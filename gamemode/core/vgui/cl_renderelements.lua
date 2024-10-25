@@ -1,4 +1,4 @@
-local impulseLogo = Material("impulse-reforged/impulse-logo-white.png")
+local impulseLogo = Material("impulse-reforged/impulse-white.png")
 local fromCol = Color(255, 45, 85, 255)
 local toCol = Color(90, 200, 250, 255)
 local fromColHalloween = Color(252, 70, 5) 
