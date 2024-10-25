@@ -284,11 +284,32 @@ function GM:CalcView(player, origin, angles, fov)
 		local eyes = ragdoll:GetAttachment(ragdoll:LookupAttachment("eyes"))
 		if not eyes then return end
 
+		local pos, ang = eyes.Pos, eyes.Ang
+
+		local traceHull = util.TraceHull({
+			start = ragdoll:WorldSpaceCenter(),
+			endpos = pos,
+			filter = ragdoll,
+			mins = Vector(-10, -10, -10),
+			maxs = Vector(10, 10, 10),
+			mask = MASK_SHOT_HULL,
+			filter = function(ent)
+				if ent == ragdoll then
+					return false
+				end
+
+				return true
+			end
+		})
+
+		pos = traceHull.HitPos
+
 		view = {
-			origin = eyes.Pos,
-			angles = eyes.Ang,
+			origin = pos,
+			angles = ang,
 			fov = 70
 		}
+
 		return view
 	end
 
