@@ -359,7 +359,6 @@ impulse.Anim.fastZombie = {
 -- @field fastZombie
 -- @table DefaultAnimClasses
 
-
 local translations = translations or {}
 
 --- Sets the animation class of a specific model
