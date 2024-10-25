@@ -2,6 +2,7 @@
 -- @module impulse.Settings
 
 impulse.Settings = impulse.Settings or {}
+impulse.Settings.Stored = {}
 
 --- A collection of data that defines how a setting will behave
 -- @realm client
@@ -62,18 +63,19 @@ impulse.Settings = impulse.Settings or {}
 --     end
 -- })
 function impulse.Settings:Define(name, settingdata)
-	impulse.Settings[name] = settingdata
-	impulse.Settings:Load()
+	self.Stored[name] = settingdata
+	self:Load()
 end
 
 local toBool = tobool
 local optX = {["tickbox"] = true} -- hash comparisons faster than string
+
 --- Gets the value of a setting
 -- @realm client
 -- @string name Setting class name
 -- @return Setting value
 function impulse.Settings:Get(name)
-	local settingData = impulse.Settings[name]
+	local settingData = self.Stored[name]
 
 	if optX[settingData.type] then
 		if settingData.value == nil then
@@ -90,7 +92,7 @@ end
 -- @realm client
 -- @internal
 function impulse.Settings:Load()
-	for v, k in pairs(impulse.Settings) do
+	for v, k in pairs(self.Stored) do
 		if k.type == "tickbox" or k.type == "slider" or k.type == "plainint" then
 			local def = k.default
 			if k.type == "tickbox" then 
@@ -113,7 +115,7 @@ end
 -- @string name Setting class name
 -- @param value New value
 function impulse.Settings:Set(name, newValue)
-	local settingData = impulse.Settings[name]
+	local settingData = self.Stored[name]
 	if settingData then
 		if type(newValue) == "boolean" then -- convert them boolz to intz. it's basically a gang war
 			newValue = newValue and 1 or 0
@@ -128,15 +130,16 @@ function impulse.Settings:Set(name, newValue)
 
 		return
 	end
+
 	return print("[impulse-reforged] Error, could not SetSetting. You've probably got the name wrong! Attempted name: "..name)
 end
 
 concommand.Add("impulse_resetsettings", function()
-	for v, k in pairs(impulse.Settings) do
+	for v, k in pairs(impulse.Settings.Stored) do
 		impulse.Settings:Set(v, k.default)
 	end
+
 	print("[impulse-reforged] Settings reset!")
 end)
-
 
 hook.Run("DefineSettings")
