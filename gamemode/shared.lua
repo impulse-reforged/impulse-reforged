@@ -6,6 +6,7 @@ impulse.Version = "2.0"
 GM.Name = "impulse"
 GM.Author = "vin, Riggs"
 GM.Website = "https://impulse.minerva-servers.com"
+GM.Version = impulse.Version
 
 meta = FindMetaTable("Player")
 
@@ -30,6 +31,20 @@ function widgets.PlayerTick()
 end
 
 hook.Remove("PlayerTick", "TickWidgets")
+
+local install = "https://github.com/riggs9162/impulse-reforged/archive/refs/heads/main.zip"
+function impulse:CheckVersion()
+	http.Fetch("https://raw.githubusercontent.com/riggs9162/impulse-reforged/main/version.txt", function(body)
+		if body == impulse.Version then
+			MsgC(Color(0, 255, 0), "[impulse-reforged] You are running the latest version of impulse-reforged.\n")
+		else
+			MsgC(Color(255, 0, 0), "[impulse-reforged] You are running an outdated version of impulse-reforged! Please update to the latest version: " .. body .. "\n")
+			MsgC(Color(255, 0, 0), "[impulse-reforged] Download the latest version here: " .. install .. "\n")
+		end
+	end, function(err)
+		MsgC(Color(255, 0, 0), "[impulse-reforged] Error checking for updates: " .. err .. "\n")
+	end)
+end
 
 function impulse:Include(fileName)
 	if ( !fileName ) then
@@ -165,6 +180,8 @@ function impulse:Boot()
 	self:BootPlugins()
 
 	self.Schema:Boot()
+
+	self:CheckVersion()
 
 	MsgC(Color(0, 255, 0), "[impulse-reforged] Booted!\n")
 

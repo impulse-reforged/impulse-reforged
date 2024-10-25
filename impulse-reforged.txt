@@ -1,7 +1,7 @@
-"impulse"
+"impulse-reforged"
 {
 	"base"		"sandbox"
 	"title"		"impulse"
-	"author"	"vin"
+	"author"	"vin, Riggs"
 	"category"	"rp"
 }
