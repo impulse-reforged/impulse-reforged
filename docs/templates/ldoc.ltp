@@ -22,7 +22,10 @@ function ldoc.is_kind_classmethod(kind)
 end
 
 function ldoc.repo_reference(item)
-	return repo .. "tree/main" .. item.file.filename:gsub(item.file.base, "/gamemode") .. "#L" .. item.lineno
+	local path = item.file.filename
+	path = path:sub(58)
+
+	return repo .. "tree/master/" .. path .. "#L" .. item.lineno
 end
 
 local function moduleDescription(mod)
@@ -45,7 +48,7 @@ end
 		{% if (mod) then %}
 			<meta property="og:description" content="{{moduleDescription(mod)}}" />
 		{% else %}
-			<meta property="og:description" content="Documentation and function reference for the Helix framework." />
+			<meta property="og:description" content="Documentation and function reference for the impulse reforged framework." />
 		{% end %}
 
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro" />

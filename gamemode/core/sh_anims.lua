@@ -367,7 +367,7 @@ local translations = translations or {}
 -- @string model The model to set
 -- @string class The animation class
 -- @see DefaultAnimClasses
-function impulse.Anim.SetModelClass(model, class)
+function impulse.Anim:SetModelClass(model, class)
 	if not impulse.Anim[class] then
 		error("'"..tostring(class).."' is not a valid animation class!")
 	end
@@ -383,7 +383,7 @@ local stringFind = string.find
 -- @realm shared
 -- @string model The model
 -- @treturn string Animation class
-function impulse.Anim.GetModelClass(model)
+function impulse.Anim:GetModelClass(model)
 	model = stringLower(model)
 	local class = translations[model]
 
@@ -392,14 +392,14 @@ function impulse.Anim.GetModelClass(model)
 	return class
 end
 
-impulse.Anim.SetModelClass("models/police.mdl", "metrocop")
-impulse.Anim.SetModelClass("models/combine_super_soldier.mdl", "overwatch")
-impulse.Anim.SetModelClass("models/combine_soldier_prisonGuard.mdl", "overwatch")
-impulse.Anim.SetModelClass("models/combine_soldier.mdl", "overwatch")
-impulse.Anim.SetModelClass("models/vortigaunt.mdl", "vort")
-impulse.Anim.SetModelClass("models/zombie/classic.mdl", "zombie")
-impulse.Anim.SetModelClass("models/zombie/zombie_soldier.mdl", "zombie")
-impulse.Anim.SetModelClass("models/breen.mdl", "player")
+impulse.Anim:SetModelClass("models/police.mdl", "metrocop")
+impulse.Anim:SetModelClass("models/combine_super_soldier.mdl", "overwatch")
+impulse.Anim:SetModelClass("models/combine_soldier_prisonGuard.mdl", "overwatch")
+impulse.Anim:SetModelClass("models/combine_soldier.mdl", "overwatch")
+impulse.Anim:SetModelClass("models/vortigaunt.mdl", "vort")
+impulse.Anim:SetModelClass("models/zombie/classic.mdl", "zombie")
+impulse.Anim:SetModelClass("models/zombie/zombie_soldier.mdl", "zombie")
+impulse.Anim:SetModelClass("models/breen.mdl", "player")
 
 hook.Run("LoadAnimationClasses")
 
@@ -434,7 +434,7 @@ PLAYER_HOLDTYPE_TRANSLATOR["bugbait"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["pistol"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["revolver"] = "normal"
 
-local getModelClass = impulse.Anim.GetModelClass
+local getModelClass = impulse.Anim:GetModelClass
 local IsValid = IsValid
 local string  = string
 local type = type
@@ -544,7 +544,7 @@ end
 
 function GM:DoAnimationEvent(ply, event, data)
 	local model = ply:GetModel():lower()
-	local class = impulse.Anim.GetModelClass(model)
+	local class = impulse.Anim:GetModelClass(model)
 
 	if class == "player" then
 		return self.BaseClass:DoAnimationEvent(ply, event, data)

@@ -8,7 +8,8 @@ end
 <nav>
 	<header>
 		{% if (not ldoc.root) then %}
-			<a href="{* ldoc.url('') *}"><img src="https://raw.githubusercontent.com/LandisGames/impulse/main/content/materials/impulse/impulse-logo-white.png" alt="impulse logo" style="display: block; margin-left: auto; margin-right: auto; width: 50%; margin-bottom: 10px;"></a>
+			<a href="{* ldoc.url('') *}"><img src="https://raw.githubusercontent.com/riggs9162/impulse-reforged/refs/heads/main/impulse-white.png" alt="impulse logo" style="display: block; margin-left: auto; margin-right: auto; width: 75%; margin-bottom: 10px;"></a>
+			<a href="{* ldoc.url('') *}"><img src="https://raw.githubusercontent.com/riggs9162/impulse-reforged/refs/heads/main/reforged-white.png" alt="impulse logo" style="display: block; margin-left: auto; margin-right: auto; width: 50%; margin-bottom: 10px;"></a>
 		{% end %}
 		<input id="search" type="search" autocomplete="off" placeholder="Search..." />
 	</header>

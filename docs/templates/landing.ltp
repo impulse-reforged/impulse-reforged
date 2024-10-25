@@ -1,10 +1,10 @@
 <div class="landing">
-    <img src="https://raw.githubusercontent.com/LandisGames/impulse/main/content/materials/impulse/impulse-logo-white.png" alt="impulse logo" style="display: block; margin-left: auto; margin-right: auto; width: 25%;">
+    <img src="https://raw.githubusercontent.com/riggs9162/impulse-reforged/refs/heads/main/impulse-reforged-white.png" alt="impulse logo" style="display: block; margin-left: auto; margin-right: auto; width: 25%;">
 </div>
 
 <div class="wrapper">
     <h2>Welcome to the impulse Framework</h2>
-    <p>impulse is a Garry's Mod Framework that can be tailored to nearly anything. With performance, aesthetic, and accessibility at the core of the design, the sky is the limit for what you can do.</p>
+    <p>impulse reforged is a free, open-source framework for Garry's Mod built upon the original impulse framework by vin. impulse is designed to be a lightweight, efficient, and secure framework for Garry's Mod servers. Alongside this, it's built with performance in mind, and is designed to be as efficient as possible.</p>
 
     <h2>Security</h2>
     <p>Security is the backbone of impulse. Networking and client data handling has been carefully crafted to keep troublemakers at bay.</p>

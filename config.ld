@@ -18,15 +18,10 @@ format = "markdown"
 ignore = true
 topics = "docs/manual"
 use_markdown_titles = true
-kind_names = {
-	module = "Libraries",
-	topic = "Manual"
-}
+kind_names = {module = "Libraries", topic = "Manual"}
 merge = true
 sort = true
 sort_modules = true
-wrap = true
-not_luadoc = true
 
 custom_display_name_handler = function(item, default_handler)
 	if (item.type == "function" and item.module) then
