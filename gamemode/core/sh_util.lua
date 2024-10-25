@@ -34,12 +34,12 @@ end
 function impulse.Util:FindPlayer(identifier)
     for k, v in player.Iterator() do
         -- Search by all possible steam id variants
-        if ( searchKey == v:SteamID() or searchKey == v:SteamID64() or searchKey == v:AccountID() ) then
+        if ( identifier == v:SteamID() or identifier == v:SteamID64() or identifier == v:AccountID() ) then
             return v
         end
 
         -- Search by name
-        if ( self:StringMatches(v:Name(), searchKey) or self:StringMatches(v:SteamName(), searchKey) ) then
+        if ( self:StringMatches(v:Name(), identifier) or self:StringMatches(v:SteamName(), identifier) ) then
             return v
         end
     end

@@ -30,11 +30,13 @@ concommand.Add("impulse_set_group", function(ply, cmd, args)
 		query:Execute()
 
 		return
+	else
+		MsgC(Color(255, 200, 0), "[impulse-reforged] Target not found, checking for SteamID...\n")
 	end
 
 	local steamid = IsSteamID(find)
 	if !steamid then
-		MsgC(Color(255, 0, 0), "[impulse-reforged] Target not found, and !a valid SteamID.\n")
+		MsgC(Color(255, 0, 0), "[impulse-reforged] Target not found, and '" .. find .. "' is not a valid SteamID.\n")
 		return
 	end
 
