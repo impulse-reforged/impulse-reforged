@@ -720,7 +720,7 @@ function GM:HUDPaintBackground()
 						DrawEntInfo(entTarg, alpha)
 					elseif entTarg:IsDoor() and hook.Run("ShouldDrawDoorInfo", entTarg) != false then
 						DrawDoorInfo(entTarg, alpha)
-					elseif impulse_ActiveButtons[entTarg:EntIndex()] and hook.Run("ShouldDrawButtonInfo", entTarg) != false then
+					elseif impulse_ActiveButtons and impulse_ActiveButtons[entTarg:EntIndex()] and hook.Run("ShouldDrawButtonInfo", entTarg) != false then
 						DrawButtonInfo(entTarg, alpha)
 					else
 						hook.Run("DrawOtherOverheadInfo", entTarg, alpha)
