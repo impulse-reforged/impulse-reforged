@@ -17,6 +17,11 @@ function PANEL:Init()
 	table.sort(settings, function(a, b) return a.name < b.name end) -- Sort settings by name
 
 	for v, k in SortedPairs(settings) do
+		if type(k) != "table" then
+			MsgC(Color(255, 0, 0), "Setting " .. v .. " is not a table, skipping...\n")
+			continue
+		end
+
 		if k.category == "ops" and !LocalPlayer():IsAdmin() then continue end -- ops settings can only be viewed by admins
 
 		if not addedCategories[k.category] then -- If category does not exist, create it
