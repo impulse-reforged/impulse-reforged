@@ -7,7 +7,7 @@ See the [Garry's Mod Wiki](https://wiki.garrysmod.com/page/Category:Player) for 
 ]]
 -- @classmod Player
 
-local PLAYER = FindMetaTable("Entity")
+local PLAYER = FindMetaTable("Player")
 
 --- Sends a chat message to the player
 -- @realm shared
@@ -63,15 +63,15 @@ local adminGroups = {
 -- @realm shared
 -- @treturn bool Is admin
 function PLAYER:IsAdmin()
-    if ( self.IsSuperAdmin(self) ) then
+    if ( hook.Run("PlayerIsAdmin", self) ) then
+        return true
+    end
+
+    if ( self:IsSuperAdmin() ) then
         return true
     end
 
     if ( adminGroups[self.GetUserGroup(self)] ) then
-        return true
-    end
-
-    if ( hook.Run("PlayerIsAdmin", self) ) then
         return true
     end
 
@@ -87,15 +87,15 @@ local leadAdminGroups = {
 -- @realm shared
 -- @treturn bool Is lead admin
 function PLAYER:IsLeadAdmin()
-    if ( self.IsSuperAdmin(self) ) then
-        return true
-    end
-
-    if ( leadAdminGroups[self.GetUserGroup(self)] ) then
-        return true
-    end
-
     if ( hook.Run("PlayerIsLeadAdmin", self) ) then
+        return true
+    end
+
+    if ( self:IsSuperAdmin() ) then
+        return true
+    end
+
+    if ( leadAdminGroups[self:GetUserGroup()] ) then
         return true
     end
 
