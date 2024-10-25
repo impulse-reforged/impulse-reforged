@@ -434,7 +434,6 @@ PLAYER_HOLDTYPE_TRANSLATOR["bugbait"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["pistol"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["revolver"] = "normal"
 
-local getModelClass = impulse.Anim.GetModelClass
 local IsValid = IsValid
 local string  = string
 local type = type
@@ -443,8 +442,8 @@ local PLAYER_HOLDTYPE_TRANSLATOR = PLAYER_HOLDTYPE_TRANSLATOR
 local HOLDTYPE_TRANSLATOR = HOLDTYPE_TRANSLATOR
 
 function GM:TranslateActivity(ply, act)
-	local model = string.lower(ply.GetModel(ply))
-	local class = getModelClass(model) or "player"
+	local model = ply:GetModel():lower()
+	local class = impulse.Anim:GetModelClass(model) or "player"
 	local weapon = ply.GetActiveWeapon(ply)
 
 	if class == "player" then
