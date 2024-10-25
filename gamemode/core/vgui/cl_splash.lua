@@ -21,9 +21,9 @@ function PANEL:Init()
 	function self.core:Paint(width, height)
 		local x = width / 2
 		local y = height * .4
-		local logo_scale = 1.1
-		local logo_w = logo_scale * 367
-		local logo_h = logo_scale * 99
+		local logo_scale = 1.2
+		local logo_w = logo_scale * 340
+		local logo_h = logo_scale * 140
 		impulse:DrawLogo(x - (logo_w / 2), y, logo_w, logo_h)
 
 		local isPreview = GetConVar("impulse_preview"):GetBool()

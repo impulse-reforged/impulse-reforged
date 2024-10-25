@@ -118,12 +118,12 @@ local bodyCol = Color(30, 30, 30, 190)
 function PANEL:Paint(w,h)
 	impulse:DrawBlur(self)
 
-	surface.SetDrawColor(bodyCol) -- menu body
-	surface.DrawRect(0, 0, w, h) -- left body
+	surface.SetDrawColor(bodyCol)
+	surface.DrawRect(0, 0, w, h)
 
 	self.scrollY = self.scrollY - (FrameTime() * 88)
 
-	impulse:DrawLogo((w / 2) - 165, self.scrollY + 70, 337, 91)
+	impulse:DrawLogo((w / 2) - 160, self.scrollY, 340, 140)
 	self.mainCredits:Draw(0, self.scrollY + 190, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 end
 

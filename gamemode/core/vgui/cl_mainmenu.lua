@@ -1,6 +1,42 @@
+local PANEL = {}
+
+AccessorFunc(PANEL, "defaultColor", "DefaultColor", FORCE_STRINGFORCE_COLOR)
+AccessorFunc(PANEL, "highlightColor", "HighlightColor", FORCE_STRINGFORCE_COLOR)
+
+function PANEL:Init()
+	self.defaultColor = color_white
+	self.highlightColor = impulse.Config.MainColour
+	
+	self:SetFont("Impulse-Elements32")
+	self:SetContentAlignment(4)
+	self:SetColor(color_white)
+end
+
+function PANEL:Paint(width, height)
+	if ( self:IsHovered() ) then
+		self:SetColor(self.highlightColor or impulse.Config.MainColour)
+	else
+		self:SetColor(self.defaultColor or color_white)
+	end
+end
+
+function PANEL:OnCursorEntered()
+	surface.PlaySound("ui/buttonrollover.wav")
+end
+
+function PANEL:OnMousePressed()
+	surface.PlaySound("ui/buttonclick.wav")
+
+	if ( self.DoClick ) then
+		self:DoClick()
+	end
+end
+
+vgui.Register("impulseMainMenuButton", PANEL, "DButton")
+
 local bodyCol = Color(30, 30, 30, 190)
 
-local PANEL = {}
+PANEL = {}
 
 function PANEL:Init()
 	if ( IsValid(impulse.MainMenu) ) then
@@ -25,22 +61,31 @@ function PANEL:Init()
 		end
 
 		surface.SetDrawColor(bodyCol) -- menu body
-		surface.DrawRect(70, 0, 400, height) -- left body
 
 		if ( impulse.Config.WordPressURL != "" ) then
 			surface.DrawRect(width - 540, 0, 520, 380) -- news body
 		end
+	end
 
-		impulse:DrawLogo(100, 50, 337, 91)
+	self.left = self.core:Add("DPanel")
+	self.left:SetPos(70, 0)
+	self.left:SetSize(400, ScrH())
+
+	self.left.Paint = function(this, width, height)
+		surface.SetDrawColor(bodyCol)
+		surface.DrawRect(0, 0, width, height)
+
+		impulse:DrawLogo(30, 30, 340, 140)
 
 		local isPreview = GetConVar("impulse_preview"):GetBool()
 		if ( isPreview ) then
-			draw.SimpleText("preview build", "Impulse-SpecialFont", 260, 115, Color(255, 242, 0))
+			draw.SimpleText("preview build", "Impulse-Elements24-Italic", 240, 100, Color(255, 242, 0), TEXT_ALIGN_TOP, TEXT_ALIGN_RIGHT)
 		end
 	end
 
-	local button = self.core:Add("DButton")
-	button:SetPos(100, 200)
+	local button = self.left:Add("impulseMainMenuButton")
+	button:Dock(TOP)
+	button:DockMargin(30, 250, 0, 0)
 	button:SetFont("Impulse-Elements48")
 	button:SetText("Play")
 	button:SizeToContents()
@@ -52,22 +97,7 @@ function PANEL:Init()
 		end
 	end)
 
-	local highlightCol = Color(impulse.Config.MainColour.r, impulse.Config.MainColour.g, impulse.Config.MainColour.b)
-	button.Paint = function(this, width, height)
-		if ( this:IsHovered() ) then
-			this:SetColor(highlightCol)
-		else
-			this:SetColor(color_white)
-		end
-	end
-
-	button.OnCursorEntered = function(this)
-		surface.PlaySound("ui/buttonrollover.wav")
-	end
-
 	button.DoClick = function(this)
-		surface.PlaySound("ui/buttonclick.wav")
-
 		if ( impulse_isNewPlayer == true ) then
 			vgui.Create("impulseCharacterCreator", self)
 		elseif ( self.popup ) then
@@ -94,151 +124,58 @@ function PANEL:Init()
 		CRASHSCREEN_ALLOW = true
 	end
 
-	local button = self.core:Add("DButton")
-	button:SetPos(100, 250)
+	local button = self.left:Add("impulseMainMenuButton")
+	button:Dock(TOP)
+	button:DockMargin(30, 0, 0, 0)
 	button:SetFont("Impulse-Elements32")
 	button:SetText("Settings")
 	button:SizeToContents()
 
-	button.Paint = function(this, width, height)
-		if ( this:IsHovered() ) then
-			this:SetColor(highlightCol)
-		else
-			this:SetColor(color_white)
-		end
-	end
-
-	button.OnCursorEntered = function(this)
-		surface.PlaySound("ui/buttonrollover.wav")
-	end
-
 	button.DoClick = function(this)
-		surface.PlaySound("ui/buttonclick.wav")
 		vgui.Create("impulseSettings", self)
 	end
 
-	local button = self.core:Add("DButton")
-	button:SetPos(100, 280)
+	local button = self.left:Add("impulseMainMenuButton")
+	button:Dock(TOP)
+	button:DockMargin(30, 0, 0, 0)
 	button:SetFont("Impulse-Elements32")
 	button:SetText("Achievements")
 	button:SizeToContents()
 
-	button.Paint = function(this, width, height)
-		if ( this:IsHovered() ) then
-			this:SetColor(highlightCol)
-		else
-			this:SetColor(color_white)
-		end
-	end
-
-	button.OnCursorEntered = function(this)
-		surface.PlaySound("ui/buttonrollover.wav")
-	end
-
 	button.DoClick = function(this)
-		surface.PlaySound("ui/buttonclick.wav")
 		vgui.Create("impulseAchievements", self)
 	end
 
-	local button = self.core:Add("DButton")
-	button:SetPos(100, 310)
+	local button = self.left:Add("impulseMainMenuButton")
+	button:Dock(TOP)
+	button:DockMargin(30, 0, 0, 0)
 	button:SetFont("Impulse-Elements32")
 	button:SetText("Community")
 	button:SizeToContents()
 
-	local highlightCol = Color(impulse.Config.MainColour.r, impulse.Config.MainColour.g, impulse.Config.MainColour.b)
-	button.Paint = function(this, width, height)
-		if ( this:IsHovered() ) then
-			this:SetColor(highlightCol)
-		else
-			this:SetColor(color_white)
-		end
-	end
-
-	button.OnCursorEntered = function(this)
-		surface.PlaySound("ui/buttonrollover.wav")
-	end
-
 	button.DoClick = function(this)
-		surface.PlaySound("ui/buttonclick.wav")
 		gui.OpenURL(impulse.Config.CommunityURL or "www.google.com")
 	end
 
-	local button = self.core:Add("DButton")
-	button:SetPos(100, 340)
+	local button = self.left:Add("impulseMainMenuButton")
+	button:Dock(TOP)
+	button:DockMargin(30, 0, 0, 0)
 	button:SetFont("Impulse-Elements32")
 	button:SetText("Donate")
 	button:SizeToContents()
-
-	local goldCol = Color(218, 165, 32)
-	function button:Paint()
-		if ( self:IsHovered() ) then
-			self:SetColor(highlightCol)
-		else
-			self:SetColor(goldCol)
-		end
-	end
-
-	button.OnCursorEntered = function(this)
-		surface.PlaySound("ui/buttonrollover.wav")
-	end
+	button:SetDefaultColor(Color(218, 165, 32))
 
 	button.DoClick = function(this)
-		surface.PlaySound("ui/buttonclick.wav")
 		gui.OpenURL(impulse.Config.DonateURL or "www.google.com")
 	end
 
-	local button = self.core:Add("DButton")
-	button:SetPos(100, ScrH() - 230)
-	button:SetFont("Impulse-Elements32")
-	button:SetText("Credits")
-	button:SizeToContents()
-
-	local highlightCol = Color(impulse.Config.MainColour.r, impulse.Config.MainColour.g, impulse.Config.MainColour.b)
-	button.Paint = function(this, width, height)
-		if ( this:IsHovered() ) then
-			this:SetColor(highlightCol)
-		else
-			this:SetColor(color_white)
-		end
-	end
-
-	button.DoClick = function(this)
-		if ( self.popup or IsValid(impulse.CreditsPanel) ) then return end
-
-		self:AlphaTo(0, 1, 0, function()
-			self:SetMouseInputEnabled(false)
-
-			impulse.CreditsPanel = vgui.Create("impulseCredits")
-			impulse.CreditsPanel:SetAlpha(0)
-			impulse.CreditsPanel:AlphaTo(255, 4, 0)
-		end)
-
-		surface.PlaySound("ui/buttonclick.wav")
-	end
-
-	timer.Simple(0, function()
-		if ( self.popup ) then
-			button:Hide()
-		else
-			button:Show()
-		end
-	end)
-
-	local button = self:Add("DButton")
-	button:SetPos(100, ScrH() - 200)
+	local button = self.left:Add("impulseMainMenuButton")
+	button:Dock(BOTTOM)
+	button:DockMargin(30, 0, 0, 200)
 	button:SetFont("Impulse-Elements32")
 	button:SetText("Disconnect")
 	button:SizeToContents()
-
-	local highlightCol = Color(240, 0, 0)
-	button.Paint = function(this, width, height)
-		if ( this:IsHovered() ) then
-			this:SetColor(highlightCol)
-		else
-			this:SetColor(color_white)
-		end
-	end
+	button:SetHighlightColor(Color(240, 0, 0))
 
 	button.OnCursorEntered = function(this)
 		surface.PlaySound("ui/buttonrollover.wav")
@@ -255,7 +192,34 @@ function PANEL:Init()
 			"No")
 	end
 
-	local button = vgui.Create("DImageButton", self)
+	local button = self.left:Add("impulseMainMenuButton")
+	button:Dock(BOTTOM)
+	button:DockMargin(30, 0, 0, 0)
+	button:SetFont("Impulse-Elements32")
+	button:SetText("Credits")
+	button:SizeToContents()
+
+	button.DoClick = function(this)
+		if ( self.popup or IsValid(impulse.CreditsPanel) ) then return end
+
+		self:AlphaTo(0, 1, 0, function()
+			self:SetMouseInputEnabled(false)
+
+			impulse.CreditsPanel = vgui.Create("impulseCredits")
+			impulse.CreditsPanel:SetAlpha(0)
+			impulse.CreditsPanel:AlphaTo(255, 4, 0)
+		end)
+	end
+
+	timer.Simple(0, function()
+		if ( self.popup ) then
+			button:Hide()
+		else
+			button:Show()
+		end
+	end)
+
+	local button = self.core:Add("DImageButton")
 	button:SetPos(self:GetWide() - 30 - 53, 10)
 	button:SetImage("impulse-reforged/icons/social/discord.png")
 	button:SetSize(62, 55)
@@ -278,22 +242,22 @@ function PANEL:Init()
 		gui.OpenURL(impulse.Config.DiscordURL or "https://discord.minerva-servers.com")
 	end
 
+	local schemaLabel = self.left:Add("DLabel")
+	schemaLabel:SetFont("Impulse-Elements32")
+	schemaLabel:SetText(impulse.Config.SchemaName)
+	schemaLabel:SizeToContents()
+	schemaLabel:SetPos(30, 170)
+
+	if ( schemaLabel:GetWide() > 300 ) then
+		schemaLabel:SetFont("Impulse-Elements27")
+	end
+
 	local year = os.date("%Y", os.time())
 	local copyrightLabel = vgui.Create("DLabel", self.core)
 	copyrightLabel:SetFont("Impulse-Elements14")
 	copyrightLabel:SetText("Powered by impulse\nCopyright Minerva Servers " .. year .. "\nimpulse version: " .. impulse.Version)
 	copyrightLabel:SizeToContents()
 	copyrightLabel:SetPos(ScrW() - copyrightLabel:GetWide(), ScrH() - copyrightLabel:GetTall() - 5)
-
-	local schemaLabel = vgui.Create("DLabel", self.core)
-	schemaLabel:SetFont("Impulse-Elements32")
-	schemaLabel:SetText(impulse.Config.SchemaName)
-	schemaLabel:SizeToContents()
-	schemaLabel:SetPos(100, 140)
-
-	if ( schemaLabel:GetWide() > 300 ) then
-		schemaLabel:SetFont("Impulse-Elements27")
-	end
 
 	if ( impulse.Config.WordPressURL != "" ) then
 		local newsLabel = vgui.Create("DLabel", self.core)

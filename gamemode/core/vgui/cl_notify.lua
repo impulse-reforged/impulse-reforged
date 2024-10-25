@@ -3,10 +3,15 @@ local PANEL = {}
 local baseSizeW, baseSizeH = 300, 20
 
 function PANEL:Init()
-	self.message = markup.Parse("")
 	self:SetSize(baseSizeW, baseSizeH)
+
+	self.message = markup.Parse("")
 	self.startTime = CurTime()
 	self.endTime = CurTime() + 7.5
+
+	self:MakePopup()
+	self:SetKeyboardInputEnabled(false)
+	self:SetMouseInputEnabled(false)
 end
 
 function PANEL:SetMessage(...)
@@ -58,6 +63,10 @@ function PANEL:Paint(w,h)
 	local w2 = math.TimeFraction(self.startTime, self.endTime, CurTime()) * w
 	surface.SetDrawColor(Color(255,255,255))
 	surface.DrawRect(w2, h-2, w - w2, 2)
+end
+
+function PANEL:Think()
+	self:MoveToFront()
 end
 
 vgui.Register("impulseNotify", PANEL, "DPanel")

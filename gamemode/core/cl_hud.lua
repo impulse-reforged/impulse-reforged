@@ -22,9 +22,9 @@ local blur = Material("pp/blurscreen")
 local cheapBlur = Color(0,0,0,205)
 local function BlurRect(x, y, w, h)
 	if not impulse.Settings:Get("perf_blur") then
-		draw.RoundedBox(0,x,y,w,h, cheapBlur)
+		draw.RoundedBox(0,x, y, w, h, cheapBlur)
 		surface.SetDrawColor(0,0,0)
-		surface.DrawOutlinedRect(x,y,w,h)
+		surface.DrawOutlinedRect(x, y, w, h)
 	else
 		local X, Y = 0,0
 

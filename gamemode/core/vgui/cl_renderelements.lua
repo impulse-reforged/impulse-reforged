@@ -1,4 +1,5 @@
 local impulseLogo = Material("impulse-reforged/impulse-white.png")
+local reforgedLogo = Material("impulse-reforged/reforged-white.png")
 local fromCol = Color(255, 45, 85, 255)
 local toCol = Color(90, 200, 250, 255)
 local fromColHalloween = Color(252, 70, 5) 
@@ -16,11 +17,19 @@ local function Glow(c, t, m)
 end
 
 local date = os.date("%m-%d")
-function impulse:DrawLogo(x,y,w,h)
+function impulse:DrawLogo(x, y, w, h)
+	local framework, reforged = hook.Run("GetFrameworkLogo")
+	framework = framework or impulseLogo
+	reforged = reforged or reforgedLogo
+
 	local from, to = hook.Run("GetFrameworkLogoColour")
 	local col = Glow(from or fromCol, to or toCol, math.abs(math.sin((RealTime() - 0.08) * .2)))
 
-	surface.SetMaterial(hook.Run("GetFrameworkLogo") or impulseLogo)
+	surface.SetMaterial(framework)
 	surface.SetDrawColor(col)
-	surface.DrawTexturedRect(x,y,w,h)
+	surface.DrawTexturedRect(x, y, w, h * 0.65)
+
+	surface.SetMaterial(reforged)
+	surface.SetDrawColor(col)
+	surface.DrawTexturedRect(x, y + h * 0.65, w * 0.6, h * 0.35)
 end
