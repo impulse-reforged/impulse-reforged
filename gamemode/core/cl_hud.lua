@@ -50,7 +50,7 @@ local lasthealth
 local time = 0
 local zoneLbl
 local gradient = Material("vgui/gradient-l")
-local watermark = Material("impulse-reforged/impulse-logo-white.png")
+local watermark = Material("impulse-reforged/impulse-white.png")
 local watermarkCol = Color(255,255,255,120)
 local fde = 0
 local hudBlackGrad = Color(40,40,40,180)
