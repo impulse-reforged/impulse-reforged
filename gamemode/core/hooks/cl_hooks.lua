@@ -148,7 +148,7 @@ function GM:ScoreboardHide()
 end
 
 function GM:DefineSettings()
-	impulse.Settings:Define("font_scale", {name="Font scale", category="General", type="slider", default=1, minValue=0.5, maxValue=1.5, decimals = 2, onChanged = function(newValue)
+	impulse.Settings:Define("font_scale", {name="Font scale", category="Other", type="slider", default=1, minValue=0.5, maxValue=1.5, decimals = 2, onChanged = function(newValue)
 		hook.Run("LoadFonts")
 	end})
 	impulse.Settings:Define("hud_vignette", {name="Vignette enabled", category="HUD", type="tickbox", default=true})
@@ -189,7 +189,7 @@ function GM:DefineSettings()
 	impulse.Settings:Define("perf_anim", {name="Animations enabled", category="Performance", type="tickbox", default=true})
 	impulse.Settings:Define("inv_sortequippablesattop", {name="Sort equipped at top", category="Inventory", type="tickbox", default=true})
 	impulse.Settings:Define("inv_sortweight", {name="Sort by weight", category="Inventory", type="dropdown", default="Inventory only", options={"Never", "Inventory only", "Containers only", "Always"}})
-	impulse.Settings:Define("misc_vendorgreeting", {name="Vendor greeting sound enabled", category="Misc", type="tickbox", default=true})
+	impulse.Settings:Define("misc_vendorgreeting", {name="Vendor greeting sound enabled", category="Other", type="tickbox", default=true})
 	impulse.Settings:Define("chat_oocenabled", {name="OOC enabled", category="Chatbox", type="tickbox", default=true})
 	impulse.Settings:Define("chat_pmpings", {name="PM and tag sound enabled", category="Chatbox", type="tickbox", default=true})
 end
