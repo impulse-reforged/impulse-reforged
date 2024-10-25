@@ -371,7 +371,7 @@ function impulse.Anim:SetModelClass(model, class)
 	if not impulse.Anim[class] then
 		error("'"..tostring(class).."' is not a valid animation class!")
 	end
-	
+
 	translations[model:lower()] = class
 end
 
@@ -388,7 +388,7 @@ function impulse.Anim:GetModelClass(model)
 	local class = translations[model]
 
 	class = class or "player"
-	
+
 	return class
 end
 
@@ -434,7 +434,7 @@ PLAYER_HOLDTYPE_TRANSLATOR["bugbait"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["pistol"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["revolver"] = "normal"
 
-local getModelClass = impulse.Anim:GetModelClass
+local getModelClass = impulse.Anim.GetModelClass
 local IsValid = IsValid
 local string  = string
 local type = type
@@ -668,7 +668,7 @@ end
 
 if SERVER then
 	util.AddNetworkString("impulseSeqSet")
-	
+
 	function meta:SetWeaponRaised(state)
 		self:SetSyncVar(SYNC_WEPRAISED, state, true)
 
