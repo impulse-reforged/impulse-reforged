@@ -22,7 +22,11 @@ function impulse:DrawLogo(x, y, w, h)
 	framework = framework or impulseLogo
 	reforged = reforged or reforgedLogo
 
+
 	local from, to = hook.Run("GetFrameworkLogoColour")
+	from = from or fromCol
+	to = to or toCol
+
 	local col = from:Lerp(to, math.abs(math.sin((RealTime() - 0.08) * .2)))
 
 	surface.SetMaterial(framework)
