@@ -63,8 +63,54 @@ impulse.Settings.Stored = {}
 --     end
 -- })
 function impulse.Settings:Define(name, settingdata)
+	if not settingdata then
+		return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Data is nil, attempted name: "..name.."\n")
+	end
+
+	if not type(settingdata) == "table" then
+		return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Data is not a table, attempted name: "..name.."\n")
+	end
+
+	if not settingdata.name then
+		return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Name is nil, attempted name: "..name.."\n")
+	end
+
+	if not settingdata.type then
+		return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Type is nil, attempted name: "..name.."\n")
+	end
+
+	if settingdata.default == nil then
+		return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Default is nil, attempted name: "..name.."\n")
+	end
+
+	if settingdata.type == "slider" then
+		if not settingdata.minValue then
+			settingdata.minValue = 0
+		end
+
+		if not settingdata.maxValue then
+			settingdata.maxValue = 100
+		end
+
+		if not settingdata.decimals then
+			settingdata.decimals = 0
+		end
+	elseif settingdata.type == "dropdown" then
+		if not settingdata.options then
+			return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Options is nil, attempted name: "..name.."\n")
+		end
+	end
+
+	if not settingdata.category then
+		settingdata.category = "Other"
+	end
+
 	self.Stored[name] = settingdata
 	self:Load()
+
+	MsgC(Color(0, 255, 0), "[impulse-reforged] Defined setting: "..name.."\n")
+
+	return settingdata
 end
 
 local toBool = tobool
@@ -77,7 +123,7 @@ local optX = {["tickbox"] = true} -- hash comparisons faster than string
 function impulse.Settings:Get(name)
 	local settingData = self.Stored[name]
 	if not settingData then
-		return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not GetSetting. Please contact a developer, attempted name: "..name.."\n")
+		return --MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not GetSetting. Please contact a developer, attempted name: "..name.."\n")
 	end
 
 	if optX[settingData.type] then
