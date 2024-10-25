@@ -13,7 +13,7 @@ function PANEL:Init()
 	settingsPages:Dock(FILL)
 	--settingsPages:InvalidateParent(true) -- this is called to sync the new positions and sizes with the dock
 
-	local settings = table.Copy(impulse.Settings)
+	local settings = table.Copy(impulse.Settings.Stored)
 	table.sort(settings, function(a, b) return a.name < b.name end) -- Sort settings by name
 
 	for v, k in SortedPairs(settings) do
