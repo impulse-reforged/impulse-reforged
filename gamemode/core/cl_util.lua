@@ -3,50 +3,6 @@
 
 impulse.Util = impulse.Util or {}
 
-function GM:ForceDermaSkin()
-	return "impulse"
-end
-
-local blur = Material("pp/blurscreen")
-
-local superTesters = {
-	["STEAM_0:1:53542485"] = true, -- mats
-	["STEAM_0:1:75156459"] = true, -- jamsu
-	["STEAM_0:1:83204982"] = true, -- oscar
-	["STEAM_0:1:43061896"] = true, -- jim wakelin
-	["STEAM_0:0:24607430"] = true, -- stranger
-	["STEAM_0:0:26121174"] = true, -- greasy
-	["STEAM_0:1:40283833"] = true, -- tim cook
-	["STEAM_0:0:157214263"] = true, -- loka
-	["STEAM_0:0:73384910"] = true, -- avx/soviet
-	["STEAM_0:1:175014750"] = true -- personwhoplaysgames
-}
-
-local mappers = {
-	["STEAM_0:0:24607430"] = true -- stranger
-}
-
-local eventTeam = {
-	["STEAM_0:1:462578059"] = true -- opiper
-}
-
-local winners = {}
-
-
--- Please don't ever remove credit or users/badges from this section. People worked hard on this. Thanks!
-impulse.Badges = {
-	staff = {Material("icon16/shield.png"), "This player is a staff member.", function(ply) return not ply:IsIncognito() and ply:IsAdmin() end},
-	donator = {Material("icon16/coins.png"), "This player is a donator.", function(ply) return ply:IsDonator() end},
-	exdev = {Material("icon16/cog_go.png"), "This player is a ex impulse developer.", function(ply) return ply:SteamID() == "STEAM_0:1:102639297" end},
-	dev = {Material("icon16/cog.png"), "This player is a impulse developer.", function(ply) return not ply:IsIncognito() and ply:IsDeveloper() end},
-	vin = {Material("impulse-reforged/vin.png"), "Hi, it's me vin! The creator of impulse.", function(ply) return not ply:IsIncognito() and (ply:SteamID() == "STEAM_0:1:95921723") end},
-	supertester = {Material("icon16/bug.png"), "This player made large contributions to the testing of impulse.", function(ply) return (superTesters[ply:SteamID()] or false) end},
-	competition = {Material("icon16/rosette.png"), "This player has won a competition.", function(ply) return winners[ply:SteamID()] end},
-	mapper = {Material("icon16/map.png"), "This player is a mapper that has collaborated with impulse.", function(ply) return mappers[ply:SteamID()] end},
-	eventteam = {Material("icon16/controller.png"), "This player is the leader of the event team.", function(ply) return eventTeam[ply:SteamID()] end},
-	communitymanager = {Material("icon16/transmit.png"), "This player is a community manager. Feel free to ask them questions.", function(ply) return ply:GetUserGroup() == "communitymanager" end}
-}
-
 impulse.blurRenderQueue = {}
 
 local blur = Material("pp/blurscreen")
@@ -61,9 +17,9 @@ local render = render
 -- @number[opt=0.2] passes Quality of the blur. This should be kept as default
 -- @number[opt=255] alpha Opacity of the blur
 -- @usage function PANEL:Paint(width, height)
---     impulse:DrawBlur(self)
+--     impulse.Util:DrawBlur(self)
 -- end
-function impulse:DrawBlur(panel, amount, passes, alpha)
+function impulse.Util:DrawBlur(panel, amount, passes, alpha)
 	amount = amount or 5
 
 	if (!impulse.Settings:Get("perf_blur")) then
@@ -87,7 +43,7 @@ function impulse:DrawBlur(panel, amount, passes, alpha)
 	end
 end
 
---- Draws a blurred rectangle with the given position and bounds. This shouldn't be used for panels, see `impulse:DrawBlur`
+--- Draws a blurred rectangle with the given position and bounds. This shouldn't be used for panels, see `impulse.Util:DrawBlur`
 -- instead.
 -- @realm client
 -- @number x X-position of the rectangle
@@ -98,9 +54,9 @@ end
 -- @number[opt=0.2] passes Quality of the blur. This should be kept as default
 -- @number[opt=255] alpha Opacity of the blur
 -- @usage hook.Add("HUDPaint", "MyHUDPaint", function()
---     impulse:DrawBlurAt(0, 0, ScrW(), ScrH())
+--     impulse.Util:DrawBlurAt(0, 0, ScrW(), ScrH())
 -- end)
-function impulse:DrawBlurAt(x, y, width, height, amount, passes, alpha)
+function impulse.Util:DrawBlurAt(x, y, width, height, amount, passes, alpha)
 	amount = amount or 5
 
 	if (!impulse.Settings:Get("perf_blur")) then
@@ -128,7 +84,7 @@ end
 -- `PostDrawOpaqueRenderables` hook.
 -- @realm client
 -- @func drawFunc Function to call when it needs to be drawn
-function impulse:PushBlur(drawFunc)
+function impulse.Util:PushBlur(drawFunc)
 	self.blurRenderQueue[#self.blurRenderQueue + 1] = drawFunc
 end
 
@@ -138,7 +94,7 @@ end
 -- @string text Text to wrap
 -- @number maxWidth Maximum allowed width in pixels
 -- @string[opt="Impulse-Elements19-Shadow"] font Font to use for the text
-function impulse:WrapText(text, maxWidth, font)
+function impulse.Util:WrapText(text, maxWidth, font)
 	font = font or "Impulse-Elements19-Shadow"
 	surface.SetFont(font)
 
@@ -207,7 +163,7 @@ end
 -- @string[opt] text Text to display on the bar
 -- @func[opt] onDone Called when bar is complete
 -- @bool[opt=false] popup If the bar should stop player input
-function impulse:MakeWorkbar(time, text, onDone, popup)
+function impulse.Util:MakeWorkbar(time, text, onDone, popup)
 	if ( IsValid(impulse.WorkbarPanel) ) then
 		impulse.WorkbarPanel:Remove()
 	end
@@ -245,7 +201,7 @@ local baseWidth, baseHeight = 1280, 720
 local targetWidth, targetHeight = 3840, 2160
 
 --- @realm client
-function impulse:DynamicScaleFontSize(baseSize)
+function impulse.Util:DynamicScaleFontSize(baseSize)
     local screenWidth, screenHeight = ScrW(), ScrH()
     local baseScale = baseHeight / screenHeight
     local targetScale = targetHeight / baseHeight
@@ -301,7 +257,7 @@ local uColoursBase = {
 
 local uColoursUsed = {}
 local uColoursLive = {}
-function impulse:GetUniqueColour(hash)
+function impulse.Util:GetUniqueColour(hash)
 	if uColoursLive[hash] then
 		return uColoursLive[hash]
 	end
@@ -322,22 +278,22 @@ function impulse:GetUniqueColour(hash)
 	return uColoursLive[hash]
 end
 
-function impulse:GetTextSize(text, font)
+function impulse.Util:GetTextSize(text, font)
 	surface.SetFont(font or "Impulse-Elements20")
 	return surface.GetTextSize(text)
 end
 
-function impulse:GetTextWidth(text, font)
+function impulse.Util:GetTextWidth(text, font)
 	surface.SetFont(font or "Impulse-Elements20")
 	return surface.GetTextSize(text)
 end
 
-function impulse:GetTextHeight(text, font)
+function impulse.Util:GetTextHeight(text, font)
 	surface.SetFont(font or "Impulse-Elements20")
 	return select(2, surface.GetTextSize(text))
 end
 
-function impulse:DrawTexture(material, color, x, y, w, h, ...)
+function impulse.Util:DrawTexture(material, color, x, y, w, h, ...)
 	surface.SetDrawColor(color or color_white)
 	surface.SetMaterial(Material(material, ...))
 	surface.DrawTexturedRect(x, y, w, h)

@@ -25,7 +25,7 @@ end
 
 local topCol = Color(30, 30, 30, 200)
 function PANEL:Paint(w,h)
-	impulse:DrawBlur(self)
+	impulse.Util:DrawBlur(self)
 	
 	draw.RoundedBox(0, 0, 0, w, h, topCol)
 

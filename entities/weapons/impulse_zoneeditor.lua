@@ -112,7 +112,7 @@ else
 
 		for k, v in pairs(impulse.Config.Zones) do
 			local cent = (LerpVector(.5, v.pos1, v.pos2)):ToScreen()
-			draw.SimpleText(v.name, "BudgetLabel", cent.x, cent.y, impulse:GetUniqueColour(v.name))
+			draw.SimpleText(v.name, "BudgetLabel", cent.x, cent.y, impulse.Util:GetUniqueColour(v.name))
 		end
 	end
 
@@ -126,7 +126,7 @@ else
 			for name,k in pairs(impulse.Config.Zones) do
 				pos1 = k.pos1
 				pos2 = k.pos2
-				col = impulse:GetUniqueColour(k.name)
+				col = impulse.Util:GetUniqueColour(k.name)
 
 				-- i cba to do this maths, this is from ns
 				local c1, c2, c3, c4

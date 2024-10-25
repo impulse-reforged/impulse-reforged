@@ -127,7 +127,7 @@ function PANEL:Paint(width, height)
 	surface.SetMaterial(vignette)
 	surface.DrawTexturedRect(0, 0, width, height)
 
-	impulse:DrawBlur(self)
+	impulse.Util:DrawBlur(self)
 end
 
 vgui.Register("impulseSplash", PANEL, "DPanel")

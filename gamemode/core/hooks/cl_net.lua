@@ -231,7 +231,7 @@ net.Receive("impulseInvDoSearch", function()
 	end
 
 
-	impulse:MakeWorkbar(5, "Searching...", function()
+	impulse.Util:MakeWorkbar(5, "Searching...", function()
 		if not IsValid(searchee) then return end
 
 		local searchMenu = vgui.Create("impulseSearchMenu")
@@ -649,5 +649,5 @@ net.Receive("impulseMakeWorkbar", function()
 	local text = net.ReadString() or nil
 	local popup = net.ReadBool() or nil
 
-	impulse:MakeWorkbar(time, text, nil, popup)
+	impulse.Util:MakeWorkbar(time, text, nil, popup)
 end)

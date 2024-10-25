@@ -57,7 +57,7 @@ function PANEL:Init()
 
 	self.core.Paint = function(this, width, height)
 		if ( self.popup ) then
-			impulse:DrawBlurAt(70, 0, 400, height)
+			impulse.Util:DrawBlurAt(70, 0, 400, height)
 		end
 
 		surface.SetDrawColor(bodyCol) -- menu body
@@ -338,7 +338,7 @@ function PANEL:Paint(width, height)
 		surface.SetMaterial(vignette)
 		surface.DrawTexturedRect(0, 0, width, height)
 
-		impulse:DrawBlur(self)
+		impulse.Util:DrawBlur(self)
 	end
 end
 

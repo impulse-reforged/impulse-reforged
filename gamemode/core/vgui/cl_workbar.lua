@@ -40,7 +40,7 @@ local bgCol = impulse.Config.MainColour
 local outlineCol = Color(50, 50, 50, 255)
 local bodyCol = Color(30, 30, 30, 100)
 function PANEL:Paint(w, h)
-	impulse:DrawBlur(self)
+	impulse.Util:DrawBlur(self)
 	
 	surface.SetDrawColor(bodyCol)
 	surface.DrawRect(0, 0, w, h)

@@ -273,7 +273,7 @@ function PANEL:OnMousePressed(keycode)
 						surface.PlaySound(self.Item.UseWorkBarSound)
 					end
 
-					impulse:MakeWorkbar(self.Item.UseWorkBarTime, self.Item.UseWorkBarName or "Using...", function()
+					impulse.Util:MakeWorkbar(self.Item.UseWorkBarTime, self.Item.UseWorkBarName or "Using...", function()
 						net.Start("impulseInvDoUse")
 						net.WriteUInt(itemID, 16)
 						net.SendToServer()

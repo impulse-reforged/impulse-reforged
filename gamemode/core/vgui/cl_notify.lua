@@ -47,7 +47,7 @@ local lifetime = 10
 
 function PANEL:Paint(w,h)
 	-- draw frame
-	impulse:DrawBlur(self)
+	impulse.Util:DrawBlur(self)
 
 	surface.SetDrawColor(darkCol)
 	surface.DrawRect(0,0,w,h)

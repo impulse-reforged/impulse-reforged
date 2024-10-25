@@ -102,7 +102,7 @@ else
         if ( impulse.GasZones.Config and impulse.GasZones.Config[game.GetMap()] ) then
             for name,k in pairs(impulse.GasZones.Config[game.GetMap()]) do
                 local cent = (LerpVector(.5, k.pos1 or k[1], k.pos2 or k[2])):ToScreen()
-                draw.SimpleText(name, "BudgetLabel", cent.x, cent.y, impulse:GetUniqueColour(k), TEXT_ALIGN_CENTER)
+                draw.SimpleText(name, "BudgetLabel", cent.x, cent.y, impulse.Util:GetUniqueColour(k), TEXT_ALIGN_CENTER)
             end
         end
     end
@@ -118,7 +118,7 @@ else
                 for name,k in pairs(impulse.GasZones.Config[game.GetMap()]) do
                     pos1 = k.pos1 or k[1]
                     pos2 = k.pos2 or k[2]
-                    col = impulse:GetUniqueColour(k)
+                    col = impulse.Util:GetUniqueColour(k)
 
                     -- i cba to do this maths, this is from ns
                     local c1, c2, c3, c4

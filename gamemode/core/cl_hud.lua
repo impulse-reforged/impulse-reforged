@@ -18,32 +18,6 @@ function GM:HUDShouldDraw(element)
 	return true
 end
 
-local blur = Material("pp/blurscreen")
-local cheapBlur = Color(0,0,0,205)
-local function BlurRect(x, y, w, h)
-	if not impulse.Settings:Get("perf_blur") then
-		draw.RoundedBox(0,x, y, w, h, cheapBlur)
-		surface.SetDrawColor(0,0,0)
-		surface.DrawOutlinedRect(x, y, w, h)
-	else
-		local X, Y = 0,0
-
-		surface.SetDrawColor(color_white)
-		surface.SetMaterial(blur)
-
-		for i = 1, 2 do
-			blur:SetFloat("$blur", (i / 10) * 20)
-			blur:Recompute()
-
-			render.UpdateScreenEffectTexture()
-
-			render.SetScissorRect(x, y, x+w, y+h, true)
-			surface.DrawTexturedRect(X * -1, Y * -1, ScrW(), ScrH())
-			render.SetScissorRect(0, 0, 0, 0, false)
-		end
-	end
-end
-
 local vignette = Material("impulse-reforged/vignette.png")
 local vig_alpha_normal = Color(10,10,10,190)
 local lasthealth
@@ -307,19 +281,11 @@ function GM:HUDPaint()
 		if IsValid(PlayerIcon) then
 			PlayerIcon:Remove()
 		end
+
 		return
 	end
 
-	if health < 45 then
-		healthstate = Color(255,0,0,240)
-	elseif health < 70 then
-		healthstate = Color(255,0,0,190)
-	else
-		healthstate = nil
-	end
-
 	-- Draw any HUD stuff under this comment
-
 	if lasthealth and health < lasthealth then
 		painFde = 0
 	end
@@ -358,7 +324,7 @@ function GM:HUDPaint()
 	local shouldDraw = hook.Run("ShouldDrawHUD")
 	if shouldDraw != false then
 		y = scrH-hudHeight-8-10
-		BlurRect(10, y, hudWidth, hudHeight)
+		impulse.Util:DrawBlurAt(10, y, hudWidth, hudHeight)
 		surface.SetDrawColor(darkCol)
 		surface.DrawRect(10, y, hudWidth, hudHeight)
 		surface.SetMaterial(gradient)

@@ -116,7 +116,7 @@ end
 
 local bodyCol = Color(30, 30, 30, 190)
 function PANEL:Paint(w,h)
-	impulse:DrawBlur(self)
+	impulse.Util:DrawBlur(self)
 
 	surface.SetDrawColor(bodyCol)
 	surface.DrawRect(0, 0, w, h)

@@ -1,3 +1,7 @@
+function GM:ForceDermaSkin()
+	return "impulse"
+end
+
 function GM:OnSchemaLoaded()
 	if not impulse.MainMenu and !IsValid(impulse.MainMenu) then
 		impulse.SplashScreen = vgui.Create("impulseSplash")

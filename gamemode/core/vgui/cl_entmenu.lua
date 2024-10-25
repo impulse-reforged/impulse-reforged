@@ -181,7 +181,7 @@ function PANEL:SetContainer(ent)
 	if ent:GetClass() == "impulse_container" and !ent:GetLoot() then
 		if LocalPlayer():IsCP() then
 			self:AddAction("impulse-reforged/icons/padlock-2-256.png", "Remove Padlock", function()
-				impulse:MakeWorkbar(15, "Breaking padlock...", function()
+				impulse.Util:MakeWorkbar(15, "Breaking padlock...", function()
 					if not IsValid(ent) then return end
 
 					net.Start("impulseInvContainerRemovePadlock")

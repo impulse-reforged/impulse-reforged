@@ -73,7 +73,7 @@ local darkCol = Color(80, 80, 80, 100)
 local fullCol = Color(139, 0, 0, 15)
 
 function PANEL:Paint(w,h)
-	impulse:DrawBlur(self)
+	impulse.Util:DrawBlur(self)
 	
 	surface.SetDrawColor(darkCol)
 	surface.DrawRect(0, 0, w, h)

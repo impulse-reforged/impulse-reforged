@@ -132,7 +132,7 @@ function impulse.chatBox.buildBox()
 			if (text:sub(1, 1) == "/") then
 				local command = string.PatternSafe(string.lower(text))
 
-				impulse:DrawBlur(self)
+				impulse.Util:DrawBlur(self)
 
 				surface.SetDrawColor(ColorAlpha(color_black, 200))
 				surface.DrawRect(0, 0, w, h)
