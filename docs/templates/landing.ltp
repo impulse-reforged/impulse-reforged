@@ -1,0 +1,14 @@
+<div class="landing">
+    <img src="https://raw.githubusercontent.com/LandisGames/impulse/main/content/materials/impulse/impulse-logo-white.png" alt="impulse logo" style="display: block; margin-left: auto; margin-right: auto; width: 25%;">
+</div>
+
+<div class="wrapper">
+    <h2>Welcome to the impulse Framework</h2>
+    <p>impulse is a Garry's Mod Framework that can be tailored to nearly anything. With performance, aesthetic, and accessibility at the core of the design, the sky is the limit for what you can do.</p>
+
+    <h2>Security</h2>
+    <p>Security is the backbone of impulse. Networking and client data handling has been carefully crafted to keep troublemakers at bay.</p>
+
+    <h2>Performance</h2>
+    <p>impulse has been optimized to the bit for maximum performance. Servers can expect to achieve 128 players concurrently (given proper moderation and a well constructed schema) without major issues.</p>
+</div>
