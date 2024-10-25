@@ -400,8 +400,6 @@ impulse.Anim:SetModelClass("models/zombie/classic.mdl", "zombie")
 impulse.Anim:SetModelClass("models/zombie/zombie_soldier.mdl", "zombie")
 impulse.Anim:SetModelClass("models/breen.mdl", "player")
 
-hook.Run("LoadAnimationClasses")
-
 HOLDTYPE_TRANSLATOR = {}
 HOLDTYPE_TRANSLATOR[""] = "normal"
 HOLDTYPE_TRANSLATOR["physgun"] = "smg"
@@ -616,7 +614,7 @@ function meta:ForceSequence(sequence, callback, time, noFreeze)
 		if time > 0 then
 			timer.Create("impulseSeq"..self:EntIndex(), time, 1, function()
 				if IsValid(self) then
-					self:leaveSequence()
+					self:LeaveSequence()
 				end
 			end)
 		end
@@ -633,7 +631,7 @@ function meta:ForceSequence(sequence, callback, time, noFreeze)
 	return false
 end
 
-function meta:leaveSequence()
+function meta:LeaveSequence()
 	hook.Run("OnPlayerLeaveSequence", self)
 
 	net.Start("impulseSeqSet")
