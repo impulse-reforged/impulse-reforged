@@ -142,9 +142,7 @@ function PANEL:SetItem(netitem, wide)
 end
 
 function PANEL:OnMousePressed(keycode)
-	if self.Disabled then
-		return
-	end
+	if self.Disabled then return end
 
 	if self.ContainerType or self.ContainerInv then
 		local itemid

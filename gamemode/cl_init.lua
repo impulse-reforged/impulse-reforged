@@ -46,9 +46,7 @@ hook.Add("PreDrawHalos", "PropertiesHover", function() -- overwrite exploitable 
 	local ent = properties.GetHovered( EyePos(), LocalPlayer():GetAimVector() )
 	if ( !IsValid( ent ) ) then return end
 
-	if ent:GetNoDraw() then
-		return
-	end
+	if ent:GetNoDraw() then return end
 
 	local c = Color( 255, 255, 255, 255 )
 	c.r = 200 + math.sin( RealTime() * 50 ) * 55

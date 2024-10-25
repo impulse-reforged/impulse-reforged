@@ -1,7 +1,5 @@
 function meta:MakeAFK()
-	if self.AFKImmune then
-		return
-	end
+	if self.AFKImmune then return end
 	
 	self.AFKState = true
 

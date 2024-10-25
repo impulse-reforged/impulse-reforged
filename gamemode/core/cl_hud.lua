@@ -65,7 +65,8 @@ local bleedFlash = false
 local hotPink = Color(148, 0, 211)
 
 local function DrawPlayerInfo(target, alpha)
-	hook.Run("PreDrawPlayerInfo", target, alpha)
+	local preDrawPlayerInfo = hook.Run("PreDrawPlayerInfo", target, alpha)
+	if ( preDrawPlayerInfo == false ) then return end
 
 	local pos = target:EyePos()
 
@@ -94,7 +95,8 @@ local function DrawPlayerInfo(target, alpha)
 end
 
 local function DrawDoorInfo(target, alpha)
-	hook.Run("PreDrawDoorInfo", target, alpha)
+	local preDrawDoorInfo = hook.Run("PreDrawDoorInfo", target, alpha)
+	if ( preDrawDoorInfo == false ) then return end
 
 	local pos = target.LocalToWorld(target, target:OBBCenter()):ToScreen()
 	local doorOwners = target:GetSyncVar(SYNC_DOOR_OWNERS, nil)
@@ -133,7 +135,8 @@ local function DrawDoorInfo(target, alpha)
 end
 
 local function DrawEntInfo(target, alpha)
-	hook.Run("PreDrawEntInfo", target, alpha)
+	local preDrawEntInfo = hook.Run("PreDrawEntInfo", target, alpha)
+	if ( preDrawEntInfo == false ) then return end
 
 	local pos = target.LocalToWorld(target, target:OBBCenter()):ToScreen()
 	local scrW = ScrW()
@@ -152,7 +155,8 @@ local function DrawEntInfo(target, alpha)
 end
 
 local function DrawButtonInfo(target, alpha)
-	hook.Run("PreDrawButtonInfo", target, alpha)
+	local preDrawButtonInfo = hook.Run("PreDrawButtonInfo", target, alpha)
+	if ( preDrawButtonInfo == false ) then return end
 
 	local pos = target:LocalToWorld(target:OBBCenter()):ToScreen()
 	local scrW = ScrW()
@@ -169,7 +173,8 @@ local function DrawButtonInfo(target, alpha)
 end
 
 local function DrawCrosshair(x, y)
-	hook.Run("PreDrawCrosshair")
+	local preDrawCrosshair = hook.Run("PreDrawCrosshair", x, y)
+	if ( preDrawCrosshair == false ) then return end
 
 	surface.SetDrawColor(color_white)
 
@@ -744,9 +749,7 @@ end
 concommand.Add("impulse_cameratoggle", function()
 	impulse.HUDEnabled = (!impulse.HUDEnabled)
 
-	if not IsValid(impulse.chatBox.frame) then
-		return
-	end
+	if not IsValid(impulse.chatBox.frame) then return end
 
 	if impulse.HUDEnabled then
 		impulse.chatBox.frame:Show()

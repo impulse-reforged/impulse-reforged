@@ -3,9 +3,7 @@ impulse.Relationships.Players = impulse.Relationships.Players or {}
 impulse.Relationships.NPCS = impulse.Relationships.NPCS or {}
 
 local function StoreDefaultRelationship(npc)
-	if player.GetCount() == 0 then
-		return
-	end
+	if player.GetCount() == 0 then return end
 
 	npc.DefaultRelationship = npc:Disposition(player.GetAll()[1]) or 1
 end

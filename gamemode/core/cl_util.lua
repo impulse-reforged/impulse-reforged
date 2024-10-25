@@ -168,9 +168,7 @@ function impulse.Util:MakeWorkbar(time, text, onDone, popup)
 		impulse.WorkbarPanel:Remove()
 	end
 
-	if not ( time ) then
-		return
-	end
+	if not ( time ) then return end
 
 	local bar = vgui.Create("impulseWorkbar")
 	bar:SetEndTime(CurTime() + time)

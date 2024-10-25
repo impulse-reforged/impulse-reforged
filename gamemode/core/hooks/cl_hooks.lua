@@ -469,9 +469,7 @@ local blackandwhite = {
 }
 
 function GM:RenderScreenspaceEffects()
-	if impulse.HUDEnabled == false or (IsValid(impulse.MainMenu) and impulse.MainMenu:IsVisible()) then
-		return
-	end
+	if impulse.HUDEnabled == false or (IsValid(impulse.MainMenu) and impulse.MainMenu:IsVisible()) then return end
 
 	if LocalPlayer():Health() < 20 then
 		DrawColorModify(blackandwhite)
@@ -496,9 +494,7 @@ function GM:OnContextMenuOpen()
 
 	local canUse = hook.Run("CanUseInventory", LocalPlayer())
 
-	if canUse != nil and canUse == false then
-		return
-	end
+	if canUse != nil and canUse == false then return end
 
 	if not input.IsKeyDown(KEY_LALT) then
 		impulse_inventory = vgui.Create("impulseInventory")

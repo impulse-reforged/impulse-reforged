@@ -106,9 +106,7 @@ function ENTITY:SyncSingle(varID, target)
 	local syncType = impulse.Sync.Vars[varID]
 	local syncCondition = impulse.Sync.VarsConditional[varID]
 
-	if target and syncCondition and !syncCondition(target) then
-		return
-	end
+	if target and syncCondition and !syncCondition(target) then return end
 
 	if syncRealm == SYNC_TYPE_PUBLIC then
 		if target then
@@ -206,9 +204,7 @@ function ENTITY:SetSyncVar(varID, newValue, instantSync)
 	if not targetData then
 		impulse.Sync.Data[targetID] = {}
 		targetData = impulse.Sync.Data[targetID]
-	elseif targetData[varID] and (type(newValue) != "table" and targetData[varID][1] == newValue) then
-		return
-	end
+	elseif targetData[varID] and (type(newValue) != "table" and targetData[varID][1] == newValue) then return end
 
 	targetData[varID] = {newValue, SYNC_TYPE_PUBLIC}
 

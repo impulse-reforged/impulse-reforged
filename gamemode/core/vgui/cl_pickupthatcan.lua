@@ -72,9 +72,7 @@ function PANEL:Init()
 end
 
 function PANEL:StartLevel(level, time)
-	if self.go then
-		return
-	end
+	if self.go then return end
 
 	local ldata = levels[level]
 	self.Level = level
@@ -97,9 +95,7 @@ function PANEL:StartLevel(level, time)
 end
 
 function PANEL:GameOver(win)
-	if self.go then
-		return
-	end
+	if self.go then return end
 
 	self.go = true
 
@@ -158,9 +154,7 @@ function PANEL:GameOver(win)
 end
 
 function PANEL:SpawnCan(speed)
-	if self.go then
-		return
-	end
+	if self.go then return end
 
 	local panel = self
 	local x = math.random(50, 450)

@@ -1,9 +1,7 @@
 util.AddNetworkString("opsSnapshot")
 
 hook.Add("PlayerDeath", "opsDeathSnapshot", function(victim, attacker, inflictor)
-	if not victim:IsPlayer() or not inflictor:IsPlayer() then
-		return
-	end
+	if not victim:IsPlayer() or not inflictor:IsPlayer() then return end
 
 	local snapshot = {}
 

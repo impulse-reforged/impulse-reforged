@@ -99,9 +99,7 @@ function meta:CanBecomeTeamClass(classID, forced)
 	local classData = teamData.classes[classID]
 	local classPlayers = 0
 
-	if not ( classData ) then
-		return
-	end
+	if not ( classData ) then return end
 
 	if not self:Alive() then
 		return false, "You are not alive, bro how the fuck did this happen man?"

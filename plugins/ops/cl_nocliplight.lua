@@ -34,9 +34,7 @@ function PLUGIN:Think()
 		end
 	end
 
-	if vgui.CursorVisible() then
-		return
-	end
+	if vgui.CursorVisible() then return end
 
 	if (wait > CurTime()) then return end
 

@@ -51,9 +51,7 @@ end
 -- @realm shared
 -- @treturn bool Is player prop door
 function ENTITY:IsPropDoor()
-	if not IsValid(self) then
-		return
-	end
+	if not IsValid(self) then return end
 	
 	if not self.GetModel or not propDoors[self:GetModel()] then
 		return false

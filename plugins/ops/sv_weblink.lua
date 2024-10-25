@@ -1,9 +1,7 @@
 -- This file contains private info, do NOT publicise.
 
 function opsSlackLog(message)
-	if not impulse.YML.apis.slack_webhook then
-		return
-	end
+	if not impulse.YML.apis.slack_webhook then return end
 	
 	local isPreview = GetConVar("impulse_preview"):GetBool()
 
@@ -27,9 +25,7 @@ function opsSlackLog(message)
 end
 
 function opsDiscordLog(message, embeds, webhookOverride)
-	if not impulse.YML.apis.discord_ops_webhook or not impulse.Config.DiscordRelayURL then
-		return
-	end
+	if not impulse.YML.apis.discord_ops_webhook or not impulse.Config.DiscordRelayURL then return end
 	
 	local isPreview = GetConVar("impulse_preview"):GetBool()
 

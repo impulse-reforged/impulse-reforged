@@ -368,9 +368,7 @@ function PANEL:ShowInfo()
 	msg:SetMultiline(true)
 	msg:DockMargin(0, 5, 0, 0)
 
-	if not canEdit then
-		return
-	end
+	if not canEdit then return end
 
 	local btn = vgui.Create("DButton", sheet)
 	btn:SetText("Update text")

@@ -70,9 +70,7 @@ local IsValid = IsValid
 local CurTime = CurTime
 
 function SWEP:Deploy()
-	if not IsValid(self.Owner) then
-		return
-	end
+	if not IsValid(self.Owner) then return end
 
 	if SERVER then
 		self.Owner:DrawWorldModel(false)
@@ -88,9 +86,7 @@ function SWEP:OnRemove()
 end
 
 function SWEP:Holster()
-	if not IsValid(self.Owner) then
-		return
-	end
+	if not IsValid(self.Owner) then return end
 
 	self:Reset()
 
@@ -98,9 +94,7 @@ function SWEP:Holster()
 end
 
 local function SetSubPhysMotionEnabled(ent, enabled)
-	if not IsValid(ent) then
-		return
-	end
+	if not IsValid(ent) then return end
 
 	for i=0, ent:GetPhysicsObjectCount() - 1 do
 		local subPhys = ent:GetPhysicsObjectNum(i)
@@ -362,9 +356,7 @@ function SWEP:CanCarry(ent)
 end
 
 function SWEP:PrimaryAttack()
-	if not IsFirstTimePredicted() then
-		return
-	end
+	if not IsFirstTimePredicted() then return end
 
 	self:SetNextPrimaryFire(CurTime() + 0.5)
 
@@ -399,9 +391,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-	if not IsFirstTimePredicted() then
-		return
-	end
+	if not IsFirstTimePredicted() then return end
 	local ply = self.Owner
 
 	local trace = {}
@@ -442,9 +432,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:DragObject(phys, targetPos, isRagdoll)
-	if not IsValid(phys) then
-		return
-	end
+	if not IsValid(phys) then return end
 
 	local point = self:GetOwner():GetShootPos() + self:GetOwner():GetAimVector() * 50
 	local physDirection = targetPos - point

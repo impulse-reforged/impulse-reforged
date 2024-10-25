@@ -5,9 +5,7 @@ end
 function impulse.Ops.EventManager.GetSequence()
 	local val = GetGlobalString("opsEventSequence", "")
 
-	if val == "" then
-		return
-	end
+	if val == "" then return end
 
     return val
 end

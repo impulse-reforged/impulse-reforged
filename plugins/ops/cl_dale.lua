@@ -13,9 +13,7 @@ local function doSay(message)
 end
 
 function impulse.Ops.DaleRead(message)
-	if impulse.Ops.CurReportClaimed then
-		return
-	end
+	if impulse.Ops.CurReportClaimed then return end
 
 	message = string.Trim(message, " ")
 	message = string.Replace(message, "\n", "")

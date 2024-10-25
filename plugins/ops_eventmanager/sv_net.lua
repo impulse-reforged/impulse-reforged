@@ -12,9 +12,7 @@ net.Receive("impulseOpsEMPushSequence", function(len, ply)
 	if (ply.nextOpsEMPush or 0) > CurTime() then return end
 	ply.nextOpsEMPush = CurTime() + 1
 
-	if not ply:IsEventAdmin() then
-		return
-	end
+	if not ply:IsEventAdmin() then return end
 
 	local seqName = net.ReadString()
 	local seqEventCount = net.ReadUInt(16)
@@ -43,9 +41,7 @@ net.Receive("impulseOpsEMPlaySequence", function(len, ply)
 	if (ply.nextOpsEMPlay or 0) > CurTime() then return end
 	ply.nextOpsEMPlay = CurTime() + 1
 
-	if not ply:IsEventAdmin() then
-		return
-	end
+	if not ply:IsEventAdmin() then return end
 
 	local seqName = net.ReadString()
 
@@ -67,9 +63,7 @@ net.Receive("impulseOpsEMStopSequence", function(len, ply)
 	if (ply.nextOpsEMStop or 0) > CurTime() then return end
 	ply.nextOpsEMStop = CurTime() + 1
 
-	if not ply:IsEventAdmin() then
-		return
-	end
+	if not ply:IsEventAdmin() then return end
 
 	local seqName = net.ReadString()
 
@@ -88,9 +82,7 @@ net.Receive("impulseOpsEMStopSequence", function(len, ply)
 end)
 
 net.Receive("impulseOpsEMIntroCookie", function(len, ply)
-	if ply.usedIntroCookie or not impulse.Ops.EventManager.GetEventMode() then
-		return
-	end
+	if ply.usedIntroCookie or not impulse.Ops.EventManager.GetEventMode() then return end
 	
 	ply.usedIntroCookie = true
 

@@ -132,9 +132,7 @@ function SKIN:PaintWindowCloseButton(panel, w, h)
 
 	if not panel.m_bBackground then return end
 
-	if panel:GetDisabled() then
-		return
-	end
+	if panel:GetDisabled() then return end
 
 	if panel.Hovered then
         tbl.HoverTime = SysTime()

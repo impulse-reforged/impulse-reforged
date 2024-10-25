@@ -80,9 +80,7 @@ function meta:Jail(time, jailData)
 	local pos
 	local cellID
 
-	if self.InJail then
-		return
-	end
+	if self.InJail then return end
 
 	if table.Count(impulse.Arrest.Prison) >= table.Count(impulse.Config.PrisonCells) then
 		doCellMates = true

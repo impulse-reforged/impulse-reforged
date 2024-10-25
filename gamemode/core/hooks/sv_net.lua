@@ -308,9 +308,7 @@ net.Receive("impulseClassChange",function(len, ply)
 	if (ply.lastTeamTry or 0) > CurTime() then return end
 	ply.lastTeamTry = CurTime() + 0.1
 
-	if ply:GetSyncVar(SYNC_ARRESTED, false) then
-		return
-	end
+	if ply:GetSyncVar(SYNC_ARRESTED, false) then return end
 
 	local classChangeTime = impulse.Config.ClassChangeTime
 
@@ -339,9 +337,7 @@ net.Receive("impulseBuyItem", function(len, ply)
 	if (ply.nextBuy or 0) > CurTime() then return end
 	ply.nextBuy = CurTime() + 0.1
 
-	if ply:GetSyncVar(SYNC_ARRESTED, false) or not ply:Alive() then
-		return
-	end
+	if ply:GetSyncVar(SYNC_ARRESTED, false) or not ply:Alive() then return end
 
 	local buyableID = net.ReadUInt(8)
 
@@ -519,9 +515,7 @@ net.Receive("impulseDoorAdd", function(len, ply)
 
 	local target = net.ReadEntity()
 
-	if not IsValid(target) or not target:IsPlayer() or not ply.beenSetup then
-		return
-	end
+	if not IsValid(target) or not target:IsPlayer() or not ply.beenSetup then return end
 
 	local cost = math.ceil(impulse.Config.DoorPrice / 2)
 
@@ -567,9 +561,7 @@ net.Receive("impulseDoorRemove", function(len, ply)
 
 	local target = net.ReadEntity()
 
-	if not IsValid(target) or not target:IsPlayer() or not ply.beenSetup then
-		return
-	end
+	if not IsValid(target) or not target:IsPlayer() or not ply.beenSetup then return end
 
 	local trace = {}
 	trace.start = ply:EyePos()
@@ -654,15 +646,11 @@ net.Receive("impulseInvDoEquip", function(len, ply)
 	if not ply.beenInvSetup or (ply.nextInvEquip or 0) > CurTime() then return end
 	ply.nextInvEquip = CurTime() + 0.1
 
-	if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then
-		return
-	end
+	if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then return end
 
 	local canUse = hook.Run("CanUseInventory", ply)
 
-	if canUse != nil and canUse == false then
-		return
-	end
+	if canUse != nil and canUse == false then return end
 
 	local itemID = net.ReadUInt(16)
 	local equipState = net.ReadBool()
@@ -678,15 +666,11 @@ net.Receive("impulseInvDoDrop", function(len, ply)
 	if not ply.beenInvSetup or (ply.nextInvDrop or 0) > CurTime() then return end
 	ply.nextInvDrop = CurTime() + 0.1
 
-	if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then
-		return
-	end
+	if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then return end
 
 	local canUse = hook.Run("CanUseInventory", ply)
 
-	if canUse != nil and canUse == false then
-		return
-	end
+	if canUse != nil and canUse == false then return end
 
 	local itemID = net.ReadUInt(16)
 
@@ -702,15 +686,11 @@ net.Receive("impulseInvDoUse", function(len, ply)
 	if not ply.beenInvSetup or (ply.nextInvUse or 0) > CurTime() then return end
 	ply.nextInvUse = CurTime() + 0.1
 
-	if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then
-		return
-	end
+	if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then return end
 
 	local canUse = hook.Run("CanUseInventory", ply)
 
-	if canUse != nil and canUse == false then
-		return
-	end
+	if canUse != nil and canUse == false then return end
 
 	local itemID = net.ReadUInt(16)
 
@@ -766,21 +746,15 @@ net.Receive("impulseInvDoMove", function(len, ply)
 
 	local canUse = hook.Run("CanUseInventory", ply)
 
-	if canUse != nil and canUse == false then
-		return
-	end
+	if canUse != nil and canUse == false then return end
 
-	if not ply.currentStorage:CanPlayerUse(ply) then
-		return
-	end
+	if not ply.currentStorage:CanPlayerUse(ply) then return end
 
 	local itemid = net.ReadUInt(16)
 	local from = net.ReadUInt(4)
 	local to = 1
 
-	if from != 1 and from != 2 then
-		return
-	end
+	if from != 1 and from != 2 then return end
 
 	if from == 1 then
 		to = 2
@@ -793,9 +767,7 @@ net.Receive("impulseInvDoMove", function(len, ply)
 
 	local hasItem, item = ply:HasInventoryItemSpecific(itemid, from)
 
-	if not hasItem then
-		return
-	end
+	if not hasItem then return end
 
 	if ply.currentStorage:GetClass() == "impulse_storage_public" then
 		local item = impulse.Inventory.Items[impulse.Inventory.ClassToNetID(item.class)]
@@ -823,9 +795,7 @@ net.Receive("impulseInvDoMove", function(len, ply)
 
 	local canStore = hook.Run("CanStoreItem", ply, ply.currentStorage, item.class, from)
 
-	if canStore != nil and canStore == false then
-		return
-	end
+	if canStore != nil and canStore == false then return end
 
 	ply:MoveInventoryItem(itemid, from, to)
 end)
@@ -841,22 +811,16 @@ net.Receive("impulseInvDoMoveMass", function(len, ply)
 
 	local canUse = hook.Run("CanUseInventory", ply)
 
-	if canUse != nil and canUse == false then
-		return
-	end
+	if canUse != nil and canUse == false then return end
 
-	if not ply.currentStorage:CanPlayerUse(ply) then
-		return
-	end
+	if not ply.currentStorage:CanPlayerUse(ply) then return end
 
 	local classid = net.ReadUInt(10)
 	local amount = net.ReadUInt(8)
 	local from = net.ReadUInt(4)
 	local to = 1
 
-	if from != 1 and from != 2 then
-		return
-	end
+	if from != 1 and from != 2 then return end
 
 	if from == 1 then
 		to = 2
@@ -869,9 +833,7 @@ net.Receive("impulseInvDoMoveMass", function(len, ply)
 		return ply:Notify("Because you were recently in combat you must wait "..string.NiceTime(ply.NextStorage - CurTime()).." before depositing items into your storage.")
 	end
 
-	if not impulse.Inventory.Items[classid] then
-		return
-	end
+	if not impulse.Inventory.Items[classid] then return end
 
 	local item = impulse.Inventory.Items[classid]
 	local class = item.UniqueID
@@ -883,9 +845,7 @@ net.Receive("impulseInvDoMoveMass", function(len, ply)
 		hasItem = ply:HasInventoryItemStorage(class, amount)
 	end
 
-	if not hasItem then
-		return
-	end
+	if not hasItem then return end
 
 	if ply.currentStorage:GetClass() == "impulse_storage_public" then
 		if item.Illegal then
@@ -918,9 +878,7 @@ net.Receive("impulseInvDoMoveMass", function(len, ply)
 
 	local canStore = hook.Run("CanStoreItem", ply, ply.currentStorage, class, from)
 
-	if canStore != nil and canStore == false then
-		return
-	end
+	if canStore != nil and canStore == false then return end
 
 	ply:MoveInventoryItemMass(class, from, to, amount)
 end)
@@ -964,13 +922,9 @@ net.Receive("impulseCharacterEdit", function(len, ply)
 	if (ply.nextCharEditTry or 0) > CurTime() then return end
 	ply.nextCharEditTry = CurTime() + 3
 
-	if not ply.currentCosmeticEditor or not IsValid(ply.currentCosmeticEditor) or ply.currentCosmeticEditor:GetPos():DistToSqr(ply:GetPos()) > (120 ^ 2) then
-		return
-	end
+	if not ply.currentCosmeticEditor or not IsValid(ply.currentCosmeticEditor) or ply.currentCosmeticEditor:GetPos():DistToSqr(ply:GetPos()) > (120 ^ 2) then return end
 
-	if ply:Team() != impulse.Config.DefaultTeam then
-		return
-	end
+	if ply:Team() != impulse.Config.DefaultTeam then return end
 
 	local newIsFemale = false
 	local newModel = net.ReadString()
@@ -980,9 +934,7 @@ net.Receive("impulseCharacterEdit", function(len, ply)
 	local curModel = ply.defaultModel
 	local curSkin = ply.defaultSkin
 
-	if not table.HasValue(impulse.Config.DefaultMaleModels, newModel) and !table.HasValue(impulse.Config.DefaultFemaleModels, newModel) then
-		return
-	end
+	if not table.HasValue(impulse.Config.DefaultMaleModels, newModel) and !table.HasValue(impulse.Config.DefaultFemaleModels, newModel) then return end
 
 	if table.HasValue(impulse.Config.DefaultFemaleModels, newModel) then
 		newIsFemale = true
@@ -990,9 +942,7 @@ net.Receive("impulseCharacterEdit", function(len, ply)
 
 	local skinBlacklist = impulse.Config.DefaultSkinBlacklist[newModel]
 
-	if skinBlacklist and table.HasValue(skinBlacklist, newSkin) then
-		return
-	end
+	if skinBlacklist and table.HasValue(skinBlacklist, newSkin) then return end
 
 	if newIsFemale != isCurFemale then
 		cost = cost + impulse.Config.CosmeticGenderPrice
@@ -1002,9 +952,7 @@ net.Receive("impulseCharacterEdit", function(len, ply)
 		cost = cost + impulse.Config.CosmeticModelSkinPrice
 	end
 
-	if cost == 0 then
-		return
-	end
+	if cost == 0 then return end
 
 	if ply:CanAfford(cost) then
 		local query = mysql:Update("impulse_players")
@@ -1047,9 +995,7 @@ net.Receive("impulseDoConfiscate", function(len, ply)
 
 	local item = ply.ConfiscatingItem
 
-	if not item or not IsValid(item) then
-		return
-	end
+	if not item or not IsValid(item) then return end
 
 	local itemName = item.Item.Name
 
@@ -1092,9 +1038,7 @@ net.Receive("impulseMixTry", function(len, ply)
 	local mix = net.ReadUInt(8)
 	local mixClass = impulse.Inventory.MixturesRef[mix]
 
-	if not mixClass then
-		return
-	end
+	if not mixClass then return end
 
 	local bench = mixClass[1]
 	mix = mixClass[2]
@@ -1213,45 +1157,29 @@ net.Receive("impulseVendorBuy", function(len, ply)
 	if (ply.nextVendorBuy or 0) > CurTime() then return end
 	ply.nextVendorBuy = CurTime() + 0.1
 
-	if not ply.currentVendor or not IsValid(ply.currentVendor) then
-		return
-	end
+	if not ply.currentVendor or not IsValid(ply.currentVendor) then return end
 
 	local vendor = ply.currentVendor
 
-	if (ply:GetPos() - vendor:GetPos()):LengthSqr() > (120 ^ 2) then
-		return
-	end
+	if (ply:GetPos() - vendor:GetPos()):LengthSqr() > (120 ^ 2) then return end
 
-	if ply:GetSyncVar(SYNC_ARRESTED, false) or not ply:Alive() then
-		return
-	end
+	if ply:GetSyncVar(SYNC_ARRESTED, false) or not ply:Alive() then return end
 
 	local canUse = hook.Run("CanUseInventory", ply)
 
-	if canUse != nil and canUse == false then
-		return
-	end
+	if canUse != nil and canUse == false then return end
 
-	if vendor.Vendor.CanUse and vendor.Vendor.CanUse(vendor, ply) == false then
-		return
-	end
+	if vendor.Vendor.CanUse and vendor.Vendor.CanUse(vendor, ply) == false then return end
 
 	local class = net.ReadString()
 
-	if string.len(class) > 128 then
-		return
-	end
+	if string.len(class) > 128 then return end
 
 	local sellData = vendor.Vendor.Sell[class]
 
-	if not sellData then
-		return
-	end
+	if not sellData then return end
 
-	if sellData.Cost and !ply:CanAfford(sellData.Cost) then
-		return
-	end
+	if sellData.Cost and !ply:CanAfford(sellData.Cost) then return end
 
 	if sellData.Max then
 		local hasItem, amount = ply:HasInventoryItem(class)
@@ -1261,9 +1189,7 @@ net.Receive("impulseVendorBuy", function(len, ply)
 		end
 	end
 
-	if sellData.CanBuy and sellData.CanBuy(ply) == false then
-		return
-	end
+	if sellData.CanBuy and sellData.CanBuy(ply) == false then return end
 
 	if not ply:CanHoldItem(class) then
 		return ply:Notify("You don't have enough inventory space to hold this item.")
@@ -1342,29 +1268,19 @@ net.Receive("impulseVendorSell", function(len, ply)
 	if (ply.nextVendorSell or 0) > CurTime() then return end
 	ply.nextVendorSell = CurTime() + 0.1
 
-	if not ply.currentVendor or not IsValid(ply.currentVendor) then
-		return
-	end
+	if not ply.currentVendor or not IsValid(ply.currentVendor) then return end
 
 	local vendor = ply.currentVendor
 
-	if (ply:GetPos() - vendor:GetPos()):LengthSqr() > (120 ^ 2) then
-		return
-	end
+	if (ply:GetPos() - vendor:GetPos()):LengthSqr() > (120 ^ 2) then return end
 
-	if ply:GetSyncVar(SYNC_ARRESTED, false) or not ply:Alive() then
-		return
-	end
+	if ply:GetSyncVar(SYNC_ARRESTED, false) or not ply:Alive() then return end
 
 	local canUse = hook.Run("CanUseInventory", ply)
 
-	if canUse != nil and canUse == false then
-		return
-	end
+	if canUse != nil and canUse == false then return end
 
-	if vendor.Vendor.CanUse and vendor.Vendor.CanUse(vendor, ply) == false then
-		return
-	end
+	if vendor.Vendor.CanUse and vendor.Vendor.CanUse(vendor, ply) == false then return end
 
 	if vendor.Vendor.MaxBuys and (vendor.Buys or 0) >= vendor.Vendor.MaxBuys then
 		return ply:Notify("This vendor can not afford to purchase this item.")
@@ -1373,26 +1289,18 @@ net.Receive("impulseVendorSell", function(len, ply)
 	local itemid = net.ReadUInt(16)
 	local hasItem, itemData = ply:HasInventoryItemSpecific(itemid)
 
-	if not hasItem then
-		return
-	end
+	if not hasItem then return end
 
-	if itemData.restricted then
-		return
-	end
+	if itemData.restricted then return end
 
 	local class = itemData.class
 
 	local buyData = vendor.Vendor.Buy[class]
 	local itemName = impulse.Inventory.Items[impulse.Inventory.ClassToNetID(class)].Name
 
-	if not buyData then
-		return
-	end
+	if not buyData then return end
 
-	if buyData.CanBuy and buyData.CanBuy(ply) == false then
-		return
-	end
+	if buyData.CanBuy and buyData.CanBuy(ply) == false then return end
 
 	if vendor.Vendor.MaxBuys then
 		vendor.Buys = (vendor.Buys or 0) + 1
@@ -1453,17 +1361,11 @@ net.Receive("impulseUnRestrain", function(len, ply)
 	local tr = util.TraceLine(trace)
 	local ent = tr.Entity
 
-	if not ent or not IsValid(ent) then
-		return
-	end
+	if not ent or not IsValid(ent) then return end
 
-	if not ent:IsPlayer() or ent:GetSyncVar(SYNC_ARRESTED, false) == false or not ply:CanArrest(ent) then
-		return
-	end
+	if not ent:IsPlayer() or ent:GetSyncVar(SYNC_ARRESTED, false) == false or not ply:CanArrest(ent) then return end
 
-	if ent.BeingJailed then
-		return
-	end
+	if ent.BeingJailed then return end
 
 	if ent.InJail then
 		return ply:Notify("You can't unrestrain someone who is in jail.")
@@ -1484,24 +1386,16 @@ net.Receive("impulseInvContainerCodeReply", function(len, ply)
 
 	local container = ply.currentContainerPass
 
-	if not container or not IsValid(container) then
-		return
-	end
+	if not container or not IsValid(container) then return end
 
-	if not ply:Alive() then
-		return
-	end
+	if not ply:Alive() then return end
 
-	if (ply:GetPos() - container:GetPos()):LengthSqr() > (120 ^ 2) then
-		return
-	end
+	if (ply:GetPos() - container:GetPos()):LengthSqr() > (120 ^ 2) then return end
 
 	local code = net.ReadUInt(16)
 	code = math.floor(code)
 
-	if code < 0 then
-		return
-	end
+	if code < 0 then return end
 
 	if code == container.Code then
 		container:AddAuthorised(ply)
@@ -1531,13 +1425,9 @@ net.Receive("impulseInvContainerDoMove", function(len, ply)
 
 	local container = ply.currentContainer
 
-	if not container or not IsValid(container) then
-		return
-	end
+	if not container or not IsValid(container) then return end
 
-	if container:GetPos():DistToSqr(ply:GetPos()) > (120 ^ 2) then
-		return
-	end
+	if container:GetPos():DistToSqr(ply:GetPos()) > (120 ^ 2) then return end
 
 	local isLoot = container:GetLoot()
 
@@ -1545,27 +1435,19 @@ net.Receive("impulseInvContainerDoMove", function(len, ply)
 		if ply:IsCP() then
 			return
 		end
-	elseif container.Code and !container.Authorised[ply] then
-		return
-	end
+	elseif container.Code and !container.Authorised[ply] then return end
 
-	if ply:GetSyncVar(SYNC_ARRESTED, false) or not ply:Alive() then
-		return
-	end
+	if ply:GetSyncVar(SYNC_ARRESTED, false) or not ply:Alive() then return end
 
 	local canUse = hook.Run("CanUseInventory", ply)
 
-	if canUse != nil and canUse == false then
-		return
-	end
+	if canUse != nil and canUse == false then return end
 
 	local itemid = net.ReadUInt(16)
 	local from = net.ReadUInt(4)
 	local to = 1
 
-	if from != 1 and from != 2 then
-		return
-	end
+	if from != 1 and from != 2 then return end
 
 	if from == 1 then
 		to = 2
@@ -1619,9 +1501,7 @@ net.Receive("impulseInvContainerRemovePadlock", function(len, ply)
 	if (ply.nextPadlockBreak or 0) > CurTime() then return end
 	ply.nextPadlockBreak = CurTime() + 6
 
-	if not ply:IsCP() then
-		return
-	end
+	if not ply:IsCP() then return end
 
 	local trace = {}
 	trace.start = ply:EyePos()
@@ -1631,13 +1511,9 @@ net.Receive("impulseInvContainerRemovePadlock", function(len, ply)
 	local tr = util.TraceLine(trace)
 	local ent = tr.Entity
 
-	if not ent or not IsValid(ent) then
-		return
-	end
+	if not ent or not IsValid(ent) then return end
 
-	if ent:GetClass() != "impulse_container" then
-		return
-	end
+	if ent:GetClass() != "impulse_container" then return end
 
 	ent:SetCode(nil)
 	ply:Notify("Padlock removed from container.")
@@ -1647,22 +1523,16 @@ net.Receive("impulseInvContainerDoSetCode", function(len, ply)
 	if (ply.nextSetContCode or 0) > CurTime() then return end
 	ply.nextSetContCode = CurTime() + 0.1
 
-	if not ply.ContainerCodeSet or not IsValid(ply.ContainerCodeSet) then
-		return
-	end
+	if not ply.ContainerCodeSet or not IsValid(ply.ContainerCodeSet) then return end
 
 	local container = ply.ContainerCodeSet
 
-	if container:CPPIGetOwner() != ply then
-		return
-	end
+	if container:CPPIGetOwner() != ply then return end
 
 	local passcode = net.ReadUInt(16)
 	passcode = math.floor(passcode)
 
-	if passcode < 1000 or passcode > 9999 then
-		return
-	end
+	if passcode < 1000 or passcode > 9999 then return end
 
 	container:SetCode(passcode)
 	ply.ContainerCodeSet = nil
@@ -1677,26 +1547,18 @@ net.Receive("impulseGroupDoRankAdd", function(len, ply)
 	if (ply.nextRPGroupRankEdit or 0) > CurTime() then return end
 	ply.nextRPGroupRankEdit = CurTime() + 0.1
 
-	if ply:IsCP() then
-		return
-	end
+	if ply:IsCP() then return end
 
 	local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
 	local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
 
-	if not name or not rank then
-		return
-	end
+	if not name or not rank then return end
 
 	local groupData = impulse.Group.Groups[name]
 
-	if not groupData then
-		return
-	end
+	if not groupData then return end
 
-	if not ply:GroupHasPermission(6) then
-		return
-	end
+	if not ply:GroupHasPermission(6) then return end
 
 	local rankName = net.ReadString()
 	local nChange = net.ReadBool()
@@ -1794,32 +1656,22 @@ net.Receive("impulseGroupDoInvite", function(len, ply)
 	if (ply.nextRPGroupRankInv or 0) > CurTime() then return end
 	ply.nextRPGroupRankInv = CurTime() + 0.1
 
-	if ply:IsCP() then
-		return
-	end
+	if ply:IsCP() then return end
 
 	local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
 	local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
 
-	if not name or not rank then
-		return
-	end
+	if not name or not rank then return end
 
 	local groupData = impulse.Group.Groups[name]
 
-	if not groupData then
-		return
-	end
+	if not groupData then return end
 
-	if not ply:GroupHasPermission(3) then
-		return
-	end
+	if not ply:GroupHasPermission(3) then return end
 
 	local targ = net.ReadEntity()
 
-	if not IsValid(targ) or not targ:IsPlayer() or not targ.beenSetup or targ:GetSyncVar(SYNC_GROUP_NAME, nil) then
-		return
-	end
+	if not IsValid(targ) or not targ:IsPlayer() or not targ.beenSetup or targ:GetSyncVar(SYNC_GROUP_NAME, nil) then return end
 
 	if targ.GroupInvites and targ.GroupInvites[name] then
 		return ply:Notify("This player already has a pending invite for this group.")
@@ -1857,28 +1709,20 @@ net.Receive("impulseGroupDoInviteAccept", function(len, ply)
 	if (ply.nextRPGroupRankAccept or 0) > CurTime() then return end
 	ply.nextRPGroupRankAccept = CurTime() + 6
 
-	if ply:IsCP() then
-		return
-	end
+	if ply:IsCP() then return end
 
 	local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
 	local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
 
-	if name or rank then
-		return
-	end
+	if name or rank then return end
 
 	local name = net.ReadString()
 
 	local groupData = impulse.Group.Groups[name]
 
-	if not groupData then
-		return
-	end
+	if not groupData then return end
 
-	if not ply.GroupInvites or not ply.GroupInvites[name] then
-		return
-	end
+	if not ply.GroupInvites or not ply.GroupInvites[name] then return end
 
 	if groupData.MemberCount >= groupData.MaxSize then
 		return ply:Notify("This group is full.")
@@ -1894,37 +1738,25 @@ net.Receive("impulseGroupDoRankRemove", function(len, ply)
 	if (ply.nextRPGroupRankEdit or 0) > CurTime() then return end
 	ply.nextRPGroupRankEdit = CurTime() + 0.1
 
-	if ply:IsCP() then
-		return
-	end
+	if ply:IsCP() then return end
 
 	local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
 	local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
 
-	if not name or not rank then
-		return
-	end
+	if not name or not rank then return end
 
 	local groupData = impulse.Group.Groups[name]
 
-	if not groupData then
-		return
-	end
+	if not groupData then return end
 
-	if not ply:GroupHasPermission(6) then
-		return
-	end
+	if not ply:GroupHasPermission(6) then return end
 
 	local rankName = net.ReadString()
 	local r = groupData.Ranks[rankName]
 
-	if not r then
-		return
-	end
+	if not r then return end
 
-	if r[99] or r[0] then
-		return
-	end
+	if r[99] or r[0] then return end
 
 	impulse.Group.RankShift(name, rankName, impulse.Group.GetDefaultRank(name))
 	impulse.Group.Groups[name].Ranks[rankName] = nil
@@ -1936,32 +1768,22 @@ net.Receive("impulseGroupDoSetRank", function(len, ply)
 	if (ply.nextRPGroupRankSet or 0) > CurTime() then return end
 	ply.nextRPGroupRankSet = CurTime() + 0.1
 
-	if ply:IsCP() then
-		return
-	end
+	if ply:IsCP() then return end
 
 	local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
 	local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
 
-	if not name or not rank then
-		return
-	end
+	if not name or not rank then return end
 
 	local groupData = impulse.Group.Groups[name]
 
-	if not groupData then
-		return
-	end
+	if not groupData then return end
 
-	if not ply:GroupHasPermission(5) then
-		return
-	end
+	if not ply:GroupHasPermission(5) then return end
 
 	local targ = net.ReadString()
 
-	if not targ or not groupData.Members[targ] then
-		return
-	end
+	if not targ or not groupData.Members[targ] then return end
 
 	local memberData = groupData.Members[targ]
 
@@ -1973,13 +1795,9 @@ net.Receive("impulseGroupDoSetRank", function(len, ply)
 	local rankName = net.ReadString()
 	local r = groupData.Ranks[rankName]
 
-	if not r then
-		return
-	end
+	if not r then return end
 
-	if r[99] then
-		return
-	end
+	if r[99] then return end
 
 	if rankName == memberData.Rank then
 		return ply:Notify("This player is already set to this rank.")
@@ -2004,32 +1822,22 @@ net.Receive("impulseGroupDoRemove", function(len, ply)
 	if (ply.nextRPGroupRankSet or 0) > CurTime() then return end
 	ply.nextRPGroupRankSet = CurTime() + 0.1
 
-	if ply:IsCP() then
-		return
-	end
+	if ply:IsCP() then return end
 
 	local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
 	local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
 
-	if not name or not rank then
-		return
-	end
+	if not name or not rank then return end
 
 	local groupData = impulse.Group.Groups[name]
 
-	if not groupData then
-		return
-	end
+	if not groupData then return end
 
-	if not ply:GroupHasPermission(4) then
-		return
-	end
+	if not ply:GroupHasPermission(4) then return end
 
 	local targ = net.ReadString()
 
-	if not targ or not groupData.Members[targ] then
-		return
-	end
+	if not targ or not groupData.Members[targ] then return end
 
 	local memberData = groupData.Members[targ]
 
@@ -2061,28 +1869,18 @@ net.Receive("impulseGroupDoCreate", function(len, ply)
 	if (ply.nextRPGroupCreate or 0) > CurTime() then return end
 	ply.nextRPGroupCreate = CurTime() + 4
 
-	if not ply.impulseID then
-		return
-	end
+	if not ply.impulseID then return end
 
-	if ply:IsCP() then
-		return
-	end
+	if ply:IsCP() then return end
 
-	if ply:GetXP() < impulse.Config.GroupXPRequirement then
-		return
-	end
+	if ply:GetXP() < impulse.Config.GroupXPRequirement then return end
 
-	if not ply:CanAfford(impulse.Config.GroupMakeCost) then
-		return
-	end
+	if not ply:CanAfford(impulse.Config.GroupMakeCost) then return end
 
 	local curName = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
 	local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
 
-	if name or curName then
-		return
-	end
+	if name or curName then return end
 
 	local name = string.Trim(string.sub(net.ReadString(), 1, 32), " ")
 
@@ -2122,26 +1920,18 @@ net.Receive("impulseGroupDoDelete", function(len, ply)
 	if (ply.nextRPGroupDelete or 0) > CurTime() then return end
 	ply.nextRPGroupDelete = CurTime() + 3
 
-	if ply:IsCP() then
-		return
-	end
+	if ply:IsCP() then return end
 
 	local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
 	local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
 
-	if not name or not rank then
-		return
-	end
+	if not name or not rank then return end
 
 	local groupData = impulse.Group.Groups[name]
 
-	if not groupData or not groupData.ID then
-		return
-	end
+	if not groupData or not groupData.ID then return end
 
-	if not ply:GroupHasPermission(99) then
-		return
-	end
+	if not ply:GroupHasPermission(99) then return end
 
 	for v, k in pairs(groupData.Members) do
 		local targEnt = player.GetBySteamID(v)
@@ -2164,26 +1954,18 @@ net.Receive("impulseGroupDoLeave", function(len, ply)
 	if (ply.nextRPGroupDelete or 0) > CurTime() then return end
 	ply.nextRPGroupDelete = CurTime() + 3
 
-	if ply:IsCP() then
-		return
-	end
+	if ply:IsCP() then return end
 
 	local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
 	local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
 
-	if not name or not rank then
-		return
-	end
+	if not name or not rank then return end
 
 	local groupData = impulse.Group.Groups[name]
 
-	if not groupData then
-		return
-	end
+	if not groupData then return end
 
-	if ply:GroupHasPermission(99) then
-		return
-	end
+	if ply:GroupHasPermission(99) then return end
 
 	ply:GroupRemove(name)
 	ply:Notify("You have left the "..name.." group.")
@@ -2193,32 +1975,22 @@ net.Receive("impulseGroupDoSetColor", function(len, ply)
 	if (ply.nextRPGroupDataSet or 0) > CurTime() then return end
 	ply.nextRPGroupDataSet = CurTime() + 0.1
 
-	if ply:IsCP() then
-		return
-	end
+	if ply:IsCP() then return end
 
 	local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
 	local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
 
-	if not name or not rank then
-		return
-	end
+	if not name or not rank then return end
 
 	local groupData = impulse.Group.Groups[name]
 
-	if not groupData then
-		return
-	end
+	if not groupData then return end
 
-	if not ply:GroupHasPermission(99) then
-		return
-	end
+	if not ply:GroupHasPermission(99) then return end
 
 	local col = net.ReadColor()
 
-	if not col then
-		return
-	end
+	if not col then return end
 
 	col.a = 255
 
@@ -2232,32 +2004,22 @@ net.Receive("impulseGroupDoSetInfo", function(len, ply)
 	if (ply.nextRPGroupDataSet or 0) > CurTime() then return end
 	ply.nextRPGroupDataSet = CurTime() + 3
 
-	if ply:IsCP() then
-		return
-	end
+	if ply:IsCP() then return end
 
 	local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
 	local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
 
-	if not name or not rank then
-		return
-	end
+	if not name or not rank then return end
 
 	local groupData = impulse.Group.Groups[name]
 
-	if not groupData then
-		return
-	end
+	if not groupData then return end
 
-	if not ply:GroupHasPermission(8) then
-		return
-	end
+	if not ply:GroupHasPermission(8) then return end
 
 	local info = net.ReadString()
 
-	if not info then
-		return
-	end
+	if not info then return end
 
 	info = string.sub(info, 1, 1024)
 

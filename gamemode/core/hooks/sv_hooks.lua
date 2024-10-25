@@ -861,9 +861,7 @@ local function LoadButtons()
 		end
 	end
 
-	if not impulse.Config.Buttons then
-		return
-	end
+	if not impulse.Config.Buttons then return end
 
 	for a,button in pairs(ents.FindByClass("func_button")) do
 		if button.ButtonCheck then

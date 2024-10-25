@@ -473,9 +473,7 @@ end
 function meta:SetInventoryItemEquipped(itemid, state)
 	local item = impulse.Inventory.Data[self.impulseID][1][itemid]
 
-	if not item then
-		return
-	end
+	if not item then return end
 	
 	local id = impulse.Inventory.ClassToNetID(item.class)
 	local onEquip = impulse.Inventory.Items[id].OnEquip
@@ -484,15 +482,11 @@ function meta:SetInventoryItemEquipped(itemid, state)
 	local class = impulse.Inventory.Items[id]
 	local isAlive = self:Alive()
 
-	if class.CanEquip and !class.CanEquip(item, self) then
-		return
-	end
+	if class.CanEquip and !class.CanEquip(item, self) then return end
 
 	local canEquip = hook.Run("PlayerCanEquipItem", self, class, item)
 
-	if canEquip != nil and !canEquip then
-		return
-	end
+	if canEquip != nil and !canEquip then return end
 
 	if class.EquipGroup then
 		local equippedItem = self.InventoryEquipGroups[class.EquipGroup]
