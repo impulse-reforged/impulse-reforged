@@ -2,7 +2,7 @@ local impulseLogo = Material("impulse-reforged/impulse-white.png")
 local reforgedLogo = Material("impulse-reforged/reforged-white.png")
 local fromCol = Color(255, 45, 85, 255)
 local toCol = Color(90, 200, 250, 255)
-local fromColHalloween = Color(252, 70, 5) 
+local fromColHalloween = Color(252, 70, 5)
 local toColHalloween = Color(148, 1, 148)
 local fromColXmas = Color(223, 17, 3)
 local toColXmas = Color(240, 240, 236)
@@ -23,7 +23,7 @@ function impulse:DrawLogo(x, y, w, h)
 	reforged = reforged or reforgedLogo
 
 	local from, to = hook.Run("GetFrameworkLogoColour")
-	local col = Glow(from or fromCol, to or toCol, math.abs(math.sin((RealTime() - 0.08) * .2)))
+	local col = from:Lerp(to, math.abs(math.sin((RealTime() - 0.08) * .2)))
 
 	surface.SetMaterial(framework)
 	surface.SetDrawColor(col)
