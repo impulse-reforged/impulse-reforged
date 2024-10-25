@@ -1,6 +1,8 @@
 --- A generic module that holds anything that doesnt fit elsewhere
 -- @module impulse.Util
 
+impulse.Util = impulse.Util or {}
+
 function impulse.Util:IsEmpty(vector, ignore) -- findpos and isempty are from darkrp
     ignore = ignore or {}
 

@@ -76,6 +76,9 @@ local optX = {["tickbox"] = true} -- hash comparisons faster than string
 -- @return Setting value
 function impulse.Settings:Get(name)
 	local settingData = self.Stored[name]
+	if not settingData then
+		return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not GetSetting. Please contact a developer, attempted name: "..name.."\n")
+	end
 
 	if optX[settingData.type] then
 		if settingData.value == nil then
@@ -93,6 +96,11 @@ end
 -- @internal
 function impulse.Settings:Load()
 	for v, k in pairs(self.Stored) do
+		if not k then
+			MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not load setting. Please contact a developer, attempted name: "..v.."\n")
+			continue
+		end
+
 		if k.type == "tickbox" or k.type == "slider" or k.type == "plainint" then
 			local def = k.default
 			if k.type == "tickbox" then 
@@ -131,15 +139,15 @@ function impulse.Settings:Set(name, newValue)
 		return
 	end
 
-	return print("[impulse-reforged] Error, could not SetSetting. You've probably got the name wrong! Attempted name: "..name)
+	return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not SetSetting. Please contact a developer, attempted name: "..name.."\n")
 end
 
-concommand.Add("impulse_resetsettings", function()
+concommand.Add("impulse_settings_reset", function()
 	for v, k in pairs(impulse.Settings.Stored) do
 		impulse.Settings:Set(v, k.default)
 	end
 
-	print("[impulse-reforged] Settings reset!")
+	MsgC(Color(0, 255, 0), "[impulse-reforged] Settings reset to default.\n")
 end)
 
 hook.Run("DefineSettings")
