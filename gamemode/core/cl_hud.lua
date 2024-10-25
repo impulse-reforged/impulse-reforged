@@ -216,6 +216,7 @@ function GM:HUDPaint()
 
 	local scrW, scrH = ScrW(), ScrH()
 	local hudWidth, hudHeight = 300, 178
+	local x, y
 
 	local seeColIcons = impulse.Settings:Get("hud_iconcolours")
 	local aboveHUDUsed = false
@@ -330,24 +331,26 @@ function GM:HUDPaint()
 	surface.DrawRect(0, 0, scrW, scrH)
 
 	--Crosshair
-	local x, y
-	local curWep = ply:GetActiveWeapon()
+	local hud_crosshair = impulse.Settings:Get("hud_crosshair")
+	if hud_crosshair == true then
+		local curWep = ply:GetActiveWeapon()
 
-	if not curWep or not curWep.ShouldDrawCrosshair or (curWep.ShouldDrawCrosshair and curWep.ShouldDrawCrosshair(curWep) != false) then
-		if impulse.Settings:Get("view_thirdperson") == true or impulse.Settings:Get("view_firstperson_smooth_origin") == true or impulse.Settings:Get("view_firstperson_smooth_angles") == true then
-			--local p = ply:GetEyeTrace().HitPos:ToScreen()
-			local p = util.TraceLine({
-				start = ply:GetShootPos(),
-				endpos = ply:GetShootPos() + ply:GetAimVector() * 10000,
-				filter = ply,
-				mask = MASK_SHOT
-			}).HitPos:ToScreen()
-			x, y = p.x, p.y
-		else
-			x, y = scrW/2, scrH/2
+		if not curWep or not curWep.ShouldDrawCrosshair or (curWep.ShouldDrawCrosshair and curWep.ShouldDrawCrosshair(curWep) != false) then
+			if impulse.Settings:Get("view_thirdperson") == true or impulse.Settings:Get("view_firstperson_smooth_origin") == true or impulse.Settings:Get("view_firstperson_smooth_angles") == true then
+				--local p = ply:GetEyeTrace().HitPos:ToScreen()
+				local p = util.TraceLine({
+					start = ply:GetShootPos(),
+					endpos = ply:GetShootPos() + ply:GetAimVector() * 10000,
+					filter = ply,
+					mask = MASK_SHOT
+				}).HitPos:ToScreen()
+				x, y = p.x, p.y
+			else
+				x, y = scrW/2, scrH/2
+			end
+
+			DrawCrosshair(x, y)
 		end
-
-		DrawCrosshair(x, y)
 	end
 
 	-- HUD
