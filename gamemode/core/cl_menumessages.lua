@@ -4,7 +4,7 @@
 file.CreateDir("impulse-reforged/menumsgs")
 
 impulse.MenuMessage = impulse.MenuMessage or {}
-impulse.MenuMessage.Data = impulse.MenuMessage.Data or {}
+impulse.MenuMessage.Stored = impulse.MenuMessage.Stored or {}
 
 --- Creates a new MenuMessage and displays it
 -- @realm client
@@ -16,9 +16,9 @@ impulse.MenuMessage.Data = impulse.MenuMessage.Data or {}
 -- @string[opt] urlText The text of the URL button
 -- @int[opt] expiry UNIX time until when this message will automatically expire
 function impulse.MenuMessage:Add(uid, title, message, color, url, urlText, expiry)
-	if self.Data[uid] then return end
+	if self.Stored[uid] then return end
 
-	self.Data[uid] = {
+	self.Stored[uid] = {
 		type = uid,
 		title = title,
 		message = message,
@@ -33,10 +33,10 @@ end
 -- @realm client
 -- @string uid Unique name
 function impulse.MenuMessage:Remove(uid)
-	local msg = self.Data[uid]
+	local msg = self.Stored[uid]
 	if not msg then return end
 
-	self.Data[uid] = nil
+	self.Stored[uid] = nil
 
 	local fname = "impulse-reforged/menumsgs/"..uid..".dat"
 
@@ -49,7 +49,7 @@ end
 -- @realm client
 -- @string uid Unique name
 function impulse.MenuMessage:Save(uid)
-	local msg = self.Data[uid]
+	local msg = self.Stored[uid]
 	if not msg then return end
 
 	local compiled = util.TableToJSON(msg)
@@ -62,7 +62,7 @@ end
 -- @string uid Unique name
 -- @internal
 function impulse.MenuMessage:CanSee(uid)
-	local msg = self.Data[uid]
+	local msg = self.Stored[uid]
 	if not msg then return end
 	if not msg.scheduled then return true end
 

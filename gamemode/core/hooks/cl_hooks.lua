@@ -17,11 +17,11 @@ function GM:OnSchemaLoaded()
 			continue
 		end
 
-		impulse.MenuMessage.Data[data.type] = data
+		impulse.MenuMessage.Stored[data.type] = data
 	end
 end
 
-if engine.ActiveGamemode() == "impulse" then -- debug fallback
+if engine.ActiveGamemode() == "impulse-reforged" then -- debug fallback
 	impulse.SplashScreen = vgui.Create("impulseSplash")
 end
 
@@ -559,9 +559,9 @@ function GM:DisplayMenuMessages(menu)
 
 	local time = os.time()
 
-	for v, k in pairs(impulse.MenuMessage.Data) do
+	for v, k in pairs(impulse.MenuMessage.Stored) do
 		if k.expiry and k.expiry < time then
-			impulse.MenuMessage.Remove(v)
+			impulse.MenuMessage:Remove(v)
 			continue
 		end
 
@@ -580,7 +580,7 @@ function GM:DisplayMenuMessages(menu)
 		msg:SetMessage(v)
 
 		msg.OnClosed = function()
-			impulse.MenuMessage.Remove(v)
+			impulse.MenuMessage:Remove(v)
 
 			if IsValid(menu) then
 				hook.Run("DisplayMenuMessages", menu)

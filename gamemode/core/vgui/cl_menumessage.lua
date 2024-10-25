@@ -5,7 +5,7 @@ function PANEL:Init()
 end
 
 function PANEL:SetMessage(uid)
-	self.Message = impulse.MenuMessage.Data[uid]
+	self.Message = impulse.MenuMessage.Stored[uid]
 	self.Message.colour = ColorAlpha(self.Message.colour, 170)
 
 	self.desc = vgui.Create("DLabel", self)

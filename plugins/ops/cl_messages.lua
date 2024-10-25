@@ -213,8 +213,8 @@ net.Receive("opsGiveWarn", function()
 	local template = "You have received a warning from a Game Moderator for a violation of the server rules.\nReason: "..reason.."\nPlease read the server rules again before continuing. Repeated offences will be punished by a ban."
 	local id = "warn_"..os.time()
 
-	impulse.MenuMessage.Add(id, "Warning Notice", template, Color(238, 210, 2), "https://panel.impulse-community.com/index.php?t=violations", "View more details")
-	impulse.MenuMessage.Save(id)
+	impulse.MenuMessage:Add(id, "Warning Notice", template, Color(238, 210, 2), "https://panel.impulse-community.com/index.php?t=violations", "View more details")
+	impulse.MenuMessage:Save(id)
 end)
 
 net.Receive("opsGiveCombineBan", function()
@@ -224,8 +224,8 @@ net.Receive("opsGiveCombineBan", function()
 	local template = "You have an active combine ban for a violation of the server rules.\nExpiry time: "..endDate
 	local id = "combineban_"..endDate
 
-	impulse.MenuMessage.Add(id, "Combine Ban Notice", template, Color(179, 58, 58), impulse.Config.RulesURL, "Read the rules", endTime)
-	impulse.MenuMessage.Save(id)
+	impulse.MenuMessage:Add(id, "Combine Ban Notice", template, Color(179, 58, 58), impulse.Config.RulesURL, "Read the rules", endTime)
+	impulse.MenuMessage:Save(id)
 end)
 
 net.Receive("opsGiveOOCBan", function()
@@ -235,8 +235,8 @@ net.Receive("opsGiveOOCBan", function()
 	local template = "You have an active OOC communication timeout for a violation of the server rules.\nExpiry time: "..endDate
 	local id = "oocban_"..endDate
 
-	impulse.MenuMessage.Add(id, "OOC Timeout Notice", template, Color(179, 58, 58), impulse.Config.RulesURL, "Read the rules", endTime)
-	impulse.MenuMessage.Save(id)
+	impulse.MenuMessage:Add(id, "OOC Timeout Notice", template, Color(179, 58, 58), impulse.Config.RulesURL, "Read the rules", endTime)
+	impulse.MenuMessage:Save(id)
 end)
 
 net.Receive("opsGetRecord", function()
@@ -260,8 +260,8 @@ net.Receive("opsGetRecord", function()
 	local template = "You have a poor disciplinary record that consists of "..warns.." warnings and "..bans.." bans.\nPlease take time to read the server rules before continuing as further violations will result in a long-term or possibly permanent suspension."
 
 	if curScore != score and score > 3 then
-		impulse.MenuMessage.Remove("badsport")
-		impulse.MenuMessage.Add("badsport", "Poor Disciplinary Record Notice", template, col, "https://panel.impulse-community.com/index.php?t=violations", "View more details")
+		impulse.MenuMessage:Remove("badsport")
+		impulse.MenuMessage:Add("badsport", "Poor Disciplinary Record Notice", template, col, "https://panel.impulse-community.com/index.php?t=violations", "View more details")
 	end
 
 	cookie.Set("ops-record-badsportscore", score)
@@ -269,8 +269,8 @@ end)
 
 net.Receive("opsUnderInvestigation", function()
 	local template = "You are currently under investigation for possible cheating.\nOur automated systems have flagged you as a suspected cheater and your account is now under review. If you were not cheating, you don't need to worry and you can just ignore this message. You will not be informed of the outcome of this investigation when it is complete."
-	impulse.MenuMessage.Add("cheater", "Cheating Investigation Notice", template, Color(238, 210, 2))
-	impulse.MenuMessage.Save("cheater")
+	impulse.MenuMessage:Add("cheater", "Cheating Investigation Notice", template, Color(238, 210, 2))
+	impulse.MenuMessage:Save("cheater")
 end)
 
 net.Receive("opsE2Viewer", function()

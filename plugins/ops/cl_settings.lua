@@ -17,8 +17,8 @@ hook.Add("CreateMenuMessages", "opsOffDutyWarn", function()
 	end
 
 	if impulse.Settings:Get("admin_onduty", true) == false then
-		impulse.MenuMessage.Add("offduty", "Game Moderator Off Duty Notice", "You are currently off-duty. This is a reminder to ensure you return to duty as soon as possible.\nTo return to duty, goto settings, ops and tick the on duty box.", Color(238, 210, 2))
+		impulse.MenuMessage:Add("offduty", "Game Moderator Off Duty Notice", "You are currently off-duty. This is a reminder to ensure you return to duty as soon as possible.\nTo return to duty, goto settings, ops and tick the on duty box.", Color(238, 210, 2))
 	else
-		impulse.MenuMessage.Remove("offduty")
+		impulse.MenuMessage:Remove("offduty")
 	end
 end)

@@ -106,7 +106,7 @@ end
 -- @realm shared
 -- @treturn bool Is super admin
 function PLAYER:IsSuperAdmin()
-    if self.GetUserGroup(self) == "superadmin" then
+    if ( self.GetUserGroup(self) == "superadmin" ) then
         return true
     end
 
