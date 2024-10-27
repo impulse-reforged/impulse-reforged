@@ -42,7 +42,7 @@ local setTeamCommand = {
 		teamID = tonumber(teamID)
 
 		if plyTarget then
-			if teamID and impulse.Teams.Data[teamID] then
+			if teamID and impulse.Teams.Stored[teamID] then
 				local teamName = team.GetName(teamID)
 				plyTarget:SetTeam(teamID)
 				plyTarget:Notify("Your team has been set to "..teamName.." by a game moderator.")

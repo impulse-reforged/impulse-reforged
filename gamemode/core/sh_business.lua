@@ -25,17 +25,11 @@ end
 function meta:CanBuy(name)
 	local buyable = impulse.Business.Data[name]
 
-	if buyable.teams and !table.HasValue(buyable.teams, self:Team()) then
-		return false
-	end
+	if buyable.teams and !table.HasValue(buyable.teams, self:Team()) then return false end
 
-	if buyable.classes and !table.HasValue(buyable.classes, self:GetTeamClass()) then
-		return false
-	end
+	if buyable.classes and !table.HasValue(buyable.classes, self:GetTeamClass()) then return false end
 
-	if buyable.customCheck and !buyable.customCheck(self) then
-		return false
-	end
+	if buyable.customCheck and !buyable.customCheck(self) then return false end
 
 	return true
 end

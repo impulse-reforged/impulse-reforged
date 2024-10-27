@@ -7,16 +7,12 @@ hook.Add("iac.CheaterConvicted", "iacCheaterLog", function(steamid, code, caseIn
 		end
 	end
 
-	if not impulse.YML.apis.discord_iac_webhook then
-		return
-	end
+	if not impulse.YML.apis.discord_iac_webhook then return end
 
 	caseInfo = caseInfo or {}
 	local evidence = ""
 	for v, k in pairs(caseInfo) do
-		if v == "detector" then
-			continue
-		end
+		if v == "detector" then continue end
 
 		evidence = evidence.."**"..tostring(v).."**: `"..tostring(k).."`\n"
 	end

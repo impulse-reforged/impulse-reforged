@@ -10,16 +10,6 @@
 function CanUseInventory(ply)
 end
 
---- Called before when animation classes have been loaded
--- @realm shared
-function PreLoadAnimationClasses()
-end
-
---- Called after when animation classes have been loaded
--- @realm shared
-function PostLoadAnimationClasses()
-end
-
 --- Called to decide what the known name of a player should be
 -- @realm shared
 -- @entity ply The player to get the name of

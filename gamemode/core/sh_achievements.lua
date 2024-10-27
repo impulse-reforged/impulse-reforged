@@ -18,14 +18,10 @@ if SERVER then
 	-- @string class Achievement class
 	-- @bool[opt=false] skipPoints Wether to skip calculating the points from this achievement
 	function meta:AchievementGive(name, skipPoints)
-		if not self.impulseData then
-			return
-		end
+		if not self.impulseData then return end
 
 		self.impulseData.Achievements = self.impulseData.Achievements or {}
-		if self.impulseData.Achievements[name] then
-			return
-		end
+		if self.impulseData.Achievements[name] then return end
 
 		self.impulseData.Achievements[name] = math.floor(os.time())
 		self:SaveData()
@@ -43,9 +39,7 @@ if SERVER then
 	-- @realm server
 	-- @string class Achievement class
 	function meta:AchievementTake(name)
-		if not self.impulseData then
-			return
-		end
+		if not self.impulseData then return end
 
 		self.impulseData.Achievements = self.impulseData.Achievements or {}
 		self.impulseData.Achievements[name] = nil
@@ -74,9 +68,7 @@ if SERVER then
 	-- @realm server
 	-- @string class Achievement class
 	function meta:AchievementCheck(name)
-		if not self.impulseData then
-			return
-		end
+		if not self.impulseData then return end
 
 		self.impulseData.Achievements = self.impulseData.Achievements or {}
 		local ach = impulse.Config.Achievements[name]

@@ -473,9 +473,7 @@ end
 function meta:SetInventoryItemEquipped(itemid, state)
 	local item = impulse.Inventory.Data[self.impulseID][1][itemid]
 
-	if not item then
-		return
-	end
+	if not item then return end
 	
 	local id = impulse.Inventory.ClassToNetID(item.class)
 	local onEquip = impulse.Inventory.Items[id].OnEquip
@@ -484,15 +482,11 @@ function meta:SetInventoryItemEquipped(itemid, state)
 	local class = impulse.Inventory.Items[id]
 	local isAlive = self:Alive()
 
-	if class.CanEquip and !class.CanEquip(item, self) then
-		return
-	end
+	if class.CanEquip and !class.CanEquip(item, self) then return end
 
 	local canEquip = hook.Run("PlayerCanEquipItem", self, class, item)
 
-	if canEquip != nil and !canEquip then
-		return
-	end
+	if canEquip != nil and !canEquip then return end
 
 	if class.EquipGroup then
 		local equippedItem = self.InventoryEquipGroups[class.EquipGroup]
@@ -553,9 +547,7 @@ function meta:DropInventoryItem(itemid)
 	local class = impulse.Inventory.Items[itemnetid]
 
 	if item.restricted then
-		if not class.DropIfRestricted then
-			return
-		end
+		if not class.DropIfRestricted then return end
 	end
 
 	self:TakeInventoryItem(itemid)
@@ -681,9 +673,7 @@ end
 function meta:CanMakeMix(mixClass)
 	local skill = self:GetSkillLevel("craft")
 
-	if mixClass.Level > skill then
-		return false
-	end
+	if mixClass.Level > skill then return false end
 
 	for v, k in pairs(mixClass.Input) do
 		local item = self:HasInventoryItem(v, k.take)

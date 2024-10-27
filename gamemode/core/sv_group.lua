@@ -351,9 +351,7 @@ function impulse.Group.NetworkRanks(to, name)
 end
 
 local function postCompute(self, name, rank, skipDb)
-	if not IsValid(self) then
-		return
-	end
+	if not IsValid(self) then return end
 
 	impulse.Group.NetworkMemberToOnline(name, self:SteamID())
 
@@ -400,9 +398,7 @@ end
 
 function meta:GroupLoad(groupid, rank)
 	impulse.Group.Load(groupid, function(name)
-		if not IsValid(self) then
-			return
-		end
+		if not IsValid(self) then return end
 
 		impulse.Group.ComputeMembers(name, function()
 			if not IsValid(self) then

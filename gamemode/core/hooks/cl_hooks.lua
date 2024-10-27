@@ -273,9 +273,7 @@ function GM:CalcView(player, origin, angles, fov)
 
 	if ( SYNC_FALLOVER_RAGDOLL ) then
 		local entity = Entity(LocalPlayer():GetSyncVar(SYNC_FALLOVER_RAGDOLL, 0))
-		if IsValid(entity) then
-			return
-		end
+		if IsValid(entity) then return end
 	end
 	
 	local ragdoll = player.Ragdoll
@@ -403,9 +401,7 @@ function GM:CalcView(player, origin, angles, fov)
 		end
 
 		-- if we havent done anything, dont return anything
-		if thirdperson_smooth_origin == origin and thirdperson_smooth_angles == angles and fov == 90 then
-			return
-		end
+		if thirdperson_smooth_origin == origin and thirdperson_smooth_angles == angles and fov == 90 then return end
 
 		return {
 			origin = thirdperson_smooth_origin,
@@ -444,9 +440,7 @@ function GM:CalcView(player, origin, angles, fov)
 		end
 
 		-- if we havent done anything, dont return anything
-		if firstperson_smooth_origin == origin and firstperson_smooth_angles == angles and fov == 90 then
-			return
-		end
+		if firstperson_smooth_origin == origin and firstperson_smooth_angles == angles and fov == 90 then return end
 
 		return {
 			origin = firstperson_smooth_origin,
@@ -469,9 +463,7 @@ local blackandwhite = {
 }
 
 function GM:RenderScreenspaceEffects()
-	if impulse.HUDEnabled == false or (IsValid(impulse.MainMenu) and impulse.MainMenu:IsVisible()) then
-		return
-	end
+	if impulse.HUDEnabled == false or (IsValid(impulse.MainMenu) and impulse.MainMenu:IsVisible()) then return end
 
 	if LocalPlayer():Health() < 20 then
 		DrawColorModify(blackandwhite)
@@ -496,9 +488,7 @@ function GM:OnContextMenuOpen()
 
 	local canUse = hook.Run("CanUseInventory", LocalPlayer())
 
-	if canUse != nil and canUse == false then
-		return
-	end
+	if canUse != nil and canUse == false then return end
 
 	if not input.IsKeyDown(KEY_LALT) then
 		impulse_inventory = vgui.Create("impulseInventory")

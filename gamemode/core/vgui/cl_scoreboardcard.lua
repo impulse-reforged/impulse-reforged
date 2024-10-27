@@ -28,9 +28,7 @@ function PANEL:SetPlayer(player)
 	self.modelIcon:SetDisabled(true)
 
 	timer.Simple(0, function()
-		if not IsValid(self) then
-			return
-		end
+		if not IsValid(self) then return end
 
 		local ent = self.modelIcon.Entity
 
@@ -108,9 +106,7 @@ function PANEL:Paint(w,h)
 	end
 end
 function PANEL:OnMousePressed(key)
-	if not IsValid(self.Player) then
-		return false
-	end
+	if not IsValid(self.Player) then return false end
 
 	if key == MOUSE_RIGHT then
 		LocalPlayer():Notify("You have copied "..self.Player:SteamName().."'s Steam ID.")

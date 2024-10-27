@@ -51,9 +51,7 @@ if SERVER then
 	end
 
 	function ENT:Use(activator)
-		if self.UseDelay > CurTime() then
-			return
-		end
+		if self.UseDelay > CurTime() then return end
 
 		if activator:IsPlayer() then
 			if self.Item.Illegal and activator:IsCP() then

@@ -121,15 +121,11 @@ function PANEL:AddEvent(id, eventdata)
 
 		local curEvents = impulse.Ops.EventManager.GetCurEvents()
 
-		if not curEvents then
-			return
-		end
+		if not curEvents then return end
 
 		local curEvent = curEvents[id]
 
-		if not curEvent then
-			return
-		end
+		if not curEvent then return end
 
 		if not curEvents[id + 1] and (impulse.Ops.EventManager.GetSequence() and panel.Sequence == impulse.Ops.EventManager.GetSequence()) then
 			impulse_OpsEM_CurEvents[id] = CurTime()

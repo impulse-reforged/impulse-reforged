@@ -70,9 +70,7 @@ local IsValid = IsValid
 local CurTime = CurTime
 
 function SWEP:Deploy()
-	if not IsValid(self.Owner) then
-		return
-	end
+	if not IsValid(self.Owner) then return end
 
 	if SERVER then
 		self.Owner:DrawWorldModel(false)
@@ -88,9 +86,7 @@ function SWEP:OnRemove()
 end
 
 function SWEP:Holster()
-	if not IsValid(self.Owner) then
-		return
-	end
+	if not IsValid(self.Owner) then return end
 
 	self:Reset()
 
@@ -98,9 +94,7 @@ function SWEP:Holster()
 end
 
 local function SetSubPhysMotionEnabled(ent, enabled)
-	if not IsValid(ent) then
-		return
-	end
+	if not IsValid(ent) then return end
 
 	for i=0, ent:GetPhysicsObjectCount() - 1 do
 		local subPhys = ent:GetPhysicsObjectNum(i)
@@ -300,9 +294,7 @@ if SERVER then
 	local stand_time = 0
 
 	function SWEP:Think()
-		if not self:CheckValidity() then
-			return
-		end
+		if not self:CheckValidity() then return end
 
 		local curTime = CurTime()
 
@@ -342,29 +334,19 @@ end
 function SWEP:CanCarry(ent)
 	local phys = ent:GetPhysicsObject()
 
-	if ent.NoCarry then
-		return false
-	end
+	if ent.NoCarry then return false end
 
-	if not IsValid(phys) then
-		return false
-	end
+	if not IsValid(phys) then return false end
 
-	if phys:GetMass() > 100 or not phys:IsMoveable() then
-		return false
-	end
+	if phys:GetMass() > 100 or not phys:IsMoveable() then return false end
 
-	if IsValid(ent.carrier) or IsValid(self.heldEntity) then
-		return false
-	end
+	if IsValid(ent.carrier) or IsValid(self.heldEntity) then return false end
 
 	return true
 end
 
 function SWEP:PrimaryAttack()
-	if not IsFirstTimePredicted() then
-		return
-	end
+	if not IsFirstTimePredicted() then return end
 
 	self:SetNextPrimaryFire(CurTime() + 0.5)
 
@@ -399,9 +381,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-	if not IsFirstTimePredicted() then
-		return
-	end
+	if not IsFirstTimePredicted() then return end
 	local ply = self.Owner
 
 	local trace = {}
@@ -442,9 +422,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:DragObject(phys, targetPos, isRagdoll)
-	if not IsValid(phys) then
-		return
-	end
+	if not IsValid(phys) then return end
 
 	local point = self:GetOwner():GetShootPos() + self:GetOwner():GetAimVector() * 50
 	local physDirection = targetPos - point
@@ -468,9 +446,7 @@ function SWEP:AllowPickup(target)
 	local phys = target:GetPhysicsObject()
 	local ply = self:GetOwner()
 
-	if IsValid(phys) and IsValid(ply) and target:GetClass() == "func_physbox" then
-		return false
-	end
+	if IsValid(phys) and IsValid(ply) and target:GetClass() == "func_physbox" then return false end
 
 	return (
 			IsValid(phys) and IsValid(ply) and
@@ -501,9 +477,7 @@ function SWEP:DoPickup(throw)
 		local ent = trace.Entity
 		local phys = trace.Entity:GetPhysicsObject()
 
-		if not IsValid(phys) or not phys:IsMoveable() or phys:HasGameFlag(FVPHYSICS_PLAYER_HELD) or ent.NoCarry then
-			return
-		end
+		if not IsValid(phys) or not phys:IsMoveable() or phys:HasGameFlag(FVPHYSICS_PLAYER_HELD) or ent.NoCarry then return end
 
 		-- if the client messes with phys desync will occur
 		if SERVER then

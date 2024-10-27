@@ -42,7 +42,7 @@ local quickTools = {
 		icon = "icon16/group_edit.png",
 		onRun = function(ply, sid)
 			local teams = DermaMenu()
-			for v, k in pairs(impulse.Teams.Data) do
+			for v, k in pairs(impulse.Teams.Stored) do
 				teams:AddOption(k.name, function()
 					LocalPlayer():ConCommand("say /setteam "..sid.." "..v)
 				end)
@@ -180,9 +180,7 @@ local quickTools = {
 function PANEL:Init()
 	self:Hide()
 	timer.Simple(0, function() -- Time to allow SetPlayer to catch up
-		if not IsValid(self) then
-			return
-		end
+		if not IsValid(self) then return end
 		
 		self:Show()
 		self:SetSize(600, 400)

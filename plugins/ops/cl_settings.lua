@@ -12,9 +12,7 @@ impulse.Settings:Define("admin_observer_hide", {name="Hide yourself when noclipp
 end})
 
 hook.Add("CreateMenuMessages", "opsOffDutyWarn", function()
-	if not LocalPlayer():IsAdmin() then
-		return
-	end
+	if not LocalPlayer():IsAdmin() then return end
 
 	if impulse.Settings:Get("admin_onduty", true) == false then
 		impulse.MenuMessage:Add("offduty", "Game Moderator Off Duty Notice", "You are currently off-duty. This is a reminder to ensure you return to duty as soon as possible.\nTo return to duty, goto settings, ops and tick the on duty box.", Color(238, 210, 2))

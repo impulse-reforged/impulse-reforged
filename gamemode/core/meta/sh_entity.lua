@@ -51,13 +51,9 @@ end
 -- @realm shared
 -- @treturn bool Is player prop door
 function ENTITY:IsPropDoor()
-	if not IsValid(self) then
-		return
-	end
+	if not IsValid(self) then return end
 	
-	if not self.GetModel or not propDoors[self:GetModel()] then
-		return false
-	end
+	if not self.GetModel or not propDoors[self:GetModel()] then return false end
 
 	if (self:CPPIGetOwner() and IsValid(self:CPPIGetOwner())) and self:CPPIGetOwner():IsPlayer() then
 		return true
@@ -113,13 +109,9 @@ end
 function ENTITY:CanBeCarried()
 	local phys = self:GetPhysicsObject()
 
-	if not IsValid(phys) then
-		return false
-	end
+	if not IsValid(phys) then return false end
 
-	if phys:GetMass() > 100 or not phys:IsMoveable() then
-		return false
-	end
+	if phys:GetMass() > 100 or not phys:IsMoveable() then return false end
 
 	return true
 end

@@ -22,9 +22,7 @@ function meta:GroupHasPermission(act)
 	local group = self:GetSyncVar(SYNC_GROUP_NAME, nil)
 	local rank = self:GetSyncVar(SYNC_GROUP_RANK, nil)
 
-	if not group or not rank then
-		return false
-	end
+	if not group or not rank then return false end
 
 	local groupData = impulse.Group.Groups[group]
 
@@ -32,25 +30,17 @@ function meta:GroupHasPermission(act)
 		groupData = impulse.Group.Groups[1]
 	end
 
-	if not groupData then
-		return false
-	end
+	if not groupData then return false end
 
-	if not groupData.Ranks then
-		return false
-	end
+	if not groupData.Ranks then return false end
 	
-	if not groupData.Ranks[rank] then
-		return false
-	end
+	if not groupData.Ranks[rank] then return false end
 
 	if groupData.Ranks[rank][99] then -- is owner
 		return true
 	end
 
-	if not groupData.Ranks[rank][act] then
-		return false
-	end
+	if not groupData.Ranks[rank][act] then return false end
 
 	return true
 end

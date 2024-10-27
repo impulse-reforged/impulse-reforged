@@ -3,7 +3,6 @@ if SERVER then
     util.AddNetworkString("opsGetRecord")
 end
 
-
 local setHealthCommand = {
     description = "Sets health of the specified player.",
     requiresArg = true,
@@ -143,7 +142,7 @@ local setClassCommand = {
             return ply:Notify("No class specified.")
         end
 
-        local id, class = impulse.Teams.FindClass(arg[2])
+        local id, class = impulse.Teams:FindClass(arg[2])
 
         if not class then
             return ply:Notify("Invalid class.")
@@ -176,7 +175,7 @@ local setRankCommand = {
             return ply:Notify("No rank specified.")
         end
 
-        local id, rank = impulse.Teams.FindRank(arg[2])
+        local id, rank = impulse.Teams:FindRank(arg[2])
 
         if not rank then
             return ply:Notify("Invalid rank.")
@@ -607,6 +606,38 @@ local takeSkillXPCommand = {
 
 impulse.RegisterChatCommand("/takeskillxp", takeSkillXPCommand)
 
+local quizBypassCommand = {
+    description = "Bypasses a quiz from a team, allowing the player to join without taking it.",
+    requiresArg = true,
+    adminOnly = true,
+    onRun = function(ply, arg, rawText)
+        local targ = impulse.Util:FindPlayer(arg[1])
+        local team = arg[2]
+
+        if not impulse.Teams:FindTeam(team) then
+            return ply:Notify("No team specified!")
+        end
+
+        if targ and IsValid(targ) then
+            if not impulse.Teams.Stored.quiz then
+                return ply:Notify("This team does not have a quiz!")
+            end
+
+            ply:Notify("You have bypassed " .. targ:Nick() .. "'s " .. team .. " quiz.")
+
+            for k, v in player.Iterator() do
+                if v:IsLeadAdmin() then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has bypassed " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") " .. team .. " quiz.")
+                end
+            end
+        else
+            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+        end
+    end
+}
+
+impulse.RegisterChatCommand("/quizbypass", quizBypassCommand)
+
 local kickCommand = {
     description = "Kicks the specified player from the server.",
     requiresArg = true,
@@ -643,7 +674,6 @@ local kickCommand = {
 }
 
 impulse.RegisterChatCommand("/kick", kickCommand)
-
 
 if GExtension then
     local banCommand = {

@@ -178,9 +178,7 @@ function PANEL:ShowGroup()
 
 		local gname = LocalPlayer():GetSyncVar(SYNC_GROUP_NAME, nil)
 
-		if not gname then
-			return
-		end
+		if not gname then return end
 
 		for v, k in player.Iterator() do
 			if k:GetSyncVar(SYNC_GROUP_NAME, nil) then
@@ -368,9 +366,7 @@ function PANEL:ShowInfo()
 	msg:SetMultiline(true)
 	msg:DockMargin(0, 5, 0, 0)
 
-	if not canEdit then
-		return
-	end
+	if not canEdit then return end
 
 	local btn = vgui.Create("DButton", sheet)
 	btn:SetText("Update text")

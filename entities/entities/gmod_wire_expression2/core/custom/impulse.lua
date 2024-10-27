@@ -38,9 +38,7 @@ end
 
 e2function string impulseGetItemClass(entity ent)
 	if not IsValid(ent) then return end
-	if ent:GetClass() != "impulse_item" or not ent.Item then
-		return
-	end
+	if ent:GetClass() != "impulse_item" or not ent.Item then return end
 
 	return ent.Item.UniqueID or "unknown"
 end

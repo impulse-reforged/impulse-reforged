@@ -135,7 +135,7 @@ end
 function meta:MakeWorkbar(time, text, onDone, popup)
     self:ClearWorkbar()
 
-    if not ( time ) then
+    if ( !time ) then
         net.Start("impulseMakeWorkbar")
         net.Send(self)
 

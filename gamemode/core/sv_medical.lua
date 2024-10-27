@@ -1,9 +1,7 @@
 function meta:BreakLegs()
 	self.BrokenLegsTime = CurTime() + impulse.Config.BrokenLegsHealTime -- reset heal time
 
-	if self:HasBrokenLegs() then
-		return
-	end
+	if self:HasBrokenLegs() then return end
 
 	self:SetSyncVar(SYNC_BROKENLEGS, true, true)
 	self.BrokenLegs = true

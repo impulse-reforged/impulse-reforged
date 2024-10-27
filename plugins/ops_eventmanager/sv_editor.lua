@@ -1,7 +1,5 @@
 concommand.Add("impulse_ops_eventmanager", function(ply)
-	if not ply:IsEventAdmin() then
-		return
-	end
+	if not ply:IsEventAdmin() then return end
 
 	local c = table.Count(impulse.Ops.EventManager.Sequences)
 

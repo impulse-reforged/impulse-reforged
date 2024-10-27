@@ -29,15 +29,11 @@ net.Receive("impulseOpsEMClientsideEvent", function()
 	local len = net.ReadUInt(16)
 	local prop = pon.decode(net.ReadData(len))
 
-	if not impulse.Ops.EventManager then
-		return
-	end
+	if not impulse.Ops.EventManager then return end
 
 	local sequenceData = impulse.Ops.EventManager.Config.Events[event]
 
-	if not sequenceData then
-		return
-	end
+	if not sequenceData then return end
 
 	if not uid or uid == "" then
 		uid = nil

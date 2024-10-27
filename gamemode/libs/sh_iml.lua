@@ -25,9 +25,7 @@ function IMLRead(data)
 	for v, k in pairs(lines) do
 		local sub = string.Split(k, " ")
 
-		if not sub[1] or not sub[2] then
-			continue
-		end
+		if not sub[1] or not sub[2] then continue end
 		
 		return
 	end

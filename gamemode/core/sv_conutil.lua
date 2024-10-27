@@ -3,9 +3,7 @@ local function IsSteamID(str)
 end
 
 concommand.Add("impulse_set_group", function(ply, cmd, args)
-	if ply != NULL or IsValid(ply) then
-		return
-	end
+	if ply != NULL or IsValid(ply) then return end
 	
 	local find = args[1]
 	if !find then

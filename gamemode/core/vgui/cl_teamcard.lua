@@ -13,9 +13,9 @@ function PANEL:SetTeam(teamID)
 	self.playerCount = self.players
 	self.model = impulse_defaultModel or "models/Humans/Group01/male_02.mdl" 
 	self.skin = impulse_defaultSkin or 0
-	self.bodygroups = impulse.Teams.Data[teamID].bodygroups
+	self.bodygroups = impulse.Teams.Stored[teamID].bodygroups
 	self.requirements = ""
-	local teamData = impulse.Teams.Data[teamID]
+	local teamData = impulse.Teams.Stored[teamID]
 
 	if teamData.limit then
 		if teamData.percentLimit and teamData.percentLimit == true then

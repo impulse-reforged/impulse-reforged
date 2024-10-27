@@ -338,9 +338,7 @@ net.Receive("impulseMixDo", function()
 end)
 
 net.Receive("impulseVendorUse", function()
-	if impulse_vendor and IsValid(impulse_vendor) then
-		return
-	end
+	if impulse_vendor and IsValid(impulse_vendor) then return end
 
 	impulse_vendor = vgui.Create("impulseVendorMenu")
 	impulse_vendor:SetupVendor()
@@ -356,9 +354,7 @@ net.Receive("impulseVendorUseDownload", function()
 	impulse.Vendor.Data[vendor].Buy = buy
 	impulse.Vendor.Data[vendor].Sell = sell
 
-	if impulse_vendor and IsValid(impulse_vendor) then
-		return
-	end
+	if impulse_vendor and IsValid(impulse_vendor) then return end
 
 	impulse_vendor = vgui.Create("impulseVendorMenu")
 	impulse_vendor:SetupVendor()
@@ -367,9 +363,7 @@ end)
 net.Receive("impulseViewWhitelists", function()
 	local targ = impulse_WhitelistReqTarg
 
-	if not targ or not IsValid(targ) then
-		return
-	end
+	if not targ or not IsValid(targ) then return end
 
 	local count = net.ReadUInt(4)
 	local top = targ:SteamName().."'s whitelist(s):\n\n"
@@ -473,9 +467,7 @@ end)
 net.Receive("impulseAchievementGet", function()
 	local achievementCode = net.ReadString()
 
-	if not impulse.Achievements then
-		return
-	end
+	if not impulse.Achievements then return end
 
 	local get = vgui.Create("impulseAchievementNotify")
 	get:SetAchivement(achievementCode)
@@ -546,9 +538,7 @@ net.Receive("impulseGroupRank", function()
 	local len = net.ReadUInt(32)
 	local rank = pon.decode(net.ReadData(len))
 
-	if name then
-		return
-	end
+	if name then return end
 
 	if not impulse.Group.Groups[1] then
 		impulse.Group.Groups[1] = {}
