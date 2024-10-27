@@ -366,9 +366,7 @@ end)
 -- Hide the default chat too in case that pops up
 hook.Remove("HUDShouldDraw", "impulse.chatBox_hidedefault")
 hook.Add("HUDShouldDraw", "impulse.chatBox_hidedefault", function( name )
-	if name == "CHudChat" then
-		return false
-	end
+	if name == "CHudChat" then return false end
 end)
 
  -- Modify the Chatbox for align.

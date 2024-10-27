@@ -192,7 +192,7 @@ function PANEL:Init()
 	local scroll = vgui.Create("DScrollPanel", b)
 	scroll:Dock(FILL)
 
-	for v, k in pairs(impulse.Teams.Data) do
+	for v, k in pairs(impulse.Teams.Stored) do
 		local t = scroll:Add("DPanel")
 		t:SetTall(60)
 		t:Dock(TOP)

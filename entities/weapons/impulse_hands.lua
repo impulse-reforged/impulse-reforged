@@ -294,9 +294,7 @@ if SERVER then
 	local stand_time = 0
 
 	function SWEP:Think()
-		if not self:CheckValidity() then
-			return
-		end
+		if not self:CheckValidity() then return end
 
 		local curTime = CurTime()
 
@@ -336,21 +334,13 @@ end
 function SWEP:CanCarry(ent)
 	local phys = ent:GetPhysicsObject()
 
-	if ent.NoCarry then
-		return false
-	end
+	if ent.NoCarry then return false end
 
-	if not IsValid(phys) then
-		return false
-	end
+	if not IsValid(phys) then return false end
 
-	if phys:GetMass() > 100 or not phys:IsMoveable() then
-		return false
-	end
+	if phys:GetMass() > 100 or not phys:IsMoveable() then return false end
 
-	if IsValid(ent.carrier) or IsValid(self.heldEntity) then
-		return false
-	end
+	if IsValid(ent.carrier) or IsValid(self.heldEntity) then return false end
 
 	return true
 end
@@ -456,9 +446,7 @@ function SWEP:AllowPickup(target)
 	local phys = target:GetPhysicsObject()
 	local ply = self:GetOwner()
 
-	if IsValid(phys) and IsValid(ply) and target:GetClass() == "func_physbox" then
-		return false
-	end
+	if IsValid(phys) and IsValid(ply) and target:GetClass() == "func_physbox" then return false end
 
 	return (
 			IsValid(phys) and IsValid(ply) and
@@ -489,9 +477,7 @@ function SWEP:DoPickup(throw)
 		local ent = trace.Entity
 		local phys = trace.Entity:GetPhysicsObject()
 
-		if not IsValid(phys) or not phys:IsMoveable() or phys:HasGameFlag(FVPHYSICS_PLAYER_HELD) or ent.NoCarry then
-			return
-		end
+		if not IsValid(phys) or not phys:IsMoveable() or phys:HasGameFlag(FVPHYSICS_PLAYER_HELD) or ent.NoCarry then return end
 
 		-- if the client messes with phys desync will occur
 		if SERVER then

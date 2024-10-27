@@ -864,9 +864,7 @@ local function LoadButtons()
 	if not impulse.Config.Buttons then return end
 
 	for a,button in pairs(ents.FindByClass("func_button")) do
-		if button.ButtonCheck then
-			continue
-		end
+		if button.ButtonCheck then continue end
 
 		for v, k in pairs(impulse.Config.Buttons) do
 			if k.pos:DistToSqr(button:GetPos()) < (9 ^ 2) then -- getpos client/server innaccuracy
@@ -1012,7 +1010,7 @@ function GM:Think()
 		lastAFKScan = ctime + 2
 
 		for v, k in player.Iterator() do
-			if not ( IsValid(k) ) then
+			if ( !IsValid(k) ) then
 				continue
 			end
 			if k.AFKTimer and k.AFKTimer < ctime and !impulse.Arrest.Dragged[k] and !k:IsAFK() then
@@ -1050,9 +1048,7 @@ function GM:DatabaseConnectionFailed(errorText)
 end
 
 function GM:PlayerCanPickupWeapon(ply)
-	if ply:GetSyncVar(SYNC_ARRESTED, false) then
-		return false
-	end
+	if ply:GetSyncVar(SYNC_ARRESTED, false) then return false end
 
 	return true
 end
@@ -1064,9 +1060,7 @@ local exploitRagBlock = {
 }
 
 function GM:PlayerSpawnRagdoll(ply, model)
-	if exploitRagBlock[model] then
-		return false
-	end
+	if exploitRagBlock[model] then return false end
 
 	return ply:IsLeadAdmin()
 end
@@ -1092,9 +1086,7 @@ function GM:PlayerSpawnNPC(ply)
 end
 
 function GM:PlayerSpawnProp(ply, model)
-	if not ply:Alive() or not ply.beenSetup or ply:GetSyncVar(SYNC_ARRESTED, false) then
-		return false
-	end
+	if not ply:Alive() or not ply.beenSetup or ply:GetSyncVar(SYNC_ARRESTED, false) then return false end
 
 	if ply:IsAdmin() then
 		return true
@@ -1132,9 +1124,7 @@ function GM:PlayerSpawnedProp(ply, model, ent)
 end
 
 function GM:PlayerSpawnVehicle(ply, model)
-	if ply:GetSyncVar(SYNC_ARRESTED, false) then
-		return false
-	end
+	if ply:GetSyncVar(SYNC_ARRESTED, false) then return false end
 
 	if ply:IsDonator() and (model:find("chair") or model:find("seat") or model:find("pod")) then
 		local count = 0
@@ -1244,13 +1234,9 @@ local adminWorldRemoveWhitelist = {
 }
 
 function GM:CanTool(ply, tr, tool)
-	if not ply:IsAdmin() and tool == "spawner" then
-		return false
-	end
+	if not ply:IsAdmin() and tool == "spawner" then return false end
 
-	if bannedTools[tool] then
-		return false
-	end
+	if bannedTools[tool] then return false end
 
 	if donatorTools[tool] and !ply:IsDonator() then
 		ply:Notify("This tool is restricted to donators only.")
@@ -1329,9 +1315,7 @@ local whitelistDupeEnts = {
 }
 
 function GM:ADVDupeIsAllowed(ply, class, entclass) -- adv dupe 2 can be easily exploited, this fixes it. you must have the impulse version of AD2 for this to work
-	if bannedDupeEnts[class] then
-		return false
-	end
+	if bannedDupeEnts[class] then return false end
 
 	if donatorDupeEnts[class] then
 		if ply:IsDonator() then
@@ -1356,23 +1340,19 @@ function GM:SetupMove(ply, mvData)
 end
 
 function GM:CanPlayerEnterVehicle(ply, veh)
-	if ply:GetSyncVar(SYNC_ARRESTED, false) or ply.ArrestedDragging then
-		return false
-	end
+	if ply:GetSyncVar(SYNC_ARRESTED, false) or ply.ArrestedDragging then return false end
 
 	return true
 end
 
 function GM:CanExitVehicle(veh, ply)
-	if ply:GetSyncVar(SYNC_ARRESTED, false) then
-		return false
-	end
+	if ply:GetSyncVar(SYNC_ARRESTED, false) then return false end
 
 	return true
 end
 
 function GM:PlayerSetHandsModel(ply, hands)
-	local handModel = impulse.Teams.Data[ply:Team()].handModel
+	local handModel = impulse.Teams.Stored[ply:Team()].handModel
 
 	if handModel then
 		hands:SetModel(handModel)
@@ -1394,13 +1374,9 @@ function GM:PlayerSpray()
 end
 
 function GM:PlayerShouldTakeDamage(ply, attacker)
-	if ply:Team() == 0 then
-		return false
-	end
+	if ply:Team() == 0 then return false end
 
-	if ply.SpawnProtection and attacker:IsPlayer() then
-		return false
-	end
+	if ply.SpawnProtection and attacker:IsPlayer() then return false end
 
 	if attacker and IsValid(attacker) and attacker:IsPlayer() and attacker != Entity(0) and attacker != ply then
 		if (ply.NextStorage or 0) < CurTime() then

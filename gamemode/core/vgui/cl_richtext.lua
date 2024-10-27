@@ -111,9 +111,7 @@ function PANEL:AddText(...)
 
 	textElement:SetTall(mrkup:GetHeight())
 	textElement.Paint = function(self, w, h)
-		if self.sleeping then
-			return
-		end
+		if self.sleeping then return end
 
 		mrkup:Draw(0, 0)
 	end

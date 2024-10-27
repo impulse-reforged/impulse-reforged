@@ -10,7 +10,7 @@ end
 
 function impulse.Relationships.Find(ply, npcclass)
 	local t = ply:Team()
-	local tData = impulse.Teams.Data[t]
+	local tData = impulse.Teams.Stored[t]
 
 	if tData and tData.Relationships and tData.Relationships[npcclass] then
 		return tData.Relationships[npcclass]

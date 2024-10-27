@@ -29,9 +29,7 @@ function PANEL:Init()
 		if parent.withdrawInput:GetValue() == "" then return true end
 		local num = tonumber(parent.withdrawInput:GetValue())
 
-		if not num then
-			return
-		end
+		if not num then return end
 
 		net.Start("impulseATMWithdraw")
 		net.WriteUInt(math.floor(num), 32)
@@ -51,9 +49,7 @@ function PANEL:Init()
 		if parent.depositInput:GetValue() == "" then return true end
 		local num = tonumber(parent.depositInput:GetValue())
 
-		if not num then
-			return
-		end
+		if not num then return end
 
 		net.Start("impulseATMDeposit")
 		net.WriteUInt(math.floor(num), 32)

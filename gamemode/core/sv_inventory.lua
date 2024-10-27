@@ -547,9 +547,7 @@ function meta:DropInventoryItem(itemid)
 	local class = impulse.Inventory.Items[itemnetid]
 
 	if item.restricted then
-		if not class.DropIfRestricted then
-			return
-		end
+		if not class.DropIfRestricted then return end
 	end
 
 	self:TakeInventoryItem(itemid)
@@ -675,9 +673,7 @@ end
 function meta:CanMakeMix(mixClass)
 	local skill = self:GetSkillLevel("craft")
 
-	if mixClass.Level > skill then
-		return false
-	end
+	if mixClass.Level > skill then return false end
 
 	for v, k in pairs(mixClass.Input) do
 		local item = self:HasInventoryItem(v, k.take)

@@ -7,19 +7,13 @@ if SERVER then
 	util.AddNetworkString("opsE2ViewerRemove")
 
 	net.Receive("opsE2ViewerRemove", function(len, ply)
-		if not ply:IsAdmin() then
-			return
-		end
+		if not ply:IsAdmin() then return end
 
 		local chip = net.ReadEntity()
 
-		if not IsValid(chip) then
-			return
-		end
+		if not IsValid(chip) then return end
 
-		if chip:GetClass() != "gmod_wire_expression2" then
-			return
-		end
+		if chip:GetClass() != "gmod_wire_expression2" then return end
 
 		chip:Remove()
 		ply:Notify("Expression chip removed.")

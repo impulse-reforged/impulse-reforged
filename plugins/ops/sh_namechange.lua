@@ -3,9 +3,7 @@ if SERVER then
 	util.AddNetworkString("impulseOpsDoNamechange")
 
 	net.Receive("impulseOpsDoNamechange", function(len, ply)
-		if not ply.NameChangeForced then
-			return
-		end
+		if not ply.NameChangeForced then return end
 
 		local charName = net.ReadString()
 

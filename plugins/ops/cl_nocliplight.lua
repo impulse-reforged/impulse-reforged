@@ -11,7 +11,7 @@ local cols = {
 }
 function PLUGIN:Think()
 	local ply = LocalPlayer()
-	if not ( ply:IsAdmin() and ply:GetMoveType() == MOVETYPE_NOCLIP and ply:Alive() and !ply:InVehicle() ) then
+	if ( !ply:IsAdmin() or ply:GetMoveType() != MOVETYPE_NOCLIP or !ply:Alive() or ply:InVehicle() ) then
 		OPS_LIGHT = false
 		lightOn = false
 		return

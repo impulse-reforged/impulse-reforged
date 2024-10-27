@@ -30,9 +30,7 @@ function ENTITY:Sync(target)
 		local syncType = impulse.Sync.Vars[varID]
 		local syncCondition = impulse.Sync.VarsConditional[varID]
 
-		if target and syncCondition and !syncCondition(target) then
-			return
-		end
+		if target and syncCondition and !syncCondition(target) then return end
 		
 		if syncRealm == SYNC_TYPE_PUBLIC then
 			if target then

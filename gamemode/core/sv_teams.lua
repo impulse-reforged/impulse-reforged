@@ -1,9 +1,7 @@
 meta.OldSetTeam = meta.OldSetTeam or meta.SetTeam
 function meta:SetTeam(teamID, forced)
-	local teamData = impulse.Teams.Data[teamID]
-	if not teamData then
-		return false
-	end
+	local teamData = impulse.Teams.Stored[teamID]
+	if not teamData then return false end
 
 	local teamPlayers = team.NumPlayers(teamID)
 
@@ -80,7 +78,7 @@ function meta:SetTeam(teamID, forced)
 end
 
 function meta:SetTeamClass(classID, skipLoadout)
-	local teamData = impulse.Teams.Data[self:Team()]
+	local teamData = impulse.Teams:FindTeam(self:Team())
 	local classData = teamData.classes[classID]
 	local classPlayers = 0
 
@@ -188,7 +186,7 @@ function meta:SetTeamClass(classID, skipLoadout)
 end
 
 function meta:SetTeamRank(rankID)
-	local teamData = impulse.Teams.Data[self:Team()]
+	local teamData = impulse.Teams:FindTeam(self:Team())
 	local classData = teamData.classes[self:GetTeamClass()]
 	local rankData = teamData.ranks[rankID]
 
@@ -381,9 +379,7 @@ function impulse.Teams.GetWhitelist(steamid, team, callback)
 end
 
 function meta:HasTeamWhitelist(team, level)
-	if not self.Whitelists then
-		return false
-	end
+	if not self.Whitelists then return false end
 
 	local whitelist = self.Whitelists[team]
 
@@ -402,9 +398,7 @@ function meta:SetupWhitelists()
 	self.Whitelists = {}
 
 	impulse.Teams.GetAllWhitelistsPlayer(self:SteamID(), function(result)
-		if not result or not IsValid(self) then
-			return
-		end
+		if not result or not IsValid(self) then return end
 
 		for v, k in pairs(result) do
 			local teamName = k.team

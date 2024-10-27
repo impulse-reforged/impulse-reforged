@@ -21,7 +21,7 @@ function PANEL:Init()
 end
 
 function PANEL:SetQuiz(team)
-	local teamData = impulse.Teams.Data[team]
+	local teamData = impulse.Teams.Stored[team]
 	local selections = {}
 	self:SetTitle(teamData.name.." Entry Quiz")
 
@@ -84,7 +84,7 @@ function PANEL:SetQuiz(team)
 	local panel = self
 	function self.finish:DoClick()
 		local passed = true
-		local answers = impulse.Teams.Data[team].quiz
+		local answers = impulse.Teams.Stored[team].quiz
 
 		for v, k in pairs(selections) do
 			local isCorrect = k[2]

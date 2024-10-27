@@ -107,9 +107,7 @@ else
 		draw.SimpleText("STATE: "..(self.State or "Nothing selected"), "BudgetLabel", 100, 120)
 		draw.SimpleText("Warning, when you click your current position\nwill be registered, not your weapon aim position!", "BudgetLabel", 100, 140)
 
-		if not impulse.Config.NPCSpawns then
-			return
-		end
+		if not impulse.Config.NPCSpawns then return end
 
 		for k, v in pairs(impulse.Config.NPCSpawns) do
 			local cent = v.pos:ToScreen()

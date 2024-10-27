@@ -11,9 +11,7 @@ hidden["CHudDeathNotice"] = true
 hidden["CHudDamageIndicator"] = true
 
 function GM:HUDShouldDraw(element)
-	if (hidden[element]) then
-		return false
-	end
+	if (hidden[element]) then return false end
 
 	return true
 end

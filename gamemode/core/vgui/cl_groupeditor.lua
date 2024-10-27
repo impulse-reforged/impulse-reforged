@@ -178,9 +178,7 @@ function PANEL:ShowGroup()
 
 		local gname = LocalPlayer():GetSyncVar(SYNC_GROUP_NAME, nil)
 
-		if not gname then
-			return
-		end
+		if not gname then return end
 
 		for v, k in player.Iterator() do
 			if k:GetSyncVar(SYNC_GROUP_NAME, nil) then

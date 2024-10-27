@@ -222,9 +222,7 @@ function PANEL:SetTable(prop, callback)
 
 
 	for v, k in pairs(prop) do
-		if done[v] then
-			continue
-		end
+		if done[v] then continue end
 
 		setupProp(v, k)
 	end

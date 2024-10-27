@@ -277,9 +277,9 @@ net.Receive("impulseTeamChange", function(len, ply)
 
 	local teamID = net.ReadUInt(8)
 
-	if teamID and isnumber(teamID) and impulse.Teams.Data[teamID] then
+	if teamID and isnumber(teamID) and impulse.Teams.Stored[teamID] then
 		if ply:CanBecomeTeam(teamID, true) then
-			if impulse.Teams.Data[teamID].quiz then
+			if impulse.Teams.Stored[teamID].quiz then
 				local data = ply:GetData()
 
 				if not data.quiz or not data.quiz[teamID] then
@@ -322,7 +322,7 @@ net.Receive("impulseClassChange",function(len, ply)
 	end
 
 	local classID = net.ReadUInt(8)
-	local classes = impulse.Teams.Data[ply:Team()].classes
+	local classes = impulse.Teams.Stored[ply:Team()].classes
 
 	if classID and isnumber(classID) and classID > 0 and classes and classes[classID] and !classes[classID].noMenu then
 		if ply:CanBecomeTeamClass(classID, true) then
@@ -532,13 +532,9 @@ net.Receive("impulseDoorAdd", function(len, ply)
 	local owners = traceEnt:GetSyncVar(SYNC_DOOR_OWNERS, nil)
 
 	if IsValid(traceEnt) and ply:IsDoorOwner(owners) and traceEnt:GetDoorMaster() == ply then
-		if target == ply then
-			return
-		end
+		if target == ply then return end
 
-		if target.OwnedDoors and target.OwnedDoors[traceEnt] then
-			return
-		end
+		if target.OwnedDoors and target.OwnedDoors[traceEnt] then return end
 
 		if table.Count(owners) > 9 then
 			return ply:Notify("Door user limit reached (9).")
@@ -571,13 +567,9 @@ net.Receive("impulseDoorRemove", function(len, ply)
 	local traceEnt = util.TraceLine(trace).Entity
 
 	if IsValid(traceEnt) and ply:IsDoorOwner(traceEnt:GetSyncVar(SYNC_DOOR_OWNERS, nil)) and traceEnt:GetDoorMaster() == ply then
-		if target == ply then
-			return
-		end
+		if target == ply then return end
 
-		if not target.OwnedDoors or not target.OwnedDoors[traceEnt] then
-			return
-		end
+		if not target.OwnedDoors or not target.OwnedDoors[traceEnt] then return end
 
 		if traceEnt:GetDoorMaster() == target then
 			return ply:Notify("The door's master cannot be removed.")
@@ -594,7 +586,7 @@ net.Receive("impulseQuizSubmit", function(len, ply)
 	ply.quizzing = false
 
 	local teamID = net.ReadUInt(8)
-	if not impulse.Teams.Data[teamID] or not impulse.Teams.Data[teamID].quiz then return end
+	if not impulse.Teams.Stored[teamID] or not impulse.Teams.Stored[teamID].quiz then return end
 
 	local quizPassed = net.ReadBool()
 
@@ -772,9 +764,7 @@ net.Receive("impulseInvDoMove", function(len, ply)
 	if ply.currentStorage:GetClass() == "impulse_storage_public" then
 		local item = impulse.Inventory.Items[impulse.Inventory.ClassToNetID(item.class)]
 
-		if not item then
-			return
-		end
+		if not item then return end
 
 		if item.Illegal then
 			return ply:Notify("You may not access or store illegal items at public storage lockers.")
@@ -888,7 +878,7 @@ net.Receive("impulseChangeRPName", function(len, ply)
 	if (ply.nextRPNameTry or 0) > CurTime() then return end
 	ply.nextRPNameTry = CurTime() + 0.1
 
-	if impulse.Teams.Data[ply:Team()] and impulse.Teams.Data[ply:Team()].blockNameChange then
+	if impulse.Teams.Stored[ply:Team()] and impulse.Teams.Stored[ply:Team()].blockNameChange then
 		return ply:Notify("Your team can not change their name.")
 	end
 
@@ -1184,9 +1174,7 @@ net.Receive("impulseVendorBuy", function(len, ply)
 	if sellData.Max then
 		local hasItem, amount = ply:HasInventoryItem(class)
 
-		if hasItem and amount >= sellData.Max then
-			return
-		end
+		if hasItem and amount >= sellData.Max then return end
 	end
 
 	if sellData.CanBuy and sellData.CanBuy(ply) == false then return end
@@ -1432,9 +1420,7 @@ net.Receive("impulseInvContainerDoMove", function(len, ply)
 	local isLoot = container:GetLoot()
 
 	if isLoot then
-		if ply:IsCP() then
-			return
-		end
+		if ply:IsCP() then return end
 	elseif container.Code and !container.Authorised[ply] then return end
 
 	if ply:GetSyncVar(SYNC_ARRESTED, false) or not ply:Alive() then return end
@@ -1455,15 +1441,11 @@ net.Receive("impulseInvContainerDoMove", function(len, ply)
 
 	if from == 2 then
 		local item = impulse.Inventory.Items[itemid]
-		if not item then
-			return
-		end
+		if not item then return end
 
 		local class = impulse.Inventory.Items[itemid].UniqueID
 
-		if not container.Inventory[class] then
-			return
-		end
+		if not container.Inventory[class] then return end
 
 		if not ply:CanHoldItem(class) then
 			return ply:Notify("Item is too heavy to hold.")
@@ -1480,9 +1462,7 @@ net.Receive("impulseInvContainerDoMove", function(len, ply)
 	elseif from == 1 then
 		local hasItem, item = ply:HasInventoryItemSpecific(itemid, 1)
 
-		if not hasItem then
-			return
-		end
+		if not hasItem then return end
 
 		if item.restricted then
 			return ply:Notify("You cannot store a restricted item.")
@@ -1895,9 +1875,7 @@ net.Receive("impulseGroupDoCreate", function(len, ply)
 	local slots = ply:IsDonator() and impulse.Config.GroupMaxMembersVIP or impulse.Config.GroupMaxMembers
 
 	impulse.Group.DBCreate(name, ply.impulseID, slots, 30, nil, function(groupid)
-		if not IsValid(ply) then
-			return
-		end
+		if not IsValid(ply) then return end
 
 		if not groupid then
 			return ply:Notify("This group name is already in use.")

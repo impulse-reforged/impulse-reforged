@@ -14,9 +14,7 @@ function PANEL:Init()
 
 	local playerList = {}
 	for v, k in player.Iterator() do
-		if k:IsAdmin() and k:GetSyncVar(SYNC_INCOGNITO, false) then
-			continue
-		end
+		if k:IsAdmin() and k:GetSyncVar(SYNC_INCOGNITO, false) then continue end
 
 		table.insert(playerList, k)
 	end

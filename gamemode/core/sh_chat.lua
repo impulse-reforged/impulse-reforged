@@ -243,7 +243,7 @@ local advertCommand = {
 	requiresArg = true,
 	requiresAlive = true,
 	onRun = function(ply, arg, rawText)
-		if not impulse.Teams.Data[ply:Team()].canAdvert or impulse.Teams.Data[ply:Team()].canAdvert == false then 
+		if not impulse.Teams.Stored[ply:Team()].canAdvert or impulse.Teams.Stored[ply:Team()].canAdvert == false then 
 			return ply:Notify("Your team cannot make an advert.") 
 		end
 
@@ -423,9 +423,7 @@ local eventCommand = {
 	leadAdminOnly = true,
 	requiresArg = true,
 	onRun = function(ply, arg, rawText)
-		if ply:GetUserGroup() == "leadadmin" then
-			return
-		end
+		if ply:GetUserGroup() == "leadadmin" then return end
 		
 		for v, k in player.Iterator() do
 			k:SendChatClassMessage(14, rawText, ply)
@@ -581,15 +579,11 @@ if CLIENT then
 		local groupName = LocalPlayer():GetSyncVar(SYNC_GROUP_NAME, nil)
 		local groupRank = speaker:GetSyncVar(SYNC_GROUP_RANK, nil)
 
-		if not groupName or not groupRank then
-			return
-		end
+		if not groupName or not groupRank then return end
 
 		local myGroup = impulse.Group.Groups[1]
 
-		if not myGroup then
-			return
-		end
+		if not myGroup then return end
 		
 		if myGroup.Color then
 			chat.AddText(myGroup.Color, "["..groupName.."] ("..groupRank..") ", speaker:Nick(), ": ", message)

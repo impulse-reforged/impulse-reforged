@@ -20,9 +20,7 @@ end
 
 
 function EFFECT:Think()
-	if not IsValid(self.Player) then
-		return false
-	end
+	if not IsValid(self.Player) then return false end
 
 	local pos = self.Player:GetShootPos();
 

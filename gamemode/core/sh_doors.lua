@@ -9,7 +9,7 @@ function meta:CanLockUnlockDoor(doorOwners, doorGroup)
 	local teamDoorGroups = self.DoorGroups or {}
 
 	if CLIENT then
-		local t = impulse.Teams.Data[LocalPlayer():Team()]
+		local t = impulse.Teams.Stored[LocalPlayer():Team()]
 		teamDoorGroups = t.doorGroup
 
 		local class = LocalPlayer():GetTeamClass()
@@ -39,8 +39,6 @@ function meta:IsDoorOwner(doorOwners)
 end
 
 function meta:CanBuyDoor(doorOwners, doorBuyable)
-	if doorOwners or doorBuyable == false then
-		return false
-	end
+	if doorOwners or doorBuyable == false then return false end
 	return true
 end

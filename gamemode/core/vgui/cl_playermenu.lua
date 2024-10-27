@@ -151,7 +151,7 @@ function PANEL:QuickActions()
 	self.list:SetSpaceY(5)
 	self.list:SetSpaceX(5)
 
-	local classes = impulse.Teams.Data[LocalPlayer():Team()].classes
+	local classes = impulse.Teams.Stored[LocalPlayer():Team()].classes
 	if classes and LocalPlayer():InSpawn() then
 		for v,classData in pairs(classes) do
 			if not classData.noMenu and LocalPlayer():GetTeamClass() != v then
@@ -245,7 +245,7 @@ function PANEL:Teams()
 	unavailibleList:SetSpaceY(5)
 	unavailibleList:SetSpaceX(5)
 
-	for v, k in pairs(impulse.Teams.Data) do
+	for v, k in pairs(impulse.Teams.Stored) do
 		local selectedList
 
 		if (k.xp > LocalPlayer():GetXP()) or (k.donatorOnly and k.donatorOnly == true and LocalPlayer():IsDonator() == false) then
@@ -264,10 +264,10 @@ function PANEL:Teams()
 		local realSelf = self
 
 		function teamCard:OnCursorEntered()
-			local model = impulse.Teams.Data[self.team].model
-			local skin = impulse.Teams.Data[self.team].skin or 0
-			local desc = impulse.Teams.Data[self.team].description
-			local bodygroups = impulse.Teams.Data[self.team].bodygroups
+			local model = impulse.Teams.Stored[self.team].model
+			local skin = impulse.Teams.Stored[self.team].skin or 0
+			local desc = impulse.Teams.Stored[self.team].description
+			local bodygroups = impulse.Teams.Stored[self.team].bodygroups
 
 			if not model then
 				model = impulse_defaultModel or "models/Humans/Group01/male_02.mdl" 
@@ -328,9 +328,7 @@ function PANEL:Business()
 	self.cat = {}
 
 	for name,k in pairs(impulse.Business.Data) do
-		if not LocalPlayer():CanBuy(name) then
-			continue
-		end
+		if not LocalPlayer():CanBuy(name) then continue end
 
 		local parent = nil
 

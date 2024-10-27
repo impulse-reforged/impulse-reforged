@@ -70,7 +70,7 @@ hook.Add("HUDPaint", "impulseOpsHUD", function()
 
 			local y = 160
 
-			for v, k in pairs(impulse.Teams.Data) do
+			for v, k in pairs(impulse.Teams.Stored) do
 				draw.SimpleText(team.GetName(v)..": "..#team.GetPlayers(v), "Impulse-Elements16-Shadow", 20, y, col)
 				y = y + 20
 			end

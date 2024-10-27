@@ -16,7 +16,7 @@ if SERVER then
 	end
 	
 	function meta:TakeXP(amount)
-		if not ( amount > 0 ) then
+		if ( !amount > 0 ) then
 			print("Input must be more than 0!")
 			return
 		end
