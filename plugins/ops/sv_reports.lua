@@ -18,7 +18,7 @@ util.AddNetworkString("opsReportDaleReplied")
 util.AddNetworkString("opsReportDaleClose")
 
 function impulse.Ops.ReportNew(ply, arg, rawText)
-	if ply.nextReport and ply.nextReport > CurTime() then
+    if ply.nextReport and ply.nextReport > CurTime() then
         return 
     end
 
@@ -175,26 +175,26 @@ function impulse.Ops.ReportClose(ply, arg, rawText)
         end
 
         if reportClaimant and !isDc and IsValid(reportClaimant) then
-        	local query = mysql:Insert("impulse_reports")
-			query:Insert("reporter", reporter:SteamID())
-			query:Insert("mod", reportClaimant:SteamID())
-			query:Insert("message", string.sub(reportMessage, 1, 650))
-			query:Insert("start", os.date("%Y-%m-%d %H:%M:%S", os.time()))
-			query:Insert("claimwait", targetReport[5] - targetReport[4])
-			query:Insert("closewait", CurTime() - targetReport[4])
-			query:Execute(true)
+            local query = mysql:Insert("impulse_reports")
+            query:Insert("reporter", reporter:SteamID())
+            query:Insert("mod", reportClaimant:SteamID())
+            query:Insert("message", string.sub(reportMessage, 1, 650))
+            query:Insert("start", os.date("%Y-%m-%d %H:%M:%S", os.time()))
+            query:Insert("claimwait", targetReport[5] - targetReport[4])
+            query:Insert("closewait", CurTime() - targetReport[4])
+            query:Execute(true)
         end
 
         impulse.Ops.Reports[reportId] = nil
 
         for v, k in player.Iterator() do
-        	if k:IsAdmin() then
-		        net.Start("opsReportClosed")
-		        net.WriteEntity(ply)
-		        net.WriteUInt(reportId, 16)
-		        net.Send(k)
-		    end
-	    end
+            if k:IsAdmin() then
+                net.Start("opsReportClosed")
+                net.WriteEntity(ply)
+                net.WriteUInt(reportId, 16)
+                net.Send(k)
+            end
+        end
 
         if not isDc then
             net.Start("opsReportMessage")

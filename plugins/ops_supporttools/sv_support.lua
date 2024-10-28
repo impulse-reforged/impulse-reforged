@@ -39,25 +39,25 @@ net.Receive("impulseOpsSTDoGroupRemove", function(len, ply)
     local name = net.ReadString()
     local groupData = impulse.Group.Groups[name]
 
-	if not groupData or not groupData.ID then
+    if not groupData or not groupData.ID then
         impulse.Group.DBRemoveByName(name)
         ply:Notify("No loaded group found, however, we have attempted to remove it from the database.")
-		return
-	end
-	
-	for v, k in pairs(groupData.Members) do
-		local targEnt = player.GetBySteamID(v)
+        return
+    end
+    
+    for v, k in pairs(groupData.Members) do
+        local targEnt = player.GetBySteamID(v)
 
-		if IsValid(targEnt) then
-			targEnt:SetSyncVar(SYNC_GROUP_NAME, nil, true)
-			targEnt:SetSyncVar(SYNC_GROUP_RANK, nil, true)
-			targEnt:Notify("You were removed from the "..name.." group as it has been removed by the staff team for violations of the RP group rules.")
-		end
-	end
+        if IsValid(targEnt) then
+            targEnt:SetSyncVar(SYNC_GROUP_NAME, nil, true)
+            targEnt:SetSyncVar(SYNC_GROUP_RANK, nil, true)
+            targEnt:Notify("You were removed from the "..name.." group as it has been removed by the staff team for violations of the RP group rules.")
+        end
+    end
 
-	impulse.Group.DBRemove(groupData.ID)
-	impulse.Group.DBRemovePlayerMass(groupData.ID)
-	impulse.Group.Groups[name] = nil
+    impulse.Group.DBRemove(groupData.ID)
+    impulse.Group.DBRemovePlayerMass(groupData.ID)
+    impulse.Group.Groups[name] = nil
 
     ply:Notify("The "..name.." group has been removed.")
 end)
@@ -121,8 +121,8 @@ net.Receive("impulseOpsSTDoRefund", function(len, ply)
 end)
 
 function impulse.Ops.ST.Open(ply)
-	net.Start("impulseOpsSTOpenTool")
-	net.Send(ply)
+    net.Start("impulseOpsSTOpenTool")
+    net.Send(ply)
 end
 
 function PLUGIN:PostInventorySetup(ply)

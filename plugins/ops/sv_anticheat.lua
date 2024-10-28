@@ -1,21 +1,21 @@
 util.AddNetworkString("opsUnderInvestigation")
 
 hook.Add("iac.CheaterConvicted", "iacCheaterLog", function(steamid, code, caseInfo)
-	for v, k in player.Iterator() do
-		if k:IsAdmin() then
-			k:AddChatText(Color(255, 0, 0), "[IAC CONVICTION] "..steamid.." code: "..code)
-		end
-	end
+    for v, k in player.Iterator() do
+        if k:IsAdmin() then
+            k:AddChatText(Color(255, 0, 0), "[IAC CONVICTION] "..steamid.." code: "..code)
+        end
+    end
 
-	if not impulse.YML.apis.discord_iac_webhook then return end
+    if not impulse.YML.apis.discord_iac_webhook then return end
 
-	caseInfo = caseInfo or {}
-	local evidence = ""
-	for v, k in pairs(caseInfo) do
-		if v == "detector" then continue end
+    caseInfo = caseInfo or {}
+    local evidence = ""
+    for v, k in pairs(caseInfo) do
+        if v == "detector" then continue end
 
-		evidence = evidence.."**"..tostring(v).."**: `"..tostring(k).."`\n"
-	end
+        evidence = evidence.."**"..tostring(v).."**: `"..tostring(k).."`\n"
+    end
 
     local embeds = {
         title = "IAC ban issued",
@@ -31,10 +31,10 @@ hook.Add("iac.CheaterConvicted", "iacCheaterLog", function(steamid, code, caseIn
                 name = "Code",
                 value = tostring(code)
             },
-			{
-				name = "Detector",
-				value = caseInfo.detector or "Generic"
-			},
+            {
+                name = "Detector",
+                value = caseInfo.detector or "Generic"
+            },
             {
                 name = "Evidence",
                 value = string.sub(tostring(evidence), 1, 800)

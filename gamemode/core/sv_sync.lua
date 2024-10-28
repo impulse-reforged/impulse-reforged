@@ -21,72 +21,72 @@ local ENTITY = FindMetaTable("Entity")
 -- @usage ent:Sync() -- syncs all SyncVar's with all players
 -- @usage ent:Sync(ply) -- syncs all SyncVar's with a single player
 function ENTITY:Sync(target)
-	local targetID = self:EntIndex()
-	local syncUser = impulse.Sync.Data[targetID]
+    local targetID = self:EntIndex()
+    local syncUser = impulse.Sync.Data[targetID]
 
-	for varID, syncData in pairs(syncUser) do
-		local value = syncData[1]
-		local syncRealm = syncData[2]
-		local syncType = impulse.Sync.Vars[varID]
-		local syncCondition = impulse.Sync.VarsConditional[varID]
+    for varID, syncData in pairs(syncUser) do
+        local value = syncData[1]
+        local syncRealm = syncData[2]
+        local syncType = impulse.Sync.Vars[varID]
+        local syncCondition = impulse.Sync.VarsConditional[varID]
 
-		if target and syncCondition and !syncCondition(target) then return end
-		
-		if syncRealm == SYNC_TYPE_PUBLIC then
-			if target then
-				if value == nil then
-					net.Start("impulseSyncRemoveVar")
-						net.WriteUInt(targetID, 16)
-						net.WriteUInt(varID, SYNC_ID_BITS)
-					net.Send(target)
-				else
-					net.Start("impulseSyncUpdate")
-						net.WriteUInt(targetID, 16)
-						net.WriteUInt(varID, SYNC_ID_BITS)
-						impulse.Sync:DoType(syncType, value)
-					net.Send(target)
-				end
-			else
-				local recipFilter = RecipientFilter()
+        if target and syncCondition and !syncCondition(target) then return end
+        
+        if syncRealm == SYNC_TYPE_PUBLIC then
+            if target then
+                if value == nil then
+                    net.Start("impulseSyncRemoveVar")
+                        net.WriteUInt(targetID, 16)
+                        net.WriteUInt(varID, SYNC_ID_BITS)
+                    net.Send(target)
+                else
+                    net.Start("impulseSyncUpdate")
+                        net.WriteUInt(targetID, 16)
+                        net.WriteUInt(varID, SYNC_ID_BITS)
+                        impulse.Sync:DoType(syncType, value)
+                    net.Send(target)
+                end
+            else
+                local recipFilter = RecipientFilter()
 
-				if syncCondition then
-					for v, k in player.Iterator() do
-						if syncCondition(k) then
-							recipFilter:AddPlayer(k)
-						end
-					end
-				else
-					recipFilter:AddAllPlayers()
-				end
+                if syncCondition then
+                    for v, k in player.Iterator() do
+                        if syncCondition(k) then
+                            recipFilter:AddPlayer(k)
+                        end
+                    end
+                else
+                    recipFilter:AddAllPlayers()
+                end
 
-				if value == nil then
-					net.Start("impulseSyncRemoveVar")
-						net.WriteUInt(targetID, 16)
-						net.WriteUInt(varID, SYNC_ID_BITS)
-					net.Send(recipFilter)
-				else
-					net.Start("impulseSyncUpdate")
-						net.WriteUInt(targetID, 16)
-						net.WriteUInt(varID, SYNC_ID_BITS)
-						impulse.Sync:DoType(syncType, value)
-					net.Send(recipFilter)
-				end
-			end
-		elseif target and target:IsPlayer() and target:EntIndex() == targetID then
-			if value == nil then
-				net.Start("impulseSyncRemoveVar")
-					net.WriteUInt(targetID, 16)
-					net.WriteUInt(varID, SYNC_ID_BITS)
-				net.Send(target)
-			else
-				net.Start("impulseSyncUpdatepdateClient")
-					net.WriteUInt(targetID, 8)
-					net.WriteUInt(varID, SYNC_ID_BITS)
-					impulse.Sync:DoType(syncType, value)
-				net.Send(target)
-			end
-		end
-	end
+                if value == nil then
+                    net.Start("impulseSyncRemoveVar")
+                        net.WriteUInt(targetID, 16)
+                        net.WriteUInt(varID, SYNC_ID_BITS)
+                    net.Send(recipFilter)
+                else
+                    net.Start("impulseSyncUpdate")
+                        net.WriteUInt(targetID, 16)
+                        net.WriteUInt(varID, SYNC_ID_BITS)
+                        impulse.Sync:DoType(syncType, value)
+                    net.Send(recipFilter)
+                end
+            end
+        elseif target and target:IsPlayer() and target:EntIndex() == targetID then
+            if value == nil then
+                net.Start("impulseSyncRemoveVar")
+                    net.WriteUInt(targetID, 16)
+                    net.WriteUInt(varID, SYNC_ID_BITS)
+                net.Send(target)
+            else
+                net.Start("impulseSyncUpdatepdateClient")
+                    net.WriteUInt(targetID, 8)
+                    net.WriteUInt(varID, SYNC_ID_BITS)
+                    impulse.Sync:DoType(syncType, value)
+                net.Send(target)
+            end
+        end
+    end
 end
 
 --- Sync's a single SyncVar on an entity with all clients or a single target if provided.
@@ -96,97 +96,97 @@ end
 -- @usage ent:SyncSingle(SYNC_MONEY) -- syncs the money SyncVar with all players
 -- @usage ent:SyncSingle(SYNC_MONEY, ply) -- syncs the money SyncVar with a single player
 function ENTITY:SyncSingle(varID, target)
-	local targetID = self:EntIndex()
-	local syncUser = impulse.Sync.Data[targetID]
-	local syncData = syncUser[varID]
-	local value = syncData[1]
-	local syncRealm = syncData[2]
-	local syncType = impulse.Sync.Vars[varID]
-	local syncCondition = impulse.Sync.VarsConditional[varID]
+    local targetID = self:EntIndex()
+    local syncUser = impulse.Sync.Data[targetID]
+    local syncData = syncUser[varID]
+    local value = syncData[1]
+    local syncRealm = syncData[2]
+    local syncType = impulse.Sync.Vars[varID]
+    local syncCondition = impulse.Sync.VarsConditional[varID]
 
-	if target and syncCondition and !syncCondition(target) then return end
+    if target and syncCondition and !syncCondition(target) then return end
 
-	if syncRealm == SYNC_TYPE_PUBLIC then
-		if target then
-			if value == nil then
-				net.Start("impulseSyncRemoveVar")
-					net.WriteUInt(targetID, 16)
-					net.WriteUInt(varID, SYNC_ID_BITS)
-				net.Send(target)
-			else
-				net.Start("impulseSyncUpdate")
-					net.WriteUInt(targetID, 16)
-					net.WriteUInt(varID, SYNC_ID_BITS)
-					impulse.Sync:DoType(syncType, value)
-				net.Send(target)
-			end
-		else
-			local recipFilter = RecipientFilter()
+    if syncRealm == SYNC_TYPE_PUBLIC then
+        if target then
+            if value == nil then
+                net.Start("impulseSyncRemoveVar")
+                    net.WriteUInt(targetID, 16)
+                    net.WriteUInt(varID, SYNC_ID_BITS)
+                net.Send(target)
+            else
+                net.Start("impulseSyncUpdate")
+                    net.WriteUInt(targetID, 16)
+                    net.WriteUInt(varID, SYNC_ID_BITS)
+                    impulse.Sync:DoType(syncType, value)
+                net.Send(target)
+            end
+        else
+            local recipFilter = RecipientFilter()
 
-			if syncCondition then
-				for v, k in player.Iterator() do
-					if syncCondition(k) then
-						recipFilter:AddPlayer(k)
-					end
-				end
-			else
-				recipFilter:AddAllPlayers()
-			end
+            if syncCondition then
+                for v, k in player.Iterator() do
+                    if syncCondition(k) then
+                        recipFilter:AddPlayer(k)
+                    end
+                end
+            else
+                recipFilter:AddAllPlayers()
+            end
 
-			if value == nil then
-				net.Start("impulseSyncRemoveVar")
-					net.WriteUInt(targetID, 16)
-					net.WriteUInt(varID, SYNC_ID_BITS)
-				net.Send(recipFilter)
-			else
-				net.Start("impulseSyncUpdate")
-					net.WriteUInt(targetID, 16)
-					net.WriteUInt(varID, SYNC_ID_BITS)
-					impulse.Sync:DoType(syncType, value)
-				net.Send(recipFilter)
-			end
-		end
-	elseif target and target:IsPlayer() and target:EntIndex() == targetID then
-		if value == nil then
-			net.Start("impulseSyncRemoveVar")
-				net.WriteUInt(targetID, 16)
-				net.WriteUInt(varID, SYNC_ID_BITS)
-			net.Send(target)
-		else
-			net.Start("impulseSyncUpdatepdateClient")
-				net.WriteUInt(targetID, 8)
-				net.WriteUInt(varID, SYNC_ID_BITS)
-				impulse.Sync:DoType(syncType, value)
-			net.Send(target)
-		end
-	end
+            if value == nil then
+                net.Start("impulseSyncRemoveVar")
+                    net.WriteUInt(targetID, 16)
+                    net.WriteUInt(varID, SYNC_ID_BITS)
+                net.Send(recipFilter)
+            else
+                net.Start("impulseSyncUpdate")
+                    net.WriteUInt(targetID, 16)
+                    net.WriteUInt(varID, SYNC_ID_BITS)
+                    impulse.Sync:DoType(syncType, value)
+                net.Send(recipFilter)
+            end
+        end
+    elseif target and target:IsPlayer() and target:EntIndex() == targetID then
+        if value == nil then
+            net.Start("impulseSyncRemoveVar")
+                net.WriteUInt(targetID, 16)
+                net.WriteUInt(varID, SYNC_ID_BITS)
+            net.Send(target)
+        else
+            net.Start("impulseSyncUpdatepdateClient")
+                net.WriteUInt(targetID, 8)
+                net.WriteUInt(varID, SYNC_ID_BITS)
+                impulse.Sync:DoType(syncType, value)
+            net.Send(target)
+        end
+    end
 end
 
 --- Removes all SyncVar's from an entity and update all players
 -- @realm server
 -- @usage ent:SyncRemove() -- removes all SyncVar's from the entity and updates all players
 function ENTITY:SyncRemove()
-	local targetID = self:EntIndex()
+    local targetID = self:EntIndex()
 
-	impulse.Sync.Data[targetID] = nil
+    impulse.Sync.Data[targetID] = nil
 
-	net.Start("impulseSyncRemove")
-		net.WriteUInt(targetID, 16)
-	net.Broadcast()	
+    net.Start("impulseSyncRemove")
+        net.WriteUInt(targetID, 16)
+    net.Broadcast()    
 end
 
 --- Removes a specific SyncVar from an entity and update all players
 -- @realm server
 -- @int varID Sync variable
 function ENTITY:SyncRemoveVar(varID)
-	local targetID = self:EntIndex()
+    local targetID = self:EntIndex()
 
-	impulse.Sync.Data[targetID][varID] = nil
+    impulse.Sync.Data[targetID][varID] = nil
 
-	net.Start("impulseSyncRemoveVar")
-		net.WriteUInt(targetID, 16)
-		net.WriteUInt(varID, SYNC_ID_BITS)
-	net.Broadcast()	
+    net.Start("impulseSyncRemoveVar")
+        net.WriteUInt(targetID, 16)
+        net.WriteUInt(varID, SYNC_ID_BITS)
+    net.Broadcast()    
 end
 
 --- Sets a Sync var on an entity
@@ -196,19 +196,19 @@ end
 -- @bool[opt=false] instantSync If we should network this to all players
 -- @usage ply:SetSyncVar(SYNC_XP, 60, true) -- sets money to 60 and networks the new value to all players
 function ENTITY:SetSyncVar(varID, newValue, instantSync)
-	local targetID = self:EntIndex()
-	local targetData = impulse.Sync.Data[targetID]
+    local targetID = self:EntIndex()
+    local targetData = impulse.Sync.Data[targetID]
 
-	if not targetData then
-		impulse.Sync.Data[targetID] = {}
-		targetData = impulse.Sync.Data[targetID]
-	elseif targetData[varID] and (type(newValue) != "table" and targetData[varID][1] == newValue) then return end
+    if not targetData then
+        impulse.Sync.Data[targetID] = {}
+        targetData = impulse.Sync.Data[targetID]
+    elseif targetData[varID] and (type(newValue) != "table" and targetData[varID][1] == newValue) then return end
 
-	targetData[varID] = {newValue, SYNC_TYPE_PUBLIC}
+    targetData[varID] = {newValue, SYNC_TYPE_PUBLIC}
 
-	if instantSync then
-		self:SyncSingle(varID)
-	end
+    if instantSync then
+        self:SyncSingle(varID)
+    end
 end
 
 --- Gets the Sync variable on an entity
@@ -219,14 +219,14 @@ end
 -- @usage print(ply:GetSyncVar(SYNC_XP, 0)) -- Print the player's XP, fallback to 0 if it's nil
 -- > 75
 function ENTITY:GetSyncVar(varID, fallback)
-	local targetData = impulse.Sync.Data[self.EntIndex(self)]
+    local targetData = impulse.Sync.Data[self.EntIndex(self)]
 
-	if targetData != nil then
-		if targetData[varID] != nil then
-			return targetData[varID][1]
-		end
-	end
-	return fallback
+    if targetData != nil then
+        if targetData[varID] != nil then
+            return targetData[varID][1]
+        end
+    end
+    return fallback
 end
 
 local ENTITY = FindMetaTable("Player")
@@ -239,9 +239,9 @@ local ENTITY = FindMetaTable("Player")
 -- @param newValue Value to set
 -- @usage ply:SetLocalSyncVar(SYNC_BANKMONEY, 600)
 function ENTITY:SetLocalSyncVar(varID, newValue)
-	local targetID = self:EntIndex()
-	local targetData = impulse.Sync.Data[targetID]
-	targetData[varID] = {newValue, SYNC_TYPE_PRIVATE}
+    local targetID = self:EntIndex()
+    local targetData = impulse.Sync.Data[targetID]
+    targetData[varID] = {newValue, SYNC_TYPE_PRIVATE}
 
-	self:SyncSingle(varID, self)
+    self:SyncSingle(varID, self)
 end

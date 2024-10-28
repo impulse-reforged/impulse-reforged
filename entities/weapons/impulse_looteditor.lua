@@ -67,17 +67,17 @@ function SWEP:PrimaryAttack()
     if ( !self.nextPrimaryAttack ) then self.nextPrimaryAttack = 0 end
     if ( CurTime() < self.nextPrimaryAttack ) then return end
 
-	local owner = self:GetOwner()
+    local owner = self:GetOwner()
 
-	local tr = util.GetPlayerTrace( owner )
-	tr.mask = toolmask
-	tr.mins = vector_origin
-	tr.maxs = tr.mins
-	local trace = util.TraceLine( tr )
-	if ( !trace.Hit ) then trace = util.TraceHull( tr ) end
-	if ( !trace.Hit ) then return end
+    local tr = util.GetPlayerTrace( owner )
+    tr.mask = toolmask
+    tr.mins = vector_origin
+    tr.maxs = tr.mins
+    local trace = util.TraceLine( tr )
+    if ( !trace.Hit ) then trace = util.TraceHull( tr ) end
+    if ( !trace.Hit ) then return end
 
-	self:DoShootEffect( trace.HitPos, trace.HitNormal, trace.Entity, trace.PhysicsBone, IsFirstTimePredicted() )
+    self:DoShootEffect( trace.HitPos, trace.HitNormal, trace.Entity, trace.PhysicsBone, IsFirstTimePredicted() )
 
     self.nextPrimaryAttack = CurTime() + self.Primary.Delay
 

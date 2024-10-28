@@ -8,7 +8,7 @@
 -- @param card The card panel that is used to display the item. You can use this to get the item data by calling card.Item
 -- @treturn bool Should we allow the dropdown menu to be populated?
 -- @usage hook.Add("PrePopulateInventoryItemMenu", "MyUniqueHookID", function(card)
--- 	    return LocalPlayer():IsAdmin() -- Only allow admins to interact with the item
+--         return LocalPlayer():IsAdmin() -- Only allow admins to interact with the item
 -- end)
 function PrePopulateInventoryItemMenu(card)
 end
@@ -18,9 +18,9 @@ end
 -- @param card The card panel that is used to display the item. You can use this to get the item data by calling card.Item
 -- @param popup The dropdown menu that is used to show you actions you can do with the item, such as dropping it
 -- @usage hook.Add("PostPopulateInventoryItemMenu", "MyUniqueHookID", function(card, popup)
--- 	    popup:AddOption("My Custom Action", function()
--- 	        print("You clicked the custom action!")
--- 	    end)
+--         popup:AddOption("My Custom Action", function()
+--             print("You clicked the custom action!")
+--         end)
 -- end)
 function PostPopulateInventoryItemMenu(card, popup)
 end

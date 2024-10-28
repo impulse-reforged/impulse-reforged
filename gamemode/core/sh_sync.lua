@@ -51,19 +51,19 @@ local meta = FindMetaTable("Entity")
 -- @see SyncTypes
 -- @usage SYNC_XP = impulse.Sync:RegisterVar(SYNC_INT)
 function impulse.Sync:RegisterVar(type, conditional)
-	syncVarsID = syncVarsID + 1
+    syncVarsID = syncVarsID + 1
 
-	if syncVarsID > SYNC_MAX_VARS then
-		print("[impulse-reforged] WARNING: Sync var limit hit! (255)")
-	end
+    if syncVarsID > SYNC_MAX_VARS then
+        print("[impulse-reforged] WARNING: Sync var limit hit! (255)")
+    end
 
-	impulse.Sync.Vars[syncVarsID] = type
+    impulse.Sync.Vars[syncVarsID] = type
 
-	if conditional then
-		impulse.Sync.VarsConditional[syncVarsID] = conditional
-	end
+    if conditional then
+        impulse.Sync.VarsConditional[syncVarsID] = conditional
+    end
 
-	return syncVarsID
+    return syncVarsID
 end
 
 local ioRegister = {}
@@ -76,80 +76,80 @@ ioRegister[CLIENT] = {}
 -- @int type SyncType
 -- @param value
 function impulse.Sync:DoType(type, value)
-	return ioRegister[SERVER or CLIENT][type](value)
+    return ioRegister[SERVER or CLIENT][type](value)
 end
 
 if ( CLIENT ) then
-	--- Gets the Sync variable on an entity
-	-- @realm shared
-	-- @int varID Sync variable (EG: SYNC_MONEY)
-	-- @param fallback If we don't know the value we will fallback to this value
-	-- @return value
-	-- @usage local xp = ply:GetSyncVar(SYNC_XP, 0)
-	function meta:GetSyncVar(varID, fallback)
-		local targetData = impulse.Sync.Data[self.EntIndex(self)]
+    --- Gets the Sync variable on an entity
+    -- @realm shared
+    -- @int varID Sync variable (EG: SYNC_MONEY)
+    -- @param fallback If we don't know the value we will fallback to this value
+    -- @return value
+    -- @usage local xp = ply:GetSyncVar(SYNC_XP, 0)
+    function meta:GetSyncVar(varID, fallback)
+        local targetData = impulse.Sync.Data[self.EntIndex(self)]
 
-		if targetData != nil then
-			if targetData[varID] != nil then
-				return targetData[varID]
-			end
-		end
-		return fallback
-	end
+        if targetData != nil then
+            if targetData[varID] != nil then
+                return targetData[varID]
+            end
+        end
+        return fallback
+    end
 
-	net.Receive("impulseSyncUpdate", function(len)
-		local targetID = net.ReadUInt(16)
-		local varID = net.ReadUInt(SYNC_ID_BITS)
-		local syncType = impulse.Sync.Vars[varID]
-		local newValue = impulse.Sync:DoType(syncType)
-		local targetData = impulse.Sync.Data[targetID]
+    net.Receive("impulseSyncUpdate", function(len)
+        local targetID = net.ReadUInt(16)
+        local varID = net.ReadUInt(SYNC_ID_BITS)
+        local syncType = impulse.Sync.Vars[varID]
+        local newValue = impulse.Sync:DoType(syncType)
+        local targetData = impulse.Sync.Data[targetID]
 
-		if not targetData then
-			impulse.Sync.Data[targetID] = {}
-			targetData = impulse.Sync.Data[targetID]
-		end
+        if not targetData then
+            impulse.Sync.Data[targetID] = {}
+            targetData = impulse.Sync.Data[targetID]
+        end
 
-		targetData[varID] = newValue
+        targetData[varID] = newValue
 
-		hook.Run("OnSyncUpdate", varID, targetID, newValue)
-	end)
+        hook.Run("OnSyncUpdate", varID, targetID, newValue)
+    end)
 
-	net.Receive("impulseSyncUpdatepdateClient", function(len)
-		local targetID = net.ReadUInt(8)
-		local varID = net.ReadUInt(SYNC_ID_BITS)
-		local syncType = impulse.Sync.Vars[varID]
-		local newValue = impulse.Sync:DoType(syncType)
-		local targetData = impulse.Sync.Data[targetID]
+    net.Receive("impulseSyncUpdatepdateClient", function(len)
+        local targetID = net.ReadUInt(8)
+        local varID = net.ReadUInt(SYNC_ID_BITS)
+        local syncType = impulse.Sync.Vars[varID]
+        local newValue = impulse.Sync:DoType(syncType)
+        local targetData = impulse.Sync.Data[targetID]
 
-		if not targetData then
-			impulse.Sync.Data[targetID] = {}
-			targetData = impulse.Sync.Data[targetID]
-		end
+        if not targetData then
+            impulse.Sync.Data[targetID] = {}
+            targetData = impulse.Sync.Data[targetID]
+        end
 
-		targetData[varID] = newValue
+        targetData[varID] = newValue
 
-		hook.Run("OnSyncUpdate", varID, targetID, newValue)
-	end)
+        hook.Run("OnSyncUpdate", varID, targetID, newValue)
+    end)
 
-	net.Receive("impulseSyncRemove", function()
-		local targetID = net.ReadUInt(16)
+    net.Receive("impulseSyncRemove", function()
+        local targetID = net.ReadUInt(16)
 
-		impulse.Sync.Data[targetID] = nil
-	end)
+        impulse.Sync.Data[targetID] = nil
+    end)
 
-	net.Receive("impulseSyncRemoveVar", function()
-		local targetID = net.ReadUInt(16)
-		local varID = net.ReadUInt(SYNC_ID_BITS)
-		local syncEnt = impulse.Sync.Data[targetID]
+    net.Receive("impulseSyncRemoveVar", function()
+        local targetID = net.ReadUInt(16)
+        local varID = net.ReadUInt(SYNC_ID_BITS)
+        local syncEnt = impulse.Sync.Data[targetID]
 
-		if syncEnt then
-			if impulse.Sync.Data[targetID][varID] != nil then
-				impulse.Sync.Data[targetID][varID] = nil
-			end
-		end
+        if syncEnt then
+            if impulse.Sync.Data[targetID][varID] != nil then
+                impulse.Sync.Data[targetID][varID] = nil
+            end
+        end
 
-		hook.Run("OnSyncUpdate", varID, targetID)
-	end)
+        hook.Run("OnSyncUpdate", varID, targetID)
+    end)
 end
 
 -- Declare some sync var types and how they are read/written
@@ -166,23 +166,23 @@ ioRegister[CLIENT][SYNC_STRING] = function(val) return net.ReadString() end
 ioRegister[SERVER][SYNC_MINITABLE] = function(val) return net.WriteData(pon.encode(val), 32) end
 ioRegister[CLIENT][SYNC_MINITABLE] = function(val) return pon.decode(net.ReadData(32)) end
 ioRegister[SERVER][SYNC_INTSTACK] = function(val) 
-	local count = net.WriteUInt(#val, 8)
+    local count = net.WriteUInt(#val, 8)
 
-	for v, k in pairs(val) do
-		net.WriteUInt(k, 8)
-	end
+    for v, k in pairs(val) do
+        net.WriteUInt(k, 8)
+    end
 
-	return
+    return
 end
 ioRegister[CLIENT][SYNC_INTSTACK] = function(val) 
-	local count = net.ReadUInt(8)
-	local compiled =  {}
+    local count = net.ReadUInt(8)
+    local compiled =  {}
 
-	for k = 1, count do
-		table.insert(compiled, (net.ReadUInt(8)))
-	end
+    for k = 1, count do
+        table.insert(compiled, (net.ReadUInt(8)))
+    end
 
-	return compiled
+    return compiled
 end
 
 --- Default Sync variables

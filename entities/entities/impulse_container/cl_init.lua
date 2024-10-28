@@ -1,18 +1,18 @@
 include("shared.lua")
 
 function ENT:Draw()
-	self:DrawModel()
+    self:DrawModel()
 end
 
 function ENT:Think()
-	if not self.LootSet and self:GetLoot() then
-		self.HUDName = "Lootable Container"
-		self.HUDDesc = "Press E to loot this container."
+    if not self.LootSet and self:GetLoot() then
+        self.HUDName = "Lootable Container"
+        self.HUDDesc = "Press E to loot this container."
 
-		self.LootSet = true
-	end
+        self.LootSet = true
+    end
 
-	self:SetNextClientThink(CurTime() + 0.25)
+    self:SetNextClientThink(CurTime() + 0.25)
 
-	return true
+    return true
 end

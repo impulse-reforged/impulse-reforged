@@ -23,7 +23,7 @@ function impulse.Util:IsEmpty(vector, ignore) -- findpos and isempty are from da
         end
     end
 
-	return a and b
+    return a and b
 end
 
 function impulse.Util:FindEmptyPos(pos, ignore, distance, step, area)

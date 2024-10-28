@@ -213,6 +213,8 @@ end
 -- @string b Second string to check
 -- @treturn bool Whether or not the strings are equivalent
 function impulse.Util:StringMatches(a, b)
+    if (!a or !b) then return false end
+
     if (a and b) then
         a = tostring(a)
         b = tostring(b)
@@ -238,6 +240,8 @@ end
 -- @string b Second string to check
 -- @treturn bool Whether or not the strings are equivalent
 function impulse.Util:StringMatchesTable(a, b)
+    if (!a or !b) then return false end
+
     if (a and b) then
         a = tostring(a)
         b = tostring(b)

@@ -63,15 +63,15 @@ local adminGroups = {
 -- @realm shared
 -- @treturn bool Is admin
 function PLAYER:IsAdmin()
-    if ( self.IsSuperAdmin(self) ) then
-        return true
-    end
-
-    if ( adminGroups[self.GetUserGroup(self)] ) then
-        return true
-    end
-
     if ( hook.Run("PlayerIsAdmin", self) ) then
+        return true
+    end
+
+    if ( self:IsSuperAdmin() ) then
+        return true
+    end
+
+    if ( adminGroups[self:GetUserGroup()] ) then
         return true
     end
 
@@ -87,15 +87,15 @@ local leadAdminGroups = {
 -- @realm shared
 -- @treturn bool Is lead admin
 function PLAYER:IsLeadAdmin()
-    if ( self.IsSuperAdmin(self) ) then
-        return true
-    end
-
-    if ( leadAdminGroups[self.GetUserGroup(self)] ) then
-        return true
-    end
-
     if ( hook.Run("PlayerIsLeadAdmin", self) ) then
+        return true
+    end
+
+    if ( self:IsSuperAdmin() ) then
+        return true
+    end
+
+    if ( leadAdminGroups[self:GetUserGroup()] ) then
         return true
     end
 
@@ -106,11 +106,11 @@ end
 -- @realm shared
 -- @treturn bool Is super admin
 function PLAYER:IsSuperAdmin()
-    if ( self.GetUserGroup(self) == "superadmin" ) then
+    if ( hook.Run("PlayerIsSuperAdmin", self) ) then
         return true
     end
 
-    if ( hook.Run("PlayerIsSuperAdmin", self) ) then
+    if ( self:GetUserGroup() == "superadmin" ) then
         return true
     end
 
@@ -136,6 +136,8 @@ end
 -- @realm shared
 -- @treturn bool Is female
 function PLAYER:IsCharacterFemale()
+    hook.Run("PlayerIsCharacterFemale", self)
+
     if ( SERVER ) then
         return self:IsFemale(self.defaultModel)
     else

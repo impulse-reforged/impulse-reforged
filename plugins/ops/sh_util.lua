@@ -810,7 +810,7 @@ if GExtension then
                 net.WriteString(reason)
                 net.Send(plyTarget)
 
-            	local steamid = plyTarget:SteamID64()
+                local steamid = plyTarget:SteamID64()
                 local embeds = {
                     title = "Warning issued",
                     description = "User was warned by a staff member.",

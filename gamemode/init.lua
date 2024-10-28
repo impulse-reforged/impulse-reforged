@@ -20,12 +20,12 @@ RunConsoleCommand("sv_allowdownload", "0")
 RunConsoleCommand("sv_allowcslua", "0")
 
 if engine.ActiveGamemode() == "impulse-reforged" then
-	local gs = ""
-	for k, v in pairs(engine.GetGamemodes()) do
-		if v.name:find("impulse") and v.name != "impulse-reforged" then
-			gs = gs .. v.name .. "\n"
-		end
-	end
+    local gs = ""
+    for k, v in pairs(engine.GetGamemodes()) do
+        if v.name:find("impulse") and v.name != "impulse-reforged" then
+            gs = gs .. v.name .. "\n"
+        end
+    end
 
-	SetGlobalString("impulse_fatalerror", "No schema loaded. Please place the schema in your gamemodes folder, then set it as your gamemode.\n\nInstalled available schemas:\n"..gs)
+    SetGlobalString("impulse_fatalerror", "No schema loaded. Please place the schema in your gamemodes folder, then set it as your gamemode.\n\nInstalled available schemas:\n"..gs)
 end

@@ -3,40 +3,40 @@ local PANEL = {}
 local baseSizeW, baseSizeH = 300, 20
 
 function PANEL:Init()
-	self:SetSize(baseSizeW, baseSizeH)
+    self:SetSize(baseSizeW, baseSizeH)
 
-	self.message = markup.Parse("")
-	self.startTime = CurTime()
-	self.endTime = CurTime() + 7.5
+    self.message = markup.Parse("")
+    self.startTime = CurTime()
+    self.endTime = CurTime() + 7.5
 
-	self:MakePopup()
-	self:SetKeyboardInputEnabled(false)
-	self:SetMouseInputEnabled(false)
+    self:MakePopup()
+    self:SetKeyboardInputEnabled(false)
+    self:SetMouseInputEnabled(false)
 end
 
 function PANEL:SetMessage(...)
-	-- Encode message into markup
-	local msg = "<font=Impulse-Elements18>"
+    -- Encode message into markup
+    local msg = "<font=Impulse-Elements18>"
 
-	for k, v in ipairs({...}) do
-		if type(v) == "table" then
-			msg = msg.."<color="..v.r..","..v.g..","..v.b..">"
-		elseif type(v) == "Player" then
-			local col = team.GetColor(v:Team())
-			msg= msg.."<color="..col.r..","..col.g..","..col.b..">"..tostring(v:Name()):gsub("<", "&lt;"):gsub(">", "&gt;").."</color>"
-		else
-			msg = msg..tostring(v):gsub("<", "&lt;"):gsub(">", "&gt;")
-		end
-	end
-	msg = msg.."</font>"
+    for k, v in ipairs({...}) do
+        if type(v) == "table" then
+            msg = msg.."<color="..v.r..","..v.g..","..v.b..">"
+        elseif type(v) == "Player" then
+            local col = team.GetColor(v:Team())
+            msg= msg.."<color="..col.r..","..col.g..","..col.b..">"..tostring(v:Name()):gsub("<", "&lt;"):gsub(">", "&gt;").."</color>"
+        else
+            msg = msg..tostring(v):gsub("<", "&lt;"):gsub(">", "&gt;")
+        end
+    end
+    msg = msg.."</font>"
 
-	-- parse
-	self.message = markup.Parse(msg, baseSizeW-20)
+    -- parse
+    self.message = markup.Parse(msg, baseSizeW-20)
 
-	-- set frame position and height to suit the markup
-	local shiftHeight = self.message:GetHeight()
-	self:SetHeight(shiftHeight+baseSizeH)
-	surface.PlaySound("buttons/lightswitch2.wav")
+    -- set frame position and height to suit the markup
+    local shiftHeight = self.message:GetHeight()
+    self:SetHeight(shiftHeight+baseSizeH)
+    surface.PlaySound("buttons/lightswitch2.wav")
 end
 
 local gradient = Material("vgui/gradient-r")
@@ -46,27 +46,27 @@ local hudBlackGrad = Color(40,40,40,120)
 local lifetime = 10
 
 function PANEL:Paint(w,h)
-	-- draw frame
-	impulse.Util:DrawBlur(self)
+    -- draw frame
+    impulse.Util:DrawBlur(self)
 
-	surface.SetDrawColor(darkCol)
-	surface.DrawRect(0,0,w,h)
-	
-	surface.SetDrawColor(darkCol)
-	surface.SetMaterial(gradient)
-	surface.DrawTexturedRect(0,0,w,h)
+    surface.SetDrawColor(darkCol)
+    surface.DrawRect(0,0,w,h)
+    
+    surface.SetDrawColor(darkCol)
+    surface.SetMaterial(gradient)
+    surface.DrawTexturedRect(0,0,w,h)
 
-	-- draw message
-	self.message:Draw(10,10, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+    -- draw message
+    self.message:Draw(10,10, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 
-	-- draw timebar
-	local w2 = math.TimeFraction(self.startTime, self.endTime, CurTime()) * w
-	surface.SetDrawColor(Color(255,255,255))
-	surface.DrawRect(w2, h-2, w - w2, 2)
+    -- draw timebar
+    local w2 = math.TimeFraction(self.startTime, self.endTime, CurTime()) * w
+    surface.SetDrawColor(Color(255,255,255))
+    surface.DrawRect(w2, h-2, w - w2, 2)
 end
 
 function PANEL:Think()
-	self:MoveToFront()
+    self:MoveToFront()
 end
 
 vgui.Register("impulseNotify", PANEL, "DPanel")

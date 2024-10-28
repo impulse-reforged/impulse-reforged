@@ -13,8 +13,8 @@ local busID = 0
 -- @param buyableData Buyable data
 -- @see BuyableData
 function impulse.Business.Define(name, buyableData)
-	busID = busID + 1
-	buyableData.key = name
+    busID = busID + 1
+    buyableData.key = name
     impulse.Business.Data[name] = buyableData
     impulse.Business.DataRef[busID] = name
 end
@@ -23,15 +23,15 @@ end
 -- @realm shared
 -- @string name Buyable name
 function meta:CanBuy(name)
-	local buyable = impulse.Business.Data[name]
+    local buyable = impulse.Business.Data[name]
 
-	if buyable.teams and !table.HasValue(buyable.teams, self:Team()) then return false end
+    if buyable.teams and !table.HasValue(buyable.teams, self:Team()) then return false end
 
-	if buyable.classes and !table.HasValue(buyable.classes, self:GetTeamClass()) then return false end
+    if buyable.classes and !table.HasValue(buyable.classes, self:GetTeamClass()) then return false end
 
-	if buyable.customCheck and !buyable.customCheck(self) then return false end
+    if buyable.customCheck and !buyable.customCheck(self) then return false end
 
-	return true
+    return true
 end
 
 --- Spawns a buyable as an entity
@@ -42,49 +42,49 @@ end
 -- @entity owner Owner player
 -- @internal
 function impulse.SpawnBuyable(pos, ang, buyable, owner)
-	local spawnedBuyable
+    local spawnedBuyable
 
-	if buyable.bench then
-		spawnedBuyable = impulse.Inventory.SpawnBench(buyable.bench, pos, ang)
-	else
-		spawnedBuyable = ents.Create(buyable.entity)
+    if buyable.bench then
+        spawnedBuyable = impulse.Inventory.SpawnBench(buyable.bench, pos, ang)
+    else
+        spawnedBuyable = ents.Create(buyable.entity)
 
-		if buyable.model then
-			spawnedBuyable:SetModel(buyable.model)
-		end
+        if buyable.model then
+            spawnedBuyable:SetModel(buyable.model)
+        end
 
-		spawnedBuyable:SetPos(pos)
-		spawnedBuyable:Spawn()
-	end
+        spawnedBuyable:SetPos(pos)
+        spawnedBuyable:Spawn()
+    end
 
-	if buyable.removeOnTeamSwitch then
-		owner.BuyableTeamRemove = owner.BuyableTeamRemove or {}
-		table.insert(owner.BuyableTeamRemove, spawnedBuyable)
-	end
+    if buyable.removeOnTeamSwitch then
+        owner.BuyableTeamRemove = owner.BuyableTeamRemove or {}
+        table.insert(owner.BuyableTeamRemove, spawnedBuyable)
+    end
 
-	if buyable.postSpawn then
-		buyable.postSpawn(spawnedBuyable, owner)
-	end
+    if buyable.postSpawn then
+        buyable.postSpawn(spawnedBuyable, owner)
+    end
 
-	spawnedBuyable.BuyableOwner = owner
+    spawnedBuyable.BuyableOwner = owner
 
-	if spawnedBuyable.CPPISetOwner then
-		spawnedBuyable:CPPISetOwner(owner)
-	end
-	
-	spawnedBuyable.IsBuyable = true
+    if spawnedBuyable.CPPISetOwner then
+        spawnedBuyable:CPPISetOwner(owner)
+    end
+    
+    spawnedBuyable.IsBuyable = true
 
-	if buyable.refund then
-		local class = "buy_"..buyable.key
-		local sid = owner:SteamID()
-		impulse.Refunds.Add(sid, class)
+    if buyable.refund then
+        local class = "buy_"..buyable.key
+        local sid = owner:SteamID()
+        impulse.Refunds.Add(sid, class)
 
-		spawnedBuyable:CallOnRemove("RefundDestroy", function(ent)
-			impulse.Refunds.Remove(sid, class)
-		end, class, sid)
-	end
+        spawnedBuyable:CallOnRemove("RefundDestroy", function(ent)
+            impulse.Refunds.Remove(sid, class)
+        end, class, sid)
+    end
 
-	return spawnedBuyable
+    return spawnedBuyable
 end
 
 --- A collection of data that defines how a buyable will behave

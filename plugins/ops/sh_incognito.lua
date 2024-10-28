@@ -1,5 +1,5 @@
 function meta:IsIncognito()
-	return self:GetSyncVar(SYNC_INCOGNITO, false)
+    return self:GetSyncVar(SYNC_INCOGNITO, false)
 end
 
 local incognitoCommand = {
@@ -7,13 +7,13 @@ local incognitoCommand = {
     requiresArg = false,
     adminOnly = true,
     onRun = function(ply, arg, rawText)
-    	ply:SetSyncVar(SYNC_INCOGNITO, !ply:IsIncognito(), true)
+        ply:SetSyncVar(SYNC_INCOGNITO, !ply:IsIncognito(), true)
 
-    	if ply:IsIncognito() then
-    		ply:Notify("You have entered incognito mode. Please go back to normal mode as soon as you can.")
-    	else
-    		ply:Notify("You have exited incognito mode.")
-    	end
+        if ply:IsIncognito() then
+            ply:Notify("You have entered incognito mode. Please go back to normal mode as soon as you can.")
+        else
+            ply:Notify("You have exited incognito mode.")
+        end
     end
 }
 

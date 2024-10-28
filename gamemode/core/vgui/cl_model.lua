@@ -3,52 +3,52 @@
 local PANEL = {}
 
 local otaModels = {
-	["models/combine_soldier.mdl"] = true,
-	["models/combine_soldier_prisonguard.mdl"] = true,
-	["models/combine_super_soldier.mdl"] = true
+    ["models/combine_soldier.mdl"] = true,
+    ["models/combine_soldier_prisonguard.mdl"] = true,
+    ["models/combine_super_soldier.mdl"] = true
 }
 function PANEL:Init()
-	self.OldSetModel = self.SetModel
-	self.SetModel = function(self, model, skin, hidden)
-		self:OldSetModel(model)
+    self.OldSetModel = self.SetModel
+    self.SetModel = function(self, model, skin, hidden)
+        self:OldSetModel(model)
 
-		local entity = self.Entity
+        local entity = self.Entity
 
-		if (skin) then
-			entity:SetSkin(skin)
-		end
+        if (skin) then
+            entity:SetSkin(skin)
+        end
 
-		local sequence = entity:SelectWeightedSequence(ACT_IDLE)
+        local sequence = entity:SelectWeightedSequence(ACT_IDLE)
 
-		if otaModels[model] or (sequence <= 0) then
-			sequence = entity:LookupSequence("idle_unarmed")
-		end
+        if otaModels[model] or (sequence <= 0) then
+            sequence = entity:LookupSequence("idle_unarmed")
+        end
 
-		if (sequence > 0) then
-			entity:ResetSequence(sequence)
-		else
-			local found = false
+        if (sequence > 0) then
+            entity:ResetSequence(sequence)
+        else
+            local found = false
 
-			for k, v in ipairs(entity:GetSequenceList()) do
-				if ((v:lower():find("idle") or v:lower():find("fly")) and v != "idlenoise") then
-					entity:ResetSequence(v)
-					found = true
+            for k, v in ipairs(entity:GetSequenceList()) do
+                if ((v:lower():find("idle") or v:lower():find("fly")) and v != "idlenoise") then
+                    entity:ResetSequence(v)
+                    found = true
 
-					break
-				end
-			end
+                    break
+                end
+            end
 
-			if (!found) then
-				entity:ResetSequence(4)
-			end
-		end
+            if (!found) then
+                entity:ResetSequence(4)
+            end
+        end
 
-		entity:SetIK(false)
-	end
+        entity:SetIK(false)
+    end
 end
 
 function PANEL:LayoutEntity()
-	self:RunAnimation()
+    self:RunAnimation()
 end
 
 vgui.Register("impulseModelPanel", PANEL, "DModelPanel")

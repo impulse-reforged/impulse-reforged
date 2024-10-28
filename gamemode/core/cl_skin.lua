@@ -8,9 +8,9 @@ local HIGHLIGHT = Color(14, 141, 201)
 
 SKIN = {}
 
-SKIN.PrintName 		= "impulse"
-SKIN.Author 		= "vin"
-SKIN.DermaVersion	= 1
+SKIN.PrintName         = "impulse"
+SKIN.Author         = "vin"
+SKIN.DermaVersion    = 1
 SKIN.fontFrame = "Impulse-UI-SmallFont"
 SKIN.fontTab = "Impulse-UI-SmallFont"
 SKIN.fontButton = "Impulse-UI-SmallFont"
@@ -34,32 +34,32 @@ local topCol = Color(30, 30, 30, 200)
 local bodyCol = Color(80, 80, 80, 100)
 local bodyColOp = Color(80, 80, 80, 200)
 function SKIN:PaintFrame(panel, w, h)
-	impulse.Util:DrawBlur(panel)
-	
-	draw.RoundedBox(0, 0, 0, w, h, topCol) -- this is the body of the frame
+    impulse.Util:DrawBlur(panel)
+    
+    draw.RoundedBox(0, 0, 0, w, h, topCol) -- this is the body of the frame
     draw.RoundedBox(0, 0, 0, w, 25, bodyCol) -- this is the "top bar" of the derma frame
 end
 
 function SKIN:PaintMenuBar(panel, w, h)
-	draw.RoundedBox(0, 0, 0, w, h, bodyColOp)
+    draw.RoundedBox(0, 0, 0, w, h, bodyColOp)
 end
 
 local btnCol = Color(80, 80, 80, 255)
 function SKIN:PaintButton(panel) -- button skin from ns edited
-	if (panel:GetPaintBackground()) then
-		local w, h = panel:GetWide(), panel:GetTall()
-		local alpha = 200
+    if (panel:GetPaintBackground()) then
+        local w, h = panel:GetWide(), panel:GetTall()
+        local alpha = 200
 
-    	if (panel:GetDisabled()) then
-			alpha = 10
-		elseif (panel.Depressed) then
-			alpha = 70
-		elseif (panel.Hovered) then
-			alpha = 150
-		end
-		surface.SetDrawColor(ColorAlpha(btnCol, alpha))
-		surface.DrawRect(0, 0, w, h)
-	end
+        if (panel:GetDisabled()) then
+            alpha = 10
+        elseif (panel.Depressed) then
+            alpha = 70
+        elseif (panel.Hovered) then
+            alpha = 150
+        end
+        surface.SetDrawColor(ColorAlpha(btnCol, alpha))
+        surface.DrawRect(0, 0, w, h)
+    end
 end
 
 function SKIN:PaintWindowMinimizeButton( panel, w, h ) -- dont need these
@@ -71,14 +71,14 @@ function SKIN:PaintWindowMaximizeButton( panel, w, h )
 end
 
 function SKIN:DrawGenericBackground(x, y, w, h)
-	surface.SetDrawColor(45, 90, 45, 240)
-	surface.DrawRect(x, y, w, h)
+    surface.SetDrawColor(45, 90, 45, 240)
+    surface.DrawRect(x, y, w, h)
 
-	surface.SetDrawColor(ColorAlpha(color_black, 180))
-	surface.DrawOutlinedRect(x, y, w, h)
+    surface.SetDrawColor(ColorAlpha(color_black, 180))
+    surface.DrawOutlinedRect(x, y, w, h)
 
-	surface.SetDrawColor(100, 100, 100, 25)
-	surface.DrawOutlinedRect(x + 1, y + 1, w - 2, h - 2)
+    surface.SetDrawColor(100, 100, 100, 25)
+    surface.DrawOutlinedRect(x + 1, y + 1, w - 2, h - 2)
 end
 
 function SKIN:PaintVScrollBar(panel, w, h)
@@ -93,32 +93,32 @@ function SKIN:PaintScrollBarGrip(panel, w, h)
 end
 
 function SKIN:PaintButtonDown(panel, w, h)
-	if !panel.m_bBackground then return end
+    if !panel.m_bBackground then return end
 
-	if panel.Depressed || panel:IsSelected() then
-		return self.tex.Scroller.DownButton_Down( 0, 0, w, h )
-	end
+    if panel.Depressed || panel:IsSelected() then
+        return self.tex.Scroller.DownButton_Down( 0, 0, w, h )
+    end
 
-	if panel.Hovered then
-		return self.tex.Scroller.DownButton_Hover(0, 0, w, h, Color(130, 130, 130, 200))
-	end
+    if panel.Hovered then
+        return self.tex.Scroller.DownButton_Hover(0, 0, w, h, Color(130, 130, 130, 200))
+    end
 
-	self.tex.Scroller.DownButton_Normal(0, 0, w, h, Color(90, 90, 90, 200))
+    self.tex.Scroller.DownButton_Normal(0, 0, w, h, Color(90, 90, 90, 200))
 end
 
 function SKIN:PaintButtonUp( panel, w, h )
 
-	if ( !panel.m_bBackground ) then return end
+    if ( !panel.m_bBackground ) then return end
 
-	if ( panel.Depressed || panel:IsSelected() ) then
-		return self.tex.Scroller.UpButton_Down( 0, 0, w, h )
-	end
+    if ( panel.Depressed || panel:IsSelected() ) then
+        return self.tex.Scroller.UpButton_Down( 0, 0, w, h )
+    end
 
-	if ( panel.Hovered ) then
-		return self.tex.Scroller.UpButton_Hover( 0, 0, w, h, Color(130, 130, 130, 200))
-	end
+    if ( panel.Hovered ) then
+        return self.tex.Scroller.UpButton_Hover( 0, 0, w, h, Color(130, 130, 130, 200))
+    end
 
-	self.tex.Scroller.UpButton_Normal(0, 0, w, h, Color(90, 90, 90, 200))
+    self.tex.Scroller.UpButton_Normal(0, 0, w, h, Color(90, 90, 90, 200))
 
 end
 
@@ -130,18 +130,18 @@ function SKIN:PaintWindowCloseButton(panel, w, h)
     local tbl = self:GetTable(panel)
     tbl.HoverTime = tbl.HoverTime or 0
 
-	if not panel.m_bBackground then return end
+    if not panel.m_bBackground then return end
 
-	if panel:GetDisabled() then return end
+    if panel:GetDisabled() then return end
 
-	if panel.Hovered then
+    if panel.Hovered then
         tbl.HoverTime = SysTime()
-	end
+    end
 
-	if panel.Depressed and panel:IsSelected() then
-		surface.SetDrawColor(depressedCol)
+    if panel.Depressed and panel:IsSelected() then
+        surface.SetDrawColor(depressedCol)
         surface.DrawRect(0,1,w,h)
-	else
+    else
         local fraction = 1 - math.Clamp(Lerp((SysTime() - tbl.HoverTime) * 2, 0, 1), 0, 1)
         surface.SetDrawColor(232, 17, 35, 255* fraction)
         surface.DrawRect(0, 1, w, h)
@@ -159,27 +159,27 @@ function SKIN:PaintComboBox(panel, w, h)
 end
 
 function SKIN:PaintListBox(panel, w, h)
-	self.tex.Input.ListBox.Background(0, 0, w, h)
+    self.tex.Input.ListBox.Background(0, 0, w, h)
 end
 
 function SKIN:PaintProgress(panel, w, h)
-	surface.SetDrawColor(DARK_25)
-	surface.DrawRect(0, 0, w, h)
-	surface.SetDrawColor(panel.BarCol or HIGHLIGHT)
-	surface.DrawRect(0, 0, w * panel:GetFraction(), h)
-	surface.SetDrawColor(DARK_50)
-	surface.DrawOutlinedRect(0, 0, w, h)
+    surface.SetDrawColor(DARK_25)
+    surface.DrawRect(0, 0, w, h)
+    surface.SetDrawColor(panel.BarCol or HIGHLIGHT)
+    surface.DrawRect(0, 0, w * panel:GetFraction(), h)
+    surface.SetDrawColor(DARK_50)
+    surface.DrawOutlinedRect(0, 0, w, h)
 end
 
 local ccCol = Color(110, 110, 110, 130)
 function SKIN:PaintCollapsibleCategory(panel, w, h)
-	if h < 21 then
-    	--surface.SetDrawColor(HIGHLIGHT)
-    	--surface.DrawRect(0,0,w,h)
-    	draw.RoundedBox( 0, 0, 0, w, h, ccCol)
+    if h < 21 then
+        --surface.SetDrawColor(HIGHLIGHT)
+        --surface.DrawRect(0,0,w,h)
+        draw.RoundedBox( 0, 0, 0, w, h, ccCol)
     else
-    	draw.RoundedBox( 0, 0, 0, w, h, ccCol)
-	end
+        draw.RoundedBox( 0, 0, 0, w, h, ccCol)
+    end
 end
 
 local darkCol = Color(0, 0, 0, 255)
@@ -192,77 +192,77 @@ end
 
 local propSheetCol = Color(110, 110, 110, 20)
 function SKIN:PaintPropertySheet(panel, w, h)
-	local activeTab = panel:GetActiveTab()
-	local offset = 0
+    local activeTab = panel:GetActiveTab()
+    local offset = 0
 
-	if activeTab then
-		offset = activeTab:GetTall() - 8
-	end
+    if activeTab then
+        offset = activeTab:GetTall() - 8
+    end
 
-	surface.SetDrawColor(propSheetCol)
-	surface.DrawRect(0, 0+offset, w, h)
+    surface.SetDrawColor(propSheetCol)
+    surface.DrawRect(0, 0+offset, w, h)
 end
 
 local tabColActive = Color(80, 80, 80, 100)
 local tabColInactive = Color(80, 80, 80, 40)
 function SKIN:PaintTab(panel, w, h)
-	local h = 20
+    local h = 20
 
-	if panel:IsActive() then
-		surface.SetDrawColor(tabColActive)
-		return surface.DrawRect(0, 0, w, h)
-	end
+    if panel:IsActive() then
+        surface.SetDrawColor(tabColActive)
+        return surface.DrawRect(0, 0, w, h)
+    end
 
-	surface.SetDrawColor(tabColInactive)
-	surface.DrawRect(0, 0, w, h)
+    surface.SetDrawColor(tabColInactive)
+    surface.DrawRect(0, 0, w, h)
 end
 
 local function PaintNotches(x, y, w, h, num)
-	if !num then return end
+    if !num then return end
 
-	local space = w / num
+    local space = w / num
 
-	for i=0, num do
-		surface.DrawRect(x + i * space, y + 4, 1, 5)
-	end
+    for i=0, num do
+        surface.DrawRect(x + i * space, y + 4, 1, 5)
+    end
 end
 
 function SKIN:PaintNumSlider(panel, w, h)
-	surface.SetDrawColor(color_white)
-	surface.DrawRect(8, h / 2 - 1, w - 15, 1)
+    surface.SetDrawColor(color_white)
+    surface.DrawRect(8, h / 2 - 1, w - 15, 1)
 
-	PaintNotches(8, h / 2 - 1, w - 16, 1, panel.m_iNotches)
+    PaintNotches(8, h / 2 - 1, w - 16, 1, panel.m_iNotches)
 end
 
 function SKIN:PaintMenuOption( panel, w, h )
-	if ( panel.m_bBackground && !panel:IsEnabled() ) then
-		surface.SetDrawColor( Color( 0, 0, 0, 50 ) )
-		surface.DrawRect( 0, 0, w, h )
-	end
+    if ( panel.m_bBackground && !panel:IsEnabled() ) then
+        surface.SetDrawColor( Color( 0, 0, 0, 50 ) )
+        surface.DrawRect( 0, 0, w, h )
+    end
 
-	if ( panel.m_bBackground && ( panel.Hovered || panel.Highlight ) ) then
-		self.tex.MenuBG_Hover( 0, 0, w, h )
-	end
+    if ( panel.m_bBackground && ( panel.Hovered || panel.Highlight ) ) then
+        self.tex.MenuBG_Hover( 0, 0, w, h )
+    end
 
-	if ( panel.GetRadio and panel:GetRadio() ) then
-		if ( panel:GetChecked() ) then
-			if ( panel:GetDisabled() ) then
-				self.tex.RadioButtonD_Checked( 5, h / 2 - 7, 15, 15)
-			else
-				self.tex.RadioButton_Checked( 5, h / 2 - 7, 15, 15)
-			end
-		else
-			if ( panel:GetDisabled() ) then
-				self.tex.RadioButtonD( 5, h / 2 - 7, 15, 15)
-			else
-				self.tex.RadioButton( 5, h / 2 - 7, 15, 15)
-			end
-		end
-	else
-		if ( panel:GetChecked() ) then
-			self.tex.Menu_Check( 5, h / 2 - 7, 15, 15 )
-		end
-	end
+    if ( panel.GetRadio and panel:GetRadio() ) then
+        if ( panel:GetChecked() ) then
+            if ( panel:GetDisabled() ) then
+                self.tex.RadioButtonD_Checked( 5, h / 2 - 7, 15, 15)
+            else
+                self.tex.RadioButton_Checked( 5, h / 2 - 7, 15, 15)
+            end
+        else
+            if ( panel:GetDisabled() ) then
+                self.tex.RadioButtonD( 5, h / 2 - 7, 15, 15)
+            else
+                self.tex.RadioButton( 5, h / 2 - 7, 15, 15)
+            end
+        end
+    else
+        if ( panel:GetChecked() ) then
+            self.tex.Menu_Check( 5, h / 2 - 7, 15, 15 )
+        end
+    end
 end
 
 derma.DefineSkin("impulse", "Skin made by TheVingard. A nice new lick of paint for BMRP's interfaces.", SKIN)

@@ -4,16 +4,16 @@ local cleanupCommand = {
     adminOnly = true,
     onRun = function(ply, arg, rawText)
         local name = arg[1]
-		local plyTarget = impulse.Util:FindPlayer(name)
+        local plyTarget = impulse.Util:FindPlayer(name)
 
-		if plyTarget then
-			impulse.Ops.CleanupPlayer(plyTarget)
+        if plyTarget then
+            impulse.Ops.CleanupPlayer(plyTarget)
 
-			plyTarget:Notify("Your props have been removed by a game moderator ("..ply:SteamName()..").")
-			ply:Notify("You have cleaned up "..plyTarget:Name().."'s props.")
-		else
-			return ply:Notify("Could not find player: "..tostring(name))
-		end
+            plyTarget:Notify("Your props have been removed by a game moderator ("..ply:SteamName()..").")
+            ply:Notify("You have cleaned up "..plyTarget:Name().."'s props.")
+        else
+            return ply:Notify("Could not find player: "..tostring(name))
+        end
     end
 }
 
@@ -26,45 +26,45 @@ local cleanupAllCommand = {
         local countdown = arg[1]
 
         if DOING_CLEANUP and countdown then
-        	return ply:Notify("A cleanup is already queued.")
+            return ply:Notify("A cleanup is already queued.")
         end
 
         if countdown and tonumber(countdown) and tonumber(countdown) > 0 then
-        	countdown = math.Clamp(math.floor(tonumber(countdown)), 40, 600)
-        	local countdownEnd = CurTime() + countdown
-        	local r = countdown / 10
-        	local left = countdown
+            countdown = math.Clamp(math.floor(tonumber(countdown)), 40, 600)
+            local countdownEnd = CurTime() + countdown
+            local r = countdown / 10
+            local left = countdown
 
-        	DOING_CLEANUP = true
-        	timer.Create("impulseOpsCleanupClock", 10, r, function()
-        		left = left - 10
+            DOING_CLEANUP = true
+            timer.Create("impulseOpsCleanupClock", 10, r, function()
+                left = left - 10
 
-        		if left == 0 then
-        			impulse.Ops.CleanupAll()
+                if left == 0 then
+                    impulse.Ops.CleanupAll()
 
-        			for v, k in player.Iterator() do
-        				k:Notify("Your props have been removed due to a server cleanup.")
-        			end
+                    for v, k in player.Iterator() do
+                        k:Notify("Your props have been removed due to a server cleanup.")
+                    end
 
-        			DOING_CLEANUP = false
-        		else
-	        		for v, k in player.Iterator() do
-	        			k:Notify("WARNING: All props will be cleaned up in "..left.." seconds.")
-	        		end
-        		end
-        	end)
+                    DOING_CLEANUP = false
+                else
+                    for v, k in player.Iterator() do
+                        k:Notify("WARNING: All props will be cleaned up in "..left.." seconds.")
+                    end
+                end
+            end)
 
-        	for v, k in player.Iterator() do
-	        	k:Notify("WARNING: All props will be cleaned up in "..countdown.." seconds.")
-	        end
+            for v, k in player.Iterator() do
+                k:Notify("WARNING: All props will be cleaned up in "..countdown.." seconds.")
+            end
 
-        	ply:Notify("Cleanup countdown for "..countdown.." seconds has started.")
+            ply:Notify("Cleanup countdown for "..countdown.." seconds has started.")
         else
-        	impulse.Ops.CleanupAll()
+            impulse.Ops.CleanupAll()
 
-        	for v, k in player.Iterator() do
-        		k:Notify("Your props have been removed due to a server cleanup.")
-        	end
+            for v, k in player.Iterator() do
+                k:Notify("Your props have been removed due to a server cleanup.")
+            end
         end
     end
 }

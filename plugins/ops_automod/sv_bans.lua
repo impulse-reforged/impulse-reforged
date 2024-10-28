@@ -46,9 +46,9 @@ function impulse.Ops.AutoMod.Ban(ply, reason, risk, details)
         }
     }
 
-	if IsValid(ply) then
-		ply:Kick("Automatic punishment issued")
-	end
+    if IsValid(ply) then
+        ply:Kick("Automatic punishment issued")
+    end
 
                     if reqwest then
 
@@ -75,7 +75,7 @@ function impulse.Ops.AutoMod.Ban(ply, reason, risk, details)
                             end
                         })
                     else
-    			opsDiscordLog("<@&"..impulse.Config.DiscordLeadModRoleID..">", embeds)
+                opsDiscordLog("<@&"..impulse.Config.DiscordLeadModRoleID..">", embeds)
                     end
 end
 

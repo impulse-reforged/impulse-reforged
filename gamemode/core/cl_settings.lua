@@ -63,54 +63,52 @@ impulse.Settings.Stored = {}
 --     end
 -- })
 function impulse.Settings:Define(name, settingdata)
-	if not settingdata then
-		return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Data is nil, attempted name: "..name.."\n")
-	end
+    if not settingdata then
+        return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Data is nil, attempted name: "..name.."\n")
+    end
 
-	if not type(settingdata) == "table" then
-		return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Data is not a table, attempted name: "..name.."\n")
-	end
+    if not type(settingdata) == "table" then
+        return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Data is not a table, attempted name: "..name.."\n")
+    end
 
-	if not settingdata.name then
-		return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Name is nil, attempted name: "..name.."\n")
-	end
+    if not settingdata.name then
+        return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Name is nil, attempted name: "..name.."\n")
+    end
 
-	if not settingdata.type then
-		return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Type is nil, attempted name: "..name.."\n")
-	end
+    if not settingdata.type then
+        return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Type is nil, attempted name: "..name.."\n")
+    end
 
-	if settingdata.default == nil then
-		return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Default is nil, attempted name: "..name.."\n")
-	end
+    if settingdata.default == nil then
+        return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Default is nil, attempted name: "..name.."\n")
+    end
 
-	if settingdata.type == "slider" then
-		if not settingdata.minValue then
-			settingdata.minValue = 0
-		end
+    if settingdata.type == "slider" then
+        if not settingdata.minValue then
+            settingdata.minValue = 0
+        end
 
-		if not settingdata.maxValue then
-			settingdata.maxValue = 100
-		end
+        if not settingdata.maxValue then
+            settingdata.maxValue = 100
+        end
 
-		if not settingdata.decimals then
-			settingdata.decimals = 0
-		end
-	elseif settingdata.type == "dropdown" then
-		if not settingdata.options then
-			return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Options is nil, attempted name: "..name.."\n")
-		end
-	end
+        if not settingdata.decimals then
+            settingdata.decimals = 0
+        end
+    elseif settingdata.type == "dropdown" then
+        if not settingdata.options then
+            return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Options is nil, attempted name: "..name.."\n")
+        end
+    end
 
-	if not settingdata.category then
-		settingdata.category = "Other"
-	end
+    if not settingdata.category then
+        settingdata.category = "Other"
+    end
 
-	self.Stored[name] = settingdata
-	self:Load()
+    self.Stored[name] = settingdata
+    self:Load()
 
-	MsgC(Color(0, 255, 0), "[impulse-reforged] Defined setting: "..name.."\n")
-
-	return settingdata
+    return settingdata
 end
 
 local toBool = tobool
@@ -121,47 +119,47 @@ local optX = {["tickbox"] = true} -- hash comparisons faster than string
 -- @string name Setting class name
 -- @return Setting value
 function impulse.Settings:Get(name)
-	local settingData = self.Stored[name]
-	if not settingData then
-		return --MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not GetSetting. Please contact a developer, attempted name: "..name.."\n")
-	end
+    local settingData = self.Stored[name]
+    if not settingData then
+        return --MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not GetSetting. Please contact a developer, attempted name: "..name.."\n")
+    end
 
-	if optX[settingData.type] then
-		if settingData.value == nil then
-			return settingData.default
-		end
+    if optX[settingData.type] then
+        if settingData.value == nil then
+            return settingData.default
+        end
 
-		return toBool(settingData.value)
-	end
+        return toBool(settingData.value)
+    end
 
-	return settingData.value or settingData.default
+    return settingData.value or settingData.default
 end
 
 --- Loads the settings from the clientside database
 -- @realm client
 -- @internal
 function impulse.Settings:Load()
-	for v, k in pairs(self.Stored) do
-		if not k then
-			MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not load setting. Please contact a developer, attempted name: "..v.."\n")
-			continue
-		end
+    for v, k in pairs(self.Stored) do
+        if not k then
+            MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not load setting. Please contact a developer, attempted name: "..v.."\n")
+            continue
+        end
 
-		if k.type == "tickbox" or k.type == "slider" or k.type == "plainint" then
-			local def = k.default
-			if k.type == "tickbox" then 
-				def = tonumber(k.default) 
-			end
+        if k.type == "tickbox" or k.type == "slider" or k.type == "plainint" then
+            local def = k.default
+            if k.type == "tickbox" then 
+                def = tonumber(k.default) 
+            end
 
-			k.value = cookie.GetNumber("impulse-setting-"..v, def) -- Cache the data into a variable instead of sql so its fast
-		elseif k.type == "dropdown" or k.type == "textbox" then
-			k.value = cookie.GetString("impulse-setting-"..v, k.default)
-		end
+            k.value = cookie.GetNumber("impulse-setting-"..v, def) -- Cache the data into a variable instead of sql so its fast
+        elseif k.type == "dropdown" or k.type == "textbox" then
+            k.value = cookie.GetString("impulse-setting-"..v, k.default)
+        end
 
-		if k.onChanged then
-			k.onChanged(k.value)
-		end
-	end
+        if k.onChanged then
+            k.onChanged(k.value)
+        end
+    end
 end
 
 --- Sets a setting to a specified value
@@ -169,31 +167,31 @@ end
 -- @string name Setting class name
 -- @param value New value
 function impulse.Settings:Set(name, newValue)
-	local settingData = self.Stored[name]
-	if settingData then
-		if type(newValue) == "boolean" then -- convert them boolz to intz. it's basically a gang war
-			newValue = newValue and 1 or 0
-		end
+    local settingData = self.Stored[name]
+    if settingData then
+        if type(newValue) == "boolean" then -- convert them boolz to intz. it's basically a gang war
+            newValue = newValue and 1 or 0
+        end
 
-		cookie.Set("impulse-setting-"..name, newValue)
-		settingData.value = newValue
+        cookie.Set("impulse-setting-"..name, newValue)
+        settingData.value = newValue
 
-		if settingData.onChanged then
-			settingData.onChanged(newValue)
-		end
+        if settingData.onChanged then
+            settingData.onChanged(newValue)
+        end
 
-		return
-	end
+        return
+    end
 
-	return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not SetSetting. Please contact a developer, attempted name: "..name.."\n")
+    return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not SetSetting. Please contact a developer, attempted name: "..name.."\n")
 end
 
 concommand.Add("impulse_settings_reset", function()
-	for v, k in pairs(impulse.Settings.Stored) do
-		impulse.Settings:Set(v, k.default)
-	end
+    for v, k in pairs(impulse.Settings.Stored) do
+        impulse.Settings:Set(v, k.default)
+    end
 
-	MsgC(Color(0, 255, 0), "[impulse-reforged] Settings reset to default.\n")
+    MsgC(Color(0, 255, 0), "[impulse-reforged] Settings reset to default.\n")
 end)
 
 hook.Run("DefineSettings")
