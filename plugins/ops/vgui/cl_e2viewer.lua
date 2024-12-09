@@ -30,7 +30,7 @@ function PANEL:SetupE2S(e2s)
         end
 
         local x = self.list:AddLine(owner:Nick().." ("..owner:SteamName()..")", k.name, cpuTime)
-        x.Owner = owner:SteamID()
+        x.Owner = owner:SteamID64()
         x.Ent = k.ent
 
         table.insert(self.list.lines, x)
@@ -39,13 +39,13 @@ function PANEL:SetupE2S(e2s)
             local row = x
             local m = DermaMenu()
 
-            m:AddOption("Copy Owner SteamID", function()
+            m:AddOption("Copy Owner SteamID64", function()
                 if not IsValid(row) then
                     return
                 end
 
                 SetClipboardText(row.Owner)
-                LocalPlayer():Notify("Copied SteamID.")
+                LocalPlayer():Notify("Copied SteamID64.")
             end)
 
             m:AddOption("Remove E2", function()

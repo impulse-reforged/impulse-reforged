@@ -256,8 +256,8 @@ function PANEL:Init()
         self.sidButton:SetPos(105,105)
         self.sidButton:SetSize(90,20)
         self.sidButton.DoClick = function()
-            SetClipboardText(self.Player:SteamID())
-            LocalPlayer():Notify("Copied SteamID.")
+            SetClipboardText(self.Player:SteamID64())
+            LocalPlayer():Notify("Copied SteamID64.")
         end
 
         self.forumButton = vgui.Create("DButton", self)
@@ -338,7 +338,7 @@ function PANEL:Init()
                 local target = self.Player
                  function action:DoClick()
                      if not IsValid(target) then return LocalPlayer():Notify("This player has disconnected.") end
-                     self.runFunc(target, target:SteamID())
+                     self.runFunc(target, target:SteamID64())
                  end
             end
         end

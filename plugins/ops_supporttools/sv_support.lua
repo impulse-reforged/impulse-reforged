@@ -88,7 +88,7 @@ net.Receive("impulseOpsSTDoRefund", function(len, ply)
         if ( !IsValid(ply) ) then return end
 
         if ( type(result) != "table" or #result == 0 ) then
-            return ply:Notify("This Steam account has not joined the server yet or the SteamID is invalid.")
+            return ply:Notify("This Steam account has not joined the server yet or the SteamID64 is invalid.")
         end
 
         local impulseID = result[1].id

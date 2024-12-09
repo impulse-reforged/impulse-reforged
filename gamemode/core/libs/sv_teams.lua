@@ -398,7 +398,7 @@ end
 function PLAYER:SetupWhitelists()
     self.Whitelists = {}
 
-    impulse.Teams.GetAllWhitelistsPlayer(self:SteamID(), function(result)
+    impulse.Teams.GetAllWhitelistsPlayer(self:SteamID64(), function(result)
         if not result or not IsValid(self) then return end
 
         for v, k in pairs(result) do

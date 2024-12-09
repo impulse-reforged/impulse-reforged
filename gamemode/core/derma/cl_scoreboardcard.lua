@@ -5,7 +5,7 @@ function PANEL:Init()
     self.Name = "Connecting..."
     self.Ping = 0
     self:SetCursor("hand")
-    self:SetTooltip("Left click to open info card. Right click to copy SteamID.")
+    self:SetTooltip("Left click to open info card. Right click to copy SteamID64.")
 end
 
 function PANEL:SetPlayer(player)
@@ -110,7 +110,7 @@ function PANEL:OnMousePressed(key)
 
     if key == MOUSE_RIGHT then
         LocalPlayer():Notify("You have copied "..self.Player:SteamName().."'s Steam ID.")
-        SetClipboardText(self.Player:SteamID())
+        SetClipboardText(self.Player:SteamID64())
     else
         if impulse_infoCard and IsValid(impulse_infoCard) then
             impulse_infoCard:Remove()

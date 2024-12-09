@@ -1,5 +1,5 @@
 properties.Add( "ops_copysteamid", {
-    MenuLabel = "[ops] Copy player SteamID", -- Name to display on the context menu
+    MenuLabel = "[ops] Copy player SteamID64", -- Name to display on the context menu
     Order = 1005, -- The order to display this property relative to other properties
     MenuIcon = "icon16/shield.png", -- The icon to display next to the property
 
@@ -15,8 +15,8 @@ properties.Add( "ops_copysteamid", {
         return true
     end,
     Action = function( self, ent ) -- The action to perform upon using the property ( Clientside )
-        SetClipboardText(ent:SteamID())
-        LocalPlayer():Notify("Copied "..ent:Nick().."'s SteamID to clipboard.")
+        SetClipboardText(ent:SteamID64())
+        LocalPlayer():Notify("Copied "..ent:Nick().."'s SteamID64 to clipboard.")
     end
 } )
 

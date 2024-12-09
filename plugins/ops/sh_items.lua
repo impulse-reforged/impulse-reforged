@@ -11,23 +11,23 @@ if CLIENT then
         targetBox:SetWide(400)
 
         targetBox:AddChoice("Me")
-        targetBox:AddChoice("Custom SteamID (Offline User)")
+        targetBox:AddChoice("Custom SteamID64 (Offline User)")
 
         for v, k in player.Iterator() do
-            targetBox:AddChoice("PLAYER: "..k:Nick().." ("..k:SteamName()..")", k:SteamID())
+            targetBox:AddChoice("PLAYER: "..k:Nick().." ("..k:SteamName()..")", k:SteamID64())
         end
 
         targetBox:SetSortItems(false)
 
         function targetBox:OnSelect(index, text, sid)
             if text == "Me" then
-                panel.Selected = LocalPlayer():SteamID()
-            elseif text == "Custom SteamID (Offline User)" then
-                Derma_StringRequest("impulse", "Enter the SteamID (not 64 format) below:", "", function(sid)
+                panel.Selected = LocalPlayer():SteamID64()
+            elseif text == "Custom SteamID64 (Offline User)" then
+                Derma_StringRequest("impulse", "Enter the SteamID64 (not 64 format) below:", "", function(sid)
                     if IsValid(panel) then
                         sid = string.Trim(sid, " ")
                         panel.Selected = sid
-                        self:SetText("Custom SteamID ("..sid..")")
+                        self:SetText("Custom SteamID64 ("..sid..")")
                     end
                 end)
             else
@@ -106,7 +106,7 @@ local giveItemCommand = {
         end
 
         if steamid:len() > 25 then
-            return ply:Notify("SteamID too long.")
+            return ply:Notify("SteamID64 too long.")
         end
 
         local query = mysql:Select("impulse_players")
@@ -116,7 +116,7 @@ local giveItemCommand = {
             if not IsValid(ply) then return end
 
             if not result or #result < 1 then
-                return ply:Notify("This Steam account has not joined the server yet or the SteamID is invalid.")
+                return ply:Notify("This Steam account has not joined the server yet or the SteamID64 is invalid.")
             end
 
             if not impulse.Inventory.ItemsRef[item] then

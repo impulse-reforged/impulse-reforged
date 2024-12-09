@@ -49,7 +49,7 @@ local oocCommand = {
             return ply:Notify("OOC chat has been suspsended and will return shortly.")    
         end
 
-        local timeout = impulse.OOCTimeouts[ply:SteamID()]
+        local timeout = impulse.OOCTimeouts[ply:SteamID64()]
         if timeout then
             return ply:Notify("You have an active OOC timeout that will remain for "..string.NiceTime(timeout - CurTime())..".")
         end

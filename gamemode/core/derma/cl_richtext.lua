@@ -161,7 +161,7 @@ function PANEL:AddText(...)
                     end
 
 
-                    LocalPlayer():ConCommand("say /ooctimeout "..textElement.player:SteamID().." "..x)
+                    LocalPlayer():ConCommand("say /ooctimeout "..textElement.player:SteamID64().." "..x)
                 end, nil, "Issue timeout")
             end)
             banPly:SetIcon("icon16/sound_add.png")

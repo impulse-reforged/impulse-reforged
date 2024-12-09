@@ -11,7 +11,7 @@ if SERVER then
 
         local query = mysql:Update("impulse_players")
         query:Update("xp", amount)
-        query:Where("steamid", self:SteamID())
+        query:Where("steamid", self:SteamID64())
         query:Execute()
 
         return self:SetNetVar("xp", amount)

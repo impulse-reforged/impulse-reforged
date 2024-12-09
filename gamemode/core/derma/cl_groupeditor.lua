@@ -218,7 +218,7 @@ function PANEL:ShowGroup()
     local ons = 0
 
     for v, k in SortedPairsByMemberValue(group.Members, "Rank") do
-        local p = player.GetBySteamID(v)
+        local p = player.GetBySteamID64(v)
         local state = "Offline"
 
         if IsValid(p) then
@@ -227,7 +227,7 @@ function PANEL:ShowGroup()
         end
 
         local line = members:AddLine(k.Name, k.Rank, state)
-        line.SteamID = v
+        line.SteamID64 = v
         line.Name = k.Name
     end
 
@@ -235,7 +235,7 @@ function PANEL:ShowGroup()
     lblM:SizeToContents()
 
     function members:OnRowSelected(index, row)
-        local sid = row.SteamID
+        local sid = row.SteamID64
 
         local m = DermaMenu()
 

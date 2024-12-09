@@ -24,7 +24,7 @@ function PLAYER:SetSkillXP(name, value)
     if data then
         local query = mysql:Update("impulse_players")
         query:Update("skills", data)
-        query:Where("steamid", self:SteamID())
+        query:Where("steamid", self:SteamID64())
         query:Execute()
     end
 

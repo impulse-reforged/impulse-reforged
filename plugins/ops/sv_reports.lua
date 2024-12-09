@@ -57,7 +57,7 @@ function impulse.Ops.ReportNew(ply, arg, rawText)
             net.WriteUInt(1, 4)
             net.Send(ply)
 
-            opsSlackLog(":warning: *[NEW REPORT]* [#"..reportId.."] ".. ply:SteamName().. " (".. ply:Name().. ") ("..ply:SteamID().."): ```"..rawText.."```")
+            opsSlackLog(":warning: *[NEW REPORT]* [#"..reportId.."] ".. ply:SteamName().. " (".. ply:Name().. ") ("..ply:SteamID64().."): ```"..rawText.."```")
             return
         else
             ply:Notify("Unfortunately, no game moderators are currently available to review your report. Please goto impulse-community.com and submit a ban request.")
@@ -81,7 +81,7 @@ function impulse.Ops.ReportNew(ply, arg, rawText)
         end
 
         impulse.Ops.Reports[reportId][2] = impulse.Ops.Reports[reportId][2].." + "..rawText
-        opsSlackLog(":speech_balloon: *[REPORT UPDATE]* [#"..reportId.."] ".. ply:SteamName().. " (".. ply:Name().. ") ("..ply:SteamID().."): ```".. rawText.."```")
+        opsSlackLog(":speech_balloon: *[REPORT UPDATE]* [#"..reportId.."] ".. ply:SteamName().. " (".. ply:Name().. ") ("..ply:SteamID64().."): ```".. rawText.."```")
 
         net.Start("opsReportMessage")
         net.WriteUInt(reportId, 16)
@@ -132,7 +132,7 @@ function impulse.Ops.ReportClaim(ply, arg, rawText)
                 net.Send(k)
             end
         end
-        opsSlackLog(":passport_control: *[REPORT CLAIMED]* [#"..reportId.."] claimed by "..ply:SteamName().." ("..ply:SteamID()..")")
+        opsSlackLog(":passport_control: *[REPORT CLAIMED]* [#"..reportId.."] claimed by "..ply:SteamName().." ("..ply:SteamID64()..")")
 
         net.Start("opsReportMessage")
         net.WriteUInt(reportId, 16)
@@ -176,8 +176,8 @@ function impulse.Ops.ReportClose(ply, arg, rawText)
 
         if reportClaimant and !isDc and IsValid(reportClaimant) then
             local query = mysql:Insert("impulse_reports")
-            query:Insert("reporter", reporter:SteamID())
-            query:Insert("mod", reportClaimant:SteamID())
+            query:Insert("reporter", reporter:SteamID64())
+            query:Insert("mod", reportClaimant:SteamID64())
             query:Insert("message", string.sub(reportMessage, 1, 650))
             query:Insert("start", os.date("%Y-%m-%d %H:%M:%S", os.time()))
             query:Insert("claimwait", targetReport[5] - targetReport[4])
@@ -206,7 +206,7 @@ function impulse.Ops.ReportClose(ply, arg, rawText)
 
         if not IsValid(ply) or not ply:IsPlayer() then return end
 
-        opsSlackLog(":no_entry: *[REPORT CLOSED]* [#"..reportId.."] closed by "..ply:SteamName().." ("..ply:SteamID()..")")
+        opsSlackLog(":no_entry: *[REPORT CLOSED]* [#"..reportId.."] closed by "..ply:SteamName().." ("..ply:SteamID64()..")")
     else
         ply:AddChatText(claimedReportCol, "Report #"..reportId.." does not exist.")
     end

@@ -24,7 +24,7 @@ local timeoutCommand = {
         time = time * 60
 
         if plyTarget then
-            local sid = plyTarget:SteamID()
+            local sid = plyTarget:SteamID64()
             impulse.OOCTimeouts[sid] = CurTime() + time
             plyTarget:Notify("Reason: "..(reason or "Behaviour that violates the community guidelines")..".")
             plyTarget:Notify("You have been issued an OOC communication timeout by a game moderator that will last "..(time / 60).." minutes.")
@@ -67,7 +67,7 @@ local unTimeoutCommand = {
         local plyTarget = impulse.Util:FindPlayer(name)
 
         if plyTarget then
-            impulse.OOCTimeouts[plyTarget:SteamID()] = nil
+            impulse.OOCTimeouts[plyTarget:SteamID64()] = nil
             ply:Notify("The OOC communication timeout has been removed from "..plyTarget:Name()..".")
         else
             return ply:Notify("Could not find player: "..tostring(name))

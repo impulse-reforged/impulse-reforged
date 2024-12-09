@@ -1834,7 +1834,7 @@ net.Receive("impulseGroupDoRemove", function(len, ply)
         return ply:Notify("You can not remove the group owner.")
     end
 
-    if targ == ply:SteamID() then
+    if targ == ply:SteamID64() then
         return ply:Notify("You can not remove yourself.")
     end
 
@@ -1892,7 +1892,7 @@ net.Receive("impulseGroupDoCreate", function(len, ply)
 
         ply:TakeMoney(impulse.Config.GroupMakeCost)
 
-        impulse.Group.AddPlayer(ply:SteamID(), groupid, "Owner", function()
+        impulse.Group.AddPlayer(ply:SteamID64(), groupid, "Owner", function()
             if not IsValid(ply) then return end
 
             ply:GroupLoad(groupid, "Owner")

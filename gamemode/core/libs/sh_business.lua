@@ -78,7 +78,7 @@ function impulse.SpawnBuyable(pos, ang, buyable, owner)
 
     if buyable.refund then
         local class = "buy_"..buyable.key
-        local sid = owner:SteamID()
+        local sid = owner:SteamID64()
         impulse.Refunds.Add(sid, class)
 
         spawnedBuyable:CallOnRemove("RefundDestroy", function(ent)

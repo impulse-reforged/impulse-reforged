@@ -70,13 +70,13 @@ function PANEL:SetupPlayer(panel, stats, sid)
 
     if stats.Name then
         local btn = vgui.Create("DButton", panel)
-        btn:SetText("Copy SteamID")
+        btn:SetText("Copy SteamID64")
         btn:SizeToContents()
         btn:Dock(TOP)
         btn:SetWide(200)
 
         function btn:DoClick()
-            LocalPlayer():Notify("Copied SteamID.")
+            LocalPlayer():Notify("Copied SteamID64.")
             return SetClipboardText(sid)
         end
 

@@ -6,7 +6,7 @@ hook.Add("PlayerDeath", "opsDeathSnapshot", function(victim, attacker, inflictor
     local snapshot = {}
 
     snapshot.Victim = victim
-    snapshot.VictimID = victim:SteamID()
+    snapshot.VictimID = victim:SteamID64()
     snapshot.VictimNick = victim:Nick()
     snapshot.VictimPos = victim:GetPos()
     snapshot.VictimLastPos = victim.LastKnownPos or snapshot.VictimPos
@@ -21,7 +21,7 @@ hook.Add("PlayerDeath", "opsDeathSnapshot", function(victim, attacker, inflictor
     end
 
     snapshot.Inflictor = inflictor
-    snapshot.InflictorID = inflictor:SteamID()
+    snapshot.InflictorID = inflictor:SteamID64()
     snapshot.InflictorNick = inflictor:Nick()
     snapshot.InflictorPos = inflictor:GetPos()
     snapshot.InflictorLastPos = inflictor.LastKnownPos or snapshot.InflictorPos

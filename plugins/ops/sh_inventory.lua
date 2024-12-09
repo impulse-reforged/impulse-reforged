@@ -80,12 +80,12 @@ local viewInvCommand = {
 impulse.RegisterChatCommand("/viewinv", viewInvCommand)
 
 local restoreInvCommand = {
-    description = "Restores a players inventory to the last state before death. (SteamID only)",
+    description = "Restores a players inventory to the last state before death. (SteamID64 only)",
     requiresArg = true,
     adminOnly = true,
     onRun = function(ply, arg, rawText)
         local name = arg[1]
-        local plyTarget = player.GetBySteamID(name)
+        local plyTarget = player.GetBySteamID64(name)
 
         if plyTarget then
             if plyTarget.InventoryRestorePoint then
@@ -109,7 +109,7 @@ local restoreInvCommand = {
                 return ply:Notify("No restore point found for this player.")
             end
         else
-            return ply:Notify("Could not find player: "..tostring(name).." (needs SteamID value)")
+            return ply:Notify("Could not find player: "..tostring(name).." (needs SteamID64 value)")
         end
     end
 }

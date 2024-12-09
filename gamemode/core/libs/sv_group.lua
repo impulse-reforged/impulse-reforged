@@ -351,7 +351,7 @@ end
 local function postCompute(self, name, rank, skipDb)
     if not IsValid(self) then return end
 
-    impulse.Group.NetworkMemberToOnline(name, self:SteamID())
+    impulse.Group.NetworkMemberToOnline(name, self:SteamID64())
 
     self:SetNetVar("groupName", name)
     self:SetNetVar("groupRank", rank)
@@ -376,7 +376,7 @@ function PLAYER:GroupAdd(name, rank, skipDb)
     local rank = rank or impulse.Group.GetDefaultRank(name)
 
     if not skipDb then
-        impulse.Group.AddPlayer(self:SteamID(), id, rank)
+        impulse.Group.AddPlayer(self:SteamID64(), id, rank)
     end
 
     impulse.Group.ComputeMembers(name, function()
@@ -386,7 +386,7 @@ end
 
 function PLAYER:GroupRemove(name)
     local id = impulse.Group.Groups[name].ID
-    local sid = self:SteamID()
+    local sid = self:SteamID64()
 
     impulse.Group.RemovePlayer(sid)
     impulse.Group.ComputeMembers(name)
@@ -415,7 +415,7 @@ function PLAYER:GroupLoad(groupid, rank)
         if rank then
             if not impulse.Group.Groups[name].Ranks[rank] then
                 rank = impulse.Group.GetDefaultRank(name)
-                impulse.Group.UpdatePlayerRank(self:SteamID(), rank)
+                impulse.Group.UpdatePlayerRank(self:SteamID64(), rank)
             end
         end
 
