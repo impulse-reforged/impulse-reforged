@@ -45,8 +45,8 @@ net.Receive("impulseOpsSTDoGroupRemove", function(len, ply)
         local targEnt = player.GetBySteamID(v)
 
         if IsValid(targEnt) then
-            targEnt:SetSyncVar(SYNC_GROUP_NAME, nil, true)
-            targEnt:SetSyncVar(SYNC_GROUP_RANK, nil, true)
+            targEnt:SetNetVar("groupName", nil)
+            targEnt:SetNetVar("groupRank", nil)
             targEnt:Notify("You were removed from the "..name.." group as it has been removed by the staff team for violations of the RP group rules.")
         end
     end

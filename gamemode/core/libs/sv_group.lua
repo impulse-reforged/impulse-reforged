@@ -216,7 +216,7 @@ function impulse.Group.NetworkMetaDataToOnline(name)
     local rf = RecipientFilter()
 
     for v, k in player.Iterator() do
-        local x = k:GetSyncVar(SYNC_GROUP_NAME, nil)
+        local x = k:GetNetVar("groupName", nil)
 
         if x and x == name then
             rf:AddPlayer(k)
@@ -245,7 +245,7 @@ function impulse.Group.NetworkMemberToOnline(name, sid)
     local rf = RecipientFilter()
 
     for v, k in player.Iterator() do
-        local x = k:GetSyncVar(SYNC_GROUP_NAME, nil)
+        local x = k:GetNetVar("groupName", nil)
 
         if x and x == name then
             rf:AddPlayer(k)
@@ -263,7 +263,7 @@ function impulse.Group.NetworkMemberRemoveToOnline(name, sid)
     local rf = RecipientFilter()
 
     for v, k in player.Iterator() do
-        local x = k:GetSyncVar(SYNC_GROUP_NAME, nil)
+        local x = k:GetNetVar("groupName", nil)
 
         if x and x == name then
             rf:AddPlayer(k)
@@ -289,7 +289,7 @@ function impulse.Group.NetworkRanksToOnline(name)
     local rf = RecipientFilter()
 
     for v, k in player.Iterator() do
-        local x = k:GetSyncVar(SYNC_GROUP_NAME, nil)
+        local x = k:GetNetVar("groupName", nil)
 
         if x and x == name then
             if k:GroupHasPermission(5) or k:GroupHasPermission(6) then
@@ -321,8 +321,8 @@ function impulse.Group.NetworkRankToOnline(name, rankName)
     local rf = RecipientFilter()
 
     for v, k in player.Iterator() do
-        local x = k:GetSyncVar(SYNC_GROUP_NAME, nil)
-        local r = k:GetSyncVar(SYNC_GROUP_RANK, nil)
+        local x = k:GetNetVar("groupName", nil)
+        local r = k:GetNetVar("groupRank", nil)
 
         if x and x == name and r == rank then
             if k:GroupHasPermission(5) or k:GroupHasPermission(6) then continue end
@@ -353,8 +353,8 @@ local function postCompute(self, name, rank, skipDb)
 
     impulse.Group.NetworkMemberToOnline(name, self:SteamID())
 
-    self:SetSyncVar(SYNC_GROUP_NAME, name, true)
-    self:SetSyncVar(SYNC_GROUP_RANK, rank, true)
+    self:SetNetVar("groupName", name)
+    self:SetNetVar("groupRank", rank)
 
     if not skipDb then
         impulse.Group.NetworkAllMembers(self, name)
@@ -392,8 +392,8 @@ function PLAYER:GroupRemove(name)
     impulse.Group.ComputeMembers(name)
     impulse.Group.NetworkMemberRemoveToOnline(name, sid)
 
-    self:SetSyncVar(SYNC_GROUP_NAME, nil, true)
-    self:SetSyncVar(SYNC_GROUP_RANK, nil, true)
+    self:SetNetVar("groupName", nil)
+    self:SetNetVar("groupRank", nil)
 end
 
 function PLAYER:GroupLoad(groupid, rank)
@@ -421,8 +421,8 @@ function PLAYER:GroupLoad(groupid, rank)
 
         rank = rank or impulse.Group.GetDefaultRank(name)
 
-        self:SetSyncVar(SYNC_GROUP_NAME, name, true)
-        self:SetSyncVar(SYNC_GROUP_RANK, rank, true)
+        self:SetNetVar("groupName", name)
+        self:SetNetVar("groupRank", rank)
 
         impulse.Group.NetworkRank(name, self, rank)
 

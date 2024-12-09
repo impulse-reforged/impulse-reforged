@@ -323,7 +323,7 @@ net.Receive("impulseClassChange",function(len, ply)
     if (ply.lastTeamTry or 0) > CurTime() then return end
     ply.lastTeamTry = CurTime() + 0.1
 
-    if ply:GetSyncVar(SYNC_ARRESTED, false) then return end
+    if ply:GetNetVar("arrested", false) then return end
 
     local classChangeTime = impulse.Config.ClassChangeTime
 
@@ -352,7 +352,7 @@ net.Receive("impulseBuyItem", function(len, ply)
     if (ply.nextBuy or 0) > CurTime() then return end
     ply.nextBuy = CurTime() + 0.1
 
-    if ply:GetSyncVar(SYNC_ARRESTED, false) or not ply:Alive() then return end
+    if ply:GetNetVar("arrested", false) or not ply:Alive() then return end
 
     local buyableID = net.ReadUInt(8)
 
@@ -416,10 +416,10 @@ end)
 net.Receive("impulseChatState", function(len, ply)
     if (ply.nextChatState or 0) < CurTime() then
         local isTyping = net.ReadBool()
-        local state = ply:GetSyncVar(SYNC_TYPING, false)
+        local state = ply:GetNetVar("typing", false)
 
         if state != isTyping then
-            ply:SetSyncVar(SYNC_TYPING, isTyping, true)
+            ply:SetNetVar("typing", isTyping)
 
             hook.Run("ChatStateChanged", ply, state, isTyping)
         end
@@ -430,7 +430,7 @@ end)
 
 net.Receive("impulseDoorBuy", function(len, ply)
     if (ply.nextDoorBuy or 0) > CurTime() then return end
-    if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then return end
+    if not ply:Alive() or ply:GetNetVar("arrested", false) then return end
 
     local trace = {}
     trace.start = ply:EyePos()
@@ -439,7 +439,7 @@ net.Receive("impulseDoorBuy", function(len, ply)
 
     local traceEnt = util.TraceLine(trace).Entity
 
-    if IsValid(traceEnt) and ply:CanBuyDoor(traceEnt:GetSyncVar(SYNC_DOOR_OWNERS, nil), traceEnt:GetSyncVar(SYNC_DOOR_BUYABLE, true)) and hook.Run("CanEditDoor", ply, traceEnt) != false then
+    if IsValid(traceEnt) and ply:CanBuyDoor(traceEnt:GetNetVar("doorOwners", nil), traceEnt:GetNetVar("doorBuyable", true)) and hook.Run("CanEditDoor", ply, traceEnt) != false then
         if ply:CanAfford(impulse.Config.DoorPrice) then
             ply:TakeMoney(impulse.Config.DoorPrice)
             ply:SetDoorMaster(traceEnt)
@@ -456,7 +456,7 @@ end)
 
 net.Receive("impulseDoorSell", function(len, ply)
     if (ply.nextDoorSell or 0) > CurTime() then return end
-    if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then return end
+    if not ply:Alive() or ply:GetNetVar("arrested", false) then return end
 
     local trace = {}
     trace.start = ply:EyePos()
@@ -465,7 +465,7 @@ net.Receive("impulseDoorSell", function(len, ply)
 
     local traceEnt = util.TraceLine(trace).Entity
 
-    if IsValid(traceEnt) and ply:IsDoorOwner(traceEnt:GetSyncVar(SYNC_DOOR_OWNERS, nil)) and traceEnt:GetDoorMaster() == ply and hook.Run("CanEditDoor", ply, traceEnt) != false then
+    if IsValid(traceEnt) and ply:IsDoorOwner(traceEnt:GetNetVar("doorOwners", nil)) and traceEnt:GetDoorMaster() == ply and hook.Run("CanEditDoor", ply, traceEnt) != false then
         ply:RemoveDoorMaster(traceEnt)
         ply:GiveMoney(impulse.Config.DoorPrice - 2)
 
@@ -478,7 +478,7 @@ end)
 
 net.Receive("impulseDoorLock", function(len, ply)
     if (ply.nextDoorLock or 0) > CurTime() then return end
-    if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then return end
+    if not ply:Alive() or ply:GetNetVar("arrested", false) then return end
 
     local trace = {}
     trace.start = ply:EyePos()
@@ -488,7 +488,7 @@ net.Receive("impulseDoorLock", function(len, ply)
     local traceEnt = util.TraceLine(trace).Entity
 
     if IsValid(traceEnt) and traceEnt:IsDoor() then
-        local doorOwners, doorGroup = traceEnt:GetSyncVar(SYNC_DOOR_OWNERS, nil), traceEnt:GetSyncVar(SYNC_DOOR_GROUP, nil)
+        local doorOwners, doorGroup = traceEnt:GetNetVar("doorOwners", nil), traceEnt:GetNetVar("doorGroup", nil)
 
         if ply:CanLockUnlockDoor(doorOwners, doorGroup) then
             traceEnt:DoorLock()
@@ -501,7 +501,7 @@ end)
 
 net.Receive("impulseDoorUnlock", function(len, ply)
     if (ply.nextDoorUnlock or 0) > CurTime() then return end
-    if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then return end
+    if not ply:Alive() or ply:GetNetVar("arrested", false) then return end
 
     local trace = {}
     trace.start = ply:EyePos()
@@ -511,7 +511,7 @@ net.Receive("impulseDoorUnlock", function(len, ply)
     local traceEnt = util.TraceLine(trace).Entity
 
     if IsValid(traceEnt) and traceEnt:IsDoor() then
-        local doorOwners, doorGroup = traceEnt:GetSyncVar(SYNC_DOOR_OWNERS, nil), traceEnt:GetSyncVar(SYNC_DOOR_GROUP, nil)
+        local doorOwners, doorGroup = traceEnt:GetNetVar("doorOwners", nil), traceEnt:GetNetVar("doorGroup", nil)
 
         if ply:CanLockUnlockDoor(doorOwners, doorGroup) then
             traceEnt:DoorUnlock()
@@ -526,7 +526,7 @@ net.Receive("impulseDoorAdd", function(len, ply)
     if (ply.nextDoorChange or 0) > CurTime() then return end
     ply.nextDoorChange = CurTime() + 0.1
 
-    if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then return end
+    if not ply:Alive() or ply:GetNetVar("arrested", false) then return end
 
     local target = net.ReadEntity()
 
@@ -544,7 +544,7 @@ net.Receive("impulseDoorAdd", function(len, ply)
     trace.filter = ply
 
     local traceEnt = util.TraceLine(trace).Entity
-    local owners = traceEnt:GetSyncVar(SYNC_DOOR_OWNERS, nil)
+    local owners = traceEnt:GetNetVar("doorOwners", nil)
 
     if IsValid(traceEnt) and ply:IsDoorOwner(owners) and traceEnt:GetDoorMaster() == ply then
         if target == ply then return end
@@ -568,7 +568,7 @@ net.Receive("impulseDoorRemove", function(len, ply)
     if (ply.nextDoorChange or 0) > CurTime() then return end
     ply.nextDoorChange = CurTime() + 0.1
 
-    if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then return end
+    if not ply:Alive() or ply:GetNetVar("arrested", false) then return end
 
     local target = net.ReadEntity()
 
@@ -581,7 +581,7 @@ net.Receive("impulseDoorRemove", function(len, ply)
 
     local traceEnt = util.TraceLine(trace).Entity
 
-    if IsValid(traceEnt) and ply:IsDoorOwner(traceEnt:GetSyncVar(SYNC_DOOR_OWNERS, nil)) and traceEnt:GetDoorMaster() == ply then
+    if IsValid(traceEnt) and ply:IsDoorOwner(traceEnt:GetNetVar("doorOwners", nil)) and traceEnt:GetDoorMaster() == ply then
         if target == ply then return end
 
         if not target.OwnedDoors or not target.OwnedDoors[traceEnt] then return end
@@ -655,7 +655,7 @@ net.Receive("impulseInvDoEquip", function(len, ply)
     if not ply.impulseBeenInventorySetup or (ply.nextInvEquip or 0) > CurTime() then return end
     ply.nextInvEquip = CurTime() + 0.1
 
-    if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then return end
+    if not ply:Alive() or ply:GetNetVar("arrested", false) then return end
 
     local canUse = hook.Run("CanUseInventory", ply)
 
@@ -675,7 +675,7 @@ net.Receive("impulseInvDoDrop", function(len, ply)
     if not ply.impulseBeenInventorySetup or (ply.nextInvDrop or 0) > CurTime() then return end
     ply.nextInvDrop = CurTime() + 0.1
 
-    if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then return end
+    if not ply:Alive() or ply:GetNetVar("arrested", false) then return end
 
     local canUse = hook.Run("CanUseInventory", ply)
 
@@ -695,7 +695,7 @@ net.Receive("impulseInvDoUse", function(len, ply)
     if not ply.impulseBeenInventorySetup or (ply.nextInvUse or 0) > CurTime() then return end
     ply.nextInvUse = CurTime() + 0.1
 
-    if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then return end
+    if not ply:Alive() or ply:GetNetVar("arrested", false) then return end
 
     local canUse = hook.Run("CanUseInventory", ply)
 
@@ -751,7 +751,7 @@ net.Receive("impulseInvDoMove", function(len, ply)
     if not ply.currentStorage or not IsValid(ply.currentStorage) then return end
     if ply.currentStorage:GetPos():DistToSqr(ply:GetPos()) > (100 ^ 2) then return end
     if ply:IsCP() then return end
-    if ply:GetSyncVar(SYNC_ARRESTED, false) or not ply:Alive() then return end
+    if ply:GetNetVar("arrested", false) or not ply:Alive() then return end
 
     local canUse = hook.Run("CanUseInventory", ply)
 
@@ -814,7 +814,7 @@ net.Receive("impulseInvDoMoveMass", function(len, ply)
     if not ply.currentStorage or not IsValid(ply.currentStorage) then return end
     if ply.currentStorage:GetPos():DistToSqr(ply:GetPos()) > (100 ^ 2) then return end
     if ply:IsCP() then return end
-    if ply:GetSyncVar(SYNC_ARRESTED, false) or not ply:Alive() then return end
+    if ply:GetNetVar("arrested", false) or not ply:Alive() then return end
 
     local canUse = hook.Run("CanUseInventory", ply)
 
@@ -1022,7 +1022,7 @@ net.Receive("impulseMixTry", function(len, ply)
         return -- already crafting
     end
 
-    if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then
+    if not ply:Alive() or ply:GetNetVar("arrested", false) then
         return -- ded or arrested
     end
 
@@ -1083,7 +1083,7 @@ net.Receive("impulseMixTry", function(len, ply)
 
     for v, k in pairs(sounds) do
         timer.Simple(k[1], function()
-            if not IsValid(ply) or not IsValid(benchEnt) or not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) or ply.CraftFail or benchEnt:GetPos():DistToSqr(ply:GetPos()) > (120 ^ 2) then
+            if not IsValid(ply) or not IsValid(benchEnt) or not ply:Alive() or ply:GetNetVar("arrested", false) or ply.CraftFail or benchEnt:GetPos():DistToSqr(ply:GetPos()) > (120 ^ 2) then
                 if IsValid(ply) then
                     ply.CraftFail = true
                 end
@@ -1114,7 +1114,7 @@ net.Receive("impulseMixTry", function(len, ply)
 
             if ply.CraftFail then return end
 
-            if ply:GetSyncVar(SYNC_ARRESTED, false) or ply:IsCP() then return end
+            if ply:GetNetVar("arrested", false) or ply:IsCP() then return end
 
             if startTeam != ply:Team() then return end
 
@@ -1162,7 +1162,7 @@ net.Receive("impulseVendorBuy", function(len, ply)
 
     if (ply:GetPos() - vendor:GetPos()):LengthSqr() > (120 ^ 2) then return end
 
-    if ply:GetSyncVar(SYNC_ARRESTED, false) or not ply:Alive() then return end
+    if ply:GetNetVar("arrested", false) or not ply:Alive() then return end
 
     local canUse = hook.Run("CanUseInventory", ply)
 
@@ -1271,7 +1271,7 @@ net.Receive("impulseVendorSell", function(len, ply)
 
     if (ply:GetPos() - vendor:GetPos()):LengthSqr() > (120 ^ 2) then return end
 
-    if ply:GetSyncVar(SYNC_ARRESTED, false) or not ply:Alive() then return end
+    if ply:GetNetVar("arrested", false) or not ply:Alive() then return end
 
     local canUse = hook.Run("CanUseInventory", ply)
 
@@ -1360,7 +1360,7 @@ net.Receive("impulseUnRestrain", function(len, ply)
 
     if not ent or not IsValid(ent) then return end
 
-    if not ent:IsPlayer() or ent:GetSyncVar(SYNC_ARRESTED, false) == false or not ply:CanArrest(ent) then return end
+    if not ent:IsPlayer() or ent:GetNetVar("arrested", false) == false or not ply:CanArrest(ent) then return end
 
     if ent.BeingJailed then return end
 
@@ -1432,7 +1432,7 @@ net.Receive("impulseInvContainerDoMove", function(len, ply)
         if ply:IsCP() then return end
     elseif container.Code and !container.Authorised[ply] then return end
 
-    if ply:GetSyncVar(SYNC_ARRESTED, false) or not ply:Alive() then return end
+    if ply:GetNetVar("arrested", false) or not ply:Alive() then return end
 
     local canUse = hook.Run("CanUseInventory", ply)
 
@@ -1538,8 +1538,8 @@ net.Receive("impulseGroupDoRankAdd", function(len, ply)
 
     if ply:IsCP() then return end
 
-    local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
-    local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
+    local name = ply:GetNetVar("groupName", nil)
+    local rank = ply:GetNetVar("groupRank", nil)
 
     if not name or not rank then return end
 
@@ -1647,8 +1647,8 @@ net.Receive("impulseGroupDoInvite", function(len, ply)
 
     if ply:IsCP() then return end
 
-    local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
-    local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
+    local name = ply:GetNetVar("groupName", nil)
+    local rank = ply:GetNetVar("groupRank", nil)
 
     if not name or not rank then return end
 
@@ -1660,7 +1660,7 @@ net.Receive("impulseGroupDoInvite", function(len, ply)
 
     local targ = net.ReadEntity()
 
-    if not IsValid(targ) or not targ:IsPlayer() or not targ.impulseBeenSetup or targ:GetSyncVar(SYNC_GROUP_NAME, nil) then return end
+    if not IsValid(targ) or not targ:IsPlayer() or not targ.impulseBeenSetup or targ:GetNetVar("groupName", nil) then return end
 
     if targ.GroupInvites and targ.GroupInvites[name] then
         return ply:Notify("This player already has a pending invite for this group.")
@@ -1700,8 +1700,8 @@ net.Receive("impulseGroupDoInviteAccept", function(len, ply)
 
     if ply:IsCP() then return end
 
-    local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
-    local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
+    local name = ply:GetNetVar("groupName", nil)
+    local rank = ply:GetNetVar("groupRank", nil)
 
     if name or rank then return end
 
@@ -1729,8 +1729,8 @@ net.Receive("impulseGroupDoRankRemove", function(len, ply)
 
     if ply:IsCP() then return end
 
-    local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
-    local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
+    local name = ply:GetNetVar("groupName", nil)
+    local rank = ply:GetNetVar("groupRank", nil)
 
     if not name or not rank then return end
 
@@ -1759,8 +1759,8 @@ net.Receive("impulseGroupDoSetRank", function(len, ply)
 
     if ply:IsCP() then return end
 
-    local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
-    local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
+    local name = ply:GetNetVar("groupName", nil)
+    local rank = ply:GetNetVar("groupRank", nil)
 
     if not name or not rank then return end
 
@@ -1813,8 +1813,8 @@ net.Receive("impulseGroupDoRemove", function(len, ply)
 
     if ply:IsCP() then return end
 
-    local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
-    local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
+    local name = ply:GetNetVar("groupName", nil)
+    local rank = ply:GetNetVar("groupRank", nil)
 
     if not name or not rank then return end
 
@@ -1866,8 +1866,8 @@ net.Receive("impulseGroupDoCreate", function(len, ply)
 
     if not ply:CanAfford(impulse.Config.GroupMakeCost) then return end
 
-    local curName = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
-    local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
+    local curName = ply:GetNetVar("groupName", nil)
+    local rank = ply:GetNetVar("groupRank", nil)
 
     if name or curName then return end
 
@@ -1907,8 +1907,8 @@ net.Receive("impulseGroupDoDelete", function(len, ply)
 
     if ply:IsCP() then return end
 
-    local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
-    local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
+    local name = ply:GetNetVar("groupName", nil)
+    local rank = ply:GetNetVar("groupRank", nil)
 
     if not name or not rank then return end
 
@@ -1922,8 +1922,8 @@ net.Receive("impulseGroupDoDelete", function(len, ply)
         local targEnt = player.GetBySteamID(v)
 
         if IsValid(targEnt) then
-            targEnt:SetSyncVar(SYNC_GROUP_NAME, nil, true)
-            targEnt:SetSyncVar(SYNC_GROUP_RANK, nil, true)
+            targEnt:SetNetVar("groupName", nil)
+            targEnt:SetNetVar("groupRank", nil)
             targEnt:Notify("You were removed from the "..name.." group as it has been deleted by the owner.")
         end
     end
@@ -1941,8 +1941,8 @@ net.Receive("impulseGroupDoLeave", function(len, ply)
 
     if ply:IsCP() then return end
 
-    local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
-    local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
+    local name = ply:GetNetVar("groupName", nil)
+    local rank = ply:GetNetVar("groupRank", nil)
 
     if not name or not rank then return end
 
@@ -1962,8 +1962,8 @@ net.Receive("impulseGroupDoSetColor", function(len, ply)
 
     if ply:IsCP() then return end
 
-    local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
-    local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
+    local name = ply:GetNetVar("groupName", nil)
+    local rank = ply:GetNetVar("groupRank", nil)
 
     if not name or not rank then return end
 
@@ -1991,8 +1991,8 @@ net.Receive("impulseGroupDoSetInfo", function(len, ply)
 
     if ply:IsCP() then return end
 
-    local name = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
-    local rank = ply:GetSyncVar(SYNC_GROUP_RANK, nil)
+    local name = ply:GetNetVar("groupName", nil)
+    local rank = ply:GetNetVar("groupRank", nil)
 
     if not name or not rank then return end
 

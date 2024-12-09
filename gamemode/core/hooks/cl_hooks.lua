@@ -83,7 +83,7 @@ function GM:Think()
 
     if (nextLoopThink or 0) < CurTime() then
         for v, k in player.Iterator() do
-            local isArrested = k:GetSyncVar(SYNC_ARRESTED, false)
+            local isArrested = k:GetNetVar("arrested", false)
 
             if isArrested != (k.BoneArrested or false) then
                 k:SetHandsBehindBack(isArrested)
@@ -229,16 +229,14 @@ function GM:CalcViewModelView(weapon, viewmodel, oldEyePos, oldEyeAng, eyePos, e
 end
 
 function GM:ShouldDrawLocalPlayer()
-    if ( SYNC_FALLOVER_RAGDOLL ) then
-        local entity = Entity(LocalPlayer():GetSyncVar(SYNC_FALLOVER_RAGDOLL, 0))
+    if ( "falloverRagdoll" ) then
+        local entity = Entity(LocalPlayer():GetNetVar("falloverRagdoll", 0))
         if IsValid(entity) then
             return false
         end
     end
 
-    if impulse.Settings:Get("view_thirdperson") then
-        return true
-    end
+    if impulse.Settings:Get("view_thirdperson") then return true end
 end
 
 local thirdperson_smooth_origin
@@ -258,8 +256,8 @@ function GM:CalcView(player, origin, angles, fov)
         return view
     end
 
-    if ( SYNC_FALLOVER_RAGDOLL ) then
-        local entity = Entity(LocalPlayer():GetSyncVar(SYNC_FALLOVER_RAGDOLL, 0))
+    if ( "falloverRagdoll" ) then
+        local entity = Entity(LocalPlayer():GetNetVar("falloverRagdoll", 0))
         if IsValid(entity) then return end
     end
     
@@ -471,7 +469,7 @@ end
 
 function GM:OnContextMenuOpen()
     if LocalPlayer():Team() == 0 or not LocalPlayer():Alive() or impulse_ActiveWorkbar then return end
-    if LocalPlayer():GetSyncVar(SYNC_ARRESTED, false) then return end
+    if LocalPlayer():GetNetVar("arrested", false) then return end
 
     local canUse = hook.Run("CanUseInventory", LocalPlayer())
 

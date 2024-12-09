@@ -64,7 +64,7 @@ if SERVER then
                     return activator:Notify("You are not allowed to pick up this item.")
                 end
 
-                if not activator:Alive() or activator:GetSyncVar(SYNC_ARRESTED, false) then
+                if not activator:Alive() or activator:GetNetVar("arrested", false) then
                     return activator:Notify("You are not allowed to pick up items while arrested.")
                 end
 

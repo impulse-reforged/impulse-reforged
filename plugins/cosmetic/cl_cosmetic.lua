@@ -148,9 +148,9 @@ hook.Add("PostPlayerDraw", "impulseCosmeticDraw", function(k)
         end
     end
 
-    local faceCos = k:GetSyncVar(SYNC_COS_FACE) -- uses bone 6 face
-    local hatCos = k:GetSyncVar(SYNC_COS_HEAD) -- uses bone 6 face
-    local chestCos = k:GetSyncVar(SYNC_COS_CHEST) -- uses bone 1 spine
+    local faceCos = k:GetNetVar("cosmeticFace") -- uses bone 6 face
+    local hatCos = k:GetNetVar("cosmeticHead") -- uses bone 6 face
+    local chestCos = k:GetNetVar("cosmeticChest") -- uses bone 1 spine
 
     if faceCos then
         if faceCos != (k.lastFace or -1) then
@@ -260,9 +260,9 @@ hook.Add("SetupInventoryModel", "impulseDrawCosmetics", function(panel)
             end
         end
 
-        local faceCos = LocalPlayer():GetSyncVar(SYNC_COS_FACE) -- uses bone 6 face
-        local hatCos = LocalPlayer():GetSyncVar(SYNC_COS_HEAD) -- uses bone 6 face
-        local chestCos = LocalPlayer():GetSyncVar(SYNC_COS_CHEST) -- uses bone 1 spine
+        local faceCos = LocalPlayer():GetNetVar("cosmeticFace") -- uses bone 6 face
+        local hatCos = LocalPlayer():GetNetVar("cosmeticHead") -- uses bone 6 face
+        local chestCos = LocalPlayer():GetNetVar("cosmeticChest") -- uses bone 1 spine
 
         if faceCos then
             if faceCos != self.lastFaceI then

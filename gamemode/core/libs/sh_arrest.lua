@@ -57,5 +57,5 @@ end
 -- @realm shared
 -- @return bool Is arrested
 function PLAYER:IsArrested()
-    return self:GetSyncVar(SYNC_ARRESTED, false)
+    return self:GetNetVar("arrested", false)
 end

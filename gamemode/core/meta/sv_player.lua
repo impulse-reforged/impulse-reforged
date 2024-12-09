@@ -147,7 +147,7 @@ function PLAYER:GetPropCount(skip)
     end
 
     if not skip then
-        self:SetLocalSyncVar(SYNC_PROPCOUNT, c)
+        self:SetNetVar("propCount", c)
     end
 
     return c

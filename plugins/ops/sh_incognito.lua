@@ -1,7 +1,7 @@
 local PLAYER = FindMetaTable("Player")
 
 function PLAYER:IsIncognito()
-    return self:GetSyncVar(SYNC_INCOGNITO, false)
+    return self:GetNetVar("incognito", false)
 end
 
 local incognitoCommand = {
@@ -9,7 +9,7 @@ local incognitoCommand = {
     requiresArg = false,
     adminOnly = true,
     onRun = function(ply, arg, rawText)
-        ply:SetSyncVar(SYNC_INCOGNITO, !ply:IsIncognito(), true)
+        ply:SetNetVar("incognito", !ply:IsIncognito())
 
         if ply:IsIncognito() then
             ply:Notify("You have entered incognito mode. Please go back to normal mode as soon as you can.")

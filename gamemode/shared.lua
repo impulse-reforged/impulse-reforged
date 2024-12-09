@@ -53,8 +53,8 @@ impulse.Util:IncludeDir("core/hooks")
 
 function GM:Initialize()
     impulse:CheckVersion()
-    impulse.Schema:Load()
     impulse.Plugins:Load()
+    impulse.Schema:Load()
 end
 
 impulse_reloaded = false
@@ -66,8 +66,8 @@ function GM:OnReloaded()
 
     GM = GM or GAMEMODE
 
-    impulse.Schema:Load()
     impulse.Plugins:Load()
+    impulse.Schema:Load()
 
     impulse_reloads = impulse_reloads + 1
     impulse_reload_time = math.Round(SysTime() - impulse_reload_time, 2)

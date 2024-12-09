@@ -19,11 +19,11 @@ function PLAYER:Arrest()
     self:SetWalkSpeed(impulse.Config.WalkSpeed - 30)
     --self:SetJumpPower(0)
 
-    self:SetSyncVar(SYNC_ARRESTED, true, true)
+    self:SetNetVar("arrested", true)
 end
 
 function PLAYER:UnArrest()
-    self:SetSyncVar(SYNC_ARRESTED, false, true)
+    self:SetNetVar("arrested", false)
 
     if self.ArrestedWeapons then
         for v, k in pairs(self.ArrestedWeapons) do
@@ -43,7 +43,7 @@ function PLAYER:UnArrest()
 end
 
 function PLAYER:DragPlayer(ply)
-    if self:CanArrest(ply) and ply:GetSyncVar(SYNC_ARRESTED, false) then
+    if self:CanArrest(ply) and ply:GetNetVar("arrested", false) then
         ply.ArrestedDragger = self
         self.ArrestedDragging = ply
         impulse.Arrest.Dragged[ply] = true
@@ -88,7 +88,7 @@ function PLAYER:Jail(time, jailData)
         doCellMates = true
     end
 
-    if not self:GetSyncVar(SYNC_ARRESTED, false) then
+    if not self:GetNetVar("arrested", false) then
         self:Arrest()
     end
 

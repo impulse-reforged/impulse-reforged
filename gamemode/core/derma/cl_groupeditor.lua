@@ -9,7 +9,7 @@ function PANEL:Init()
     self.sheets = {}
     local panel = self
 
-    if LocalPlayer():GetSyncVar(SYNC_GROUP_NAME, "") != "" then
+    if LocalPlayer():GetNetVar("groupName", "") != "" then
         self:ShowGroup()
     else
         self:NoGroup()
@@ -121,7 +121,7 @@ function PANEL:ShowGroup()
     local panel = self
 
     local lbl = vgui.Create("DLabel", sheet)
-    lbl:SetText(LocalPlayer():GetSyncVar(SYNC_GROUP_NAME, "Unknown Name"))
+    lbl:SetText(LocalPlayer():GetNetVar("groupName", "Unknown Name"))
     lbl:SetFont("Impulse-CharacterInfo-NO")
     lbl:SetPos(5, 0)
     lbl:SizeToContents()
@@ -143,7 +143,7 @@ function PANEL:ShowGroup()
     lblM:SetPos(5, 32)
 
     local lbl = vgui.Create("DLabel", sheet)
-    lbl:SetText("Your rank: "..LocalPlayer():GetSyncVar(SYNC_GROUP_RANK, "Unknown Rank"))
+    lbl:SetText("Your rank: "..LocalPlayer():GetNetVar("groupRank", "Unknown Rank"))
     lbl:SetFont("Impulse-Elements18-Shadow")
     lbl:SetPos(5, 47)
     lbl:SizeToContents()
@@ -176,12 +176,12 @@ function PANEL:ShowGroup()
     function inv:DoClick()
         local m = DermaMenu()
 
-        local gname = LocalPlayer():GetSyncVar(SYNC_GROUP_NAME, nil)
+        local gname = LocalPlayer():GetNetVar("groupName", nil)
 
         if not gname then return end
 
         for v, k in player.Iterator() do
-            if k:GetSyncVar(SYNC_GROUP_NAME, nil) then continue end
+            if k:GetNetVar("groupName", nil) then continue end
 
             if k:IsCP() then continue end
 
@@ -336,7 +336,7 @@ end
 
 function PANEL:ShowInfo()
     local group = impulse.Group.Groups[1]
-    local name = LocalPlayer():GetSyncVar(SYNC_GROUP_NAME, "ERROR")
+    local name = LocalPlayer():GetNetVar("groupName", "ERROR")
     local sheet = self:AddSheet("Info", "icon16/information.png")
     local canEdit = LocalPlayer():GroupHasPermission(8)
 
@@ -535,7 +535,7 @@ end
 
 function PANEL:ShowAdmin()
     local group = impulse.Group.Groups[1]
-    local name = LocalPlayer():GetSyncVar(SYNC_GROUP_NAME, "ERROR")
+    local name = LocalPlayer():GetNetVar("groupName", "ERROR")
     local sheet = self:AddSheet("Admin", "icon16/shield.png")
 
     local lbl = vgui.Create("DLabel", sheet)

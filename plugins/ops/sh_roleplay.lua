@@ -123,7 +123,7 @@ local sellDoorCommand = {
             return ply:Notify("You are not looking at a door.")
         end
 
-        local owners = door:GetSyncVar(SYNC_DOOR_OWNERS, nil)
+        local owners = door:GetNetVar("doorOwners", nil)
 
         if not owners then
             return ply:Notify("No door owners to remove.")

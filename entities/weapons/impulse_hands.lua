@@ -364,7 +364,7 @@ function SWEP:PrimaryAttack()
 
     if IsValid(traceEnt) then
         if traceEnt:IsDoor() then
-            local doorOwners, doorGroup = traceEnt:GetSyncVar(SYNC_DOOR_OWNERS, nil), traceEnt:GetSyncVar(SYNC_DOOR_GROUP, nil)
+            local doorOwners, doorGroup = traceEnt:GetNetVar("doorOwners", nil), traceEnt:GetNetVar("doorGroup", nil)
 
             if ply:CanLockUnlockDoor(doorOwners, doorGroup) then
                 traceEnt:DoorLock()
@@ -391,7 +391,7 @@ function SWEP:SecondaryAttack()
     if SERVER and IsValid(traceEnt) then
         if trace.StartPos:DistToSqr(trace.HitPos) < 86 ^ 2 then
             if traceEnt:IsDoor() then
-                local doorOwners, doorGroup = traceEnt:GetSyncVar(SYNC_DOOR_OWNERS, nil), traceEnt:GetSyncVar(SYNC_DOOR_GROUP, nil)
+                local doorOwners, doorGroup = traceEnt:GetNetVar("doorOwners", nil), traceEnt:GetNetVar("doorGroup", nil)
 
                 if ply:CanLockUnlockDoor(doorOwners, doorGroup) then
                     traceEnt:DoorUnlock()

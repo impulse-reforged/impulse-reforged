@@ -61,7 +61,7 @@ end
             return self:Remove()
         end
 
-        if LocalPlayer():GetSyncVar(SYNC_ARRESTED, false) then
+        if LocalPlayer():GetNetVar("arrested", false) then
             return self:Remove()
         end
      end

@@ -13,7 +13,7 @@ if SERVER then
 
         hook.Run("PlayerRPNameChanged", self, self:Name(), name)
 
-        self:SetSyncVar(SYNC_RPNAME, name, true)
+        self:SetNetVar("roleplayName", name)
     end
 
     function PLAYER:GetSavedRPName()
@@ -75,12 +75,12 @@ function PLAYER:SteamName()
 end
 
 function PLAYER:Name()
-    return self:GetSyncVar(SYNC_RPNAME, self:SteamName())
+    return self:GetNetVar("roleplayName", self:SteamName())
 end
 
 function PLAYER:KnownName()
     local custom = hook.Run("PlayerGetKnownName", self)
-    return custom or self:GetSyncVar(SYNC_RPNAME, self:SteamName())
+    return custom or self:GetNetVar("roleplayName", self:SteamName())
 end
 
 PLAYER.GetName = PLAYER.Name

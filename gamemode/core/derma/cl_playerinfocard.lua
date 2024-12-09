@@ -306,7 +306,7 @@ function PANEL:Init()
         -- tp
         self.tp = vgui.Create("DLabel", self)
         self.tp:SetFont("Impulse-Elements18-Shadow")
-        self.tp:SetText("Achievement Points: "..self.Player:GetSyncVar(SYNC_TROPHYPOINTS, 0))
+        self.tp:SetText("Achievement Points: "..self.Player:GetNetVar("achievementPoints", 0))
         self.tp:SizeToContents()
         self.tp:SetPos(10,150)
 

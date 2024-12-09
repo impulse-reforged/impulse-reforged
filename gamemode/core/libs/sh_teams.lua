@@ -105,7 +105,7 @@ function PLAYER:CanBecomeTeam(teamID, notify)
 
     if ( !self:Alive() ) then return false end
 
-    if ( self:GetSyncVar(SYNC_ARRESTED, false) ) then return false end
+    if ( self:GetNetVar("arrested", false) ) then return false end
 
     if ( teamID == self:Team() ) then return false end
 
@@ -275,11 +275,11 @@ function PLAYER:CanBecomeTeamRank(rankID, forced)
 end
 
 function PLAYER:GetTeamClass()
-    return self:GetSyncVar(SYNC_CLASS, 0)
+    return self:GetNetVar("class", 0)
 end
 
 function PLAYER:GetTeamRank()
-    return self:GetSyncVar(SYNC_RANK, 0)
+    return self:GetNetVar("rank", 0)
 end
 
 function PLAYER:GetTeamClassName()
@@ -288,7 +288,7 @@ function PLAYER:GetTeamClassName()
     end
 
     local classData = impulse.Teams:FindTeam(self:Team()).ClassRef
-    local plyClass = self:GetSyncVar(SYNC_CLASS, nil)
+    local plyClass = self:GetNetVar("class", nil)
 
     if ( classData and plyClass ) then
         return classData[plyClass]
@@ -303,7 +303,7 @@ function PLAYER:GetTeamRankName()
     end
 
     local rankData = impulse.Teams:FindTeam(self:Team()).ranks
-    local plyRank = self:GetSyncVar(SYNC_RANK, nil)
+    local plyRank = self:GetNetVar("rank", nil)
 
     if ( rankData and plyRank ) then
         return rankData[plyRank].name

@@ -4,6 +4,5 @@ net.Receive("impulseOpsObserverHide", function(len, ply)
 
     local val = net.ReadBool()
 
-    ply:SetSyncVar(SYNC_OBSERVER_HIDE, val, true)
-    ply:Sync()
+    ply:SetNetVar("observerHide", val)
 end)

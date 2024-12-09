@@ -249,7 +249,7 @@ local advertCommand = {
             return ply:Notify("Your team cannot make an advert.") 
         end
 
-        if ply:GetSyncVar(SYNC_ARRESTED, false) then
+        if ply:GetNetVar("arrested", false) then
             return ply:Notify("You cannot make an advert while arrested.")
         end
 
@@ -393,7 +393,7 @@ local searchCommand = {
                 return ply:Notify("You cannot search this player.")
             end
 
-            if not targ:GetSyncVar(SYNC_ARRESTED, false) then
+            if not targ:GetNetVar("arrested", false) then
                 return ply:Notify("You must detain a player before searching them.")
             end
 
@@ -439,7 +439,7 @@ local groupChatCommand = {
     description = "Sends a message to members of your group.",
     requiresArg = true,
     onRun = function(ply, arg, rawText)
-        local group = ply:GetSyncVar(SYNC_GROUP_NAME, nil)
+        local group = ply:GetNetVar("groupName", nil)
 
         if not group then
             return ply:Notify("You must be in a group to use this command.")
@@ -454,7 +454,7 @@ local groupChatCommand = {
         end
 
         for v, k in player.Iterator() do
-            if k:GetSyncVar(SYNC_GROUP_NAME, "") == group and !k:IsCP() then
+            if k:GetNetVar("groupName", "") == group and !k:IsCP() then
                 k:SendChatClassMessage(15, rawText, ply)
             end
         end
@@ -578,8 +578,8 @@ if CLIENT then
     end)
 
     impulse.RegisterChatClass(15, function(message, speaker)
-        local groupName = LocalPlayer():GetSyncVar(SYNC_GROUP_NAME, nil)
-        local groupRank = speaker:GetSyncVar(SYNC_GROUP_RANK, nil)
+        local groupName = LocalPlayer():GetNetVar("groupName", nil)
+        local groupRank = speaker:GetNetVar("groupRank", nil)
 
         if not groupName or not groupRank then return end
 

@@ -50,7 +50,7 @@ end
 
 function ENT:Use(activator, caller)
     if activator:IsPlayer() and activator:Alive() then
-        if activator:GetSyncVar(SYNC_ARRESTED, false) then
+        if activator:GetNetVar("arrested", false) then
             return activator:Notify("You cannot access this when detained.")
         end
 

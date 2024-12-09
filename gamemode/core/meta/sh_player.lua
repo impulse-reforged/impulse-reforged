@@ -63,17 +63,11 @@ local adminGroups = {
 -- @realm shared
 -- @treturn bool Is admin
 function PLAYER:IsAdmin()
-    if ( hook.Run("PlayerIsAdmin", self) ) then
-        return true
-    end
+    if ( hook.Run("PlayerIsAdmin", self) ) then return true end
 
-    if ( self:IsSuperAdmin() ) then
-        return true
-    end
+    if ( self:IsSuperAdmin() ) then return true end
 
-    if ( adminGroups[self:GetUserGroup()] ) then
-        return true
-    end
+    if ( adminGroups[self:GetUserGroup()] ) then return true end
 
     return false
 end
@@ -87,17 +81,11 @@ local leadAdminGroups = {
 -- @realm shared
 -- @treturn bool Is lead admin
 function PLAYER:IsLeadAdmin()
-    if ( hook.Run("PlayerIsLeadAdmin", self) ) then
-        return true
-    end
+    if ( hook.Run("PlayerIsLeadAdmin", self) ) then return true end
 
-    if ( self:IsSuperAdmin() ) then
-        return true
-    end
+    if ( self:IsSuperAdmin() ) then return true end
 
-    if ( leadAdminGroups[self:GetUserGroup()] ) then
-        return true
-    end
+    if ( leadAdminGroups[self:GetUserGroup()] ) then return true end
 
     return false
 end
@@ -106,13 +94,9 @@ end
 -- @realm shared
 -- @treturn bool Is super admin
 function PLAYER:IsSuperAdmin()
-    if ( hook.Run("PlayerIsSuperAdmin", self) ) then
-        return true
-    end
+    if ( hook.Run("PlayerIsSuperAdmin", self) ) then return true end
 
-    if ( self.GetUserGroup and self:GetUserGroup() == "superadmin" ) then
-        return true
-    end
+    if ( self.GetUserGroup and self:GetUserGroup() == "superadmin" ) then return true end
 
     return false
 end
@@ -121,13 +105,9 @@ end
 -- @realm shared
 -- @treturn bool Is in spawn
 function PLAYER:InSpawn()
-    if ( hook.Run("PlayerIsInSpawn", self) ) then
-        return true
-    end
+    if ( hook.Run("PlayerIsInSpawn", self) ) then return true end
 
-    if ( !impulse.Config.SpawnPos1 or !impulse.Config.SpawnPos2 ) then
-        return false
-    end
+    if ( !impulse.Config.SpawnPos1 or !impulse.Config.SpawnPos2 ) then return false end
 
     return self:GetPos():WithinAABox(impulse.Config.SpawnPos1, impulse.Config.SpawnPos2)
 end
@@ -203,7 +183,7 @@ end
 -- @realm shared
 -- @treturn number Hunger level
 function PLAYER:GetHunger()
-    return self:GetSyncVar(SYNC_HUNGER, 0)
+    return self:GetNetVar("hunger", 0)
 end
 
 --- Returns whether a player is running or not

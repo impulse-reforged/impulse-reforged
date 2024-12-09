@@ -62,12 +62,10 @@ function PLAYER:SetTeam(teamID, forced)
         hook.Run("OnPlayerChangedTeam", self, self:Team(), teamID)
     end
 
-    self:SetLocalSyncVar(SYNC_CLASS, nil, true)
-    self:SetLocalSyncVar(SYNC_RANK, nil, true)
+    self:SetNetVar("class", nil)
+    self:SetNetVar("rank", nil)
     self:OldSetTeam(teamID)
     self:SetupHands()
-
-    hook.Run("UpdatePlayerSync", self)
 
     if teamData.spawns then
         self:SetPos(teamData.spawns[math.random(1, #teamData.spawns)])
@@ -181,7 +179,7 @@ function PLAYER:SetTeamClass(classID, skipLoadout)
         classData.onBecome(self)
     end
 
-    self:SetLocalSyncVar(SYNC_CLASS, classID, true)
+    self:SetNetVar("class", classID)
 
     hook.Run("PlayerChangeClass", self, classID, classData.name)
 
@@ -310,7 +308,7 @@ function PLAYER:SetTeamRank(rankID)
         rankData.onBecome(self)
     end
 
-    self:SetLocalSyncVar(SYNC_RANK, rankID, true)
+    self:SetNetVar("rank", rankID)
 
     hook.Run("PlayerChangeRank", self, rankID, rankData.name)
 

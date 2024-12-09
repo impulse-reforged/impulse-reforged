@@ -1,6 +1,94 @@
 impulse.Plugins = impulse.Plugins or {}
 impulse.Plugins.List = impulse.Plugins.List or {}
 
+function impulse.Plugins:LoadEntities(path)
+    local files, folders
+
+    local function IncludeFiles(path2, clientOnly)
+        if ( SERVER and file.Exists(path2 .. "init.lua", "LUA") or CLIENT ) then
+            if (clientOnly and CLIENT) or SERVER then
+                include(path2 .. "init.lua")
+            end
+
+            if ( file.Exists(path2 .. "cl_init.lua", "LUA") ) then
+                if SERVER then
+                    AddCSLuaFile(path2 .. "cl_init.lua")
+                else
+                    include(path2 .. "cl_init.lua")
+                end
+            end
+
+            return true
+        elseif ( file.Exists(path2 .. "shared.lua", "LUA") ) then
+            AddCSLuaFile(path2 .. "shared.lua")
+            include(path2 .. "shared.lua")
+
+            return true
+        end
+
+        return false
+    end
+
+    local function HandleEntityInclusion(folder, variable, register, default, clientOnly)
+        files, folders = file.Find(path .. "/" .. folder .. "/*", "LUA")
+        default = default or {}
+
+        for k, v in ipairs(folders) do
+            local path2 = path .. "/" .. folder .. "/" .. v .. "/"
+
+            _G[variable] = table.Copy(default)
+                _G[variable].ClassName = v
+
+                if ( IncludeFiles(path2, clientOnly) and !client ) then
+                    if (clientOnly) then
+                        if (CLIENT) then
+                            register(_G[variable], v)
+                        end
+                    else
+                        register(_G[variable], v)
+                    end
+                end
+            _G[variable] = nil
+        end
+
+        for k, v in ipairs(files) do
+            local niceName = string.StripExtension(v)
+
+            _G[variable] = table.Copy(default)
+                _G[variable].ClassName = niceName
+
+                AddCSLuaFile(path .. "/" .. folder .. "/" .. v)
+                include(path .. "/" .. folder .. "/" .. v)
+
+                if ( clientOnly ) then
+                    if ( CLIENT ) then
+                        register(_G[variable], niceName)
+                    end
+                else
+                    register(_G[variable], niceName)
+                end
+            _G[variable] = nil
+        end
+    end
+
+    -- Include entities.
+    HandleEntityInclusion("entities", "ENT", scripted_ents.Register, {
+        Type = "anim",
+        Base = "base_gmodentity",
+        Spawnable = true
+    })
+
+    -- Include weapons.
+    HandleEntityInclusion("weapons", "SWEP", weapons.Register, {
+        Primary = {},
+        Secondary = {},
+        Base = "weapon_base"
+    })
+
+    -- Include effects.
+    HandleEntityInclusion("effects", "EFFECT", effects and effects.Register, nil, true)
+end
+
 function impulse.Plugins:Load(path)
     MsgC(Color(83, 143, 239), "[impulse-reforged] Loading plugins...\n")
 
@@ -26,7 +114,9 @@ function impulse.Plugins:Load(path)
         impulse.Util:IncludeDir(path .. "/" .. v .. "/buyables", true)
         impulse.Util:IncludeDir(path .. "/" .. v .. "/vendors", true)
 
-        impulse.Plugins.List[v] = PLUGIN
+        self:LoadEntities(path .. "/" .. v .. "/entities")
+
+        self.List[v] = PLUGIN
 
         PLUGIN = nil
     end
@@ -41,7 +131,7 @@ function impulse.Plugins:Load(path)
 
         impulse.Util:Include(path .. "/" .. v, true)
 
-        impulse.Plugins.List[v] = PLUGIN
+        self.List[v] = PLUGIN
 
         PLUGIN = nil
     end

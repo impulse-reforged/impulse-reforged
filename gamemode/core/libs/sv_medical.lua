@@ -5,7 +5,7 @@ function PLAYER:BreakLegs()
 
     if self:HasBrokenLegs() then return end
 
-    self:SetSyncVar(SYNC_BROKENLEGS, true, true)
+    self:SetNetVar("brokenLegs", true)
     self.BrokenLegs = true
 
     self:EmitSound("impulse-reforged/bone"..math.random(1, 3)..".wav")
@@ -15,7 +15,7 @@ function PLAYER:BreakLegs()
 end
 
 function PLAYER:FixLegs()
-    self:SetSyncVar(SYNC_BROKENLEGS, false, true)
+    self:SetNetVar("brokenLegs", false)
     self.BrokenLegs = false
     self.BrokenLegsTime = nil
 end

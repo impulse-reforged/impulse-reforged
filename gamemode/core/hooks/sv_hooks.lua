@@ -30,15 +30,6 @@ function GM:PlayerInitialSpawn(ply)
 
     ply:SetCanZoom(false)
 
-    -- sync players with all other clients/ents
-    impulse.Sync.Data[ply:EntIndex()] = {}
-    for v, k in pairs(impulse.Sync.Data) do
-        local ent = Entity(v)
-        if IsValid(ent) then
-            ent:Sync(ply)
-        end
-    end
-
     ply:LoadData(function(data)
         if ( !IsValid(ply) ) then return end
     
@@ -173,11 +164,11 @@ function GM:PlayerSetup(ply, data)
         return
     end
 
-	ply:SetSyncVar(SYNC_RPNAME, data.rpname, true)
-	ply:SetSyncVar(SYNC_XP, data.xp, true)
+	ply:SetNetVar("roleplayName", data.rpname)
+	ply:SetNetVar("xp", data.xp)
 
-	ply:SetLocalSyncVar(SYNC_MONEY, data.money)
-	ply:SetLocalSyncVar(SYNC_BANKMONEY, data.bankmoney)
+	ply:SetNetVar("money", data.money)
+	ply:SetNetVar("bankMoney", data.bankmoney)
 
     local jsonData = util.JSONToTable(data.data or "") or {}
 
@@ -435,8 +426,8 @@ function GM:PlayerSpawn(ply)
         return
     end
 
-    if ply:GetSyncVar(SYNC_ARRESTED, false) == true then
-        ply:SetSyncVar(SYNC_ARRESTED, false, true)
+    if ply:GetNetVar("arrested", false) == true then
+        ply:SetNetVar("arrested", false)
     end
 
     if ply:HasBrokenLegs() then
@@ -471,9 +462,7 @@ function GM:PlayerDisconnected(ply)
     local userID = ply:UserID()
     local steamID = ply:SteamID64()
     local entIndex = ply:EntIndex()
-    local arrested = ply:GetSyncVar(SYNC_ARRESTED, false)
-
-    ply:SyncRemove()
+    local arrested = ply:GetNetVar("arrested", false)
 
     local plyTable = ply:GetTable()
     local dragger = plyTable.ArrestedDragger
@@ -631,20 +620,6 @@ function GM:PlayerCanHearPlayersVoice(listener, speaker)
 
     local canHear = listener.CanHear and listener.CanHear[speaker]
     return canHear, true
-end
-
-function GM:UpdatePlayerSync(ply)
-    for v, k in pairs(impulse.Sync.Data) do
-        local ent = Entity(v)
-
-        if IsValid(ent) then
-            for id,conditional in pairs(impulse.Sync.VarsConditional) do
-                if ent:GetSyncVar(id) and conditional(ply) then
-                    ent:SyncSingle(id, ply)
-                end
-            end
-        end
-    end
 end
 
 function GM:DoPlayerDeath(ply, attacker, dmginfo)
@@ -1027,7 +1002,7 @@ function GM:Think()
                     k:FeedHunger(-1)
                 end
 
-                if k:GetSyncVar(SYNC_HUNGER, 100) < 1 then
+                if k:GetNetVar("hunger", 100) < 1 then
                     if k:Health() > 10 then
                         k:TakeDamage(1, k, k)
                     end
@@ -1038,7 +1013,7 @@ function GM:Think()
             end
 
             if (k.nextHungerHeal or 0) < ctime then
-                local hunger = k:GetSyncVar(SYNC_HUNGER, 10)
+                local hunger = k:GetNetVar("hunger", 10)
 
                 if hunger >= 90 and k:Health() < 75 then
                     k:SetHealth(math.Clamp(k:Health() + 1, 0, 75))
@@ -1106,7 +1081,7 @@ function GM:PlayerTick(ply)
 end
 
 function GM:PlayerCanPickupWeapon(ply)
-    if ply:GetSyncVar(SYNC_ARRESTED, false) then return false end
+    if ply:GetNetVar("arrested", false) then return false end
 
     return true
 end
@@ -1145,11 +1120,9 @@ end
 
 function GM:PlayerSpawnProp(ply, model)
     local plyTable = ply:GetTable()
-    if not ply:Alive() or not plyTable.impulseBeenSetup or ply:GetSyncVar(SYNC_ARRESTED, false) then return false end
+    if not ply:Alive() or not plyTable.impulseBeenSetup or ply:GetNetVar("arrested", false) then return false end
 
-    if ply:IsAdmin() then
-        return true
-    end
+    if ply:IsAdmin() then return true end
 
     local limit
     local price
@@ -1183,7 +1156,7 @@ function GM:PlayerSpawnedProp(ply, model, ent)
 end
 
 function GM:PlayerSpawnVehicle(ply, model)
-    if ply:GetSyncVar(SYNC_ARRESTED, false) then return false end
+    if ply:GetNetVar("arrested", false) then return false end
 
     if ply:IsDonator() and (model:find("chair") or model:find("seat") or model:find("pod")) then
         local plyTable = ply:GetTable()
@@ -1232,13 +1205,9 @@ local adminProp = {
 }
 
 function GM:CanProperty(ply, prop)
-    if whitelistProp[prop] then
-        return true
-    end
+    if whitelistProp[prop] then return true end
 
-    if ply:IsAdmin() and adminProp[prop] then
-        return true
-    end
+    if ply:IsAdmin() and adminProp[prop] then return true end
 
     return false
 end
@@ -1387,9 +1356,7 @@ function GM:ADVDupeIsAllowed(ply, class, entclass) -- adv dupe 2 can be easily e
         end
     end
 
-    if whitelistDupeEnts[class] or string.sub(class, 1, 9) == "gmod_wire" then
-        return true
-    end
+    if whitelistDupeEnts[class] or string.sub(class, 1, 9) == "gmod_wire" then return true end
 
     return false
 end
@@ -1403,13 +1370,13 @@ end
 
 function GM:CanPlayerEnterVehicle(ply, veh)
     local plyTable = ply:GetTable()
-    if ply:GetSyncVar(SYNC_ARRESTED, false) or plyTable.ArrestedDragging then return false end
+    if ply:GetNetVar("arrested", false) or plyTable.ArrestedDragging then return false end
 
     return true
 end
 
 function GM:CanExitVehicle(veh, ply)
-    if ply:GetSyncVar(SYNC_ARRESTED, false) then return false end
+    if ply:GetNetVar("arrested", false) then return false end
 
     return true
 end

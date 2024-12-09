@@ -72,9 +72,9 @@ local function DrawPlayerInfo(target, alpha)
     pos = pos:ToScreen()
     pos.y = pos.y - 50
 
-    local myGroup = LocalPlayer():GetSyncVar(SYNC_GROUP_NAME, nil)
-    local group = target:GetSyncVar(SYNC_GROUP_NAME, nil)
-    local rank = target:GetSyncVar(SYNC_GROUP_RANK, nil)
+    local myGroup = LocalPlayer():GetNetVar("groupName", nil)
+    local group = target:GetNetVar("groupName", nil)
+    local rank = target:GetNetVar("groupRank", nil)
     local col = ColorAlpha(team.GetColor(target:Team()), alpha)
 
     if myGroup and !LocalPlayer():IsCP() and !target:IsCP() and group and rank and group == myGroup then
@@ -83,9 +83,9 @@ local function DrawPlayerInfo(target, alpha)
 
     draw.DrawText(target:KnownName(), "Impulse-Elements18-Shadow", pos.x, pos.y, col, 1)
 
-    if target:GetSyncVar(SYNC_TYPING, false) then
+    if target:GetNetVar("typing", false) then
         draw.DrawText("Typing .. .", "Impulse-Elements16-Shadow", pos.x, pos.y + 15, ColorAlpha(color_white, alpha), 1)
-    elseif target:GetSyncVar(SYNC_ARRESTED, false) and LocalPlayer():CanArrest(target) then
+    elseif target:GetNetVar("arrested", false) and LocalPlayer():CanArrest(target) then
         draw.DrawText("(F2 to unrestrain | E to drag)", "Impulse-Elements16-Shadow", pos.x, pos.y + 15, ColorAlpha(color_white, alpha), 1)
     end
 
@@ -97,10 +97,10 @@ local function DrawDoorInfo(target, alpha)
     if ( preDrawDoorInfo == false ) then return end
 
     local pos = target.LocalToWorld(target, target:OBBCenter()):ToScreen()
-    local doorOwners = target:GetSyncVar(SYNC_DOOR_OWNERS, nil)
-    local doorName = target:GetSyncVar(SYNC_DOOR_NAME, nil)
-    local doorGroup =  target:GetSyncVar(SYNC_DOOR_GROUP, nil)
-    local doorBuyable = target:GetSyncVar(SYNC_DOOR_BUYABLE, nil)
+    local doorOwners = target:GetNetVar("doorOwners", nil)
+    local doorName = target:GetNetVar("doorName", nil)
+    local doorGroup =  target:GetNetVar("doorGroup", nil)
+    local doorBuyable = target:GetNetVar("doorBuyable", nil)
     local col = ColorAlpha(impulse.Config.MainColour, alpha)
 
     if doorName then
@@ -356,20 +356,20 @@ function GM:HUDPaint()
         surface.DrawTexturedRect(110, y+66+yAdd, 18, 16)
 
         surface.SetTextPos(136, y+86+yAdd)
-        surface.DrawText("Hunger: " .. LocalPlayer():GetSyncVar(SYNC_HUNGER, 100))
+        surface.DrawText("Hunger: " .. LocalPlayer():GetNetVar("hunger", 100))
         if seeColIcons == true then surface.SetDrawColor(hungerCol) end
         surface.SetMaterial(hungerIcon)
         surface.DrawTexturedRect(110, y+87+yAdd, 18, 18)
 
         surface.SetTextPos(136, y+108+yAdd)
-        surface.DrawText("Money: " .. impulse.Config.CurrencyPrefix .. LocalPlayer():GetSyncVar(SYNC_MONEY, 0))
+        surface.DrawText("Money: " .. impulse.Config.CurrencyPrefix .. LocalPlayer():GetNetVar("money", 0))
         if seeColIcons == true then surface.SetDrawColor(moneyCol) end
         surface.SetMaterial(moneyIcon)
         surface.DrawTexturedRect(110, y+107+yAdd, 18, 18)
 
         surface.SetDrawColor(color_white)
 
-        if ply:GetSyncVar(SYNC_ARRESTED, false) == true and impulse_JailTimeEnd and impulse_JailTimeEnd > CurTime() then
+        if ply:GetNetVar("arrested", false) == true and impulse_JailTimeEnd and impulse_JailTimeEnd > CurTime() then
             local timeLeft = math.ceil(impulse_JailTimeEnd - CurTime())
 
             surface.SetMaterial(exitIcon)
@@ -378,14 +378,14 @@ function GM:HUDPaint()
             aboveHUDUsed = true
         end
 
-        draw.DrawText(ply:GetSyncVar(SYNC_XP, 0) .. "XP", "Impulse-Elements19", 55, y+150+(yAdd-8), color_white, TEXT_ALIGN_LEFT)
+        draw.DrawText(ply:GetNetVar("xp", 0) .. "XP", "Impulse-Elements19", 55, y+150+(yAdd-8), color_white, TEXT_ALIGN_LEFT)
         surface.SetMaterial(xpIcon)
         surface.DrawTexturedRect(30, y+150+(yAdd-8), 18, 18)
 
         local iconsX = 315
         local bleedIconCol
 
-        if ply:GetSyncVar(SYNC_BLEEDING, false) then
+        if ply:GetNetVar(SYNC_BLEEDING, false) then
             if (nextBleedFlash or 0) < CurTime() then
                 bleedFlash = !bleedFlash
                 nextBleedFlash = CurTime() + 1
@@ -423,7 +423,7 @@ function GM:HUDPaint()
 
                 surface.SetFont("Impulse-Elements18-Shadow")
                 surface.SetTextPos(scrW-130, scrH-50)
-                surface.DrawText("Props: " .. ply:GetSyncVar(SYNC_PROPCOUNT, 0) .. "/" .. ((ply:IsDonator() and impulse.Config.PropLimitDonator) or impulse.Config.PropLimit))
+                surface.DrawText("Props: " .. ply:GetNetVar("propCount", 0) .. "/" .. ((ply:IsDonator() and impulse.Config.PropLimitDonator) or impulse.Config.PropLimit))
             end
         end
 

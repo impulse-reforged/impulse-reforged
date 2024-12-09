@@ -1,8 +1,8 @@
 --[[--
 Physical object in the game world.
 
-Entities are physical representations of objects in the game world. Helix extends the functionality of entities to interface
-between Helix's own classes, and to reduce boilerplate code.
+Entities are physical representations of objects in the game world. impulse extends the functionality of entities to interface
+between impulse's own classes, and to reduce boilerplate code.
 
 See the [Garry's Mod Wiki](https://wiki.garrysmod.com/page/Category:Entity) for all other methods that the `Player` class has.
 ]]
@@ -12,9 +12,7 @@ local ENTITY = FindMetaTable("Entity")
 
 local modelCache = {}
 function ENTITY:IsFemale(modelov)
-    if ( self:IsPlayer() and hook.Run("PlayerIsFemale", self) ) then
-        return true
-    end
+    if ( self:IsPlayer() and hook.Run("PlayerIsFemale", self) ) then return true end
 
     local model = modelov or self:GetModel()
     if ( modelCache[model] ) then
@@ -55,9 +53,7 @@ function ENTITY:IsPropDoor()
     
     if not self.GetModel or not propDoors[self:GetModel()] then return false end
 
-    if (self:CPPIGetOwner() and IsValid(self:CPPIGetOwner())) and self:CPPIGetOwner():IsPlayer() then
-        return true
-    end
+    if (self:CPPIGetOwner() and IsValid(self:CPPIGetOwner())) and self:CPPIGetOwner():IsPlayer() then return true end
 
     if (self:CPPIGetOwner() and IsValid(self:CPPIGetOwner())) and self:CPPIGetOwner() == Entity(0) then
         if SERVER then

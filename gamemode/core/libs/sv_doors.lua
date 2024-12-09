@@ -11,12 +11,12 @@ function impulse.Doors.Save()
 
     for v, k in ents.Iterator() do
         if k:IsDoor() and k:CreatedByMap() then
-            if k:GetSyncVar(SYNC_DOOR_BUYABLE, true) == false then
+            if k:GetNetVar("doorBuyable", true) == false then
                 doors[k:MapCreationID()] = {
-                    name = k:GetSyncVar(SYNC_DOOR_NAME, nil),
-                    group = k:GetSyncVar(SYNC_DOOR_GROUP, nil),
+                    name = k:GetNetVar("doorName", nil),
+                    group = k:GetNetVar("doorGroup", nil),
                     pos = k:GetPos(),
-                    buyable = k:GetSyncVar(SYNC_DOOR_BUYABLE, false)
+                    buyable = k:GetNetVar("doorBuyable", false)
                 }
             end
         end
@@ -52,9 +52,9 @@ function impulse.Doors.Load()
                 local doorIndex = doorEnt:EntIndex()
                 posFinds[doorIndex] = true
                 
-                if doorData.name then doorEnt:SetSyncVar(SYNC_DOOR_NAME, doorData.name, true) end
-                if doorData.group then doorEnt:SetSyncVar(SYNC_DOOR_GROUP, doorData.group, true) end
-                if doorData.buyable != nil then doorEnt:SetSyncVar(SYNC_DOOR_BUYABLE, false, true) end
+                if doorData.name then doorEnt:SetNetVar("doorName", doorData.name) end
+                if doorData.group then doorEnt:SetNetVar("doorGroup", doorData.group) end
+                if doorData.buyable != nil then doorEnt:SetNetVar("doorBuyable", false) end
             end
         end
 
@@ -69,9 +69,9 @@ function impulse.Doors.Load()
                     continue
                 end
                 
-                if doorData.name then doorEnt:SetSyncVar(SYNC_DOOR_NAME, doorData.name, true) end
-                if doorData.group then doorEnt:SetSyncVar(SYNC_DOOR_GROUP, doorData.group, true) end
-                if doorData.buyable != nil then doorEnt:SetSyncVar(SYNC_DOOR_BUYABLE, false, true) end
+                if doorData.name then doorEnt:SetNetVar("doorName", doorData.name) end
+                if doorData.group then doorEnt:SetNetVar("doorGroup", doorData.group) end
+                if doorData.buyable != nil then doorEnt:SetNetVar("doorBuyable", false) end
 
                 print("[impulse-reforged] Warning! Added door by HammerID value because it could not be found via pos. Door index: "..doorIndex..". Please investigate.")
             end
@@ -104,20 +104,16 @@ local PLAYER = FindMetaTable("Player")
 function PLAYER:SetDoorMaster(door)
     local owners = {self:EntIndex()}
 
-    door:SetSyncVar(SYNC_DOOR_OWNERS, owners, true)
+    door:SetNetVar("doorOwners", owners)
     door.MasterUser = self
 
     self.OwnedDoors = self.OwnedDoors or {}
     self.OwnedDoors[door] = true
-
-    door:CallOnRemove("impulseDoorSyncRemove", function(ent)
-        ent:SyncRemove()
-    end)
 end
 
 function PLAYER:RemoveDoorMaster(door, noUnlock)
-    local owners = door:GetSyncVar(SYNC_DOOR_OWNERS)
-    door:SetSyncVar(SYNC_DOOR_OWNERS, nil, true)
+    local owners = door:GetNetVar("doorOwners")
+    door:SetNetVar("doorOwners", nil)
     door.MasterUser = nil
 
     for v, k in pairs(owners) do
@@ -134,24 +130,24 @@ function PLAYER:RemoveDoorMaster(door, noUnlock)
 end
 
 function PLAYER:SetDoorUser(door)
-    local doorOwners = door:GetSyncVar(SYNC_DOOR_OWNERS)
+    local doorOwners = door:GetNetVar("doorOwners")
 
     if not doorOwners then return end
 
     table.insert(doorOwners, self:EntIndex())
-    door:SetSyncVar(SYNC_DOOR_OWNERS, doorOwners, true)
+    door:SetNetVar("doorOwners", doorOwners)
 
     self.OwnedDoors = self.OwnedDoors or {}
     self.OwnedDoors[door] = true
 end
 
 function PLAYER:RemoveDoorUser(door)
-    local doorOwners = door:GetSyncVar(SYNC_DOOR_OWNERS)
+    local doorOwners = door:GetNetVar("doorOwners")
 
     if not doorOwners then return end
 
     table.RemoveByValue(doorOwners, self:EntIndex())
-    door:SetSyncVar(SYNC_DOOR_OWNERS, doorOwners, true)
+    door:SetNetVar("doorOwners", doorOwners)
 
     self.OwnedDoors = self.OwnedDoors or {}
     self.OwnedDoors[door] = nil
@@ -169,13 +165,13 @@ concommand.Add("impulse_door_sethidden", function(ply, cmd, args)
 
     if IsValid(traceEnt) and traceEnt:IsDoor() then
         if args[1] == "1" then
-            traceEnt:SetSyncVar(SYNC_DOOR_BUYABLE, false, true)
+            traceEnt:SetNetVar("doorBuyable", false)
         else
-            traceEnt:SetSyncVar(SYNC_DOOR_BUYABLE, nil, true)
+            traceEnt:SetNetVar("doorBuyable", nil)
         end
-        traceEnt:SetSyncVar(SYNC_DOOR_GROUP, nil, true)
-        traceEnt:SetSyncVar(SYNC_DOOR_NAME, nil, true)
-        traceEnt:SetSyncVar(SYNC_DOOR_OWNERS, nil, true)
+        traceEnt:SetNetVar("doorGroup", nil)
+        traceEnt:SetNetVar("doorName", nil)
+        traceEnt:SetNetVar("doorOwners", nil)
 
         ply:Notify("Door "..traceEnt:EntIndex().." show = "..args[1])
 
@@ -194,10 +190,10 @@ concommand.Add("impulse_door_setgroup", function(ply, cmd, args)
     local traceEnt = util.TraceLine(trace).Entity
 
     if IsValid(traceEnt) and traceEnt:IsDoor() then
-        traceEnt:SetSyncVar(SYNC_DOOR_BUYABLE, false, true)
-        traceEnt:SetSyncVar(SYNC_DOOR_GROUP, tonumber(args[1]), true)
-        traceEnt:SetSyncVar(SYNC_DOOR_NAME, nil, true)
-        traceEnt:SetSyncVar(SYNC_DOOR_OWNERS, nil, true)
+        traceEnt:SetNetVar("doorBuyable", false)
+        traceEnt:SetNetVar("doorGroup", tonumber(args[1]))
+        traceEnt:SetNetVar("doorName", nil)
+        traceEnt:SetNetVar("doorOwners", nil)
 
         ply:Notify("Door "..traceEnt:EntIndex().." group = "..args[1])
 
@@ -216,10 +212,10 @@ concommand.Add("impulse_door_removegroup", function(ply, cmd, args)
     local traceEnt = util.TraceLine(trace).Entity
 
     if IsValid(traceEnt) and traceEnt:IsDoor() then
-        traceEnt:SetSyncVar(SYNC_DOOR_BUYABLE, nil, true)
-        traceEnt:SetSyncVar(SYNC_DOOR_GROUP, nil, true)
-        traceEnt:SetSyncVar(SYNC_DOOR_NAME, nil, true)
-        traceEnt:SetSyncVar(SYNC_DOOR_OWNERS, nil, true)
+        traceEnt:SetNetVar("doorBuyable", nil)
+        traceEnt:SetNetVar("doorGroup", nil)
+        traceEnt:SetNetVar("doorName", nil)
+        traceEnt:SetNetVar("doorOwners", nil)
 
         ply:Notify("Door "..traceEnt:EntIndex().." group = nil")
 

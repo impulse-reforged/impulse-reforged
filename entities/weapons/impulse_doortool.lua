@@ -64,7 +64,7 @@ if CLIENT then
         if IsValid(tr.Entity) then
             local ent = tr.Entity
             if ent:IsDoor() or ent:IsPropDoor() then
-                local b = ((ent:GetSyncVar(SYNC_DOOR_BUYABLE, nil) != nil)) and 0 or 1
+                local b = ((ent:GetNetVar("doorBuyable", nil) != nil)) and 0 or 1
                 RunConsoleCommand("impulse_door_sethidden",tostring(b))
             end
         end

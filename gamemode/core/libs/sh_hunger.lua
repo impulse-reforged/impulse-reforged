@@ -8,13 +8,13 @@ if SERVER then
     -- @realm server
     -- @int amount Amount of hunger (0-100)
     function PLAYER:SetHunger(amount)
-        self:SetLocalSyncVar(SYNC_HUNGER, math.Clamp(amount, 0, 100))
+        self:SetNetVar("hunger", math.Clamp(amount, 0, 100))
     end
 
     --- Gives the player the amount of hunger
     -- @realm server
     -- @int amount Amount of hunger (0-100)
     function PLAYER:FeedHunger(amount)
-        self:SetHunger(amount + self:GetSyncVar(SYNC_HUNGER, 100))
+        self:SetHunger(amount + self:GetNetVar("hunger", 100))
     end
 end

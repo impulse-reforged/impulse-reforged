@@ -1,7 +1,7 @@
 local PLAYER = FindMetaTable("Player")
 
 function PLAYER:GetXP()
-    return self:GetSyncVar(SYNC_XP, 0)
+    return self:GetNetVar("xp", 0)
 end
 
 if SERVER then
@@ -14,7 +14,7 @@ if SERVER then
         query:Where("steamid", self:SteamID())
         query:Execute()
 
-        return self:SetSyncVar(SYNC_XP, amount, true)
+        return self:SetNetVar("xp", amount)
     end
     
     function PLAYER:TakeXP(amount)

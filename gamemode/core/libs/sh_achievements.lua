@@ -80,7 +80,7 @@ if SERVER then
         end
     end
 
-    --- Calculates the achievement points and stores them in the SYNC_TROPHYPOINTS SyncVar on the player
+    --- Calculates the achievement points and stores them in the "achievementPoints" SyncVar on the player
     -- @realm server
     -- @treturn int Achievement points
     function PLAYER:CalculateAchievementPoints()
@@ -94,7 +94,7 @@ if SERVER then
             val = val + 60
         end
 
-        self:SetSyncVar(SYNC_TROPHYPOINTS, val, true)
+        self:SetNetVar("achievementPoints", val)
         return val
     end
 end

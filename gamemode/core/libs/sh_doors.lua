@@ -28,15 +28,11 @@ function PLAYER:CanLockUnlockDoor(doorOwners, doorGroup)
 
     if doorOwners and table.HasValue(doorOwners, self:EntIndex()) then
         return true
-    elseif doorGroup and teamDoorGroups and table.HasValue(teamDoorGroups, doorGroup) then
-        return true
-    end
+    elseif doorGroup and teamDoorGroups and table.HasValue(teamDoorGroups, doorGroup) then return true end
 end
 
 function PLAYER:IsDoorOwner(doorOwners)
-    if doorOwners and table.HasValue(doorOwners, self:EntIndex()) then
-        return true
-    end
+    if doorOwners and table.HasValue(doorOwners, self:EntIndex()) then return true end
     return false
 end
 

@@ -31,4 +31,54 @@ if ( engine.ActiveGamemode() == "impulse-reforged" ) then
     SetGlobalString("impulse_fatalerror", "No schema loaded. Please place the schema in your gamemodes folder, then set it as your gamemode.\n\nInstalled available schemas:\n"..gs)
 end
 
+-- Include all files in the gamemode such as models, materials, sounds, etc. This is done to ensure that the files are sent to the client. Subfolders are included as well.
+local function IncludeFolder(dir)
+    local total = 0
+
+    local files, folders = file.Find(dir .. "*", "GAME")
+    for k, v in pairs(files) do
+        total = total + 1
+
+        resource.AddFile(dir .. v)
+    end
+
+    for k, v in pairs(folders) do
+        total = total + IncludeFolder(dir .. v .. "/")
+    end
+
+    return total
+end
+
+local function IncludeContent()
+    MsgC(Color(0, 255, 0), "[impulse-reforged] Loading content...\n")
+
+    local total = 0
+
+    total = total + IncludeFolder("gamemodes/impulse-reforged/content/")
+
+    MsgC(Color(0, 255, 0), "[impulse-reforged] Completed content load (" .. total .. " files)...\n")
+end
+
+-- Include all workshop addons
+local function IncludeWorkshopAddons()
+    MsgC(Color(0, 255, 0), "[impulse-reforged] Loading workshop addons...\n")
+
+    local total = 0
+    local addons = engine.GetAddons()
+
+    for k, v in pairs(addons) do
+        if v.mounted and v.wsid != "0" then
+            total = total + 1
+
+            resource.AddWorkshop(v.wsid)
+            MsgC(Color(83, 143, 239), "[impulse-reforged] Added workshop addon: " .. v.title .. "\n")
+        end
+    end
+
+    MsgC(Color(0, 255, 0), "[impulse-reforged] Completed workshop addon load (" .. total .. " addons)...\n")
+end
+
+IncludeContent()
+IncludeWorkshopAddons()
+
 MsgC(Color(0, 255, 0), "[impulse-reforged] Completed server load...\n")

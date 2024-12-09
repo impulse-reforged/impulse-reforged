@@ -24,7 +24,7 @@ e2function number impulseGetPlayerHunger(entity ent)
         return 0
     end
 
-    return ent:GetSyncVar(SYNC_HUNGER, 0) or 0
+    return ent:GetNetVar("hunger", 0) or 0
 end
 
 e2function number impulseGetPlayerXP(entity ent)

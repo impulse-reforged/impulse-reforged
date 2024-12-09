@@ -1,5 +1,5 @@
 local PLAYER = FindMetaTable("Player")
 
 function PLAYER:HasBrokenLegs()
-    return self:GetSyncVar(SYNC_BROKENLEGS, false)
+    return self:GetNetVar("brokenLegs", false)
 end

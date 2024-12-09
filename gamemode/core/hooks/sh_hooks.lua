@@ -33,7 +33,7 @@ end
 
 function GM:Move(ply, mvData)
     -- alt walk thing based on nutscripts
-    if ply.GetMoveType(ply) == MOVETYPE_WALK and ((ply.HasBrokenLegs(ply) and !ply.GetSyncVar(ply, SYNC_ARRESTED, false)) or mvData.KeyDown(mvData, IN_WALK)) then
+    if ply.GetMoveType(ply) == MOVETYPE_WALK and ((ply.HasBrokenLegs(ply) and !ply.GetNetVar(ply, "arrested", false)) or mvData.KeyDown(mvData, IN_WALK)) then
         local speed = ply:GetWalkSpeed()
         local forwardRatio = 0
         local sideRatio = 0

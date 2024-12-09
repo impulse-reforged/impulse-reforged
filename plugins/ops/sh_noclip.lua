@@ -39,5 +39,5 @@ hook.Add("CanPlayerEnterObserver", "opsNoclip", function(ply)
 end)
 
 hook.Add("ShouldHidePlayerObserver", "opsNoclip", function(ply)
-    return ply:GetSyncVar(SYNC_OBSERVER_HIDE, true)
+    return ply:GetNetVar("observerHide", true)
 end)

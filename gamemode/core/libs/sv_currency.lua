@@ -9,7 +9,7 @@ function PLAYER:SetMoney(amount)
     query:Where("steamid", self:SteamID64())
     query:Execute()
 
-    return self:SetLocalSyncVar(SYNC_MONEY, amount)
+    return self:SetNetVar("money", amount)
 end
 
 function PLAYER:SetBankMoney(amount)
@@ -21,7 +21,7 @@ function PLAYER:SetBankMoney(amount)
     query:Where("steamid", self:SteamID64())
     query:Execute()
 
-    return self:SetLocalSyncVar(SYNC_BANKMONEY, amount)
+    return self:SetNetVar("bankMoney", amount)
 end
 
 function PLAYER:GiveBankMoney(amount)

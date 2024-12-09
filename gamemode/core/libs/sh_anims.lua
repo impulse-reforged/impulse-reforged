@@ -661,14 +661,14 @@ function PLAYER:IsWeaponRaised()
         end
     end
 
-    return self.GetSyncVar(self, SYNC_WEPRAISED, false)
+    return self.GetNetVar(self, "weaponRaised", false)
 end
 
 if SERVER then
     util.AddNetworkString("impulseSeqSet")
     
     function PLAYER:SetWeaponRaised(state)
-        self:SetSyncVar(SYNC_WEPRAISED, state, true)
+        self:SetNetVar("weaponRaised", state)
 
         local weapon = self:GetActiveWeapon()
 
