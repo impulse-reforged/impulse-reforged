@@ -661,57 +661,60 @@ function GM:HUDPaintBackground()
     local realTime = RealTime()
     local frameTime = FrameTime()
 
-    if ( nextOverheadCheck < realTime ) then
-        nextOverheadCheck = realTime + 0.5
+    local shouldDrawOverhead = hook.Run("ShouldDrawOverhead")
+    if shouldDrawOverhead != false then
+        if ( nextOverheadCheck < realTime ) then
+            nextOverheadCheck = realTime + 0.5
 
-        trace.start = ply.GetShootPos(ply)
-        trace.endpos = trace.start + ply.GetAimVector(ply) * impulse.Config.TalkDistance
-        trace.filter = ply
-        trace.mins = Vector(-4, -4, -4)
-        trace.maxs = Vector(4, 4, 4)
-        trace.mask = MASK_SHOT_HULL
+            trace.start = ply.GetShootPos(ply)
+            trace.endpos = trace.start + ply.GetAimVector(ply) * impulse.Config.TalkDistance
+            trace.filter = ply
+            trace.mins = Vector(-4, -4, -4)
+            trace.maxs = Vector(4, 4, 4)
+            trace.mask = MASK_SHOT_HULL
 
-        lastEnt = util.TraceHull(trace).Entity
+            lastEnt = util.TraceHull(trace).Entity
 
-        if IsValid(lastEnt) then
-            overheadEntCache[lastEnt] = true
-        end
-    end
-
-    for entTarg, shouldDraw in pairs(overheadEntCache) do
-        if IsValid(entTarg) then
-            local goal = shouldDraw and 255 or 0
-            local alpha = approach(entTarg.overheadAlpha or 0, goal, frameTime * 1000)
-
-            if lastEnt != entTarg then
-                overheadEntCache[entTarg] = false
+            if IsValid(lastEnt) then
+                overheadEntCache[lastEnt] = true
             end
+        end
 
-            if alpha > 0 then
-                if not entTarg:GetNoDraw() then
-                    hook.Run("DrawOverheadInfo", entTarg, alpha)
+        for entTarg, shouldDraw in pairs(overheadEntCache) do
+            if IsValid(entTarg) then
+                local goal = shouldDraw and 255 or 0
+                local alpha = approach(entTarg.overheadAlpha or 0, goal, frameTime * 1000)
 
-                    if entTarg:IsPlayer() and hook.Run("ShouldDrawPlayerInfo", entTarg) != false then
-                        DrawPlayerInfo(entTarg, alpha)
-                    elseif entTarg.HUDName and hook.Run("ShouldDrawEntityInfo", entTarg) != false then
-                        DrawEntInfo(entTarg, alpha)
-                    elseif entTarg:IsDoor() and hook.Run("ShouldDrawDoorInfo", entTarg) != false then
-                        DrawDoorInfo(entTarg, alpha)
-                    elseif impulse_ActiveButtons and impulse_ActiveButtons[entTarg:EntIndex()] and hook.Run("ShouldDrawButtonInfo", entTarg) != false then
-                        DrawButtonInfo(entTarg, alpha)
-                    else
-                        hook.Run("DrawOtherOverheadInfo", entTarg, alpha)
+                if lastEnt != entTarg then
+                    overheadEntCache[entTarg] = false
+                end
+
+                if alpha > 0 then
+                    if not entTarg:GetNoDraw() then
+                        hook.Run("DrawOverheadInfo", entTarg, alpha)
+
+                        if entTarg:IsPlayer() and hook.Run("ShouldDrawPlayerInfo", entTarg) != false then
+                            DrawPlayerInfo(entTarg, alpha)
+                        elseif entTarg.HUDName and hook.Run("ShouldDrawEntityInfo", entTarg) != false then
+                            DrawEntInfo(entTarg, alpha)
+                        elseif entTarg:IsDoor() and hook.Run("ShouldDrawDoorInfo", entTarg) != false then
+                            DrawDoorInfo(entTarg, alpha)
+                        elseif impulse_ActiveButtons and impulse_ActiveButtons[entTarg:EntIndex()] and hook.Run("ShouldDrawButtonInfo", entTarg) != false then
+                            DrawButtonInfo(entTarg, alpha)
+                        else
+                            hook.Run("DrawOtherOverheadInfo", entTarg, alpha)
+                        end
                     end
                 end
-            end
 
-            entTarg.overheadAlpha = alpha
+                entTarg.overheadAlpha = alpha
 
-            if alpha == 0 and goal == 0 then
+                if alpha == 0 and goal == 0 then
+                    overheadEntCache[entTarg] = nil
+                end
+            else
                 overheadEntCache[entTarg] = nil
             end
-        else
-            overheadEntCache[entTarg] = nil
         end
     end
 
