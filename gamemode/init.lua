@@ -50,7 +50,7 @@ local function IncludeFolder(dir)
 end
 
 local function IncludeContent()
-    MsgC(Color(0, 255, 0), "[impulse-reforged] Loading content...\n")
+    MsgC(Color(83, 143, 239), "[impulse-reforged] Loading content...\n")
 
     local total = 0
 
@@ -61,7 +61,7 @@ end
 
 -- Include all workshop addons
 local function IncludeWorkshopAddons()
-    MsgC(Color(0, 255, 0), "[impulse-reforged] Loading workshop addons...\n")
+    MsgC(Color(83, 143, 239), "[impulse-reforged] Loading workshop addons...\n")
 
     local total = 0
     local addons = engine.GetAddons()
