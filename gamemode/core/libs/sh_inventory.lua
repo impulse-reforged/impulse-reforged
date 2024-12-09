@@ -33,7 +33,7 @@ function impulse.RegisterItem(item)
     local attClass = item.AttachmentClass
 
     if class then
-        function item:OnEquip(ply, class, uid)
+        function item:OnEquip(ply, data, uid, sec)
             local wep = ply:Give(class)
 
             if wep and IsValid(wep) then
