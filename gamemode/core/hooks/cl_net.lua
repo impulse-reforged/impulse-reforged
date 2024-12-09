@@ -53,6 +53,8 @@ net.Receive("impulseChatNetMessage", function(len)
     elseif IsValid(plyTarget) then
         chatClass(message, plyTarget)
     end
+
+    hook.Run("impulseChatNetMessage", id, message, target)
 end)
 
 net.Receive("impulseSendJailInfo", function()
