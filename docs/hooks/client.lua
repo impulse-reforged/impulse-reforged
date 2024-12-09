@@ -31,12 +31,6 @@ end
 function GetDeathSound()
 end
 
---- Called when you can define settings, all settings you want to define should be done inside this hook
--- @realm client
--- @see Setting
-function DefineSettings()
-end
-
 --- Called when the menu is active and MenuMessages are ready to be created
 -- @realm client
 -- @see MenuMessage

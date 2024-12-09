@@ -110,7 +110,7 @@ function PLAYER:IsSuperAdmin()
         return true
     end
 
-    if ( self:GetUserGroup() == "superadmin" ) then
+    if ( self.GetUserGroup and self:GetUserGroup() == "superadmin" ) then
         return true
     end
 
@@ -139,7 +139,7 @@ function PLAYER:IsCharacterFemale()
     hook.Run("PlayerIsCharacterFemale", self)
 
     if ( SERVER ) then
-        return self:IsFemale(self.defaultModel)
+        return self:IsFemale(self.impulseDefaultModel)
     else
         return self:IsFemale(impulse_defaultModel)
     end
@@ -223,4 +223,40 @@ function PLAYER:IsStuck()
         endpos = self:GetPos(),
         filter = self
     }, self).StartSolid
+end
+
+if ( SERVER ) then
+    function PLAYER:GetData(key, default)
+        if (key == true) then
+            return self.impulseData
+        end
+
+        local data = self.impulseData and self.impulseData[key]
+
+        if (data == nil) then
+            return default
+        else
+            return data
+        end
+    end
+else
+    function PLAYER:GetData(key, default)
+        local data = impulse.localData and impulse.localData[key]
+
+        if (data == nil) then
+            return default
+        else
+            return data
+        end
+    end
+
+    net.Receive("impulseDataSync", function()
+        impulse.localData = net.ReadTable()
+        impulse.playTime = net.ReadUInt(32)
+    end)
+
+    net.Receive("impulseData", function()
+        impulse.localData = impulse.localData or {}
+        impulse.localData[net.ReadString()] = net.ReadType()
+    end)
 end

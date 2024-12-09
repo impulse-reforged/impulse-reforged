@@ -77,7 +77,7 @@ if CLIENT then
             label:SetPos(btn:GetWide() / 2 - label:GetWide() / 2, 4)
 
             local mdl = vgui.Create("DModelPanel", btn)
-            mdl:SetModel(Model(k.Model or "models/props_junk/watermelon01.mdl"))
+            mdl:SetModel(k.Model or "models/props_junk/watermelon01.mdl")
             mdl:SetSize(128 - 16, 128 - 16)
             mdl:SetPos(btn:GetWide() / 2 - mdl:GetWide() / 2, 16)
             mdl:SetFOV(15)
@@ -96,9 +96,7 @@ local giveItemCommand = {
     requiresArg = true,
     superAdminOnly = true,
     onRun = function(ply, arg, rawText)
-        if not ply:IsSuperAdmin() then
-            return
-        end
+        if not ply:IsSuperAdmin() then return end
 
         local steamid = arg[1]
         local item = arg[2]
@@ -115,11 +113,9 @@ local giveItemCommand = {
         query:Select("id")
         query:Where("steamid", steamid)
         query:Callback(function(result)
-            if not IsValid(ply) then
-                return
-            end
+            if not IsValid(ply) then return end
 
-            if not type(result) == "table" or #result == 0 then
+            if not result or #result < 1 then
                 return ply:Notify("This Steam account has not joined the server yet or the SteamID is invalid.")
             end
 
@@ -130,13 +126,13 @@ local giveItemCommand = {
             local target = player.GetBySteamID(steamid)
 
             if target and IsValid(target) then
-                target:GiveInventoryItem(item)
+                target:GiveItem(item)
                 return ply:Notify("You have given "..target:Nick().." a "..item..".")
             end
 
             local impulseID = result[1].id
 
-            impulse.Inventory.DBAddItem(impulseID, item)
+            impulse.Inventory:AddItem(impulseID, item)
             ply:Notify("Offline player ("..steamid..") has been given a "..item..".")
         end)
 
@@ -150,9 +146,7 @@ local itemSpawnerCommand = {
     description = "Opens the item spawner.",
     superAdminOnly = true,
     onRun = function(ply, arg, rawText)
-        if not ply:IsSuperAdmin() then
-            return
-        end
+        if not ply:IsSuperAdmin() then return end
 
         net.Start("impulseOpsItemSpawner")
         net.Send(ply)

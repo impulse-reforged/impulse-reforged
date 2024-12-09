@@ -27,9 +27,7 @@ if CLIENT then
     end)
 
     function PLUGIN:DisplayMenuMessages()
-        if not refundData then
-            return
-        end
+        if not refundData then return end
 
         local msg = "You have been refunded items by support.\nYou can find these items in your private storage.\n\nRefunded items:"
 

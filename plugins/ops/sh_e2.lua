@@ -32,9 +32,7 @@ local e2ViewerCommand = {
             local data = k:GetOverlayData()
             local owner = k:CPPIGetOwner()
 
-            if not owner or not data then
-                return
-            end
+            if not owner or not data then return end
 
             net.WriteEntity(k)
             net.WriteString(data.txt)

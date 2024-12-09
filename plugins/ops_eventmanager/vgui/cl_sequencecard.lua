@@ -194,9 +194,7 @@ function PANEL:AddEvent(id, eventdata)
         local cats = {}
 
         for v, k in pairs(impulse.Ops.EventManager.Config.Events) do
-            if k.Cat == "hidden" then
-                continue
-            end
+            if k.Cat == "hidden" then continue end
 
             if not cats[k.Cat] then
                 local c, p = m:AddSubMenu(k.Cat)
@@ -343,9 +341,7 @@ function PANEL:AddEvent(id, eventdata)
         local suggested = {}
 
         for v, k in pairs(impulse.Ops.EventManager.Sequences[panel.Sequence].Events) do
-            if v == id then
-                continue
-            end
+            if v == id then continue end
 
             if k.UID and !suggested[k.UID] and string.StartWith(k.UID, text) then
                 table.insert(suggest, k.UID)
@@ -358,9 +354,7 @@ function PANEL:AddEvent(id, eventdata)
 
     local function moveToCustomSlot()
         Derma_StringRequest("impulse ops", "Enter where you wish to move this event to:", "", function(slot)
-            if not tonumber(slot) then
-                return
-            end
+            if not tonumber(slot) then return end
 
             local me = impulse.Ops.EventManager.Sequences[panel.Sequence].Events[id]
             local oldId = id

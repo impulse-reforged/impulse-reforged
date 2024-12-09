@@ -151,53 +151,40 @@ function GM:ScoreboardHide()
     impulse_scoreboard:Remove()
 end
 
-function GM:DefineSettings()
-    impulse.Settings:Define("font_scale", {name="Font scale", category="Other", type="slider", default=1, minValue=0.5, maxValue=1.5, decimals = 2, onChanged = function(newValue)
-        hook.Run("LoadFonts")
-    end})
-    impulse.Settings:Define("hud_vignette", {name="Vignette enabled", category="HUD", type="tickbox", default=true})
-    impulse.Settings:Define("hud_iconcolours", {name="Icon colours enabled", category="HUD", type="tickbox", default=false})
-    impulse.Settings:Define("hud_crosshair", {name="Crosshair enabled", category="HUD", type="tickbox", default=true})
-    impulse.Settings:Define("view_thirdperson", {name="Thirdperson enabled", category="View", type="tickbox", default=false})
-    impulse.Settings:Define("view_thirdperson_fov", {name="Thirdperson FOV", category="View", type="slider", default=100, minValue=75, maxValue=120})
-    impulse.Settings:Define("view_thirdperson_offset_x", {name="Thirdperson X Offset", category="View", type="slider", default=75, minValue=-50, maxValue=50})
-    impulse.Settings:Define("view_thirdperson_offset_y", {name="Thirdperson Y Offset", category="View", type="slider", default=20, minValue=-50, maxValue=50})
-    impulse.Settings:Define("view_thirdperson_offset_z", {name="Thirdperson Z Offset", category="View", type="slider", default=5, minValue=-50, maxValue=50})
-    impulse.Settings:Define("view_thirdperson_offset_z", {name="Thirdperson Z Offset", category="View", type="slider", default=5, minValue=-50, maxValue=50})
-    impulse.Settings:Define("view_thirdperson_smooth_origin", {name="Thirdperson Smoothness for Origin", category="View", type="tickbox", default=false})
-    impulse.Settings:Define("view_thirdperson_smooth_angles", {name="Thirdperson Smoothness for Angles", category="View", type="tickbox", default=false})
-    impulse.Settings:Define("view_firstperson_smooth_origin", {name="Firstperson Smoothness for Origin", category="View", type="tickbox", default=false})
-    impulse.Settings:Define("view_firstperson_smooth_angles", {name="Firstperson Smoothness for Angles", category="View", type="tickbox", default=false})
-    impulse.Settings:Define("view_firstperson_fov", {name="Firstperson FOV", category="View", type="slider", default=90, minValue=75, maxValue=120})
-    impulse.Settings:Define("perf_mcore", {name="Multi-core rendering enabled", category="Performance", type="tickbox", default=false, onChanged = function(newValue)
-        RunConsoleCommand("gmod_mcore_test", tostring(tonumber(newValue)))
+impulse.Settings:Define("font_scale", {name="Font scale", category="Other", type="slider", default=1, minValue=0.5, maxValue=1.5, decimals = 2, onChanged = function(newValue)
+    hook.Run("LoadFonts")
+end})
+impulse.Settings:Define("hud_vignette", {name="Vignette enabled", category="HUD", type="tickbox", default=true})
+impulse.Settings:Define("hud_iconcolours", {name="Icon colours enabled", category="HUD", type="tickbox", default=false})
+impulse.Settings:Define("hud_crosshair", {name="Crosshair enabled", category="HUD", type="tickbox", default=true})
+impulse.Settings:Define("view_thirdperson", {name="Thirdperson enabled", category="View", type="tickbox", default=false})
+impulse.Settings:Define("view_thirdperson_fov", {name="Thirdperson FOV", category="View", type="slider", default=100, minValue=75, maxValue=120})
+impulse.Settings:Define("view_thirdperson_offset_x", {name="Thirdperson X Offset", category="View", type="slider", default=75, minValue=-50, maxValue=50})
+impulse.Settings:Define("view_thirdperson_offset_y", {name="Thirdperson Y Offset", category="View", type="slider", default=20, minValue=-50, maxValue=50})
+impulse.Settings:Define("view_thirdperson_offset_z", {name="Thirdperson Z Offset", category="View", type="slider", default=5, minValue=-50, maxValue=50})
+impulse.Settings:Define("view_thirdperson_offset_z", {name="Thirdperson Z Offset", category="View", type="slider", default=5, minValue=-50, maxValue=50})
+impulse.Settings:Define("view_thirdperson_smooth_origin", {name="Thirdperson Smoothness for Origin", category="View", type="tickbox", default=false})
+impulse.Settings:Define("view_thirdperson_smooth_angles", {name="Thirdperson Smoothness for Angles", category="View", type="tickbox", default=false})
+impulse.Settings:Define("view_firstperson_smooth_origin", {name="Firstperson Smoothness for Origin", category="View", type="tickbox", default=false})
+impulse.Settings:Define("view_firstperson_smooth_angles", {name="Firstperson Smoothness for Angles", category="View", type="tickbox", default=false})
+impulse.Settings:Define("view_firstperson_fov", {name="Firstperson FOV", category="View", type="slider", default=90, minValue=75, maxValue=120})
+impulse.Settings:Define("perf_mcore", {name="Multi-core rendering enabled", category="Performance", type="tickbox", default=false, onChanged = function(newValue)
+    RunConsoleCommand("gmod_mcore_test", tostring(tonumber(newValue)))
 
-        if newValue == 1 then
-            RunConsoleCommand("mat_queue_mode", "-1")
-            RunConsoleCommand("cl_threaded_bone_setup", "1")
-        else
-            RunConsoleCommand("cl_threaded_bone_setup", "0")
-        end
-    end})
-    --[[
-    impulse.Settings:Define("perf_dynlight", {name="Dynamic light rendering enabled", category="Performance", type="tickbox", default=true, onChanged = function(newValue)
-        local v = 0
-        if newValue == 1 then
-            v = 1
-        end
-
-        RunConsoleCommand("r_shadows", v)
-        RunConsoleCommand("r_dynamic", v)
-    end})
-    ]]
-    impulse.Settings:Define("perf_blur", {name="Blur enabled", category="Performance", type="tickbox", default=true})
-    impulse.Settings:Define("perf_anim", {name="Animations enabled", category="Performance", type="tickbox", default=true})
-    impulse.Settings:Define("inv_sortequippablesattop", {name="Sort equipped at top", category="Inventory", type="tickbox", default=true})
-    impulse.Settings:Define("inv_sortweight", {name="Sort by weight", category="Inventory", type="dropdown", default="Inventory only", options={"Never", "Inventory only", "Containers only", "Always"}})
-    impulse.Settings:Define("misc_vendorgreeting", {name="Vendor greeting sound enabled", category="Other", type="tickbox", default=true})
-    impulse.Settings:Define("chat_oocenabled", {name="OOC enabled", category="Chatbox", type="tickbox", default=true})
-    impulse.Settings:Define("chat_pmpings", {name="PM and tag sound enabled", category="Chatbox", type="tickbox", default=true})
-end
+    if newValue == 1 then
+        RunConsoleCommand("mat_queue_mode", "-1")
+        RunConsoleCommand("cl_threaded_bone_setup", "1")
+    else
+        RunConsoleCommand("cl_threaded_bone_setup", "0")
+    end
+end})
+impulse.Settings:Define("perf_blur", {name="Blur enabled", category="Performance", type="tickbox", default=true})
+impulse.Settings:Define("perf_anim", {name="Animations enabled", category="Performance", type="tickbox", default=true})
+impulse.Settings:Define("inv_sortequippablesattop", {name="Sort equipped at top", category="Inventory", type="tickbox", default=true})
+impulse.Settings:Define("inv_sortweight", {name="Sort by weight", category="Inventory", type="dropdown", default="Inventory only", options={"Never", "Inventory only", "Containers only", "Always"}})
+impulse.Settings:Define("misc_vendorgreeting", {name="Vendor greeting sound enabled", category="Other", type="tickbox", default=true})
+impulse.Settings:Define("chat_oocenabled", {name="OOC enabled", category="Chatbox", type="tickbox", default=true})
+impulse.Settings:Define("chat_pmpings", {name="PM and tag sound enabled", category="Chatbox", type="tickbox", default=true})
 
 local loweredAngles = Angle(30, -30, -25)
 
@@ -528,6 +515,9 @@ local blockNormalTabs = {
 }
 
 function GM:PostReloadToolsMenu()
+    local ply = LocalPlayer()
+    if ( !IsValid(ply) or ply:Team() == 0 ) then return end
+
     local spawnMenu = g_SpawnMenu
 
     if spawnMenu then
@@ -539,12 +529,12 @@ function GM:PostReloadToolsMenu()
                 table.insert(closeMe, k.Tab)
             end
 
-            if LocalPlayer() and LocalPlayer().IsAdmin and LocalPlayer().IsDonator then -- when u first load ply doesnt exist
-                if blockNormalTabs[k.Name] and !LocalPlayer():IsAdmin() then
+            if ply and ply.IsAdmin and ply.IsDonator then -- when u first load ply doesnt exist
+                if blockNormalTabs[k.Name] and !ply:IsAdmin() then
                     table.insert(closeMe, k.Tab)
                 end
 
-                if k.Name == "#spawnmenu.category.vehicles" and !LocalPlayer():IsDonator() then
+                if k.Name == "#spawnmenu.category.vehicles" and !ply:IsDonator() then
                     table.insert(closeMe, k.Tab)
                 end
             end
@@ -619,6 +609,15 @@ end
 function GM:PostProcessPermitted()
     return false
 end
+
+gameevent.Listen("player_spawn")
+hook.Add("player_spawn", "impulsePlayerSpawn", function(data)
+    local ply = Player(data.userid)
+
+    if ply == LocalPlayer() then
+        hook.Run("PostReloadToolsMenu")
+    end
+end)
 
 concommand.Add("impulse_togglethirdperson", function() -- ease of use command for binds
     impulse.Settings:Set("view_thirdperson", (!impulse.Settings:Get("view_thirdperson")))

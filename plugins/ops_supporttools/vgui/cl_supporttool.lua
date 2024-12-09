@@ -18,11 +18,11 @@ function PANEL:Init()
     lbl:SetFont("Impulse-Elements18")
     lbl:Dock(TOP)
 
-    local s64 = vgui.Create("DTextEntry", b)
-    s64:SetFont("ChatFont")
-    s64:SetPos(0, 20)
-    s64:SetSize(900, 30)
-    s64:SetPlaceholderText("Steam64 ID")
+    local steamid64 = vgui.Create("DTextEntry", b)
+    steamid64:SetFont("ChatFont")
+    steamid64:SetPos(0, 20)
+    steamid64:SetSize(900, 30)
+    steamid64:SetPlaceholderText("Steam64 ID")
 
     local lbl = vgui.Create("DLabel", b)
     lbl:SetText("")
@@ -105,7 +105,7 @@ function PANEL:Init()
         cats[k.Category or "Unknown"]:AddItem(btn)
     end
 
-       local lbl = vgui.Create("DLabel", b)
+    local lbl = vgui.Create("DLabel", b)
     lbl:SetText("")
     lbl:SetFont("Impulse-Elements18")
     lbl:Dock(TOP)
@@ -138,7 +138,7 @@ function PANEL:Init()
     confirm:SetText("Issue Refund")
 
     function confirm:DoClick()
-        local id = string.Trim(s64:GetValue(), " ")
+        local id = string.Trim(steamid64:GetValue(), " ")
 
         if id == "" or not tonumber(id) then
             return LocalPlayer():Notify("Invalid Steam64ID.")

@@ -16,23 +16,11 @@ DeriveGamemode("sandbox")
 
 MsgC(Color(83, 143, 239), "[impulse-reforged] Starting client load...\n")
 
-impulse = impulse or {} -- defining global function table
+impulse = impulse or {}
 
-include("impulse-reforged/gamemode/core/cl_settings.lua") -- hacky
-impulse.Settings:Define("hud_highres", {name="UHD resolution scaling", category="HUD", type="tickbox", default=false, needsRestart=true})
-
-function impulse.IsHighRes()
-    return impulse.Settings:Get("hud_highres")
-end
-
-function HIGH_RES(low, high)
-    if impulse.IsHighRes() then
-        return high
-    end
-    
-    return low
-end
-
+include("core/cl_util.lua")
+include("core/sh_util.lua")
+include("core/sv_util.lua")
 include("shared.lua")
 
 timer.Remove("HintSystem_OpeningMenu")
@@ -41,7 +29,7 @@ timer.Remove("HintSystem_Annoy2")
 
 hook.Add("PreDrawHalos", "PropertiesHover", function() -- overwrite exploitable context menu shit
 
-    if ( !IsValid( vgui.GetHoveredPanel() ) || !vgui.GetHoveredPanel():IsWorldClicker() ) then return end
+    if ( !IsValid( vgui.GetHoveredPanel() ) or !vgui.GetHoveredPanel():IsWorldClicker() ) then return end
 
     local ent = properties.GetHovered( EyePos(), LocalPlayer():GetAimVector() )
     if ( !IsValid( ent ) ) then return end
@@ -54,7 +42,7 @@ hook.Add("PreDrawHalos", "PropertiesHover", function() -- overwrite exploitable 
     c.b = 200 + math.cos( RealTime() * 60 ) * 55
 
     local t = { ent }
-    if ( ent.GetActiveWeapon && IsValid( ent:GetActiveWeapon() ) ) then table.insert( t, ent:GetActiveWeapon() ) end
+    if ( ent.GetActiveWeapon and IsValid( ent:GetActiveWeapon() ) ) then table.insert( t, ent:GetActiveWeapon() ) end
     halo.Add( t, c, 2, 2, 2, true, false )
 end)
 

@@ -8,8 +8,8 @@ util.AddNetworkString("impulseOpsSTDoTeamLocked")
 util.AddNetworkString("impulseOpsSTDoGroupRemove")
 
 local function isSupport(ply)
-    if not ply:IsSuperAdmin() then
-        if ply:GetUserGroup() != "communitymanager" then
+    if ( !ply:IsSuperAdmin() ) then
+        if ( ply:GetUserGroup() != "communitymanager" ) then
             return false
         end
     end
@@ -20,9 +20,7 @@ end
 local lockedTeams = lockedTeams or {}
 
 net.Receive("impulseOpsSTDoOOCEnabled", function(len, ply)
-    if not isSupport(ply) then
-        return
-    end
+    if ( !isSupport(ply) ) then return end
 
     local enabled = net.ReadBool()
 
@@ -32,15 +30,13 @@ net.Receive("impulseOpsSTDoOOCEnabled", function(len, ply)
 end)
 
 net.Receive("impulseOpsSTDoGroupRemove", function(len, ply)
-    if not isSupport(ply) then
-        return
-    end
+    if ( !isSupport(ply) ) then return end
 
     local name = net.ReadString()
     local groupData = impulse.Group.Groups[name]
 
     if not groupData or not groupData.ID then
-        impulse.Group.DBRemoveByName(name)
+        impulse.Group.RemoveByName(name)
         ply:Notify("No loaded group found, however, we have attempted to remove it from the database.")
         return
     end
@@ -55,17 +51,15 @@ net.Receive("impulseOpsSTDoGroupRemove", function(len, ply)
         end
     end
 
-    impulse.Group.DBRemove(groupData.ID)
-    impulse.Group.DBRemovePlayerMass(groupData.ID)
+    impulse.Group.Remove(groupData.ID)
+    impulse.Group.RemovePlayerMass(groupData.ID)
     impulse.Group.Groups[name] = nil
 
     ply:Notify("The "..name.." group has been removed.")
 end)
 
 net.Receive("impulseOpsSTDoTeamLocked", function(len, ply)
-    if not isSupport(ply) then
-        return
-    end
+    if ( !isSupport(ply) ) then return end
 
     local teamid = net.ReadUInt(8)
     local locked = net.ReadBool()
@@ -80,41 +74,36 @@ net.Receive("impulseOpsSTDoTeamLocked", function(len, ply)
 end)
 
 net.Receive("impulseOpsSTDoRefund", function(len, ply)
-    if not isSupport(ply) then
-        return
-    end
+    if ( !isSupport(ply) ) then return end
 
-    local s64 = net.ReadString()
+    local steamid = net.ReadString()
     local len = net.ReadUInt(32)
     local items = pon.decode(net.ReadData(len))
-    local steamid = util.SteamIDFrom64(s64)
+    local steamid64 = util.SteamIDTo64(steamid)
 
     local query = mysql:Select("impulse_players")
     query:Select("id")
-    query:Where("steamid", steamid)
+    query:Where("steamid", steamid64)
     query:Callback(function(result)
-        if not IsValid(ply) then
-            return
-        end
+        if ( !IsValid(ply) ) then return end
 
-        if not type(result) == "table" or #result == 0 then
+        if ( type(result) != "table" or #result == 0 ) then
             return ply:Notify("This Steam account has not joined the server yet or the SteamID is invalid.")
         end
 
         local impulseID = result[1].id
         local refundData = {}
 
-        for v, k in pairs(items) do
-            if not impulse.Inventory.ItemsRef[v] then
-                continue
-            end
+        for k, v in pairs(items) do
+            if ( !impulse.Inventory.ItemsRef[k] ) then continue end
 
-            refundData[v] = k
+            refundData[k] = v
         end
 
-        impulse.Data:Write("SupportRefund_"..s64, refundData)
+        file.CreateDir("impulse-reforged/support-refunds")
+        file.Write("impulse-reforged/support-refunds/"..steamid64..".txt", util.TableToJSON(refundData))
 
-        ply:Notify("Issued support refund for user "..s64..".")
+        ply:Notify("Issued support refund for user "..steamid64..".")
     end)
 
     query:Execute()
@@ -126,22 +115,19 @@ function impulse.Ops.ST.Open(ply)
 end
 
 function PLUGIN:PostInventorySetup(ply)
-    impulse.Data:Read("SupportRefund_"..ply:SteamID64(), function(refundData)
-        if not IsValid(ply) then
-            return
-        end
+    local refundData = file.Read("impulse-reforged/support-refunds/"..ply:SteamID64()..".txt", "DATA")
+    if ( refundData ) then
+        if ( !IsValid(ply) ) then return end
         
-        for v, k in pairs(refundData) do
-            if not impulse.Inventory.ItemsRef[v] then
-                continue
-            end
+        for k, v in pairs(refundData) do
+            if ( !impulse.Inventory.ItemsRef[k] ) then continue end
             
-            for i=1,k do
-               ply:GiveInventoryItem(v, INV_STORAGE) -- refund to storage 
+            for i = 1, v do
+                ply:GiveItem(v, INVENTORY_STORAGE) -- refund to storage 
             end
         end
 
-        impulse.Data:Remove("SupportRefund_"..ply:SteamID64())
+        file.Delete("impulse-reforged/support-refunds/"..ply:SteamID64()..".txt")
 
         local data = pon.encode(refundData)
 
@@ -149,14 +135,15 @@ function PLUGIN:PostInventorySetup(ply)
         net.WriteUInt(#data, 32)
         net.WriteData(data, #data)
         net.Send(ply)
-    end)
+    end
 end
 
 function PLUGIN:CanPlayerChangeTeam(ply, newTeam)
-    if lockedTeams[newTeam] then
-        if SERVER then
-            ply:Notify("Team temporarily locked.")
+    if ( lockedTeams[newTeam] ) then
+        if ( SERVER ) then
+            ply:Notify("Sorry, this team is temporarily locked! Please try again later.")
         end
+
         return false
     end
 end

@@ -22,7 +22,9 @@ function impulse.Ops.EventManager.GetCurEvents()
     return impulse_OpsEM_CurEvents
 end
 
-function meta:IsEventAdmin()
+local PLAYER = FindMetaTable("Player")
+
+function PLAYER:IsEventAdmin()
     return self:IsSuperAdmin() or (self:IsAdmin() and impulse.Ops.EventManager.GetEventMode())
 end
 

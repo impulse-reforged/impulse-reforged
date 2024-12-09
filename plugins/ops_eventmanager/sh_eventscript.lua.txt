@@ -720,9 +720,7 @@ local function DoLine(line, no)
     local commentPos = find(line, LANG.COMMENT)
 
     local function strSearch(start)
-        if start < strLastStart then
-            return
-        end
+        if start < strLastStart then return end
 
         strLastStart = start
 

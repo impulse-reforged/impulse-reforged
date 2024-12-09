@@ -36,9 +36,9 @@ function impulse.chatBox.buildBox()
     end
 
     impulse.chatBox.entry = vgui.Create("DTextEntry", impulse.chatBox.frame)
-    impulse.chatBox.entry:SetSize( impulse.chatBox.frame:GetWide() - 50, (impulse.IsHighRes() and 28 or 20) )
+    impulse.chatBox.entry:SetSize( impulse.chatBox.frame:GetWide() - 50, 20 )
     impulse.chatBox.entry:SetTextColor( color_white )
-    impulse.chatBox.entry:SetFont(impulse.IsHighRes() and "Impulse-ChatMedium" or "Impulse-ChatSmall")
+    impulse.chatBox.entry:SetFont("Impulse-ChatSmall")
     impulse.chatBox.entry:SetDrawBorder( false )
     impulse.chatBox.entry:SetDrawBackground( false )
     impulse.chatBox.entry:SetCursorColor( color_white )
@@ -162,44 +162,44 @@ function impulse.chatBox.buildBox()
                 local isLeadAdmin = LocalPlayer():IsLeadAdmin()
                 local isSuperAdmin = LocalPlayer():IsSuperAdmin()
 
-                 for k, v in pairs(impulse.chatCommands) do
+                for k, v in pairs(impulse.chatCommands) do
                     local newCommand = impulse.Util:RemoveSpecialCharacters(command:lower())
-                     if (strFind(k:lower(), newCommand)) then
-                         local c = impulse.Config.MainColour
+                    if (strFind(k:lower(), newCommand)) then
+                        local c = impulse.Config.MainColour
 
-                         if v.adminOnly then
-                             if isAdmin then
-                                 c = impulse.Config.InteractColour
-                             else
-                                 continue
-                             end
-                         end
+                        if v.adminOnly then
+                            if isAdmin then
+                                c = impulse.Config.InteractColour
+                            else
+                                continue
+                            end
+                        end
 
-                           if v.leadAdminOnly then
-                             if isLeadAdmin or isSuperAdmin then
-                                 c = Color(128, 0, 128)
-                             else
-                                 continue
-                             end
-                         end
+                        if v.leadAdminOnly then
+                            if isLeadAdmin or isSuperAdmin then
+                                c = Color(128, 0, 128)
+                            else
+                                continue
+                            end
+                        end
 
-                          if v.superAdminOnly then
-                             if isSuperAdmin then
-                                 c = Color(255, 0, 0, 255)
-                             else
-                                 continue
-                             end
-                         end
+                        if v.superAdminOnly then
+                            if isSuperAdmin then
+                                c = Color(255, 0, 0, 255)
+                            else
+                                continue
+                            end
+                        end
 
                         draw.DrawText(k.." - "..v.description, "Impulse-ChatMedium", 10, 10 + i, c, TEXT_ALIGN_LEFT)
-                        i = i + (impulse.IsHighRes() and 22 or 15)
+                        i = i + 15
                         showing = showing + 1
 
                         if showing > 24 then
                             break
                         end
-                     end
-                 end
+                    end
+                end
             end
         end
     end
@@ -369,7 +369,7 @@ hook.Add("HUDShouldDraw", "impulse.chatBox_hidedefault", function( name )
     if name == "CHudChat" then return false end
 end)
 
- -- Modify the Chatbox for align.
+-- Modify the Chatbox for align.
 local oldGetChatBoxPos = chat.GetChatBoxPos
 function chat.GetChatBoxPos()
     return impulse.chatBox.frame:GetPos()

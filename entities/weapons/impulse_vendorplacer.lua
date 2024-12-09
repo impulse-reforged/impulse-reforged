@@ -68,9 +68,7 @@ function SWEP:PrimaryAttack()
 
     self.nextPrimaryAttack = CurTime() + self.Primary.Delay
 
-    if ( SERVER ) then
-        return
-    end
+    if ( SERVER ) then return end
 
     local function sendVendorReq(uniqueID)
         net.Start("impulseVendorPlace")
@@ -114,15 +112,11 @@ if SERVER then
     util.AddNetworkString("impulseVendorPlace")
 
     net.Receive("impulseVendorPlace", function(len, ply)
-        if not ply:IsSuperAdmin() then
-            return
-        end
+        if not ply:IsSuperAdmin() then return end
         
         local uniqueID = net.ReadString()
         
-        if not impulse.Vendor.Data[uniqueID] then
-            return
-        end
+        if not impulse.Vendor.Data[uniqueID] then return end
         
         local trace = ply:GetEyeTrace()
         local ang = ply:EyeAngles()

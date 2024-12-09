@@ -104,7 +104,7 @@ net.Receive("impulseCharacterCreate", function(len, ply)
     local charModel = net.ReadString()
     local charSkin = net.ReadUInt(8)
 
-    local plyID = ply:SteamID()
+    local plyID = ply:SteamID64()
     local plyGroup = ply:GetUserGroup()
     local timestamp = math.floor(os.time())
 
@@ -129,28 +129,39 @@ net.Receive("impulseCharacterCreate", function(len, ply)
     local query = mysql:Select("impulse_players")
     query:Where("steamid", plyID)
     query:Callback(function(result)
-        if (type(result) == "table" and #result > 0) then return end -- if ply already exists; halt
+        -- If we already have a rp name, we can't create a new character
+        if istable(result) and #result > 0 and result[1].rpname and result[1].rpname != "" then
+            MsgC(Color(255, 0, 0), "[impulse-reforged] "..ply:SteamName().." attempted to create a new character when they already have one.\n")
+            ply:Kick("You already have a character, stop trying to exploit.")
+            return
+        end
 
-        local insertQuery = mysql:Insert("impulse_players")
-        insertQuery:Insert("rpname", charName)
-        insertQuery:Insert("steamid", plyID)
-        insertQuery:Insert("group", "user")
-        insertQuery:Insert("xp", 0)
-        insertQuery:Insert("money", impulse.Config.StartingMoney)
-        insertQuery:Insert("bankmoney", impulse.Config.StartingBankMoney)
-        insertQuery:Insert("model", charModel)
-        insertQuery:Insert("skin", charSkin)
-        insertQuery:Insert("firstjoin", timestamp)
-        insertQuery:Insert("data", "[]")
-        insertQuery:Insert("skills", "[]")
-        insertQuery:Insert("rpgroup", 0)
-        insertQuery:Insert("rpgrouprank", "[]")
+        local insertQuery = mysql:Update("impulse_players")
+        insertQuery:Update("rpname", charName)
+        insertQuery:Update("steamid", plyID)
+        insertQuery:Update("steamname", ply:SteamName())
+        insertQuery:Update("group", "user")
+        insertQuery:Update("xp", 0)
+        insertQuery:Update("money", impulse.Config.StartingMoney)
+        insertQuery:Update("bankmoney", impulse.Config.StartingBankMoney)
+        insertQuery:Update("model", charModel)
+        insertQuery:Update("skin", charSkin)
+        insertQuery:Update("firstjoin", timestamp)
+        insertQuery:Update("lastjoin", timestamp)
+        insertQuery:Update("data", "[]")
+        insertQuery:Update("skills", "[]")
+        insertQuery:Update("rpgroup", 0)
+        insertQuery:Update("rpgrouprank", "[]")
+        insertQuery:Update("address", "[]")
+        insertQuery:Update("playtime", 0)
+        insertQuery:Where("steamid", plyID)
         insertQuery:Callback(function(result, status, lastID)
             if IsValid(ply) then
                 local setupData = {
                     id = lastID,
                     rpname = charName,
                     steamid = plyID,
+                    steamname = ply:SteamName(),
                     group = "user",
                     xp = 0,
                     money = impulse.Config.StartingMoney,
@@ -160,15 +171,20 @@ net.Receive("impulseCharacterCreate", function(len, ply)
                     skills = "[]",
                     skin = charSkin,
                     firstjoin = timestamp,
+                    lastjoin = timestamp,
                     rpgroup = 0,
-                            rpgrouprank = "[]"
+                    rpgrouprank = "[]",
+                    address = "[]",
+                    playtime = 0
                 }
 
-                print("[impulse-reforged] "..plyID.." has been submitted to the database. RP Name: ".. charName)
-                ply:Freeze(false)
-                impulse.SetupPlayer(ply, setupData)
+                MsgC(Color(0, 255, 0), "[impulse-reforged] "..ply:SteamName().." has created their character with the name \""..charName.."\".\n")
 
+                ply:Freeze(false)
                 ply:AllowScenePVSControl(false) -- stop cutscene
+                ply:SaveData()
+
+                hook.Run("PlayerSetup", ply, setupData)
             end
         end)
         insertQuery:Execute()
@@ -193,9 +209,7 @@ net.Receive("impulseScenePVS", function(len, ply)
         end
 
         timer.Simple(1.33, function()
-            if not IsValid(ply) then
-                return
-            end
+            if not IsValid(ply) then return end
 
             if last == 1 then
                 ply.extraPVS2 = nil
@@ -276,13 +290,14 @@ net.Receive("impulseTeamChange", function(len, ply)
     end
 
     local teamID = net.ReadUInt(8)
+    local teamData = impulse.Teams:FindTeam(teamID)
 
-    if teamID and isnumber(teamID) and impulse.Teams.Stored[teamID] then
+    if teamData then
         if ply:CanBecomeTeam(teamID, true) then
-            if impulse.Teams.Stored[teamID].quiz then
-                local data = ply:GetData()
+            if teamData.quiz then
+                local data = ply:GetData("quiz")
 
-                if not data.quiz or not data.quiz[teamID] then
+                if not data or not data[teamData.codeName] then
                     if ply.nextQuiz and ply.nextQuiz > CurTime() then
                         ply:Notify("Wait"..string.NiceTime(math.ceil(CurTime() - ply.nextQuiz)).." before attempting to retry the quiz.")
                         return
@@ -374,7 +389,7 @@ net.Receive("impulseBuyItem", function(len, ply)
         ply:TakeMoney(buyable.price)
 
         if item then
-            ply:GiveInventoryItem(item)
+            ply:GiveItem(item)
         else
             local trace = {}
             trace.start = ply:EyePos()
@@ -515,7 +530,7 @@ net.Receive("impulseDoorAdd", function(len, ply)
 
     local target = net.ReadEntity()
 
-    if not IsValid(target) or not target:IsPlayer() or not ply.beenSetup then return end
+    if not IsValid(target) or not target:IsPlayer() or not ply.impulseBeenSetup then return end
 
     local cost = math.ceil(impulse.Config.DoorPrice / 2)
 
@@ -557,7 +572,7 @@ net.Receive("impulseDoorRemove", function(len, ply)
 
     local target = net.ReadEntity()
 
-    if not IsValid(target) or not target:IsPlayer() or not ply.beenSetup then return end
+    if not IsValid(target) or not target:IsPlayer() or not ply.impulseBeenSetup then return end
 
     local trace = {}
     trace.start = ply:EyePos()
@@ -595,8 +610,10 @@ net.Receive("impulseQuizSubmit", function(len, ply)
         return ply:Notify("Quiz failed. You may retry the quiz in "..impulse.Config.QuizWaitTime.." minutes.")
     end
 
-    ply.impulseData.quiz = ply.impulseData.quiz or {}
-    ply.impulseData.quiz[teamID] = true
+    local data = ply:GetData("quiz") or {}
+    data[impulse.Teams.Stored[teamID].codeName] = true
+
+    ply:SetData("quiz", data)
     ply:SaveData()
 
     ply:Notify("You have passed the quiz. You will not need to retake it again.")
@@ -635,7 +652,7 @@ net.Receive("impulseSellAllDoors", function(len, ply)
 end)
 
 net.Receive("impulseInvDoEquip", function(len, ply)
-    if not ply.beenInvSetup or (ply.nextInvEquip or 0) > CurTime() then return end
+    if not ply.impulseBeenInventorySetup or (ply.nextInvEquip or 0) > CurTime() then return end
     ply.nextInvEquip = CurTime() + 0.1
 
     if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then return end
@@ -655,7 +672,7 @@ net.Receive("impulseInvDoEquip", function(len, ply)
 end)
 
 net.Receive("impulseInvDoDrop", function(len, ply)
-    if not ply.beenInvSetup or (ply.nextInvDrop or 0) > CurTime() then return end
+    if not ply.impulseBeenInventorySetup or (ply.nextInvDrop or 0) > CurTime() then return end
     ply.nextInvDrop = CurTime() + 0.1
 
     if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then return end
@@ -675,7 +692,7 @@ net.Receive("impulseInvDoDrop", function(len, ply)
 end)
 
 net.Receive("impulseInvDoUse", function(len, ply)
-    if not ply.beenInvSetup or (ply.nextInvUse or 0) > CurTime() then return end
+    if not ply.impulseBeenInventorySetup or (ply.nextInvUse or 0) > CurTime() then return end
     ply.nextInvUse = CurTime() + 0.1
 
     if not ply:Alive() or ply:GetSyncVar(SYNC_ARRESTED, false) then return end
@@ -874,7 +891,7 @@ net.Receive("impulseInvDoMoveMass", function(len, ply)
 end)
 
 net.Receive("impulseChangeRPName", function(len, ply)
-    if not ply.beenSetup then return end
+    if not ply.impulseBeenSetup then return end
     if (ply.nextRPNameTry or 0) > CurTime() then return end
     ply.nextRPNameTry = CurTime() + 0.1
 
@@ -908,7 +925,7 @@ net.Receive("impulseChangeRPName", function(len, ply)
 end)
 
 net.Receive("impulseCharacterEdit", function(len, ply)
-    if not ply.beenSetup then return end
+    if not ply.impulseBeenSetup then return end
     if (ply.nextCharEditTry or 0) > CurTime() then return end
     ply.nextCharEditTry = CurTime() + 3
 
@@ -921,8 +938,8 @@ net.Receive("impulseCharacterEdit", function(len, ply)
     local newSkin = net.ReadUInt(8)
     local cost = 0
     local isCurFemale = ply:IsCharacterFemale()
-    local curModel = ply.defaultModel
-    local curSkin = ply.defaultSkin
+    local curModel = ply.impulseDefaultModel
+    local curSkin = ply.impulseDefaultSkin
 
     if not table.HasValue(impulse.Config.DefaultMaleModels, newModel) and !table.HasValue(impulse.Config.DefaultFemaleModels, newModel) then return end
 
@@ -948,11 +965,11 @@ net.Receive("impulseCharacterEdit", function(len, ply)
         local query = mysql:Update("impulse_players")
         query:Update("skin", newSkin)
         query:Update("model", newModel)
-        query:Where("steamid", ply:SteamID())
+        query:Where("steamid", ply:SteamID64())
         query:Execute()
 
-        ply.defaultModel = newModel
-        ply.defaultSkin = newSkin
+        ply.impulseDefaultModel = newModel
+        ply.impulseDefaultSkin = newSkin
 
         ply:UpdateDefaultModelSkin()
 
@@ -963,8 +980,8 @@ net.Receive("impulseCharacterEdit", function(len, ply)
             oldBodyGroupsTemp[k.id] = ply:GetBodygroup(k.id)
         end
 
-        ply:SetModel(ply.defaultModel)
-        ply:SetSkin(ply.defaultSkin)
+        ply:SetModel(ply.impulseDefaultModel)
+        ply:SetSkin(ply.impulseDefaultSkin)
 
         for v, k in pairs(oldBodyGroups) do
             ply:SetBodygroup(k.id, oldBodyGroupsTemp[k.id])
@@ -1093,21 +1110,13 @@ net.Receive("impulseMixTry", function(len, ply)
         end
 
         if IsValid(ply) and ply:Alive() and IsValid(benchEnt) and ply:CanMakeMix(mixClass) then
-            if benchEnt:GetPos():DistToSqr(ply:GetPos()) > (120 ^ 2) then
-                return
-            end
+            if benchEnt:GetPos():DistToSqr(ply:GetPos()) > (120 ^ 2) then return end
 
-            if ply.CraftFail then
-                return
-            end
+            if ply.CraftFail then return end
 
-            if ply:GetSyncVar(SYNC_ARRESTED, false) or ply:IsCP() then
-                return
-            end
+            if ply:GetSyncVar(SYNC_ARRESTED, false) or ply:IsCP() then return end
 
-            if startTeam != ply:Team() then
-                return
-            end
+            if startTeam != ply:Team() then return end
 
             local item = impulse.Inventory.Items[impulse.Inventory.ClassToNetID(mixClass.Output)]
 
@@ -1118,7 +1127,7 @@ net.Receive("impulseMixTry", function(len, ply)
             local amount = mixClass.OutputAmount or 1
 
             for i = 1, amount do
-                ply:GiveInventoryItem(mixClass.Output)
+                ply:GiveItem(mixClass.Output)
             end
 
             if ( amount > 1 ) then
@@ -1243,7 +1252,7 @@ net.Receive("impulseVendorBuy", function(len, ply)
         ply:Notify("You have acquired a "..item.Name..".")
     end
 
-    ply:GiveInventoryItem(class, 1, sellData.Restricted or false)
+    ply:GiveItem(class, 1, sellData.Restricted or false)
 
     if vendor.Vendor.OnItemPurchased then
         vendor.Vendor.OnItemPurchased(vendor, class, ply)
@@ -1457,7 +1466,7 @@ net.Receive("impulseInvContainerDoMove", function(len, ply)
         end
 
         container:TakeItem(class, 1, true)
-        ply:GiveInventoryItem(class)
+        ply:GiveItem(class)
         container:UpdateUsers()
     elseif from == 1 then
         local hasItem, item = ply:HasInventoryItemSpecific(itemid, 1)
@@ -1628,7 +1637,7 @@ net.Receive("impulseGroupDoRankAdd", function(len, ply)
     end
 
     impulse.Group.NetworkRanksToOnline(name)
-    impulse.Group.DBUpdateRanks(groupData.ID, impulse.Group.Groups[name].Ranks)
+    impulse.Group.UpdateRanks(groupData.ID, impulse.Group.Groups[name].Ranks)
 end)
 
 local INVITE_ANTISPAM = INVITE_ANTISPAM or {}
@@ -1651,7 +1660,7 @@ net.Receive("impulseGroupDoInvite", function(len, ply)
 
     local targ = net.ReadEntity()
 
-    if not IsValid(targ) or not targ:IsPlayer() or not targ.beenSetup or targ:GetSyncVar(SYNC_GROUP_NAME, nil) then return end
+    if not IsValid(targ) or not targ:IsPlayer() or not targ.impulseBeenSetup or targ:GetSyncVar(SYNC_GROUP_NAME, nil) then return end
 
     if targ.GroupInvites and targ.GroupInvites[name] then
         return ply:Notify("This player already has a pending invite for this group.")
@@ -1741,7 +1750,7 @@ net.Receive("impulseGroupDoRankRemove", function(len, ply)
     impulse.Group.RankShift(name, rankName, impulse.Group.GetDefaultRank(name))
     impulse.Group.Groups[name].Ranks[rankName] = nil
     impulse.Group.NetworkRanksToOnline(name)
-    impulse.Group.DBUpdateRanks(groupData.ID, impulse.Group.Groups[name].Ranks)
+    impulse.Group.UpdateRanks(groupData.ID, impulse.Group.Groups[name].Ranks)
 end)
 
 net.Receive("impulseGroupDoSetRank", function(len, ply)
@@ -1790,7 +1799,7 @@ net.Receive("impulseGroupDoSetRank", function(len, ply)
         targEnt:Notify(ply:Nick().." set your group rank to "..rankName..".")
         n = targEnt:Nick()
     else
-        impulse.Group.DBUpdatePlayerRank(targ, rankName)
+        impulse.Group.UpdatePlayerRank(targ, rankName)
         impulse.Group.Groups[name].Members[targ].Rank = rankName
         impulse.Group.NetworkMemberToOnline(name, targ)
     end
@@ -1837,7 +1846,7 @@ net.Receive("impulseGroupDoRemove", function(len, ply)
         targEnt:Notify(ply:Nick().." has removed you from the "..name.." group.")
         n = targEnt:Nick()
     else
-        impulse.Group.DBRemovePlayer(targ, groupData.ID)
+        impulse.Group.RemovePlayer(targ, groupData.ID)
         impulse.Group.Groups[name].Members[targ] = nil
         impulse.Group.NetworkMemberRemoveToOnline(name, targ)
     end
@@ -1874,7 +1883,7 @@ net.Receive("impulseGroupDoCreate", function(len, ply)
 
     local slots = ply:IsDonator() and impulse.Config.GroupMaxMembersVIP or impulse.Config.GroupMaxMembers
 
-    impulse.Group.DBCreate(name, ply.impulseID, slots, 30, nil, function(groupid)
+    impulse.Group.Create(name, ply.impulseID, slots, 30, nil, function(groupid)
         if not IsValid(ply) then return end
 
         if not groupid then
@@ -1883,10 +1892,8 @@ net.Receive("impulseGroupDoCreate", function(len, ply)
 
         ply:TakeMoney(impulse.Config.GroupMakeCost)
 
-        impulse.Group.DBAddPlayer(ply:SteamID(), groupid, "Owner", function()
-            if not IsValid(ply) then
-                return
-            end
+        impulse.Group.AddPlayer(ply:SteamID(), groupid, "Owner", function()
+            if not IsValid(ply) then return end
 
             ply:GroupLoad(groupid, "Owner")
             ply:Notify("You have created a new group called "..name..".")
@@ -1922,8 +1929,8 @@ net.Receive("impulseGroupDoDelete", function(len, ply)
     end
 
     impulse.Group.Groups[name] = nil
-    impulse.Group.DBRemove(groupData.ID)
-    impulse.Group.DBRemovePlayerMass(groupData.ID)
+    impulse.Group.Remove(groupData.ID)
+    impulse.Group.RemovePlayerMass(groupData.ID)
 
     ply:Notify("You deleted the "..name.." group.")
 end)

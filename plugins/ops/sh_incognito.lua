@@ -1,4 +1,6 @@
-function meta:IsIncognito()
+local PLAYER = FindMetaTable("Player")
+
+function PLAYER:IsIncognito()
     return self:GetSyncVar(SYNC_INCOGNITO, false)
 end
 

@@ -57,9 +57,7 @@ if CLIENT then
     end
 
     function SWEP:Reload()
-        if self.NextGo > CurTime() then
-            return
-        end
+        if self.NextGo > CurTime() then return end
         self.NextGo = CurTime() + 0.1
         local ply = self.Owner
         local tr = ply:GetEyeTrace()

@@ -55,7 +55,7 @@ local viewInvCommand = {
         local plyTarget = impulse.Util:FindPlayer(name)
 
         if plyTarget then
-            if not plyTarget.beenInvSetup then return ply:Notify("Target is loading still...") end
+            if not plyTarget.impulseBeenInventorySetup then return ply:Notify("Target is loading still...") end
 
             local inv = plyTarget:GetInventory(1)
             net.Start("impulseOpsViewInv")
@@ -92,7 +92,7 @@ local restoreInvCommand = {
                 plyTarget:ClearInventory(1)
 
                 for v, k in pairs(plyTarget.InventoryRestorePoint) do
-                    plyTarget:GiveInventoryItem(k)
+                    plyTarget:GiveItem(k)
                 end
 
                 plyTarget.InventoryRestorePoint = nil

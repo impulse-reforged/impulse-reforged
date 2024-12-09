@@ -3,6 +3,94 @@
 
 impulse.Util = impulse.Util or {}
 
+impulse.Util.Type = impulse.Util.Type or {
+    [2] = "string",
+    [4] = "text",
+    [8] = "number",
+    [16] = "player",
+    [32] = "steamid",
+    [64] = "character",
+    [128] = "bool",
+    [1024] = "color",
+    [2048] = "vector",
+
+    string = 2,
+    text = 4,
+    number = 8,
+    player = 16,
+    steamid = 32,
+    character = 64,
+    bool = 128,
+    color = 1024,
+    vector = 2048,
+
+    optional = 256,
+    array = 512
+}
+
+--- Includes a lua file based on the prefix of the file. This will automatically call `include` and `AddCSLuaFile` based on the
+-- current realm. This function should always be called shared to ensure that the client will receive the file from the server.
+-- @realm shared
+-- @string fileName Path of the Lua file to include. The path is relative to the file that is currently running this function
+-- @string[opt] realm Realm that this file should be included in. You should usually ignore this since it
+-- will be automatically be chosen based on the `SERVER` and `CLIENT` globals. This value should either be `"server"` or
+-- `"client"` if it is filled in manually
+-- @usage impulse.Util:Include("sh_config.lua")
+-- @usage impulse.Util:Include("cl_init.lua", "client")
+-- @usage impulse.Util:Include("sv_hooks.lua", "server")
+function impulse.Util:Include(fileName, realm)
+    if (!fileName) then
+        error("[impulse] No file name specified for including.")
+    end
+
+    --MsgC(Color(83, 143, 239), "[impulse-reforged] [util] Including file \""..fileName.."\"...\n")
+
+    -- Only include server-side if we're on the server.
+    if ((realm == "server" or fileName:find("sv_")) and SERVER) then
+        return include(fileName)
+    -- Shared is included by both server and client.
+    elseif (realm == "shared" or fileName:find("shared.lua") or fileName:find("sh_")) then
+        if (SERVER) then
+            -- Send the file to the client if shared so they can run it.
+            AddCSLuaFile(fileName)
+        end
+
+        return include(fileName)
+    -- File is sent to client, included on client.
+    elseif (realm == "client" or fileName:find("cl_")) then
+        if (SERVER) then
+            AddCSLuaFile(fileName)
+        else
+            return include(fileName)
+        end
+    end
+end
+
+--- Includes multiple files in a directory.
+-- @realm shared
+-- @string directory Directory to include files from
+-- @bool[opt] bFromLua Whether or not to search from the base `lua/` folder, instead of contextually basing from `schema/`
+-- or `gamemode/`
+-- @see impulse.Util:Include
+-- @usage impulse.Util:IncludeDir("libs/thirdparty")
+function impulse.Util:IncludeDir(directory, bFromLua)
+    -- By default, we include relatively to impulse.
+    local baseDir = "impulse-reforged"
+
+    -- If we're in a schema, include relative to the schema.
+    if (SCHEMA_NAME) then
+        baseDir = SCHEMA_NAME .. "/schema/"
+    else
+        baseDir = baseDir .. "/gamemode/"
+    end
+
+    -- Find all of the files within the directory.
+    for _, v in ipairs(file.Find((bFromLua and "" or baseDir)..directory.."/*.lua", "LUA")) do
+        -- Include the file from the prefix.
+        impulse.Util:Include(directory.."/"..v)
+    end
+end
+
 if ( SERVER ) then
     function impulse:CinematicIntro(message)
         net.Start("impulseCinematicMessage")
@@ -219,7 +307,7 @@ function impulse.Util:StringMatches(a, b)
         a = tostring(a)
         b = tostring(b)
 
-        local a2, b2 = a:utf8lower(), b:utf8lower()
+        local a2, b2 = string.utf8lower(a), string.utf8lower(b)
 
         -- Check if the actual letters match.
         if (a == b) then return true end
@@ -246,7 +334,7 @@ function impulse.Util:StringMatchesTable(a, b)
         a = tostring(a)
         b = tostring(b)
 
-        local a2, b2 = a:utf8lower(), b:utf8lower()
+        local a2, b2 = string.utf8lower(a), string.utf8lower(b)
 
         -- Check if the actual letters match.
         if (a == b) then return true end
@@ -288,4 +376,20 @@ end
 -- > 787.40157480315
 function impulse.Util:MetersToUnit(meters)
     return meters / 0.0254
+end
+
+-- Returns the address:port of the server.
+function impulse.Util:GetAddress()
+    local address = tonumber(GetConVarString("hostip"))
+
+    if (!address) then
+        return "127.0.0.1"..":"..GetConVarString("hostport")
+    end
+
+    local ip = {}
+        ip[1] = bit.rshift(bit.band(address, 0xFF000000), 24)
+        ip[2] = bit.rshift(bit.band(address, 0x00FF0000), 16)
+        ip[3] = bit.rshift(bit.band(address, 0x0000FF00), 8)
+        ip[4] = bit.band(address, 0x000000FF)
+    return table.concat(ip, ".")..":"..GetConVarString("hostport")
 end

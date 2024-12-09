@@ -204,9 +204,7 @@ function impulse.Ops.ReportClose(ply, arg, rawText)
             net.Send(reporter)
         end
 
-        if not IsValid(ply) or not ply:IsPlayer() then
-            return
-        end
+        if not IsValid(ply) or not ply:IsPlayer() then return end
 
         opsSlackLog(":no_entry: *[REPORT CLOSED]* [#"..reportId.."] closed by "..ply:SteamName().." ("..ply:SteamID()..")")
     else
@@ -280,13 +278,9 @@ function impulse.Ops.ReportMsg(ply, arg, rawText)
 end
 
 hook.Add("PostSetupPlayer", "impulseOpsReportSync", function(ply)
-    if not ply:IsAdmin() then
-        return
-    end
+    if not ply:IsAdmin() then return end
 
-    if table.Count(impulse.Ops.Reports) < 1 then
-        return
-    end
+    if table.Count(impulse.Ops.Reports) < 1 then return end
 
     local reports = {}
     reports = table.Merge(reports, impulse.Ops.Reports)
@@ -303,17 +297,13 @@ hook.Add("PostSetupPlayer", "impulseOpsReportSync", function(ply)
 end)
 
 net.Receive("opsReportDaleRepliedDo", function(len, ply)
-    if (ply.nextDaleDoReply or 0) > CurTime() then
-        return
-    end
+    if (ply.nextDaleDoReply or 0) > CurTime() then return end
 
     ply.nextDaleDoReply = CurTime() + 10
 
     for id, data in pairs(impulse.Ops.Reports) do
         if data[1] == ply then
-            if data[6] then
-                return
-            end
+            if data[6] then return end
 
             impulse.Ops.Reports[id][6] = true
             for v, k in player.Iterator() do
@@ -330,17 +320,13 @@ net.Receive("opsReportDaleRepliedDo", function(len, ply)
 end)
 
 net.Receive("opsReportDaleClose", function(len, ply)
-    if (ply.nextDaleClose or 0) > CurTime() then
-        return
-    end
+    if (ply.nextDaleClose or 0) > CurTime() then return end
 
     ply.nextDaleClose = CurTime() + 10
 
     for id, data in pairs(impulse.Ops.Reports) do
         if data[1] == ply then
-            if not data[6] then
-                return
-            end
+            if not data[6] then return end
 
             impulse.Ops.ReportClose(Entity(0), {id})
             

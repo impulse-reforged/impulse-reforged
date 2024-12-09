@@ -81,9 +81,7 @@ function SWEP:PrimaryAttack()
 
     self.nextPrimaryAttack = CurTime() + self.Primary.Delay
 
-    if ( SERVER ) then
-        return
-    end
+    if ( SERVER ) then return end
 
     local trace = {}
     trace.start = self.Owner:EyePos()
@@ -139,9 +137,7 @@ function SWEP:SecondaryAttack()
     if ( !self.nextSecondaryAttack ) then self.nextSecondaryAttack = 0 end
     if ( CurTime() < self.nextSecondaryAttack ) then return end
     
-    if ( SERVER ) then
-        return
-    end
+    if ( SERVER ) then return end
 
     self.SelectedStorage = nil
     self.SelectedDoor = nil
@@ -161,20 +157,14 @@ if SERVER then
     util.AddNetworkString("impulseLootEditorSet")
 
     net.Receive("impulseLootEditorSet", function(len, ply)
-        if not ply:IsSuperAdmin() then
-            return
-        end
+        if not ply:IsSuperAdmin() then return end
         
         local pool = net.ReadString()
         local ent = net.ReadEntity()
 
-        if not IsValid(ent) or ent:GetClass() != "prop_physics" then
-            return
-        end
+        if not IsValid(ent) or ent:GetClass() != "prop_physics" then return end
         
-        if not impulse.Config.LootPools[pool] then
-            return
-        end
+        if not impulse.Config.LootPools[pool] then return end
 
         local entModel = ent:GetModel()
         local entPos = ent:GetPos()

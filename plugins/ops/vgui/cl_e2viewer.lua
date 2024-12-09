@@ -22,9 +22,7 @@ function PANEL:SetupE2S(e2s)
     for v, k in pairs(e2s) do
         local owner = k.ent:CPPIGetOwner()
 
-        if not owner then
-            return
-        end
+        if not owner then return end
 
         local cpuTime = k.perf * 1000000
         if cpuTime < 0.01 then
@@ -68,14 +66,10 @@ function PANEL:SetupE2S(e2s)
 
     function self.list:Think()
         for v, k in pairs(self.lines) do
-            if not IsValid(k) or not IsValid(k.Ent) then
-                return
-            end
+            if not IsValid(k) or not IsValid(k.Ent) then return end
 
             local data = k.Ent:GetOverlayData()
-            if not data then
-                return
-            end
+            if not data then return end
 
             local cpuTime = data.timebench * 1000000
             if cpuTime < 0.01 then

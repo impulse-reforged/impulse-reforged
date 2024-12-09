@@ -79,13 +79,15 @@ function impulse.Ops.AutoMod.Ban(ply, reason, risk, details)
                     end
 end
 
-function meta:AutoModLogAdd(msg)
+local PLAYER = FindMetaTable("Player")
+
+function PLAYER:AutoModLogAdd(msg)
     self.AutoModLog = self.AutoModLog or {}
 
     table.insert(self.AutoModLog, "["..os.date("%H:%M:%S", os.time()).."] "..msg)
 end
 
-function meta:AutoModLogGet()
+function PLAYER:AutoModLogGet()
     local o = ""
     for v, k in pairs(self.AutoModLog or {}) do
         o = o.."\n"..k

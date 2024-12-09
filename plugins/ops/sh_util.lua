@@ -11,9 +11,7 @@ local setHealthCommand = {
         local targ = impulse.Util:FindPlayer(arg[1])
         local hp = arg[2]
 
-        if not hp or not tonumber(hp) then
-            return
-        end
+        if not hp or not tonumber(hp) then return end
 
         if not ply:IsLeadAdmin() then
             hp = math.Clamp(hp, 1, 100)
@@ -46,9 +44,7 @@ local setArmorCommand = {
         local targ = impulse.Util:FindPlayer(arg[1])
         local hp = arg[2]
 
-        if not hp or not tonumber(hp) then
-            return
-        end
+        if not hp or not tonumber(hp) then return end
 
         if not ply:IsLeadAdmin() then
             hp = math.Clamp(hp, 1, 100)
@@ -79,9 +75,7 @@ local setHungerCommand = {
         local targ = impulse.Util:FindPlayer(arg[1])
         local hp = arg[2]
 
-        if not hp or not tonumber(hp) then
-            return
-        end
+        if not hp or not tonumber(hp) then return end
 
         if not ply:IsLeadAdmin() then
             hp = math.Clamp(hp, 1, 100)
@@ -217,10 +211,10 @@ local setSavedModelCommand = {
         if targ and IsValid(targ) then
             local query = mysql:Update("impulse_players")
             query:Update("model", newModel)
-            query:Where("steamid", targ:SteamID())
+            query:Where("steamid", targ:SteamID64())
             query:Execute()
     
-            targ.defaultModel = newModel
+            targ.impulseDefaultModel = newModel
             targ:SetModel(newModel)
 
             ply:Notify("You have set " .. targ:Nick() .. "'s saved model to " .. newModel .. ".")
@@ -289,10 +283,10 @@ local setSavedSkinCommand = {
         if targ and IsValid(targ) then
             local query = mysql:Update("impulse_players")
             query:Update("skin", newSkin)
-            query:Where("steamid", targ:SteamID())
+            query:Where("steamid", targ:SteamID64())
             query:Execute()
     
-            targ.defaultSkin = newSkin
+            targ.impulseDefaultSkin = newSkin
             targ:SetSkin(newSkin)
 
             ply:Notify("You have set " .. targ:Nick() .. "'s saved skin to " .. newSkin .. ".")
@@ -437,9 +431,7 @@ local addXPCommand = {
         local targ = impulse.Util:FindPlayer(arg[1])
         local xp = tonumber(arg[2])
 
-        if not xp or not tonumber(xp) then
-            return
-        end
+        if not xp or not tonumber(xp) then return end
 
         if targ and IsValid(targ) then
             targ:AddXP(xp)
@@ -466,9 +458,7 @@ local setXPCommand = {
         local targ = impulse.Util:FindPlayer(arg[1])
         local xp = tonumber(arg[2])
 
-        if not xp or not tonumber(xp) then
-            return
-        end
+        if not xp or not tonumber(xp) then return end
 
         if targ and IsValid(targ) then
             targ:SetXP(xp)
@@ -495,9 +485,7 @@ local takeXPCommand = {
         local targ = impulse.Util:FindPlayer(arg[1])
         local xp = tonumber(arg[2])
 
-        if not xp or not tonumber(xp) then
-            return
-        end
+        if not xp or not tonumber(xp) then return end
 
         if targ and IsValid(targ) then
             targ:TakeXP(xp)
@@ -525,9 +513,7 @@ local addSkillXPCommand = {
         local skill = arg[2]
         local xp = tonumber(arg[3])
 
-        if not xp or not tonumber(xp) then
-            return
-        end
+        if not xp or not tonumber(xp) then return end
 
         if targ and IsValid(targ) then
             targ:AddSkillXP(skill, xp)
@@ -555,9 +541,7 @@ local setSkillXPCommand = {
         local skill = arg[2]
         local xp = tonumber(arg[3])
 
-        if not xp or not tonumber(xp) then
-            return
-        end
+        if not xp or not tonumber(xp) then return end
 
         if targ and IsValid(targ) then
             targ:SetSkillXP(skill, xp)
@@ -585,9 +569,7 @@ local takeSkillXPCommand = {
         local skill = arg[2]
         local xp = tonumber(arg[3])
 
-        if not xp or not tonumber(xp) then
-            return
-        end
+        if not xp or not tonumber(xp) then return end
 
         if targ and IsValid(targ) then
             targ:TakeSkillXP(skill, xp)
@@ -612,24 +594,30 @@ local quizBypassCommand = {
     adminOnly = true,
     onRun = function(ply, arg, rawText)
         local targ = impulse.Util:FindPlayer(arg[1])
-        local team = arg[2]
+        local data = impulse.Teams:FindTeam(arg[2])
 
-        if not impulse.Teams:FindTeam(team) then
-            return ply:Notify("No team specified!")
+        if not data then
+            return ply:Notify("You entered and incorrect team name or index.")
         end
 
         if targ and IsValid(targ) then
-            if not impulse.Teams.Stored.quiz then
+            if not data.quiz then
                 return ply:Notify("This team does not have a quiz!")
             end
 
-            ply:Notify("You have bypassed " .. targ:Nick() .. "'s " .. team .. " quiz.")
+            ply:Notify("You have bypassed " .. targ:Nick() .. "'s " .. data.name .. " quiz.")
 
             for k, v in player.Iterator() do
                 if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has bypassed " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") " .. team .. " quiz.")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has bypassed " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") " .. data.name .. " quiz.")
                 end
             end
+
+            local quizData = ply:GetData("quiz") or {}
+            quizData[data.codeName] = true
+
+            ply:SetData("quiz", quizData)
+            ply:SaveData()
         else
             return ply:Notify("Could not find player: " .. tostring(arg[1]))
         end

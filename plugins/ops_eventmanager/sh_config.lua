@@ -491,9 +491,7 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = true,
         Clientside = false,
         Do = function(prop, uid)
-            if not OPS_ENTS or not OPS_ENTS[uid] or not IsValid(OPS_ENTS[uid]) then
-                return
-            end
+            if not OPS_ENTS or not OPS_ENTS[uid] or not IsValid(OPS_ENTS[uid]) then return end
 
             local e = OPS_ENTS[uid]
 
@@ -552,9 +550,7 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = false,
         Clientside = true,
         Do = function(prop, uid)
-            if prop["cponly"] and !LocalPlayer():IsCP() then
-                return
-            end
+            if prop["cponly"] and !LocalPlayer():IsCP() then return end
 
             LocalPlayer():EmitSound(prop["sound"], prop["level"], nil, prop["volume"])
         end
@@ -738,7 +734,7 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = true,
         Clientside = false,
         Do = function(prop, uid)
-            local x = impulse.Inventory.SpawnItem(prop["class"], prop["pos"])
+            local x = impulse.Inventory:SpawnItem(prop["class"], prop["pos"])
             x.IsRestrictedItem = true
         end
     },
@@ -1132,9 +1128,7 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = true,
         Clientside = true,
         Do = function(prop, uid)
-            if not impulse.Ops.EventManager.Scenes then
-                return
-            end
+            if not impulse.Ops.EventManager.Scenes then return end
 
             if prop["text"] == "" then
                 prop["text"] = nil

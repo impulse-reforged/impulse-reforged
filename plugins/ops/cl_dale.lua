@@ -61,9 +61,7 @@ function impulse.Ops.DaleRead(message)
                 end
             end
 
-            if fail then
-                continue
-            end
+            if fail then continue end
 
             if k.Command then LocalPlayer():ConCommand(k.Command) end
             return impulse.Ops.DaleSay(k.Reply, k.RequestClose or false)
