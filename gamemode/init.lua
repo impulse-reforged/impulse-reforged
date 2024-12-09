@@ -67,7 +67,7 @@ local function IncludeWorkshopAddons()
     local addons = engine.GetAddons()
 
     for k, v in pairs(addons) do
-        if v.mounted and v.wsid != "0" then
+        if ( v.mounted and v.wsid != "0" ) then
             total = total + 1
 
             resource.AddWorkshop(v.wsid)
