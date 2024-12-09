@@ -378,7 +378,10 @@ function impulse.Util:MetersToUnit(meters)
     return meters / 0.0254
 end
 
--- Returns the address:port of the server.
+--- Returns the address:port of the server.
+-- @realm shared
+-- @treturn string Address:Port of the server
+-- @usage print(impulse.Util:GetAddress())
 function impulse.Util:GetAddress()
     local address = tonumber(GetConVarString("hostip"))
 
@@ -392,4 +395,40 @@ function impulse.Util:GetAddress()
         ip[3] = bit.rshift(bit.band(address, 0x0000FF00), 8)
         ip[4] = bit.band(address, 0x000000FF)
     return table.concat(ip, ".")..":"..GetConVarString("hostport")
+end
+
+--- Finds a target in the player's crosshair, with an optional range.
+-- @realm shared
+-- @player ply Player to find the target for
+-- @entity target Target entity to check
+-- @number[opt=0.9] range Range to check for the target
+-- @treturn bool Whether or not the target is in the player's crosshair
+-- @usage -- returns true if Entity(2) is in Entity(1)'s crosshair
+-- print(impulse.Util:FindInCrosshair(Entity(1), Entity(2)))
+-- > true
+-- @usage -- returns true if Entity(2) is in Entity(1)'s crosshair within 0.5 range
+-- print(impulse.Util:FindInCrosshair(Entity(1), Entity(2), 0.5))
+-- > true
+-- @usage -- returns false if Entity(2) is not in Entity(1)'s crosshair within 0.1 range
+-- print(impulse.Util:FindInCrosshair(Entity(1), Entity(2), 0.1))
+-- > false
+function impulse.Util:FindInCrosshair(ply, target, range)
+    if ( !IsValid(ply) and !IsValid(target) ) then return end
+
+    if ( !IsValid(target) ) then return end
+
+    if ( !range ) then
+        range = 0.9
+    end
+
+    range = math.Clamp(range, 0, 1)
+
+    local origin, originVector = ply:EyePos(), ply:GetAimVector()
+
+    local targetOrigin = target.EyePos and target:EyePos() or target:WorldSpaceCenter()
+    local direction = targetOrigin - origin
+
+    if ( originVector:Dot(direction:GetNormalized()) > range ) then return true end
+
+    return false
 end
