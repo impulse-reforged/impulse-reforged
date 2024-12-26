@@ -28,7 +28,7 @@ if ( engine.ActiveGamemode() == "impulse-reforged" ) then
         end
     end
 
-    SetGlobalString("impulse_fatalerror", "No schema loaded. Please place the schema in your gamemodes folder, then set it as your gamemode.\n\nInstalled available schemas:\n"..gs)
+    SetGlobalString("impulse_fatalerror", "No schema loaded. Please place the schema in your gamemodes folder, then set it as your gamemode.\n\nInstalled available schemas:\n" .. gs)
 end
 
 -- Include all files in the gamemode such as models, materials, sounds, etc. This is done to ensure that the files are sent to the client. Subfolders are included as well.
