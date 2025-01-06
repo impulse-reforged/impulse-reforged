@@ -91,8 +91,8 @@ end
       self.itemsStorage = {}
      self.itemPanelsStorage = {}
      local invWeight = 0
-     local realInv = impulse.Inventory.Data[0][1]
-     local localInv = table.Copy(impulse.Inventory.Data[0][1]) or {}
+     local realInv = impulse.Inventory.Data[0][INVENTORY_PLAYER]
+     local localInv = table.Copy(impulse.Inventory.Data[0][INVENTORY_PLAYER]) or {}
     local storageWeight = 0
      local reccurTemp = {}
        local sortMethod = impulse.Settings:Get("inv_sortweight", "Inventory only")

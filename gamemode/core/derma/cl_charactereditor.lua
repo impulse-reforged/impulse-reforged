@@ -27,10 +27,11 @@ function PANEL:Init()
 
         local msg = Derma_Message
 
-        local skinBlacklist = impulse.Config.DefaultSkinBlacklist[characterModel]
-
-        if skinBlacklist and table.HasValue(skinBlacklist, characterSkin) then
-            return msg("The skin you selected was on the blacklist.\nPlease select another skin or change the model.", "impulse", "OK")
+        if ( impulse.Config.DefaultSkinBlacklist ) then
+            local skinBlacklist = impulse.Config.DefaultSkinBlacklist[characterModel]
+            if skinBlacklist and table.HasValue(skinBlacklist, characterSkin) then
+                return msg("The skin you selected was on the blacklist.\nPlease select another skin or change the model.", "impulse", "OK")
+            end
         end
 
         net.Start("impulseCharacterEdit")

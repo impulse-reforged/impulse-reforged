@@ -1,7 +1,7 @@
 local PLAYER = FindMetaTable("Player")
 
 function PLAYER:IsIncognito()
-    return self:GetNetVar("incognito", false)
+    return tobool(self:GetNetVar("incognito", false))
 end
 
 local incognitoCommand = {

@@ -3,7 +3,7 @@ file = {
     "gamemode",
     "plugins",
     "docs/hooks",
-    exclude = {"gamemode/libs"}
+    exclude = {"gamemode/core/thirdparty"}
 }
 
 dir = "docs/html"

@@ -528,7 +528,7 @@ function GM:CalcMainActivity(ply, velocity)
 
     ply.SetPoseParameter(ply, "move_yaw", normalized)
 
-    if CLIENT then
+    if ( CLIENT ) then
         ply.SetIK(ply, false)
     end
 
@@ -664,7 +664,7 @@ function PLAYER:IsWeaponRaised()
     return self.GetNetVar(self, "weaponRaised", false)
 end
 
-if SERVER then
+if ( SERVER ) then
     util.AddNetworkString("impulseSeqSet")
     
     function PLAYER:SetWeaponRaised(state)
@@ -687,7 +687,7 @@ if SERVER then
     end
 end
 
-if CLIENT then
+if ( CLIENT ) then
     net.Receive("impulseSeqSet", function()
         local ent = net.ReadEntity()
         local reset = net.ReadBool()

@@ -1,7 +1,7 @@
 AddCSLuaFile()
 
 
-if CLIENT then
+if ( CLIENT ) then
     SWEP.PrintName = "Hands"
     SWEP.Slot = 1
     SWEP.SlotPos = 1
@@ -42,7 +42,7 @@ local CARRY_WEIGHT_LIMIT = 100
 local PLAYER_PICKUP_RANGE = 200
 
 function SWEP:Initialize()
-    if SERVER then
+    if ( SERVER ) then
         self.dt.carried_rag = nil
     end
 
@@ -72,7 +72,7 @@ local CurTime = CurTime
 function SWEP:Deploy()
     if not IsValid(self.Owner) then return end
 
-    if SERVER then
+    if ( SERVER ) then
         self.Owner:DrawWorldModel(false)
     end
 
@@ -217,7 +217,7 @@ function SWEP:Drop(throw)
     if not self:CheckValidity() then return end
     if not self:AllowEntityDrop() then return end
 
-    if SERVER then
+    if ( SERVER ) then
         self.Constr:Remove()
         self.CarryHack:Remove()
 
@@ -283,7 +283,7 @@ local function IsPlayerStandsOn(ent)
     return false
 end
 
-if SERVER then
+if ( SERVER ) then
     local ent_diff = vector_origin
     local ent_diff_time = CurTime()
 
@@ -346,7 +346,7 @@ function SWEP:PrimaryAttack()
 
     self:SetNextPrimaryFire(CurTime() + 0.5)
 
-    if CLIENT then return end
+    if ( CLIENT ) then return end
 
     if IsValid(self.HoldingEntity) then
         self:DoPickup(true)
@@ -476,7 +476,7 @@ function SWEP:DoPickup(throw)
         if not IsValid(phys) or not phys:IsMoveable() or phys:HasGameFlag(FVPHYSICS_PLAYER_HELD) or ent.NoCarry then return end
 
         -- if the client messes with phys desync will occur
-        if SERVER then
+        if ( SERVER ) then
             if (ply:EyePos() - trace.HitPos):Length() < self:GetRange(ent) then
                 if self:AllowPickup(ent) then
                     if ent.CanHandsPickup and !ent.CanHandsPickup(ent, ply) then return end

@@ -19,6 +19,14 @@ local DEFAULT_RANKS = pon.encode({
     }
 })
 
+--- Creates a new group
+-- @realm server
+-- @string name Group name
+-- @number ownerid Owner's SteamID64
+-- @number maxsize Maximum amount of members
+-- @number maxstorage Maximum storage amount
+-- @table ranks Table of ranks
+-- @func callback Callback function
 function impulse.Group.Create(name, ownerid, maxsize, maxstorage, ranks, callback)
     impulse.Group.IsNameUnique(name, function(unique)
         if unique then
@@ -41,12 +49,18 @@ function impulse.Group.Create(name, ownerid, maxsize, maxstorage, ranks, callbac
     end)
 end
 
+--- Removes a group
+-- @realm server
+-- @number groupid Group ID
 function impulse.Group.Remove(groupid)
     local query = mysql:Delete("impulse_rpgroups")
     query:Where("id", groupid)
     query:Execute()
 end
 
+--- Removes a group by name
+-- @realm server
+-- @string name Group name
 function impulse.Group.RemoveByName(name)
     local query = mysql:Delete("impulse_rpgroups")
     query:Where("name", name)

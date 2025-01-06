@@ -9,14 +9,14 @@ function PANEL:Init()
     self:SetCursor("hand")
 end
 
-function PANEL:SetItem(netitem, wide)
+function PANEL:SetItem(itemNet, wide)
     local direct = self.ContainerType
-    local item = impulse.Inventory.Items[(direct and netitem) or netitem.id]
+    local item = impulse.Inventory.Items[(direct and itemNet) or itemNet.id]
     self.Item = item
 
     if not direct then
-        self.IsEquipped = netitem.equipped or false
-        self.IsRestricted = netitem.restricted or false
+        self.IsEquipped = itemNet.equipped or false
+        self.IsRestricted = itemNet.restricted or false
     end
 
     self.Weight = item.Weight or 0
@@ -150,7 +150,7 @@ function PANEL:OnMousePressed(keycode)
         if self.Type == 1 then
             itemid = self.InvID
         else
-            itemid = impulse.Inventory.ClassToNetID(self.Item.UniqueID)
+            itemid = impulse.Inventory:ClassToNetID(self.Item.UniqueID)
         end
 
         net.Start("impulseInvContainerDoMove")
@@ -181,7 +181,7 @@ function PANEL:OnMousePressed(keycode)
                 end
 
                 net.Start("impulseInvDoMoveMass")
-                net.WriteUInt(impulse.Inventory.ClassToNetID(self.Item.UniqueID), 10)
+                net.WriteUInt(impulse.Inventory:ClassToNetID(self.Item.UniqueID), 10)
                 net.WriteUInt(amount, 8)
                 net.WriteUInt(self.Type, 4)
                 net.SendToServer()

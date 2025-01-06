@@ -9,7 +9,7 @@ function impulse.Ops.RegisterAction(command, cmdData, qtName, qtIcon, qtDo)
     end
 end
 
-if CLIENT then
+if ( CLIENT ) then
     -- load up windows toast notifications for reports if staff have it
     if file.Exists("garrysmod/lua/bin/gmcl_win_toast_win32.dll", "BASE_PATH") or file.Exists("garrysmod/lua/bin/gmcl_win_toast_win64.dll", "BASE_PATH") then
         require("win_toast")

@@ -1,6 +1,6 @@
 local PLAYER = FindMetaTable("Player")
 
-if SERVER then
+if ( SERVER ) then
     function PLAYER:SetRPName(name, save)
         if save then
             local query = mysql:Update("impulse_players")

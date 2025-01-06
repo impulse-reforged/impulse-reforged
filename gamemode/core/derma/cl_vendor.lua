@@ -85,7 +85,7 @@ function PANEL:SetupVendor()
 
     for v, k in pairs(self.Vendor.Sell) do
         if not k.CanBuy or k.CanBuy(LocalPlayer()) then
-            local itemid = impulse.Inventory.ClassToNetID(v)
+            local itemid = impulse.Inventory:ClassToNetID(v)
 
             if not itemid then
                 print("[impulse-reforged] "..v.." is invalid!")
@@ -110,7 +110,7 @@ function PANEL:SetupVendor()
 
     for v, k in pairs(self.Vendor.Sell) do
         if k.CanBuy and !k.CanBuy(LocalPlayer()) then
-            local itemid = impulse.Inventory.ClassToNetID(v)
+            local itemid = impulse.Inventory:ClassToNetID(v)
 
             if not itemid then
                 print("[impulse-reforged] "..v.." is invalid!")
@@ -149,7 +149,7 @@ function PANEL:SetupVendor()
     self.youScroll:SetPos(440, 83)
     self.youScroll:SetSize(340, h - 83)
 
-    for v, k in pairs(impulse.Inventory.Data[0][1]) do
+    for v, k in pairs(impulse.Inventory.Data[0][INVENTORY_PLAYER]) do
         if k.restricted then
             continue    
         end

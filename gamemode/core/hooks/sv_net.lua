@@ -120,10 +120,11 @@ net.Receive("impulseCharacterCreate", function(len, ply)
         return ply:Kick(AUTH_FAILURE)
     end
 
-    local skinBlacklist = impulse.Config.DefaultSkinBlacklist[charModel]
-
-    if skinBlacklist and table.HasValue(skinBlacklist, charSkin) then
-        return ply:Kick(AUTH_FAILURE)
+    if ( impulse.Config.DefaultSkinBlacklist ) then
+        local skinBlacklist = impulse.Config.DefaultSkinBlacklist[charModel]
+        if skinBlacklist and table.HasValue(skinBlacklist, charSkin) then
+            return ply:Kick(AUTH_FAILURE)
+        end
     end
 
     local query = mysql:Select("impulse_players")
@@ -356,7 +357,7 @@ net.Receive("impulseBuyItem", function(len, ply)
 
     local buyableID = net.ReadUInt(8)
 
-    local buyableName = impulse.Business.DataRef[buyableID]
+    local buyableName = impulse.Business.Stored[buyableID]
     local buyable = impulse.Business.Data[buyableName]
 
     if buyable and ply:CanBuy(buyableName) and ply:CanAfford(buyable.price) then
@@ -400,7 +401,7 @@ net.Receive("impulseBuyItem", function(len, ply)
 
             local ang = Angle(0, 0, 0)
 
-            local ent = impulse.SpawnBuyable(tr.HitPos, ang, buyable, ply)
+            local ent = impulse.Business:SpawnBuyable(tr.HitPos, ang, buyable, ply)
 
             table.insert(ply.BusinessSpawnCount, ent)
         end
@@ -779,7 +780,7 @@ net.Receive("impulseInvDoMove", function(len, ply)
     if not hasItem then return end
 
     if ply.currentStorage:GetClass() == "impulse_storage_public" then
-        local item = impulse.Inventory.Items[impulse.Inventory.ClassToNetID(item.class)]
+        local item = impulse.Inventory.Items[impulse.Inventory:ClassToNetID(item.class)]
 
         if not item then return end
 
@@ -1043,7 +1044,7 @@ net.Receive("impulseMixTry", function(len, ply)
     local benchEnt = bench
 
     local mix = net.ReadUInt(8)
-    local mixClass = impulse.Inventory.MixturesRef[mix]
+    local mixClass = impulse.Inventory.MixturesStored[mix]
 
     if not mixClass then return end
 
@@ -1078,7 +1079,7 @@ net.Receive("impulseMixTry", function(len, ply)
     benchEnt.InUse = true
 
     local startTeam = ply:Team()
-    local time, sounds = impulse.Inventory.GetCraftingTime(mixClass)
+    local time, sounds = impulse.Inventory:GetCraftingTime(mixClass)
     ply.CraftFail = false
 
     for v, k in pairs(sounds) do
@@ -1092,7 +1093,7 @@ net.Receive("impulseMixTry", function(len, ply)
             end
 
             local crafttype = k[2]
-            local snd = impulse.Inventory.PickRandomCraftSound(crafttype)
+            local snd = impulse.Inventory:PickRandomCraftSound(crafttype)
 
             benchEnt:EmitSound(snd, 100)
         end)
@@ -1118,7 +1119,7 @@ net.Receive("impulseMixTry", function(len, ply)
 
             if startTeam != ply:Team() then return end
 
-            local item = impulse.Inventory.Items[impulse.Inventory.ClassToNetID(mixClass.Output)]
+            local item = impulse.Inventory.Items[impulse.Inventory:ClassToNetID(mixClass.Output)]
 
             for v, k in pairs(mixClass.Input) do
                 ply:TakeInventoryItemClass(v, nil, k.take)
@@ -1243,7 +1244,7 @@ net.Receive("impulseVendorBuy", function(len, ply)
         end
     end
 
-    local item = impulse.Inventory.Items[impulse.Inventory.ClassToNetID(class)]
+    local item = impulse.Inventory.Items[impulse.Inventory:ClassToNetID(class)]
 
     if sellData.Cost then
         ply:TakeMoney(sellData.Cost)
@@ -1293,7 +1294,7 @@ net.Receive("impulseVendorSell", function(len, ply)
     local class = itemData.class
 
     local buyData = vendor.Vendor.Buy[class]
-    local itemName = impulse.Inventory.Items[impulse.Inventory.ClassToNetID(class)].Name
+    local itemName = impulse.Inventory.Items[impulse.Inventory:ClassToNetID(class)].Name
 
     if not buyData then return end
 

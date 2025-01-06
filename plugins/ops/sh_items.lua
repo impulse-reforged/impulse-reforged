@@ -1,4 +1,4 @@
-if CLIENT then
+if ( CLIENT ) then
     net.Receive("impulseOpsItemSpawner", function()
         local panel = vgui.Create("DFrame")
         panel:SetSize(ScrW() / 1.5, ScrH() / 1.25)
@@ -119,11 +119,11 @@ local giveItemCommand = {
                 return ply:Notify("This Steam account has not joined the server yet or the SteamID64 is invalid.")
             end
 
-            if not impulse.Inventory.ItemsRef[item] then
+            if not impulse.Inventory.ItemsStored[item] then
                 return ply:Notify("Item: "..item.." does not exist.")
             end
 
-            local target = player.GetBySteamID(steamid)
+            local target = player.GetBySteamID64(steamid)
 
             if target and IsValid(target) then
                 target:GiveItem(item)

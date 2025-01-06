@@ -11,7 +11,7 @@ impulse.Achievements = impulse.Achievements or {}
 
 local PLAYER = FindMetaTable("Player")
 
-if SERVER then
+if ( SERVER ) then
     --- Player class methods
     -- @classmod Player
 

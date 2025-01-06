@@ -1,6 +1,6 @@
 local infoCol = Color(135, 206, 250)
 
-if SERVER then
+if ( SERVER ) then
     util.AddNetworkString("opsGiveOOCBan")
 end
 

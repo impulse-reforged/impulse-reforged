@@ -137,7 +137,7 @@ end
 function PANEL:DoCraft(item, mix)
     local wide = self:GetWide()
     local panel = self
-    local length = impulse.Inventory.GetCraftingTime(mix)
+    local length = impulse.Inventory:GetCraftingTime(mix)
 
     self:ShowNormal(false)
     self:ShowCloseButton(false)

@@ -57,7 +57,7 @@ end
 
 function PANEL:Think()
     if self.ItemID then
-        local inv = impulse.Inventory.Data[0][1]
+        local inv = impulse.Inventory.Data[0][INVENTORY_PLAYER]
 
         if not inv[self.ItemID] then
             self:Remove()
@@ -86,7 +86,7 @@ function PANEL:Paint(w, h)
     local col = activeCol
     local cost = self.SellData.Cost
     local max = self.SellData.Max
-    local hasItem, amount = LocalPlayer():HasInventoryItem(impulse.Inventory.ClassToNetID(self.Item.UniqueID))
+    local hasItem, amount = LocalPlayer():HasInventoryItem(impulse.Inventory:ClassToNetID(self.Item.UniqueID))
     local disabled = false
     local maxed = false
 

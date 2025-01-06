@@ -112,7 +112,7 @@ function ENT:GetStorageWeight()
     local weight = 0
 
     for k, v in pairs(self.Inventory) do
-        local item = impulse.Inventory.Items[impulse.Inventory.ClassToNetID(k)]
+        local item = impulse.Inventory.Items[impulse.Inventory:ClassToNetID(k)]
         weight = weight + ((item.Weight or 0) * v)
     end
 
@@ -120,7 +120,7 @@ function ENT:GetStorageWeight()
 end
 
 function ENT:CanHoldItem(class)
-    local item = impulse.Inventory.Items[impulse.Inventory.ClassToNetID(class)]
+    local item = impulse.Inventory.Items[impulse.Inventory:ClassToNetID(class)]
     local weight = (item.Weight or 0) * (amount or 1)
 
     return self:GetStorageWeight() + weight <= self:GetCapacity()
@@ -137,7 +137,7 @@ function ENT:AddUser(ply)
     net.WriteUInt(table.Count(self.Inventory), 8)
 
     for k, v in pairs(self.Inventory) do
-        local netid = impulse.Inventory.ClassToNetID(k)
+        local netid = impulse.Inventory:ClassToNetID(k)
         local amount = v
 
         net.WriteUInt(netid, 10)
@@ -163,7 +163,7 @@ function ENT:UpdateUsers()
             net.WriteUInt(table.Count(self.Inventory), 8)
 
             for k2,v2 in pairs(self.Inventory) do
-                local netid = impulse.Inventory.ClassToNetID(k2)
+                local netid = impulse.Inventory:ClassToNetID(k2)
                 local amount = v2
 
                 net.WriteUInt(netid, 10)

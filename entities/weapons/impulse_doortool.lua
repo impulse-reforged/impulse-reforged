@@ -37,7 +37,7 @@ SWEP.Secondary.Ammo         = "none"
 SWEP.DoorGroup = 0
 SWEP.NextGo = 0
 
-if CLIENT then
+if ( CLIENT ) then
     function SWEP:PrimaryAttack()
         local ply = self.Owner
         local tr = ply:GetEyeTrace()
@@ -71,7 +71,7 @@ if CLIENT then
     end
 end
 
-if CLIENT then
+if ( CLIENT ) then
     function SWEP:DrawHUD()
         draw.SimpleText("LEFT: Apply group to door, RIGHT: Cycle door group, RELOAD: Toggle hidden on door.", "BudgetLabel", 100, 100)
         draw.SimpleText("STATE: "..(impulse.Config.DoorGroups[self.DoorGroup] or "No group selected..."), "BudgetLabel", 100, 120)

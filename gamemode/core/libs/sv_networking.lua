@@ -1,10 +1,18 @@
+--[[--
+Networking library for sending and receiving networked variables.
+
+This library is used to send and receive networked variables between the server and clients. It is used to synchronize data between the server and clients, such as player data, entity data, and global data. See `Player:SetLocalVar`, `Player:GetLocalVar`, `Entity:SetNetVar`, `Entity:GetNetVar`, `Entity:SendNetVar`, `Entity:ClearNetVars`, `SetNetVar`, and `GetNetVar` for more information.
+
+@module impulse.Networking
+]]
+
 local entityMeta = FindMetaTable("Entity")
 local playerMeta = FindMetaTable("Player")
 
-impulse.NetVar = impulse.NetVar or {}
-impulse.NetVar.List = impulse.NetVar.List or {}
-impulse.NetVar.Locals = impulse.NetVar.Locals or {}
-impulse.NetVar.Globals = impulse.NetVar.Globals or {}
+impulse.Networking = impulse.Networking or {}
+impulse.Networking.List = impulse.Networking.List or {}
+impulse.Networking.Locals = impulse.Networking.Locals or {}
+impulse.Networking.Globals = impulse.Networking.Globals or {}
 
 util.AddNetworkString("impulseGlobalVarSet")
 util.AddNetworkString("impulseLocalVarSet")
@@ -27,17 +35,30 @@ local function CheckBadType(name, object)
     end
 end
 
+--- Retrieves a global networked variable. If it is not set, it'll return the default that you've specified.
+-- @realm shared
+-- @string key Identifier of the global variable
+-- @param default Default value to return if the global variable is not set
+-- @return Value associated with the key, or the default that was given if it doesn't exist
+-- @usage print(GetNetVar("example", "Hello World!"))
+-- > Hello World!
 function GetNetVar(key, default) -- luacheck: globals GetNetVar
-    local value = impulse.NetVar.Globals[key]
+    local value = impulse.Networking.Globals[key]
 
     return value != nil and value or default
 end
 
+--- Sets the value of a global networked variable.
+-- @realm server
+-- @string key Identifier of the global variable
+-- @param value New value to assign to the global variable
+-- @tab[opt=nil] receiver The players to send the networked variable to
+-- @usage SetNetVar("example", "Hello World!")
 function SetNetVar(key, value, receiver) -- luacheck: globals SetNetVar
     if (CheckBadType(key, value)) then return end
-    if (GetNetVar(key) == value) then return end
+    if (GetNetVar(key) == value and !istable(value)) then return end
 
-    impulse.NetVar.Globals[key] = value
+    impulse.Networking.Globals[key] = value
 
     net.Start("impulseGlobalVarSet")
     net.WriteString(key)
@@ -57,21 +78,21 @@ end
 -- @realm server
 -- @internal
 function playerMeta:SyncVars()
-    for k, v in pairs(impulse.NetVar.Globals) do
+    for k, v in pairs(impulse.Networking.Globals) do
         net.Start("impulseGlobalVarSet")
             net.WriteString(k)
             net.WriteType(v)
         net.Send(self)
     end
 
-    for k, v in pairs(impulse.NetVar.Locals[self] or {}) do
+    for k, v in pairs(impulse.Networking.Locals[self] or {}) do
         net.Start("impulseLocalVarSet")
             net.WriteString(k)
             net.WriteType(v)
         net.Send(self)
     end
 
-    for entity, data in pairs(impulse.NetVar.List) do
+    for entity, data in pairs(impulse.Networking.List) do
         if (IsValid(entity)) then
             local index = entity:EntIndex()
 
@@ -96,8 +117,8 @@ end
 -- > 12345678
 -- @see SetLocalVar
 function playerMeta:GetLocalVar(key, default)
-    if (impulse.NetVar.Locals[self] and impulse.NetVar.Locals[self][key] != nil) then
-        return impulse.NetVar.Locals[self][key]
+    if (impulse.Networking.Locals[self] and impulse.Networking.Locals[self][key] != nil) then
+        return impulse.Networking.Locals[self][key]
     end
 
     return default
@@ -112,8 +133,8 @@ end
 function playerMeta:SetLocalVar(key, value)
     if (CheckBadType(key, value)) then return end
 
-    impulse.NetVar.Locals[self] = impulse.NetVar.Locals[self] or {}
-    impulse.NetVar.Locals[self][key] = value
+    impulse.Networking.Locals[self] = impulse.Networking.Locals[self] or {}
+    impulse.Networking.Locals[self][key] = value
 
     net.Start("impulseLocalVarSet")
         net.WriteString(key)
@@ -133,8 +154,8 @@ end
 -- > Hello World!
 -- @see SetNetVar
 function entityMeta:GetNetVar(key, default)
-    if (impulse.NetVar.List[self] and impulse.NetVar.List[self][key] != nil) then
-        return impulse.NetVar.List[self][key]
+    if (impulse.Networking.List[self] and impulse.Networking.List[self][key] != nil) then
+        return impulse.Networking.List[self][key]
     end
 
     return default
@@ -150,10 +171,10 @@ end
 function entityMeta:SetNetVar(key, value, receiver)
     if (CheckBadType(key, value)) then return end
 
-    impulse.NetVar.List[self] = impulse.NetVar.List[self] or {}
+    impulse.Networking.List[self] = impulse.Networking.List[self] or {}
 
-    if (impulse.NetVar.List[self][key] != value) then
-        impulse.NetVar.List[self][key] = value
+    if (impulse.Networking.List[self][key] != value) then
+        impulse.Networking.List[self][key] = value
     end
 
     self:SendNetVar(key, receiver)
@@ -168,7 +189,7 @@ function entityMeta:SendNetVar(key, receiver)
     net.Start("impulseNetVarSet")
     net.WriteUInt(self:EntIndex(), 16)
     net.WriteString(key)
-    net.WriteType(impulse.NetVar.List[self] and impulse.NetVar.List[self][key])
+    net.WriteType(impulse.Networking.List[self] and impulse.Networking.List[self][key])
 
     if (receiver == nil) then
         net.Broadcast()
@@ -182,8 +203,8 @@ end
 -- @internal
 -- @tab[opt=nil] receiver The players to clear the networked variable for
 function entityMeta:ClearNetVars(receiver)
-    impulse.NetVar.List[self] = nil
-    impulse.NetVar.Locals[self] = nil
+    impulse.Networking.List[self] = nil
+    impulse.Networking.Locals[self] = nil
 
     net.Start("impulseNetVarDelete")
     net.WriteUInt(self:EntIndex(), 16)

@@ -179,13 +179,6 @@ function PLAYER:Notify(message)
     end
 end
 
---- Returns a player's hunger level
--- @realm shared
--- @treturn number Hunger level
-function PLAYER:GetHunger()
-    return self:GetNetVar("hunger", 0)
-end
-
 --- Returns whether a player is running or not
 -- @realm shared
 -- @treturn bool Is running

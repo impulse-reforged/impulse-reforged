@@ -56,7 +56,7 @@ function ENTITY:IsPropDoor()
     if (self:CPPIGetOwner() and IsValid(self:CPPIGetOwner())) and self:CPPIGetOwner():IsPlayer() then return true end
 
     if (self:CPPIGetOwner() and IsValid(self:CPPIGetOwner())) and self:CPPIGetOwner() == Entity(0) then
-        if SERVER then
+        if ( SERVER ) then
             if self:MapCreationID() == -1 then
                 return true
             else
@@ -157,7 +157,7 @@ if ( SERVER ) then
     -- @realm server
     -- @string sound Sound path
     -- @int[opt=660] range Radius in Source units to network the sound to
-    -- @int[opt=1] volume Volume of the sound
+    -- @int[opt=1] level Sound level of the sound
     -- @int[opt=100] pitch Pitch of the sound
     function ENTITY:EmitBudgetSound(sound, range, level, pitch)
         local range = range or 600

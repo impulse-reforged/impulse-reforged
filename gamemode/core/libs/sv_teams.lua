@@ -2,25 +2,24 @@ local PLAYER = FindMetaTable("Player")
 
 PLAYER.OldSetTeam = PLAYER.OldSetTeam or PLAYER.SetTeam
 
-function PLAYER:SetTeam(teamID, forced)
+function PLAYER:SetTeam(teamID)
+    local selfTable = self:GetTable()
+    
     local teamData = impulse.Teams.Stored[teamID]
-    if not teamData then return false end
+    if ( !teamData ) then
+        return false, "Invalid team ID!"
+    end
 
     local teamPlayers = team.NumPlayers(teamID)
-
-    if teamData.model then
-        self:SetModel(teamData.model)
-    else
-        self:SetModel(self.impulseDefaultModel)
+    if ( teamData.max and teamPlayers >= teamData.max ) then
+        return false, "You cannot join this team as it is full!"
     end
 
-    if teamData.skin then
-        self:SetSkin(teamData.skin)
-    elseif not teamData.model then
-        self:SetSkin(self.impulseDefaultSkin)
-    end
+    self:SetModel(teamData.model or selfTable.impulseDefaultModel)
+    self:SetSkin(teamData.skin or selfTable.impulseDefaultSkin)
+    print("Set model and skin")
 
-    if teamData.bodygroups then
+    if ( teamData.bodygroups ) then
         for v, bodygroupData in pairs(teamData.bodygroups) do
             self:SetBodygroup(bodygroupData[1], (bodygroupData[2] or math.random(0, self:GetBodygroupCount(bodygroupData[1]))))
         end
@@ -29,50 +28,62 @@ function PLAYER:SetTeam(teamID, forced)
             self:SetBodygroup(i, 0)
         end
     end
+    print("Set bodygroups")
 
     self:ResetSubMaterials()
+    print("Reset sub materials")
 
     if ( self:HasBrokenLegs() ) then
         self:FixLegs()
+        print("Fixed legs")
     end
 
-    if self:IsCP() or teamData.cp then
+    if ( self:IsCP() or teamData.cp ) then
         self:StripAmmo()
+        print("Stripped ammo")
     end
 
     self:UnEquipInventory()
     self:ClearRestrictedInventory()
     self:StripWeapons()
+    print("Stripped weapons and inventory")
 
-    if teamData.loadout then
-        for v,weapon in pairs(teamData.loadout) do
-            self:Give(weapon)
+    if ( teamData.loadout ) then
+        for k, v in pairs(teamData.loadout) do
+            self:Give(v)
+            print("Gave weapon: " .. v)
         end
     end
 
-    if teamData.runSpeed then
+    if ( teamData.runSpeed ) then
         self:SetRunSpeed(teamData.runSpeed)
     else
         self:SetRunSpeed(impulse.Config.JogSpeed)
     end
+    print("Set run speed to: " .. self:GetRunSpeed())
 
-    self.DoorGroups = teamData.doorGroup or {}
+    selfTable.DoorGroups = teamData.doorGroup or {}
 
-    if self:Team() != teamID then
+    if ( self:Team() != teamID ) then
         hook.Run("OnPlayerChangedTeam", self, self:Team(), teamID)
+        print("Player changed team from " .. self:Team() .. " to " .. teamID)
     end
 
     self:SetNetVar("class", nil)
     self:SetNetVar("rank", nil)
-    self:OldSetTeam(teamID)
-    self:SetupHands()
+    print("Set class and rank to nil")
 
-    if teamData.spawns then
+    self:OldSetTeam(teamID)
+    print("Set team to " .. teamID)
+
+    if ( teamData.spawns ) then
         self:SetPos(teamData.spawns[math.random(1, #teamData.spawns)])
+        print("Set player position to random spawn for team " .. teamData.name)
     end
 
-    if teamData.onBecome then
+    if ( teamData.onBecome ) then
         teamData.onBecome(self)
+        print("Ran onBecome for team " .. teamData.name)
     end
 
     return true

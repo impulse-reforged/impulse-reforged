@@ -1,4 +1,4 @@
-if SERVER then
+if ( SERVER ) then
     ENT.Base = "base_brush"
     ENT.Type = "brush"
     ENT.IsZoneTrigger =  true

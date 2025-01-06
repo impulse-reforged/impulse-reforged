@@ -1,3 +1,5 @@
+--- Database library for impulse, ported directly from Helix.
+-- @module impulse.Database
 
 impulse.Database = impulse.Database or {
     Schema = {},
@@ -15,7 +17,10 @@ impulse.Database = impulse.Database or {
 
 impulse.Database.Config = impulse.Config.YML.database or {}
 
-function impulse.Database.Connect()
+--- Connects to the database using the specified adapter.
+-- @realm server
+-- @internal
+function impulse.Database:Connect()
     impulse.Database.Config.adapter = impulse.Database.Config.adapter or "sqlite"
 
     local dbmodule = impulse.Database.Config.adapter
@@ -25,36 +30,46 @@ function impulse.Database.Connect()
     local database = impulse.Database.Config.database
     local port = impulse.Database.Config.port
 
-    PrintTable(impulse.Database.Config)
-
     mysql:SetModule(dbmodule)
     mysql:Connect(hostname, username, password, database, port)
 end
 
-function impulse.Database.AddToSchema(schemaType, field, fieldType)
-    if (!impulse.Database.Type[fieldType]) then
+--- Adds a field to a schema.
+-- @realm server
+-- @string schemaType The schema to add the field to
+-- @string field The field name
+-- @string fieldType The field type
+-- @usage impulse.Database:AddToSchema("impulse_players", "xp", impulse.Util.Type.number)
+-- @internal
+function impulse.Database:AddToSchema(schemaType, field, fieldType)
+    if ( !impulse.Database.Type[fieldType] ) then
         error(string.format("attempted to add field in schema with invalid type '%s'", fieldType))
         return
     end
 
-    if (!mysql:IsConnected() or !impulse.Database.Schema[schemaType]) then
+    if ( !mysql:IsConnected() or !impulse.Database.Schema[schemaType] ) then
         impulse.Database.SchemaQueue[#impulse.Database.SchemaQueue + 1] = {schemaType, field, fieldType}
         return
     end
 
-    impulse.Database.InsertSchema(schemaType, field, fieldType)
+    impulse.Database:InsertSchema(schemaType, field, fieldType)
 end
 
--- this is only ever used internally
-function impulse.Database.InsertSchema(schemaType, field, fieldType)
+--- Inserts a field into a schema.
+-- @realm server
+-- @string schemaType The schema to insert the field into
+-- @string field The field name
+-- @string fieldType The field type
+-- @usage impulse.Database:InsertSchema("impulse_players", "xp", impulse.Util.Type.number)
+-- @internal
+function impulse.Database:InsertSchema(schemaType, field, fieldType)
     local schema = impulse.Database.Schema[schemaType]
-
-    if (!schema) then
+    if ( !schema ) then
         error(string.format("attempted to insert into schema with invalid schema type '%s'", schemaType))
         return
     end
 
-    if (!schema[field]) then
+    if ( !schema[field] ) then
         schema[field] = true
 
         local query = mysql:Update("impulse_schema")
@@ -68,7 +83,10 @@ function impulse.Database.InsertSchema(schemaType, field, fieldType)
     end
 end
 
-function impulse.Database.LoadTables()
+--- Loads and prepares all tables for use.
+-- @realm server
+-- @internal
+function impulse.Database:LoadTables()
     MsgC(Color(255, 255, 0), "[impulse-reforged] [database] loading tables...\n")
 
     local query
@@ -105,7 +123,7 @@ function impulse.Database.LoadTables()
 
     query = mysql:Create("impulse_inventory")
         query:Create("id", "INT UNSIGNED NOT NULL AUTO_INCREMENT")
-        query:Create("uniqueid", "INT(11) UNSIGNED NOT NULL")
+        query:Create("uniqueid", "VARCHAR(25) NOT NULL")
         query:Create("ownerid", "INT(11) UNSIGNED NOT NULL")
         query:Create("storagetype", "INT(11) UNSIGNED NOT NULL")
         query:PrimaryKey("id")
@@ -175,7 +193,7 @@ function impulse.Database.LoadTables()
             -- update schema if needed
             for i = 1, #impulse.Database.SchemaQueue do
                 local entry = impulse.Database.SchemaQueue[i]
-                impulse.Database.InsertSchema(entry[1], entry[2], entry[3])
+                impulse.Database:InsertSchema(entry[1], entry[2], entry[3])
             end
         end)
     query:Execute()
@@ -183,7 +201,9 @@ function impulse.Database.LoadTables()
     MsgC(Color(0, 255, 0), "[impulse-reforged] [database] tables loaded.\n")
 end
 
-function impulse.Database.WipeTables(callback)
+--- Wipes all tables in the database, meaning all data will be lost.
+-- @realm server
+function impulse.Database:WipeTables(callback)
     local query
 
     query = mysql:Drop("impulse_players")
@@ -225,20 +245,21 @@ end
 
 concommand.Add("impulse_players_printall", function(ply)
     if ( !IsValid(ply) or !ply:IsSuperAdmin() ) then return end
+
     impulse.Database:PrintAllPlayers()
 end)
 
 hook.Add("InitPostEntity", "impulseDatabaseConnect", function()
     -- Connect to the database using SQLite, mysqoo, or tmysql4.
-    impulse.Database.Connect()
+    impulse.Database:Connect()
 end)
 
 local resetCalled = 0
 
-concommand.Add("impulse_database_reset", function(client, cmd, arguments)
+concommand.Add("impulse_database_reset", function(ply, cmd, arguments)
     -- can only be ran through the server's console
-    if (!IsValid(client) or client:IsListenServerHost()) then
-        if (resetCalled < RealTime()) then
+    if ( !IsValid(ply) or ply:IsListenServerHost() ) then
+        if ( resetCalled < RealTime() ) then
             resetCalled = RealTime() + 3
 
             MsgC(Color(255, 0, 0), "[impulse] WIPING THE DATABASE WILL PERMENANTLY REMOVE ALL PLAYER, CHARACTER, ITEM, AND INVENTORY DATA.\n")
@@ -250,7 +271,7 @@ concommand.Add("impulse_database_reset", function(client, cmd, arguments)
 
             hook.Run("OnWipeTables")
 
-            impulse.Database.WipeTables(function()
+            impulse.Database:WipeTables(function()
                 MsgC(Color(255, 255, 0), "[impulse] DATABASE WIPE COMPLETED!\n")
                 RunConsoleCommand("changelevel", game.GetMap())
             end)

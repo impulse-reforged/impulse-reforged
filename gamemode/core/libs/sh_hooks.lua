@@ -4,10 +4,16 @@
 impulse.Hooks = impulse.Hooks or {}
 impulse.Hooks.Stored = impulse.Hooks.Stored or {}
 
+--- Registers a new hook group
+-- @realm shared
+-- @string name Name of the hook group
 function impulse.Hooks:Register(name)
     self.Stored[name] = true
 end
 
+--- Unregisters a hook group
+-- @realm shared
+-- @string name Name of the hook group
 function impulse.Hooks:UnRegister(name)
     self.Stored[name] = nil
 end

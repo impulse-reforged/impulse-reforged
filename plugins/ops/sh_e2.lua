@@ -2,7 +2,7 @@ if not E2Lib then
     return
 end
 
-if SERVER then
+if ( SERVER ) then
     util.AddNetworkString("opsE2Viewer")
     util.AddNetworkString("opsE2ViewerRemove")
 

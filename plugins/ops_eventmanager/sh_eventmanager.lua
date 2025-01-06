@@ -28,7 +28,7 @@ function PLAYER:IsEventAdmin()
     return self:IsSuperAdmin() or (self:IsAdmin() and impulse.Ops.EventManager.GetEventMode())
 end
 
-if SERVER then
+if ( SERVER ) then
     concommand.Add("impulse_ops_eventmode", function(ply, cmd, args)
         if not IsValid(ply) or ply:IsSuperAdmin() then
             if args[1] == "1" then

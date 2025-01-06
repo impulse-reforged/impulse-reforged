@@ -33,7 +33,7 @@ function PANEL:Init()
     local className = LocalPlayer():GetTeamClassName()
     local rankName = LocalPlayer():GetTeamRankName()
 
-    if className != "Default" then
+    if ( className != "Default" ) then
         self.infoClassRank = vgui.Create("DLabel", self)
         self.infoClassRank:SetPos(15, 80)
         self.infoClassRank:SetFont("Impulse-Elements19-Shadow")
@@ -59,16 +59,15 @@ function PANEL:Init()
         ent:SetPos(Vector(0, 0, 2.5))
         self:RunAnimation()
 
-        if not self.setup then
-            for v, k in pairs(LocalPlayer():GetBodyGroups()) do
-                ent:SetBodygroup(k.id, LocalPlayer():GetBodygroup(k.id))
+        if ( !self.setup ) then
+            for k, v in pairs(LocalPlayer():GetBodyGroups()) do
+                ent:SetBodygroup(v.id, LocalPlayer():GetBodygroup(v.id))
             end
 
-            for v, k in pairs(LocalPlayer():GetMaterials()) do
-                local mat = LocalPlayer():GetSubMaterial(v - 1)
-
-                if mat != k then
-                    ent:SetSubMaterial(v - 1, mat)
+            for k, v in pairs(LocalPlayer():GetMaterials()) do
+                local mat = LocalPlayer():GetSubMaterial(k - 1)
+                if ( mat != v ) then
+                    ent:SetSubMaterial(k - 1, mat)
                 end
             end
 
@@ -77,12 +76,6 @@ function PANEL:Init()
             self.setup = true
         end
     end
-
-    --self.invName = vgui.Create("DLabel", self)
-    --self.invName:SetPos(270, 35)
-    --self.invName:SetText("Inventory")
-    --self.invName:SetFont("Impulse-Elements24-Shadow")
-    --self.invName:SizeToContents()
 
     self:SetupItems(w, h)
 end
@@ -116,51 +109,21 @@ function PANEL:SetupItems()
 
     self.items = {}
     self.itemsPanels = {}
+
     local weight = 0
-    local realInv = impulse.Inventory.Data[0][1]
-    local localInv = table.Copy(impulse.Inventory.Data[0][1]) or {}
+    local localInv = table.Copy(impulse.Inventory.Data[0][INVENTORY_PLAYER]) or {}
     local reccurTemp = {}
     local equipTemp = {}
 
-    local shouldSortEq = impulse.Settings:Get("inv_sortequippablesattop", true)
-    local sortMethod = impulse.Settings:Get("inv_sortweight", "Inventory only")
-    local invertSort = true
-
-    for v, k in pairs(localInv) do -- fix for fucking table.sort desyncing client/server itemids!!!!!!!
-        k.realKey = v
-
-        if sortMethod == "Always" or sortMethod == "Inventory only" then
-            reccurTemp[k.id] = (reccurTemp[k.id] or 0) + (impulse.Inventory.Items[k.id].Weight or 0)
-            k.sortWeight = reccurTemp[k.id]
-        else
-            k.sortWeight = impulse.Inventory.Items[k.id].Name
-            invertSort = false
-        end
-    end
-
     if localInv and table.Count(localInv) > 0 then
-        if shouldSortEq then
-            for v, k in SortedPairsByMemberValue(localInv, "sortWeight", invertSort) do
-                if not k.equipped then continue end
-                local itemX = impulse.Inventory.Items[k.id]
+        for v, k in pairs(localInv) do
+            local itemData = impulse.Inventory.Items[k.id]
+            if not itemData then continue end
 
-                local item = self.invScroll:Add("impulseInventoryItem")
-                item:Dock(TOP)
-                item:DockMargin(0, 0, 15, 5)
-                item:SetItem(k, w)
-                item.InvID = k.realKey
-                item.InvPanel = self
-                self.items[k.id] = item
-                self.itemsPanels[k.realKey] = item
+            PrintTable(itemData)
 
-                weight =  weight + (itemX.Weight or 0)
-            end
-        end
-
-        for v, k in SortedPairsByMemberValue(localInv, "sortWeight", invertSort) do -- 01 is player 0 (localplayer) and storage 1 (local inv)
-            if shouldSortEq and k.equipped then continue end
             local otherItem = self.items[k.id]
-            local itemX = impulse.Inventory.Items[k.id]
+            local itemX = itemData
 
             if itemX.CanStack and otherItem then
                 otherItem.Count = (otherItem.Count or 1) + 1
@@ -169,10 +132,10 @@ function PANEL:SetupItems()
                 item:Dock(TOP)
                 item:DockMargin(0, 0, 15, 5)
                 item:SetItem(k, w)
-                item.InvID = k.realKey
+                item.InvID = v
                 item.InvPanel = self
                 self.items[k.id] = item
-                self.itemsPanels[k.realKey] = item
+                self.itemsPanels[v] = item
             end
 
             weight =  weight + (itemX.Weight or 0)
@@ -191,7 +154,6 @@ function PANEL:SetupItems()
 
     self:SetupSkills(w, h)
 end
-
 
 local bodyCol = Color(50, 50, 50, 210)
 function PANEL:SetupSkills(w, h)

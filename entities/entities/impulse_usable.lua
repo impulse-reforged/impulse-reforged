@@ -5,7 +5,7 @@ ENT.Category = "impulse"
 ENT.Spawnable = false
 
 
-if SERVER then
+if ( SERVER ) then
     function ENT:Initialize()
         self:PhysicsInit(SOLID_VPHYSICS)  
         self:SetMoveType(SOLID_VPHYSICS)  

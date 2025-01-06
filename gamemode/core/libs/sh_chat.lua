@@ -13,7 +13,7 @@ function impulse.RegisterChatCommand(name, cmdData)
     impulse.chatCommands[name] = cmdData
 end
 
-if SERVER then
+if ( SERVER ) then
     local PLAYER = FindMetaTable("Player")
 
     util.AddNetworkString("impulseChatNetMessage")
@@ -300,7 +300,7 @@ local dropMoneyCommand = {
                 trace.filter = ply
 
                 local tr = util.TraceLine(trace)
-                local note = impulse.SpawnMoney(tr.HitPos, value, ply)
+                local note = impulse.Currency:SpawnMoney(tr.HitPos, value, ply)
 
                 ply.DroppedMoneyC = math.Clamp((ply.DroppedMoneyC and ply.DroppedMoneyC + 1) or 1, 0, impulse.Config.DroppedMoneyLimit)
                 ply.DroppedMoney = ply.DroppedMoney or {}
@@ -408,7 +408,7 @@ local searchCommand = {
             net.WriteUInt(targ:EntIndex(), 8)
             net.WriteUInt(table.Count(inv), 16)
             for v, k in pairs(inv) do
-                local netid = impulse.Inventory.ClassToNetID(k.class)
+                local netid = impulse.Inventory:ClassToNetID(k.class)
                 net.WriteUInt(netid, 10)
             end
             net.Send(ply)
@@ -464,7 +464,7 @@ local groupChatCommand = {
 impulse.RegisterChatCommand("/group", groupChatCommand)
 impulse.RegisterChatCommand("/g", groupChatCommand)
 
-if CLIENT then
+if ( CLIENT ) then
     local talkCol = Color(255, 255, 100)
     local infoCol = Color(135, 206, 250)
     local oocCol = color_white
@@ -480,7 +480,7 @@ if CLIENT then
     local eventCol = Color(255, 69, 0)
     local fallbackRankCol = Color(211, 211, 211)
     local groupCol = Color(148, 0, 211)
-    local rankCols = impulse.Config.RankColours
+    local rankCols = impulse.Config.RankColours or {}
 
     impulse.RegisterChatClass(1, function(message, speaker)
         message = hook.Run("ProcessICChatMessage", speaker, message) or message

@@ -9,7 +9,7 @@ function ENT:SetupDataTables()
     self:NetworkVar("Int", 0, "MoneyVal")
 end
 
-if SERVER then
+if ( SERVER ) then
     function ENT:Initialize()
         self:SetModel("models/props/cs_assault/money.mdl")
         self:PhysicsInit(SOLID_VPHYSICS)

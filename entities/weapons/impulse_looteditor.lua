@@ -38,7 +38,7 @@ SWEP.Secondary.DefaultClip    = -1
 SWEP.Secondary.Automatic       = false
 SWEP.Secondary.Ammo         = "none"
 
-if SERVER then
+if ( SERVER ) then
     function SWEP:Equip(owner)
         if not owner:IsAdmin() then
             owner:StripWeapon("impulse_looteditor")
@@ -143,7 +143,7 @@ function SWEP:SecondaryAttack()
     self.SelectedDoor = nil
     self.State = nil
 
-    if CLIENT then
+    if ( CLIENT ) then
         surface.PlaySound("buttons/button10.wav")
     end
 
@@ -153,7 +153,7 @@ end
 function SWEP:Reload()
 end
 
-if SERVER then
+if ( SERVER ) then
     util.AddNetworkString("impulseLootEditorSet")
 
     net.Receive("impulseLootEditorSet", function(len, ply)

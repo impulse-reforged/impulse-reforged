@@ -10,7 +10,7 @@ end
 function PANEL:SetMix(mix)
     local wide = self:GetWide()
     local class = mix.Output
-    local id = impulse.Inventory.ClassToNetID(class)
+    local id = impulse.Inventory:ClassToNetID(class)
     local item = impulse.Inventory.Items[id]
 
     if not item then
@@ -92,7 +92,7 @@ function PANEL:RefreshCanCraft()
     local required = "<font=Impulse-Elements17>"
 
     for v, k in pairs(mix.Input) do
-        local id = impulse.Inventory.ClassToNetID(v)
+        local id = impulse.Inventory:ClassToNetID(v)
 
         if id then
             local name = (impulse.Inventory.Items[id] and impulse.Inventory.Items[id].Name) or "PANIC! INVALID ITEM!!! AHHHH!!"

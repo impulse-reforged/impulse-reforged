@@ -275,11 +275,11 @@ function PLAYER:CanBecomeTeamRank(rankID, forced)
 end
 
 function PLAYER:GetTeamClass()
-    return self:GetNetVar("class", 0)
+    return self:GetNetVar("class", nil)
 end
 
 function PLAYER:GetTeamRank()
-    return self:GetNetVar("rank", 0)
+    return self:GetNetVar("rank", nil)
 end
 
 function PLAYER:GetTeamClassName()

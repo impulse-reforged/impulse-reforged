@@ -20,7 +20,7 @@ function impulse.string.Explode( seperators, str )
     return words
 end
 
-if CLIENT then
+if ( CLIENT ) then
     local setFont = surface.SetFont
     local getTextSize = surface.GetTextSize
     local strSub = string.sub

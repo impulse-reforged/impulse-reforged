@@ -18,7 +18,7 @@ end
 
 local PLAYER = FindMetaTable("Player")
 
-if CLIENT then
+if ( CLIENT ) then
     function PLAYER:GetSkillXP(name)
         local xp = impulse.Skills.Data[name]
         

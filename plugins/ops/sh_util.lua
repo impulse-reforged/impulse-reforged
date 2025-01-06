@@ -1,4 +1,4 @@
-if SERVER then
+if ( SERVER ) then
     util.AddNetworkString("opsGiveWarn")
     util.AddNetworkString("opsGetRecord")
 end

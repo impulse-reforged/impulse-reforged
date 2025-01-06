@@ -119,8 +119,8 @@ end
 
 function PLAYER:UpdateDefaultModelSkin()
     net.Start("impulseUpdateDefaultModelSkin")
-    net.WriteString(self.impulseDefaultModel)
-    net.WriteUInt(self.impulseDefaultSkin, 8)
+        net.WriteString(self.impulseDefaultModel)
+        net.WriteUInt(self.impulseDefaultSkin, 8)
     net.Send(self)
 end
 

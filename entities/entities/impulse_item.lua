@@ -9,7 +9,7 @@ function ENT:SetupDataTables()
     self:NetworkVar("Int", 0, "ItemID")
 end
 
-if SERVER then
+if ( SERVER ) then
     function ENT:Initialize()
         self:PhysicsInit(SOLID_VPHYSICS)
         self:SetMoveType(SOLID_VPHYSICS)

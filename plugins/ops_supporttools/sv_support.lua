@@ -95,7 +95,7 @@ net.Receive("impulseOpsSTDoRefund", function(len, ply)
         local refundData = {}
 
         for k, v in pairs(items) do
-            if ( !impulse.Inventory.ItemsRef[k] ) then continue end
+            if ( !impulse.Inventory.ItemsStored[k] ) then continue end
 
             refundData[k] = v
         end
@@ -120,7 +120,7 @@ function PLUGIN:PostInventorySetup(ply)
         if ( !IsValid(ply) ) then return end
         
         for k, v in pairs(refundData) do
-            if ( !impulse.Inventory.ItemsRef[k] ) then continue end
+            if ( !impulse.Inventory.ItemsStored[k] ) then continue end
             
             for i = 1, v do
                 ply:GiveItem(v, INVENTORY_STORAGE) -- refund to storage 

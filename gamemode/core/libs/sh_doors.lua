@@ -10,7 +10,7 @@ function PLAYER:CanLockUnlockDoor(doorOwners, doorGroup)
 
     local teamDoorGroups = self.DoorGroups or {}
 
-    if CLIENT then
+    if ( CLIENT ) then
         local t = impulse.Teams.Stored[LocalPlayer():Team()]
         teamDoorGroups = t.doorGroup
 

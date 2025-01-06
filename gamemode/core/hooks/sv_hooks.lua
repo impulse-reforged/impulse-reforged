@@ -4,7 +4,7 @@ end
 
 function GM:DatabaseConnected()
     -- Create the SQL tables if they do not exist.
-    impulse.Database.LoadTables()
+    impulse.Database:LoadTables()
 
     MsgC(Color(0, 255, 0), "Database Type: " .. impulse.Database.Config.adapter .. ".\n")
 
@@ -83,33 +83,6 @@ function GM:PlayerInitialSpawn(ply)
             else
                 ply:Freeze(false)
                 hook.Run("PlayerSetup", ply, db)
-            end
-    
-            if ( GExtension ) then
-                MsgC(Color(0, 255, 0), "[impulse-reforged] GExtension detected, skipping group setting for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'.\n")
-            elseif ( VyHub ) then
-                MsgC(Color(0, 255, 0), "[impulse-reforged] VyHub detected, skipping group setting for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'.\n")
-            else
-                if ( db.group ) then
-                    ply:SetUserGroup(db.group)
-                    MsgC(Color(0, 255, 0), "[impulse-reforged] Set '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")' to group '" .. db.group .. "'.\n")
-                else
-                    ply:SetUserGroup("user")
-                    MsgC(Color(255, 0, 0), "[impulse-reforged] No group found for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'. Defaulting to user.\n")
-    
-                    local queryGroup = mysql:Update("impulse_players")
-                    queryGroup:Update("group", "user")
-                    queryGroup:Where("steamid", ply:SteamID64())
-                    queryGroup:Callback(function(result)
-                        if ( !result ) then
-                            ply:Kick("Failed to update group in database.")
-                        end
-                    end)
-    
-                    queryGroup:Execute()
-    
-                    ply:SaveData()
-                end
             end
         end)
 
@@ -194,7 +167,6 @@ function GM:PlayerSetup(ply, data)
     end
 
     local skills = util.JSONToTable(data.skills or "") or {}
-
     plyTable.impulseSkills = skills
 
     for k, v in pairs(plyTable.impulseSkills) do
@@ -252,13 +224,13 @@ function GM:PlayerSetup(ply, data)
             local userInv = impulse.Inventory.Data[userid]
 
             for v,k in pairs(result) do
-                local netid = impulse.Inventory.ClassToNetID(k.uniqueid)
+                local netid = impulse.Inventory:ClassToNetID(k.uniqueid)
                 if not netid then continue end -- when items are removed from a live server we will remove them manually in the db, if an item is broken auto doing this would break peoples items
 
-                local storetype = k.storagetype
+                local storagetype = k.storagetype
 
-                if not userInv[storetype] then
-                    userInv[storetype] = {}
+                if not userInv[storagetype] then
+                    userInv[storagetype] = {}
                 end
                 
                 ply:GiveItem(k.uniqueid, k.storagetype, false, true)
@@ -721,7 +693,7 @@ function GM:PlayerDeath(ply, killer)
 
     if money > 0 then
         ply:SetMoney(0)
-        impulse.SpawnMoney(ply:GetPos(), money)
+        impulse.Currency:SpawnMoney(ply:GetPos(), money)
     end
 
     if not plyTable.impulseBeenInventorySetup then -- people that havent made char or are not loaded in
@@ -736,7 +708,7 @@ function GM:PlayerDeath(ply, killer)
     local dropped = 0
 
     for v, k in pairs(inv) do
-        local class = impulse.Inventory.ClassToNetID(k.class)
+        local class = impulse.Inventory:ClassToNetID(k.class)
         local item = impulse.Inventory.Items[class]
 
         if not k.restricted then

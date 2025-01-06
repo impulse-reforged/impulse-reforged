@@ -891,7 +891,7 @@ function IES.Compile(script)
     return TAGS
 end
 
-if CLIENT then
+if ( CLIENT ) then
     concommand.Add("ies_test", function()
         local x = file.Read("impulse-reforged/ops/eventmanager/test.ies", "DATA")
 

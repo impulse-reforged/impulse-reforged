@@ -73,7 +73,7 @@ function PANEL:SetInv(invdata)
         net.Start("impulseInvDoSearchConfiscate")
         net.WriteUInt(#panel.taking, 8)
         for v, k in pairs(panel.taking) do
-            local netid = impulse.Inventory.ClassToNetID(k)
+            local netid = impulse.Inventory:ClassToNetID(k)
             net.WriteUInt(netid, 10)
         end
         net.SendToServer()

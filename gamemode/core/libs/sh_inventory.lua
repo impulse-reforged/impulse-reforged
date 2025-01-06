@@ -1,7 +1,7 @@
 --- Allows interactions with the players inventory
 -- @module impulse.Inventory
 
-INVENTORY_CONFISCATED = 0
+INVENTORY_NIL = 0
 INVENTORY_PLAYER = 1
 INVENTORY_STORAGE = 2
 
@@ -9,16 +9,16 @@ impulse.Inventory = impulse.Inventory or {}
 impulse.Inventory.Data = impulse.Inventory.Data or {}
 impulse.Inventory.Data[0] = impulse.Inventory.Data[0] or {}
 impulse.Inventory.Items = impulse.Inventory.Items or {}
-impulse.Inventory.ItemsRef = impulse.Inventory.ItemsRef or {}
+impulse.Inventory.ItemsStored = impulse.Inventory.ItemsStored or {}
 impulse.Inventory.ItemsQW = impulse.Inventory.ItemsQW or {}
 impulse.Inventory.Benches = impulse.Inventory.Benches or {}
 impulse.Inventory.Mixtures = impulse.Inventory.Mixtures or {}
-impulse.Inventory.MixturesRef = impulse.Inventory.MixturesRef or {}
+impulse.Inventory.MixturesStored = impulse.Inventory.MixturesStored or {}
 impulse.Inventory.CraftInfo = impulse.Inventory.CraftInfo or {}
 
-if CLIENT then
-    impulse.Inventory.Data[0][1] = impulse.Inventory.Data[0][1] or {}
-    impulse.Inventory.Data[0][2] = impulse.Inventory.Data[0][2] or {}
+if ( CLIENT ) then
+    impulse.Inventory.Data[0][INVENTORY_PLAYER] = impulse.Inventory.Data[0][INVENTORY_PLAYER] or {}
+    impulse.Inventory.Data[0][INVENTORY_STORAGE] = impulse.Inventory.Data[0][INVENTORY_STORAGE] or {}
 end
 
 local count = 1
@@ -28,7 +28,7 @@ local countX = 1
 -- @realm shared
 -- @param itemData Item data
 -- @internal
-function impulse.RegisterItem(item)
+function impulse.Inventory:RegisterItem(item)
     local class = item.WeaponClass
     local attClass = item.AttachmentClass
 
@@ -84,6 +84,7 @@ function impulse.RegisterItem(item)
             local wep = ply:GetActiveWeapon()
 
             wep:GiveAttachment(attClass)
+
             ply.InvAttachments = ply.InvAttachments or {}
             ply.InvAttachments[wep:GetClass()] = uid
         end
@@ -114,8 +115,9 @@ function impulse.RegisterItem(item)
     end
 
     impulse.Inventory.Items[count] = item -- this is done the wrong way round yea yea ik
-    impulse.Inventory.ItemsRef[item.UniqueID] = count
-    impulse.Inventory.ItemsQW[item.UniqueID] = (item.Weight or 1)
+    impulse.Inventory.ItemsStored[item.UniqueID] = count
+    impulse.Inventory.ItemsQW[item.UniqueID] = ( item.Weight or 1 )
+
     count = count + 1
 end
 
@@ -123,7 +125,7 @@ end
 -- @realm shared
 -- @param benchData Bench data
 -- @internal
-function impulse.RegisterBench(bench)
+function impulse.Inventory:RegisterBench(bench)
     local class = bench.Class
 
     impulse.Inventory.Benches[class] = bench
@@ -134,14 +136,15 @@ end
 -- @realm shared
 -- @param mixData Mixture data
 -- @internal
-function impulse.RegisterMixture(mix)
+function impulse.Inventory:RegisterMixture(mix)
     local class = mix.Class
     local bench = mix.Bench
 
     mix.NetworkID = countX
 
     impulse.Inventory.Mixtures[bench][class] = mix
-    impulse.Inventory.MixturesRef[countX] = {bench, class}
+    impulse.Inventory.MixturesStored[countX] = {bench, class}
+
     countX = countX + 1
 end
 
@@ -149,8 +152,8 @@ end
 -- @realm shared
 -- @string class Item class name
 -- @treturn int Item net ID
-function impulse.Inventory.ClassToNetID(class)
-    return impulse.Inventory.ItemsRef[class]
+function impulse.Inventory:ClassToNetID(class)
+    return impulse.Inventory.ItemsStored[class]
 end
 
 --- Used to get the crafting time and the sounds to play
@@ -158,22 +161,22 @@ end
 -- @string class Item class name
 -- @treturn int Time
 -- @treturn table Table of sounds
-function impulse.Inventory.GetCraftingTime(mix)
+function impulse.Inventory:GetCraftingTime(mix)
     local items = mix.Input
     local time = 0
     local sounds = {}
 
-    for v, k in pairs(items) do
-        local hasCustom = impulse.Inventory.CraftInfo[v]
+    for k, v in pairs(items) do
+        local hasCustom = impulse.Inventory.CraftInfo[k]
 
-        for i=1, k.take do
-            if hasCustom and hasCustom.sound then
+        for i = 1, v.take do
+            if ( hasCustom and hasCustom.sound ) then
                 table.insert(sounds, {time, hasCustom.sound})
             else
                 table.insert(sounds, {time, "generic"})
             end
 
-            time = time + ((hasCustom and hasCustom.time) or 3)
+            time = time + ( ( hasCustom and hasCustom.time ) or 3 )
         end
     end
 
@@ -204,15 +207,17 @@ local sounds = {
 -- @string[opt=generic] craftType Crafting type
 -- @see CraftingTypes
 -- @treturn string The random crafting sound based on the crafting type (eg: if type is wood then return wood2.wav)
-function impulse.Inventory.PickRandomCraftSound(crafttype)
+function impulse.Inventory:PickRandomCraftSound(crafttype)
     local max = sounds[crafttype]
-
-    if not max then
+    if ( !max ) then
         crafttype = "generic"
     end
 
-    return "impulse-reforged/craft/"..crafttype.."/"..math.random(1, max)..".wav"
+    return "impulse-reforged/craft/" .. crafttype .. "/" .. math.random(1, max) .. ".wav"
 end
+
+--- Player class methods
+-- @classmod Player
 
 local PLAYER = FindMetaTable("Player")
 
@@ -221,32 +226,32 @@ local PLAYER = FindMetaTable("Player")
 -- @treturn int Capacity (in kg)
 function PLAYER:GetMaxInventoryStorage()
     if self:IsDonator() then
-        return impulse.Config.InventoryStorageMaxWeightVIP
+        return impulse.Config.InventoryStorageMaxWeightDonator
     end
 
     return impulse.Config.InventoryStorageMaxWeight
 end
 
-if CLIENT then
+if ( CLIENT ) then
     --- Returns if a client has an inventory item and how much they have
     -- @realm client
-    -- @int itemId Item Network ID (use impulse.Inventory.ClassToNetID)
-    -- @see impulse.Inventory.ClassToNetID
+    -- @int itemId Item Network ID (use impulse.Inventory:ClassToNetID)
+    -- @see impulse.Inventory:ClassToNetID
     -- @treturn bool Has item
     -- @treturn int Amount
     function PLAYER:HasInventoryItem(id)
-        if self:Team() == 0 then
+        if ( self:Team() == 0 ) then
             return false
         end
 
-        local inv = impulse.Inventory.Data[0][1]
+        local inv = impulse.Inventory.Data[0][INVENTORY_PLAYER]
         local has = false
         local count
 
-        for v, k in pairs(inv) do
-            if k.id == id then
+        for k, v in pairs(inv) do
+            if ( v.id == id ) then
                 has = true
-                count = (count or 0) + 1
+                count = ( count or 0 ) + 1
             end
         end
 

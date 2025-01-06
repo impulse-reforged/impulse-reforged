@@ -11,7 +11,7 @@ function impulse.Plugins:LoadEntities(path)
             end
 
             if ( file.Exists(path2 .. "cl_init.lua", "LUA") ) then
-                if SERVER then
+                if ( SERVER ) then
                     AddCSLuaFile(path2 .. "cl_init.lua")
                 else
                     include(path2 .. "cl_init.lua")
@@ -95,8 +95,14 @@ function impulse.Plugins:Load(path)
     path = path or "impulse-reforged/plugins"
 
     local files, folders = file.Find(path .. "/*", "LUA")
+    local disabledPlugins = impulse.Config.DisabledPlugins
 
     for k, v in ipairs(folders) do
+        if ( disabledPlugins and disabledPlugins[v] ) then
+            MsgC(Color(255, 255, 0), "[impulse-reforged] Skipping disabled plugin: " .. v .. "\n")
+            continue
+        end
+
         PLUGIN = {}
         PLUGIN.Name = v
         PLUGIN.Folder = path .. "/" .. v
@@ -122,6 +128,11 @@ function impulse.Plugins:Load(path)
     end
 
     for k, v in ipairs(files) do
+        if ( disabledPlugins and disabledPlugins[v] ) then
+            MsgC(Color(255, 255, 0), "[impulse-reforged] Skipping disabled plugin: " .. v .. "\n")
+            continue
+        end
+
         PLUGIN = {}
         PLUGIN.Name = v
         PLUGIN.Folder = path .. "/" .. v

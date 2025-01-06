@@ -1,4 +1,4 @@
-if SERVER then
+if ( SERVER ) then
     function opsGoto(ply, pos)
         ply:ExitVehicle()
         if not ply:Alive() then ply:Spawn() end

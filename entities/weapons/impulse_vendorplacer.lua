@@ -38,7 +38,7 @@ SWEP.Secondary.DefaultClip    = -1
 SWEP.Secondary.Automatic       = false
 SWEP.Secondary.Ammo         = "none"
 
-if SERVER then
+if ( SERVER ) then
     function SWEP:Equip(owner)
         if not owner:IsAdmin() then
             owner:StripWeapon("impulse_vendorplacer")
@@ -108,7 +108,7 @@ end
 function SWEP:Reload()
 end
 
-if SERVER then
+if ( SERVER ) then
     util.AddNetworkString("impulseVendorPlace")
 
     net.Receive("impulseVendorPlace", function(len, ply)

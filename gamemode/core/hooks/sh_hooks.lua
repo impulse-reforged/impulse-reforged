@@ -7,7 +7,7 @@ function GM:StartCommand(ply, cmd)
         cmd:RemoveKey(KEY_BLACKLIST)
     end
 
-    if SERVER then
+    if ( SERVER ) then
         local dragger = ply.ArrestedDragger
 
         if isValid(dragger) and ply == dragger.ArrestedDragging and ply:Alive() and dragger:Alive() then
@@ -26,7 +26,7 @@ function GM:StartCommand(ply, cmd)
 end
 
 function GM:PlayerSwitchWeapon(ply, oldWep, newWep)
-    if SERVER then
+    if ( SERVER ) then
         ply:SetWeaponRaised(false)
     end
 end

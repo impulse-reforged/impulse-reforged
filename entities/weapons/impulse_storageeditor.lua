@@ -37,7 +37,7 @@ SWEP.Secondary.Automatic       = false
 SWEP.Secondary.Ammo         = "none"
 SWEP.NextGo = 0
 
-if SERVER then
+if ( SERVER ) then
     function SWEP:Equip(owner)
         if not owner:IsAdmin() then
             owner:StripWeapon("impulse_storageeditor")
@@ -82,7 +82,7 @@ function SWEP:PrimaryAttack()
         self.SelectedDoor = ent
         self.State = "Storage "..self.SelectedStorage:EntIndex().." and door "..ent:EntIndex().." selected, ready for export."
 
-        if CLIENT then
+        if ( CLIENT ) then
             surface.PlaySound("buttons/blip1.wav")
             self.Owner:Notify("Ready for export!")
         end
@@ -96,7 +96,7 @@ function SWEP:SecondaryAttack()
     self.SelectedDoor = nil
     self.State = nil
 
-    if CLIENT then
+    if ( CLIENT ) then
         surface.PlaySound("buttons/button10.wav")
     end
     
@@ -104,7 +104,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:Reload()
-    if CLIENT then
+    if ( CLIENT ) then
         self.SelectedStorage = nil
         self.SelectedDoor = nil
         self.State = nil

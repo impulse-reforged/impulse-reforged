@@ -12,7 +12,7 @@ local managerCommand = {
 
 impulse.RegisterChatCommand("/supporttool", managerCommand)
 
-if CLIENT then
+if ( CLIENT ) then
     net.Receive("impulseOpsSTOpenTool", function()
         vgui.Create("impulseSupportTool")
     end)
@@ -32,7 +32,7 @@ if CLIENT then
         local msg = "You have been refunded items by support.\nYou can find these items in your private storage.\n\nRefunded items:"
 
         for v, k in pairs(refundData) do
-            local netid = impulse.Inventory.ClassToNetID(v)
+            local netid = impulse.Inventory:ClassToNetID(v)
             if not netid then continue end -- invalid item?
 
             local item = impulse.Inventory.Items[netid]

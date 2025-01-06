@@ -187,20 +187,20 @@ net.Receive("impulseInvRemove", function()
 end)
 
 net.Receive("impulseInvClear", function()
-    local storetype = net.ReadUInt(4)
+    local storagetype = net.ReadUInt(4)
 
-    if impulse.Inventory.Data[0][storetype] then
-        impulse.Inventory.Data[0][storetype] = {}
+    if impulse.Inventory.Data[0][storagetype] then
+        impulse.Inventory.Data[0][storagetype] = {}
     end
 end)
 
 net.Receive("impulseInvClearRestricted", function()
-    local storetype = net.ReadUInt(4)
+    local storagetype = net.ReadUInt(4)
 
-    if impulse.Inventory.Data[0][storetype] then
-        for v, k in pairs(impulse.Inventory.Data[0][storetype]) do
+    if impulse.Inventory.Data[0][storagetype] then
+        for v, k in pairs(impulse.Inventory.Data[0][storagetype]) do
             if k.restricted then
-                impulse.Inventory.Data[0][storetype][v] = nil
+                impulse.Inventory.Data[0][storagetype][v] = nil
             end
         end
     end
@@ -209,7 +209,7 @@ end)
 net.Receive("impulseInvUpdateEquip", function()
     local itemID = net.ReadUInt(16)
     local state = net.ReadBool()
-    local item = impulse.Inventory.Data[0][1][itemID]
+    local item = impulse.Inventory.Data[0][INVENTORY_PLAYER][itemID]
 
     item.equipped = state or false
 

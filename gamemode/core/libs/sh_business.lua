@@ -3,7 +3,7 @@
 
 impulse.Business = impulse.Business or {}
 impulse.Business.Data = impulse.Business.Data or {}
-impulse.Business.DataRef = impulse.Business.DataRef or {}
+impulse.Business.Stored = impulse.Business.Stored or {}
 
 local busID = 0
 
@@ -12,11 +12,12 @@ local busID = 0
 -- @string name Buyable name
 -- @param buyableData Buyable data
 -- @see BuyableData
-function impulse.Business.Define(name, buyableData)
+function impulse.Business:Define(name, buyableData)
     busID = busID + 1
     buyableData.key = name
+
     impulse.Business.Data[name] = buyableData
-    impulse.Business.DataRef[busID] = name
+    impulse.Business.Stored[busID] = name
 end
 
 local PLAYER = FindMetaTable("Player")
@@ -43,7 +44,7 @@ end
 -- @string buyable Buyable name
 -- @entity owner Owner player
 -- @internal
-function impulse.SpawnBuyable(pos, ang, buyable, owner)
+function impulse.Business:SpawnBuyable(pos, ang, buyable, owner)
     local spawnedBuyable
 
     if buyable.bench then

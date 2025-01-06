@@ -48,11 +48,11 @@ function PANEL:Init()
       self.itemsStorage = {}
      self.itemPanelsStorage = {}
      local invWeight = 0
-     local realInv = impulse.Inventory.Data[0][1]
-     local localInv = table.Copy(impulse.Inventory.Data[0][1]) or {}
+     local realInv = impulse.Inventory.Data[0][INVENTORY_PLAYER]
+     local localInv = table.Copy(impulse.Inventory.Data[0][INVENTORY_PLAYER]) or {}
     local storageWeight = 0
-      local realInvStorage = impulse.Inventory.Data[0][2]
-     local localInvStorage = table.Copy(impulse.Inventory.Data[0][2]) or {}
+      local realInvStorage = impulse.Inventory.Data[0][INVENTORY_STORAGE]
+     local localInvStorage = table.Copy(impulse.Inventory.Data[0][INVENTORY_STORAGE]) or {}
      local reccurTemp = {}
       local sortMethod = impulse.Settings:Get("inv_sortweight", "Inventory only")
      local invertSort = true

@@ -1,4 +1,4 @@
-if SERVER then
+if ( SERVER ) then
     util.AddNetworkString("impulseOpsViewInv")
     util.AddNetworkString("impulseOpsRemoveInv")
 
@@ -63,7 +63,7 @@ local viewInvCommand = {
             net.WriteUInt(table.Count(inv), 16)
 
             for v, k in pairs(inv) do
-                local netid = impulse.Inventory.ClassToNetID(k.class)
+                local netid = impulse.Inventory:ClassToNetID(k.class)
                 net.WriteUInt(netid, 10)
                 net.WriteBool(k.restricted or false)
                 net.WriteBool(k.equipped or false)
