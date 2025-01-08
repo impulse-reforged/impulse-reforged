@@ -21,8 +21,6 @@ function GM:DatabaseConnectionFailed()
     SetGlobalString("impulse_fatalerror", "Failed to connect to database. See server console for error.")
 end
 
-local mathAbs = math.abs
-
 function GM:PlayerInitialSpawn(ply)
     local isNew = false
     local plyTable = ply:GetTable()
@@ -88,35 +86,51 @@ function GM:PlayerInitialSpawn(ply)
         query:Execute()
     end)
 
-    timer.Create(ply:UserID() .. "impulseXP", impulse.Config.XPTime, 0, function()
-        if not ply:IsAFK() then
+    local xpTimerName = "impulseXP." .. ply:UserID()
+    timer.Create(xpTimerName, impulse.Config.XPTime, 0, function()
+        if ( !IsValid(ply) ) then
+            timer.Remove(xpTimerName)
+            return
+        end
+
+        if ( !ply:IsAFK() ) then
             ply:GiveTimedXP()
         end
     end)
 
-    timer.Create(ply:UserID() .. "impulseOOCLimit", 1800, 0, function()
-        if IsValid(ply) then
-            if ply:IsDonator() then
-                plyTable.OOCLimit = impulse.Config.OOCLimitVIP
-            else
-                plyTable.OOCLimit = impulse.Config.OOCLimit
-            end
+    local oocTimerName = "impulseOOCLimit." .. ply:UserID()
+    timer.Create(oocTimerName, 1800, 0, function()
+        if ( !IsValid(ply) ) then
+            timer.Remove(oocTimerName)
+            return
+        end
 
-            net.Start("impulseUpdateOOCLimit")
+        if ( ply:IsDonator() ) then
+            plyTable.OOCLimit = impulse.Config.OOCLimitVIP
+        else
+            plyTable.OOCLimit = impulse.Config.OOCLimit
+        end
+
+        net.Start("impulseUpdateOOCLimit")
             net.WriteUInt(1800, 16)
             net.WriteBool(true)
-            net.Send(ply)
-        end
+        net.Send(ply)
     end)
 
-    timer.Create(ply:UserID() .. "impulseFullLoad", 0.5, 0, function()
-        if IsValid(ply) and ply:GetModel() != "player/default.mdl" then
+    local loadTimerName = "impulseFullLoad." .. ply:UserID()
+    timer.Create(loadTimerName, 0.5, 0, function()
+        if ( !IsValid(ply) ) then
+            timer.Remove(loadTimerName)
+            return
+        end
+
+        if ( ply:GetModel() != "player/default.mdl" ) then
+            timer.Remove(loadTimerName)
             hook.Run("PlayerInitialSpawnLoaded", ply)
-            timer.Remove(ply:UserID() .. "impulseFullLoad")
         end
     end)
 
-    plyTable.impulseAFKTimer = CurTime() + 720 -- initial afk time :)
+    plyTable.impulseAFKTimer = CurTime() + 720
 end
 
 function GM:PlayerSetup(ply, data)
@@ -132,7 +146,14 @@ function GM:PlayerSetup(ply, data)
 
     local userCount = playerCount - donatorCount
     if ( !ply:IsDonator() and userCount >= ( impulse.Config.UserSlots or 9999 ) ) then
-        ply:Kick("The server is currently at full user capacity. Donate at " .. impulse.Config.DonateURL .. " to access additional donator slots")
+        local donateURL = impulse.Config.DonateURL
+        local message = "The server is currently at full user capacity. Please try again later."
+        if ( donateURL and donateURL != "" ) then
+            message = message .. " Consider donating at " .. donateURL .. " to gain access to reserved slots."
+        end
+
+        ply:Kick(message)
+
         return
     end
 
@@ -305,7 +326,7 @@ function GM:PlayerLoadout(ply)
     if ( ply:Team() == 0 ) then return end
 
     local data = ply:GetTeamData()
-    if data and data.spawns then
+    if ( data and data.spawns ) then
         ply:SetPos(data.spawns[math.random(1, #data.spawns)])
     end
 
@@ -319,8 +340,8 @@ function GM:PostSetupPlayer(ply)
     local plyTable = ply:GetTable()
     plyTable.impulseData.Achievements = plyTable.impulseData.Achievements or {}
 
-    for v, k in pairs(impulse.Config.Achievements) do
-        ply:AchievementCheck(v)
+    for k, v in pairs(impulse.Config.Achievements) do
+        ply:AchievementCheck(k)
     end
 
     ply:Spawn()
@@ -410,7 +431,7 @@ function GM:PlayerSpawn(ply)
         end
     end
 
-    plyTable.ArrestedWeapons = nil
+    plyTable.impulseArrestedWeapons = nil
     plyTable.SpawnProtection = true
 
     ply:SetJumpPower(impulse.Config.JumpPower or 160)
@@ -437,16 +458,14 @@ function GM:PlayerDisconnected(ply)
         dragger.impulseArrestedDragging = nil
     end
 
-    timer.Remove(userID .. "impulseXP")
-    timer.Remove(userID .. "impulseOOCLimit")
-
-    if ( timer.Exists(userID .. "impulseFullLoad") ) then
-        timer.Remove(userID .. "impulseFullLoad")
+    local loadTimerName = "impulseFullLoad." .. userID
+    if ( timer.Exists(loadTimerName) ) then
+        timer.Remove(loadTimerName)
     end
 
     local jailCell = plyTable.InJail
     if ( jailCell ) then
-        timer.Remove(userID .. "impulsePrison")
+        timer.Remove("impulsePrison." .. userID)
         local duration = impulse.Arrest.Prison[jailCell][entIndex].duration
         impulse.Arrest.Prison[jailCell][entIndex] = nil
         impulse.Arrest.DisconnectRemember[steamID] = duration

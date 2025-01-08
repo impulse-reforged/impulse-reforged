@@ -14,7 +14,7 @@ local unArrestCommand = {
             if plyTarget.InJail then
                 impulse.Arrest.Prison[plyTarget.InJail][plyTarget:EntIndex()] = nil
                 plyTarget.InJail = nil
-                timer.Remove(plyTarget:UserID().."impulsePrison")
+                timer.Remove("impulsePrison." .. plyTarget:UserID())
                 plyTarget:StopDrag()
                 plyTarget:Spawn()
             end
