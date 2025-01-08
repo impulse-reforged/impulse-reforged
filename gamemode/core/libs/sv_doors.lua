@@ -6,7 +6,7 @@ local fileName = "impulse-reforged/doors/"..game.GetMap()
 
 file.CreateDir("impulse-reforged/doors")
 
-function impulse.Doors.Save()
+function impulse.Doors:Save()
     local doors = {}
 
     for v, k in ents.Iterator() do
@@ -22,15 +22,15 @@ function impulse.Doors.Save()
         end
     end
 
-    print("[impulse-reforged] Saving doors to impulse/doors/"..game.GetMap()..".dat | Doors saved: "..#doors)
-    file.Write(fileName..".dat", util.TableToJSON(doors))
+    print("[impulse-reforged] Saving doors to impulse-reforged/doors/"..game.GetMap()..".json | Doors saved: "..#doors)
+    file.Write(fileName..".json", util.TableToJSON(doors))
 end
 
-function impulse.Doors.Load()
+function impulse.Doors:Load()
     impulse.Doors.Data = {}
 
-    if file.Exists(fileName..".dat", "DATA") then
-        local mapDoorData = util.JSONToTable(file.Read(fileName..".dat", "DATA"))
+    if file.Exists(fileName..".json", "DATA") then
+        local mapDoorData = util.JSONToTable(file.Read(fileName..".json", "DATA"))
         local posBuffer = {}
         local posFinds = {}
 
@@ -107,8 +107,8 @@ function PLAYER:SetDoorMaster(door)
     door:SetNetVar("doorOwners", owners)
     door.MasterUser = self
 
-    self.OwnedDoors = self.OwnedDoors or {}
-    self.OwnedDoors[door] = true
+    self.impulseOwnedDoors = self.impulseOwnedDoors or {}
+    self.impulseOwnedDoors[door] = true
 end
 
 function PLAYER:RemoveDoorMaster(door, noUnlock)
@@ -120,7 +120,7 @@ function PLAYER:RemoveDoorMaster(door, noUnlock)
         local owner = Entity(k)
 
         if IsValid(owner) and owner:IsPlayer() then
-            owner.OwnedDoors[door] = nil
+            owner.impulseOwnedDoors[door] = nil
         end
     end
 
@@ -137,8 +137,8 @@ function PLAYER:SetDoorUser(door)
     table.insert(doorOwners, self:EntIndex())
     door:SetNetVar("doorOwners", doorOwners)
 
-    self.OwnedDoors = self.OwnedDoors or {}
-    self.OwnedDoors[door] = true
+    self.impulseOwnedDoors = self.impulseOwnedDoors or {}
+    self.impulseOwnedDoors[door] = true
 end
 
 function PLAYER:RemoveDoorUser(door)
@@ -149,12 +149,12 @@ function PLAYER:RemoveDoorUser(door)
     table.RemoveByValue(doorOwners, self:EntIndex())
     door:SetNetVar("doorOwners", doorOwners)
 
-    self.OwnedDoors = self.OwnedDoors or {}
-    self.OwnedDoors[door] = nil
+    self.impulseOwnedDoors = self.impulseOwnedDoors or {}
+    self.impulseOwnedDoors[door] = nil
 end
 
 concommand.Add("impulse_door_sethidden", function(ply, cmd, args)
-    if not ply:IsSuperAdmin() then return false end
+    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
 
     local trace = {}
     trace.start = ply:EyePos()
@@ -175,12 +175,12 @@ concommand.Add("impulse_door_sethidden", function(ply, cmd, args)
 
         ply:Notify("Door "..traceEnt:EntIndex().." show = "..args[1])
 
-        impulse.Doors.Save()
+        impulse.Doors:Save()
     end
 end)
 
 concommand.Add("impulse_door_setgroup", function(ply, cmd, args)
-    if not ply:IsSuperAdmin() then return false end
+    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
 
     local trace = {}
     trace.start = ply:EyePos()
@@ -197,12 +197,12 @@ concommand.Add("impulse_door_setgroup", function(ply, cmd, args)
 
         ply:Notify("Door "..traceEnt:EntIndex().." group = "..args[1])
 
-        impulse.Doors.Save()
+        impulse.Doors:Save()
     end
 end)
 
 concommand.Add("impulse_door_removegroup", function(ply, cmd, args)
-    if not ply:IsSuperAdmin() then return false end
+    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
 
     local trace = {}
     trace.start = ply:EyePos()
@@ -210,8 +210,7 @@ concommand.Add("impulse_door_removegroup", function(ply, cmd, args)
     trace.filter = ply
 
     local traceEnt = util.TraceLine(trace).Entity
-
-    if IsValid(traceEnt) and traceEnt:IsDoor() then
+    if ( IsValid(traceEnt) and traceEnt:IsDoor() ) then
         traceEnt:SetNetVar("doorBuyable", nil)
         traceEnt:SetNetVar("doorGroup", nil)
         traceEnt:SetNetVar("doorName", nil)
@@ -219,6 +218,6 @@ concommand.Add("impulse_door_removegroup", function(ply, cmd, args)
 
         ply:Notify("Door "..traceEnt:EntIndex().." group = nil")
 
-        impulse.Doors.Save()
+        impulse.Doors:Save()
     end
 end)

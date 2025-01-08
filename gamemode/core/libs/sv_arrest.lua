@@ -1,7 +1,7 @@
 impulse.Arrest = impulse.Arrest or {}
 impulse.Arrest.Dragged = impulse.Arrest.Dragged or {}
 impulse.Arrest.Prison = impulse.Arrest.Prison or {}
-impulse.Arrest.DCRemember = impulse.Arrest.DCRemember or {}
+impulse.Arrest.DisconnectRemember = impulse.Arrest.DisconnectRemember or {}
 
 util.AddNetworkString("impulseSendJailInfo")
 
@@ -44,8 +44,8 @@ end
 
 function PLAYER:DragPlayer(ply)
     if self:CanArrest(ply) and ply:GetNetVar("arrested", false) then
-        ply.ArrestedDragger = self
-        self.ArrestedDragging = ply
+        ply.impulseArrestedDragger = self
+        self.impulseArrestedDragging = ply
         impulse.Arrest.Dragged[ply] = true
 
         self:Say("/me starts dragging "..ply:Name()..".")
@@ -55,12 +55,12 @@ end
 function PLAYER:StopDrag()
     impulse.Arrest.Dragged[self] = nil
 
-    local dragger = self.ArrestedDragger
+    local dragger = self.impulseArrestedDragger
 
     if IsValid(dragger) then
-        dragger.ArrestedDragging = nil
+        dragger.impulseArrestedDragging = nil
     end
-    self.ArrestedDragger = nil
+    self.impulseArrestedDragger = nil
 end
 
 function PLAYER:SendJailInfo(time, jailData)

@@ -37,3 +37,10 @@ end
 function PLAYER:FeedHunger(amount)
     self:SetHunger(amount + self:GetNetVar("hunger", 100))
 end
+
+--- Takes the amount of hunger from the player
+-- @realm server
+-- @int amount Amount of hunger (0-100)
+function PLAYER:TakeHunger(amount)
+    self:SetHunger(self:GetNetVar("hunger", 100) - amount)
+end

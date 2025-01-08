@@ -9,7 +9,7 @@ hook.Add("PlayerDeath", "opsDeathSnapshot", function(victim, attacker, inflictor
     snapshot.VictimID = victim:SteamID64()
     snapshot.VictimNick = victim:Nick()
     snapshot.VictimPos = victim:GetPos()
-    snapshot.VictimLastPos = victim.LastKnownPos or snapshot.VictimPos
+    snapshot.VictimLastPos = victim.impulseLastPos or snapshot.VictimPos
     snapshot.VictimAng = victim:GetAngles()
     snapshot.VictimEyeAng = victim:EyeAngles()
     snapshot.VictimModel = victim:GetModel()
@@ -24,7 +24,7 @@ hook.Add("PlayerDeath", "opsDeathSnapshot", function(victim, attacker, inflictor
     snapshot.InflictorID = inflictor:SteamID64()
     snapshot.InflictorNick = inflictor:Nick()
     snapshot.InflictorPos = inflictor:GetPos()
-    snapshot.InflictorLastPos = inflictor.LastKnownPos or snapshot.InflictorPos
+    snapshot.InflictorLastPos = inflictor.impulseLastPos or snapshot.InflictorPos
     snapshot.InflictorAng = inflictor:GetAngles()
     snapshot.InflictorEyePos = inflictor:EyePos()
     snapshot.InflictorEyeAng = inflictor:EyeAngles()

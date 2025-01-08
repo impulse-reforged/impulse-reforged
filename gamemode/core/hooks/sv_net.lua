@@ -550,7 +550,7 @@ net.Receive("impulseDoorAdd", function(len, ply)
     if IsValid(traceEnt) and ply:IsDoorOwner(owners) and traceEnt:GetDoorMaster() == ply then
         if target == ply then return end
 
-        if target.OwnedDoors and target.OwnedDoors[traceEnt] then return end
+        if target.impulseOwnedDoors and target.impulseOwnedDoors[traceEnt] then return end
 
         if table.Count(owners) > 9 then
             return ply:Notify("Door user limit reached (9).")
@@ -585,7 +585,7 @@ net.Receive("impulseDoorRemove", function(len, ply)
     if IsValid(traceEnt) and ply:IsDoorOwner(traceEnt:GetNetVar("doorOwners", nil)) and traceEnt:GetDoorMaster() == ply then
         if target == ply then return end
 
-        if not target.OwnedDoors or not target.OwnedDoors[traceEnt] then return end
+        if not target.impulseOwnedDoors or not target.impulseOwnedDoors[traceEnt] then return end
 
         if traceEnt:GetDoorMaster() == target then
             return ply:Notify("The door's master cannot be removed.")
@@ -630,10 +630,10 @@ end)
 net.Receive("impulseSellAllDoors", function(len, ply)
     if (ply.nextSellAllDoors or 0) > CurTime() then return end
     ply.nextSellAllDoors = CurTime() + 5
-    if not ply.OwnedDoors or table.Count(ply.OwnedDoors) == 0 then return end
+    if not ply.impulseOwnedDoors or table.Count(ply.impulseOwnedDoors) == 0 then return end
 
     local sold = 0
-    for v, k in pairs(ply.OwnedDoors) do
+    for v, k in pairs(ply.impulseOwnedDoors) do
         if IsValid(v) and hook.Run("CanEditDoor", ply, v) != false then
             if v:GetDoorMaster() == ply then
                 local noUnlock = v.NoDCUnlock or false
@@ -645,7 +645,7 @@ net.Receive("impulseSellAllDoors", function(len, ply)
         end
     end
 
-    ply.OwnedDoors = {}
+    ply.impulseOwnedDoors = {}
 
     local amount = sold * (impulse.Config.DoorPrice - 2)
     ply:GiveMoney(amount)
@@ -716,7 +716,7 @@ net.Receive("impulseInvDoSearchConfiscate", function(len, ply)
     if (ply.nextInvConf or 0) > CurTime() then return end
     ply.nextInfConf = CurTime() + 0.1
 
-    local targ = ply.InvSearching
+    local targ = ply.impulseInventorySearching
     if not IsValid(targ) or not ply:CanArrest(targ) then return end
 
     local count = net.ReadUInt(8) or 0
@@ -741,7 +741,7 @@ net.Receive("impulseInvDoSearchConfiscate", function(len, ply)
         targ:Notify("The search has been completed.")
     end
 
-    ply.InvSearching = nil
+    ply.impulseInventorySearching = nil
     targ:Freeze(false)
 end)
 
@@ -770,9 +770,9 @@ net.Receive("impulseInvDoMove", function(len, ply)
         to = 2
     end
 
-    if to == 2 and (ply.NextStorage or 0) > CurTime() then
+    if to == 2 and (ply.impulseNextStorage or 0) > CurTime() then
         ply.nextInvMove = CurTime() + 0.1
-        return ply:Notify("Because you were recently in combat you must wait "..string.NiceTime(ply.NextStorage - CurTime()).." before depositing items into your storage.")
+        return ply:Notify("Because you were recently in combat you must wait "..string.NiceTime(ply.impulseNextStorage - CurTime()).." before depositing items into your storage.")
     end
 
     local hasItem, item = ply:HasInventoryItemSpecific(itemid, from)
@@ -836,9 +836,9 @@ net.Receive("impulseInvDoMoveMass", function(len, ply)
 
     amount = math.Clamp(amount, 0, 9999)
 
-    if to == 2 and (ply.NextStorage or 0) > CurTime() then
+    if to == 2 and (ply.impulseNextStorage or 0) > CurTime() then
         ply.nextInvMove = CurTime() + 0.1
-        return ply:Notify("Because you were recently in combat you must wait "..string.NiceTime(ply.NextStorage - CurTime()).." before depositing items into your storage.")
+        return ply:Notify("Because you were recently in combat you must wait "..string.NiceTime(ply.impulseNextStorage - CurTime()).." before depositing items into your storage.")
     end
 
     if not impulse.Inventory.Items[classid] then return end
@@ -1363,7 +1363,7 @@ net.Receive("impulseUnRestrain", function(len, ply)
 
     if not ent:IsPlayer() or ent:GetNetVar("arrested", false) == false or not ply:CanArrest(ent) then return end
 
-    if ent.BeingJailed then return end
+    if ent.impulseBeingJailed then return end
 
     if ent.InJail then
         return ply:Notify("You can't unrestrain someone who is in jail.")

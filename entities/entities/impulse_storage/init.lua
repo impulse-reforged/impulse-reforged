@@ -29,7 +29,7 @@ function ENT:CanPlayerUse(ply)
 
     if not door:IsValid() or not door:IsDoor() then return true end
 
-    if ply.OwnedDoors and ply.OwnedDoors[door] then
+    if ply.impulseOwnedDoors and ply.impulseOwnedDoors[door] then
         return true
     else
         return false

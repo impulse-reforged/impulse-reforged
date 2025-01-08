@@ -1,53 +1,67 @@
+--- Saving mechanic in order to preserve entities between server restarts.
+-- @module impulse.Save
+
+impulse.Save = impulse.Save or {}
+
 file.CreateDir("impulse-reforged")
 file.CreateDir("impulse-reforged/saves")
 
-function LoadSaveEnts()
-    if file.Exists( "impulse-reforged/saves/"..string.lower(game.GetMap())..".dat", "DATA") then
-        local savedEnts = util.JSONToTable( file.Read( "impulse-reforged/saves/" .. string.lower( game.GetMap() ) .. ".dat" ) )
-        for v, k in pairs(savedEnts) do
-            local x = ents.Create(k.class)
-
-            if not IsValid(x) then
-                print("[impulse-reforged] [save] Entity "..k.class.." does not exist! Skipping!")
+function impulse.Save:Load()
+    local map = string.lower(game.GetMap())
+    if ( file.Exists("impulse-reforged/saves/" .. map .. ".json", "DATA") ) then
+        local savedEnts = util.JSONToTable( file.Read( "impulse-reforged/saves/" ..  map ..  ".json" ) )
+        for k, v in pairs(savedEnts) do
+            local ent = ents.Create(v.class)
+            if ( !IsValid(ent) ) then
+                print("[impulse-reforged] [save] Entity " .. v.class .. " does not exist! Skipping!")
                 continue
             end
 
-            x:SetPos(k.pos)
-            x:SetAngles(k.angle)
+            ent:SetPos(v.pos)
+            ent:SetAngles(v.angle)
             
-            if k.class == "prop_physics" or k.class == "prop_dynamic" or k.class == "impulse_hl2rp_scavengable" then
-                x:SetModel(k.model)
-                x:SetMaterial(k.material)
+            if ( v.class == "prop_physics" or v.class == "prop_dynamic" or v.class == "impulse_hl2rp_scavengable" ) then
+                ent:SetModel(v.model)
+                ent:SetMaterial(v.material)
 
-                k.submaterials = k.submaterials or {}
+                -- Load bodygroups
+                v.bodygroups = v.bodygroups or {}
+                for i = 0, ent:GetNumBodyGroups() - 1 do
+                    if ( v.bodygroups[i] ) then
+                        ent:SetBodygroup(i, v.bodygroups[i])
+                    end
+                end
+
+                -- Load submaterials
+                v.submaterials = v.submaterials or {}
                 for i = 0, 31 do
-                    if k.submaterials[i] then
-                        x:SetSubMaterial(i, k.submaterials[i])
+                    if ( v.submaterials[i] ) then
+                        ent:SetSubMaterial(i, v.submaterials[i])
                     end
                 end
             end
 
-            if k.bench then
-                x.Bench = k.bench
+            if ( v.bench ) then
+                ent.Bench = v.bench
             end
 
-            x.impulseSaveEnt = true
+            ent.impulseSaveEnt = true
 
-            if k.keyvalue then
-                x.impulseSaveKeyValue = k.keyvalue
+            if ( v.keyvalue ) then
+                ent.impulseSaveKeyValue = v.keyvalue
 
-                if k.keyvalue["nopos"] then
-                    x.AlwaysPos = k.pos
+                if ( v.keyvalue["nopos"] ) then
+                    ent.AlwaysPos = v.pos
                 end
             end
 
-            x:Spawn()
-            x:Activate()
+            ent:Spawn()
+            ent:Activate()
 
-            local phys = x:GetPhysicsObject()
-
-            if phys and phys:IsValid() then
-                phys:EnableMotion(false)
+            local physObj = ent:GetPhysicsObject()
+            if ( IsValid(physObj) ) then
+                physObj:EnableMotion(false)
+                physObj:Sleep()
             end
         end
     end
@@ -55,139 +69,177 @@ function LoadSaveEnts()
     hook.Run("PostLoadSaveEnts")
 end
 
-concommand.Add("impulse_save_saveall", function(ply, cmd, args)
-    if not ply:IsSuperAdmin() then return end
+concommand.Add("impulse_save_all", function(ply, cmd, args)
+    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
 
     local savedEnts = {}
 
-    for v, k in ents.Iterator() do
-        if k.impulseSaveEnt then
+    for k, v in ents.Iterator() do
+        if ( v.impulseSaveEnt ) then
             local data = {}
 
-            data.pos = k.AlwaysPos or k:GetPos()
-            data.angle = k:GetAngles()
+            data.pos = v.AlwaysPos or v:GetPos()
+            data.angle = v:GetAngles()
 
-            data.class = k:GetClass()
-            data.model = k:GetModel()
-            data.material = k:GetMaterial()
+            data.class = v:GetClass()
+            data.model = v:GetModel()
+            data.material = v:GetMaterial()
 
-            data.submaterials = {}
-            for i = 0, 31 do
-                if k:GetSubMaterial(i) == 0 then
+            data.bodygroups = {}
+
+            for i = 0, v:GetNumBodyGroups() - 1 do
+                if ( v:GetBodygroup(i) == 0 ) then
                     continue
                 end
 
-                data.submaterials[i] = k:GetSubMaterial(i)
+                data.bodygroups[i] = v:GetBodygroup(i)
             end
 
-            data.keyvalue = (k.impulseSaveKeyValue or nil)
+            data.submaterials = {}
 
-            if k.Bench then
-                data.bench = k.Bench
+            for i = 0, 31 do
+                if ( v:GetSubMaterial(i) == 0 ) then
+                    continue
+                end
+
+                data.submaterials[i] = v:GetSubMaterial(i)
             end
 
-            savedEnts[#savedEnts + 1] = data
+            data.keyvalue = (v.impulseSaveKeyValue or nil)
+
+            if ( v.Bench ) then
+                data.bench = v.Bench
+            end
+
+            table.insert(savedEnts, data)
         end
     end
 
-    file.Write("impulse-reforged/saves/"..string.lower(game.GetMap())..".dat", util.TableToJSON(savedEnts, true))
+    file.Write("impulse-reforged/saves/" .. map .. ".json", util.TableToJSON(savedEnts, true))
 
-    ply:AddChatText("All marked ents have been saved, all un-marked ents have been omitted from the save.")
-end)
+    ply:AddChatText("All marked entities have been saved, and have been written to the save file.")
+end, nil, "Saves all marked entities.", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
 concommand.Add("impulse_save_reload", function(ply)
-    if not ply:IsSuperAdmin() then return end
-    for v, k in ents.Iterator() do
-        if k.impulseSaveEnt then
-            k:Remove()
+    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
+
+    for k, v in ents.Iterator() do
+        if ( v.impulseSaveEnt ) then
+            SafeRemoveEntity(v)
         end
     end
 
-    LoadSaveEnts()
+    impulse.Save:Load()
 
     ply:AddChatText("All saved ents have been reloaded.")
-end)
+end, nil, "Reloads all saved entities.", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
 concommand.Add("impulse_save_mark", function(ply)
-    if not ply:IsSuperAdmin() then return end
-    local ent = ply:GetEyeTrace().Entity
+    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
 
-    if IsValid(ent) then
-        ent.impulseSaveEnt = true
-        ply:AddChatText("Marked "..ent:GetClass().." for saving.")
+    local ent = ply:GetEyeTrace().Entity
+    if ( !IsValid(ent) ) then
+        return ply:AddChatText("Invalid entity.")
     end
-end)
+
+    ent.impulseSaveEnt = true
+    ply:AddChatText("Marked " .. ent:GetClass() .. " for saving.")
+end, nil, "Marks an entity for saving.", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
 concommand.Add("impulse_save_unmark", function(ply)
-    if not ply:IsSuperAdmin() then return end
-    local ent = ply:GetEyeTrace().Entity
+    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
 
-    if IsValid(ent) then
-        ent.impulseSaveEnt = nil
-        ply:AddChatText("Removed "..ent:GetClass().." for saving.")
+    local ent = ply:GetEyeTrace().Entity
+    if ( !IsValid(ent) ) then
+        return ply:AddChatText("Invalid entity.")
     end
-end)
 
-concommand.Add("impulse_save_keyvalue", function(ply, cmd, args)
-    if not ply:IsSuperAdmin() then return end
+    ent.impulseSaveEnt = nil
+    ply:AddChatText("Removed " .. ent:GetClass() .. " for saving.")
+end, nil, "Unmarks an entity for saving.", FCVAR_CLIENTCMD_CAN_EXECUTE)
+
+concommand.Add("impulse_save_set_keyvalue", function(ply, cmd, args)
+    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
+
     local ent = ply:GetEyeTrace().Entity
+    if ( !IsValid(ent) ) then
+        return ply:AddChatText("Invalid entity.")
+    end
+
     local key = args[1]
     local value = args[2]
-
-    if not key or not value then
-        return ply:AddChatText("Missing key/value.")
+    if ( !key or !value ) then
+        return ply:AddChatText("Invalid key/value pair.")
     end
 
-    if IsValid(ent) then
-        if ent.impulseSaveEnt then
-            if tonumber(value) then
-                value = tonumber(value)
-            end
-
-            if value == "nil" then
-                value = nil
-            end
-
-            ent.impulseSaveKeyValue = ent.impulseSaveKeyValue or {}
-            ent.impulseSaveKeyValue[key] = value
-            ply:AddChatText("Key/Value ("..key.."="..(value or "VALUE REMOVED")..") pair set on "..ent:GetClass()..".")
-        else
-            ply:AddChatText("Mark this entity for saving first.")
+    if ( ent.impulseSaveEnt ) then
+        if ( tonumber(value) ) then
+            value = tonumber(value)
         end
-    end
-end)
 
-concommand.Add("impulse_save_printkeyvalues", function(ply, cmd, args)
-    if not ply:IsSuperAdmin() then return end
+        if ( value == "nil" ) then
+            value = nil
+        end
+
+        ent.impulseSaveKeyValue = ent.impulseSaveKeyValue or {}
+        ent.impulseSaveKeyValue[key] = value
+        ply:AddChatText("Set keyvalue " .. key .. " to " .. tostring(value) .. " on " .. ent:GetClass() .. ".")
+    else
+        ply:AddChatText("Entity is not marked for saving, cannot set keyvalue.")
+    end
+end, nil, "Sets a keyvalue on a save marked entity.", FCVAR_CLIENTCMD_CAN_EXECUTE)
+
+concommand.Add("impulse_save_print_keyvalues", function(ply)
+    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
+
     local ent = ply:GetEyeTrace().Entity
-
-    if IsValid(ent) then
-        if ent.impulseSaveEnt then
-            if not ent.impulseSaveKeyValue then
-                return ply:AddChatText("Entity has no keyvalue table.")
-            end
-
-            ply:AddChatText(table.ToString(ent.impulseSaveKeyValue))
-        else
-            ply:AddChatText("Entity not saving marked.")
-        end
+    if ( !IsValid(ent) ) then
+        return ply:AddChatText("Invalid entity.")
     end
-end)
+
+    if ( ent.impulseSaveEnt ) then
+        if ( !ent.impulseSaveKeyValue ) then
+            return ply:AddChatText("Entity is marked for saving but has no keyvalues.")
+        end
+
+        ply:AddChatText(table.ToString(ent.impulseSaveKeyValue))
+    else
+        ply:AddChatText("Entity is not marked for saving.")
+    end
+end, nil, "Prints keyvalues of a save marked entity.", FCVAR_CLIENTCMD_CAN_EXECUTE)
+
+local help = [[impulse Save System Help
+The impulse save system is a tool to save entities between server restarts. This is useful for saving progress in a map, or saving entities that are not saved by default, such as detailed props or custom entities.
+
+impulse_save_all - Saves all marked entities.
+impulse_save_reload - Reloads all saved entities.
+impulse_save_mark - Marks an entity for saving.
+impulse_save_unmark - Unmarks an entity for saving.
+impulse_save_set_keyvalue - Sets a keyvalue on a save marked entity.
+impulse_save_print_keyvalues - Prints keyvalues of a save marked entity.
+impulse_save_wipe - Wipes the save file for the current map.
+
+If you need further help, please contact a developer.]]
 
 concommand.Add("impulse_save_help", function(ply)
-    if not ply:IsSuperAdmin() then return end
+    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
+
+    for k, v in pairs(string.Explode("\n", help)) do
+        ply:AddChatText(v)
+    end
     
-    ply:AddChatText("Mark entities you want to save with save_mark and save_unmark. Ensure all entities are in correct state/position before using save_saveall to save them. Then use save_reload to cleanup.")
-end)
+end, nil, "Shows save system help.", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
 concommand.Add("impulse_save_wipe", function(ply)
-    if not ply:IsSuperAdmin() then return end
-    file.Delete("impulse-reforged/saves/"..string.lower(game.GetMap())..".dat")
+    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
+
+    local map = string.lower(game.GetMap())
+    file.Delete("impulse-reforged/saves/" .. map .. ".json")
     ply:AddChatText("Save file for this map has been wiped.")
 
-    for v, k in ents.Iterator() do
-        if k.impulseSaveEnt then
-            k:Remove()
+    for k, v in ents.Iterator() do
+        if ( v.impulseSaveEnt ) then
+            SafeRemoveEntity(v)
         end
     end
 end)

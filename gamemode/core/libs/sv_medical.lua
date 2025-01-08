@@ -11,7 +11,7 @@ function PLAYER:BreakLegs()
     if ( self:HasBrokenLegs() ) then return end
 
     self:SetNetVar("brokenLegs", true)
-    self.BrokenLegs = true
+    self.impulseBrokenLegs = true
 
     self:EmitSound("impulse-reforged/bone" .. math.random(1, 3) .. ".wav")
     self:Notify("You have broken your legs!", NOTIFY_ERROR)
@@ -23,6 +23,6 @@ end
 -- @realm server
 function PLAYER:FixLegs()
     self:SetNetVar("brokenLegs", false)
-    self.BrokenLegs = false
+    self.impulseBrokenLegs = false
     self.BrokenLegsTime = nil
 end

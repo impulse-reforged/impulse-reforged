@@ -12,7 +12,7 @@ function GM:OnSchemaLoaded()
     end
 
     local dir = "impulse-reforged/menumsgs/"
-    for v, k in ipairs(file.Find(dir.."*.dat", "DATA")) do
+    for v, k in ipairs(file.Find(dir.."*.json", "DATA")) do
         local f = file.Read(dir..k, "DATA")
         local data = util.JSONToTable(f)
 

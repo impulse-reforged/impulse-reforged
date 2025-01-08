@@ -4,7 +4,7 @@ properties.Add("impulse_save_mark", {
     MenuIcon = "icon16/arrow_up.png",
     Filter = function(self, ent, ply)
         if not IsValid(ent) then return false end
-        if not ply:IsSuperAdmin() then return false end
+        if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
 
         return true
     end,
@@ -29,7 +29,7 @@ properties.Add("impulse_save_unmark", {
     MenuIcon = "icon16/arrow_down.png",
     Filter = function(self, ent, ply)
         if not IsValid(ent) then return false end
-        if not ply:IsSuperAdmin() then return false end
+        if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
 
         return true
     end,
@@ -54,7 +54,7 @@ properties.Add("impulse_save_keyvalue", {
     MenuIcon = "icon16/tag_blue_add.png",
     Filter = function(self, ent, ply)
         if not IsValid(ent) then return false end
-        if not ply:IsSuperAdmin() then return false end
+        if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
 
         return true
     end,
@@ -116,7 +116,7 @@ properties.Add("impulse_save_printkeyvalues", {
     MenuIcon = "icon16/tag_blue.png",
     Filter = function(self, ent, ply)
         if not IsValid(ent) then return false end
-        if not ply:IsSuperAdmin() then return false end
+        if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
 
         return true
     end,
@@ -148,7 +148,7 @@ properties.Add("impulse_save_saveall", {
     MenuIcon = "icon16/disk.png",
     Filter = function(self, ent, ply)
         if not IsValid(ent) then return false end
-        if not ply:IsSuperAdmin() then return false end
+        if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
 
         return true
     end,

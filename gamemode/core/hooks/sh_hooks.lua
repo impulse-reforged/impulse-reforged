@@ -8,9 +8,9 @@ function GM:StartCommand(ply, cmd)
     end
 
     if ( SERVER ) then
-        local dragger = ply.ArrestedDragger
+        local dragger = ply.impulseArrestedDragger
 
-        if isValid(dragger) and ply == dragger.ArrestedDragging and ply:Alive() and dragger:Alive() then
+        if isValid(dragger) and ply == dragger.impulseArrestedDragging and ply:Alive() and dragger:Alive() then
             cmd:ClearMovement()
             cmd:ClearButtons()
 

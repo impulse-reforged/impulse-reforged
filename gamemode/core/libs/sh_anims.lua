@@ -592,39 +592,37 @@ local PLAYER = FindMetaTable("Player")
 function PLAYER:ForceSequence(sequence, callback, time, noFreeze)
     hook.Run("OnPlayerEnterSequence", self, sequence, callback, time, noFreeze)
 
-    if not sequence then
+    if ( !sequence ) then
         net.Start("impulseSeqSet")
-        net.WriteEntity(self)
-        net.WriteBool(true)
-        net.WriteUInt(0, 16)
+            net.WriteEntity(self)
+            net.WriteBool(true)
+            net.WriteUInt(0, 16)
         net.Broadcast()
-        --return netstream.Start(nil, "seqSet", self)
     end
 
     local sequence = self:LookupSequence(sequence)
-
-    if sequence and sequence > 0 then
+    if ( sequence and sequence > 0 ) then
         time = time or self:SequenceDuration(sequence)
 
         self.impulseSeqCallback = callback
         self.impulseForceSeq = sequence
 
-        if not noFreeze then
+        if ( !noFreeze ) then
             self:SetMoveType(MOVETYPE_NONE)
         end
 
-        if time > 0 then
-            timer.Create("impulseSeq"..self:EntIndex(), time, 1, function()
-                if IsValid(self) then
-                    self:LeaveSequence()
-                end
+        if ( time > 0 ) then
+            timer.Create("impulseSeq" .. self:EntIndex(), time, 1, function()
+                if ( !IsValid(self) ) then return end
+
+                self:LeaveSequence()
             end)
         end
 
         net.Start("impulseSeqSet")
-        net.WriteEntity(self)
-        net.WriteBool(false)
-        net.WriteUInt(sequence, 16)
+            net.WriteEntity(self)
+            net.WriteBool(false)
+            net.WriteUInt(sequence, 16)
         net.Broadcast()
 
         return time
@@ -637,26 +635,25 @@ function PLAYER:LeaveSequence()
     hook.Run("OnPlayerLeaveSequence", self)
 
     net.Start("impulseSeqSet")
-    net.WriteEntity(self)
-    net.WriteBool(true)
-    net.WriteUInt(0, 16)
+        net.WriteEntity(self)
+        net.WriteBool(true)
+        net.WriteUInt(0, 16)
     net.Broadcast()
 
     self:SetMoveType(MOVETYPE_WALK)
     self.impulseForceSeq = nil
 
-    if self.impulseSeqCallback then
+    if ( self.impulseSeqCallback ) then
         self:impulseSeqCallback()
     end
 end
 
 function PLAYER:IsWeaponRaised()
-    local weapon = self.GetActiveWeapon(self)
-
-    if IsValid(weapon) then
-        if weapon.IsAlwaysRaised or ALWAYS_RAISED[weapon.GetClass(weapon)] then
+    local weapon = self:GetActiveWeapon()
+    if ( IsValid(weapon) ) then
+        if ( weapon.IsAlwaysRaised or ALWAYS_RAISED[weapon.GetClass(weapon)] ) then
             return true
-        elseif weapon.IsAlwaysLowered then
+        elseif ( weapon.IsAlwaysLowered ) then
             return false
         end
     end
@@ -671,15 +668,22 @@ if ( SERVER ) then
         self:SetNetVar("weaponRaised", state)
 
         local weapon = self:GetActiveWeapon()
-
-        if IsValid(weapon) then
+        if ( IsValid(weapon) ) then
             weapon:SetNextPrimaryFire(CurTime() + 1)
             weapon:SetNextSecondaryFire(CurTime() + 1)
 
-            if weapon.OnLowered then
-                weapon.OnLowered(weapon)
+            if ( state ) then
+                if ( weapon.OnRaised ) then
+                    weapon.OnRaised(weapon)
+                end
+            else
+                if ( weapon.OnLowered ) then
+                    weapon.OnLowered(weapon)
+                end
             end
         end
+
+        hook.Run("PlayerWeaponRaised", self, state)
     end
 
     function PLAYER:ToggleWeaponRaised()
@@ -693,8 +697,8 @@ if ( CLIENT ) then
         local reset = net.ReadBool()
         local sequence = net.ReadUInt(16)
 
-        if IsValid(ent) then
-            if reset then
+        if ( IsValid(ent) ) then
+            if ( reset ) then
                 ent.impulseForceSeq = nil
                 return
             end

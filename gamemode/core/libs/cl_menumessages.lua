@@ -38,7 +38,7 @@ function impulse.MenuMessage:Remove(uid)
 
     self.Stored[uid] = nil
 
-    local fname = "impulse-reforged/menumsgs/"..uid..".dat"
+    local fname = "impulse-reforged/menumsgs/"..uid..".json"
 
     if file.Exists(fname, "DATA") then
         file.Delete(fname)
@@ -54,7 +54,7 @@ function impulse.MenuMessage:Save(uid)
 
     local compiled = util.TableToJSON(msg)
 
-    file.Write("impulse-reforged/menumsgs/"..uid..".dat", compiled)
+    file.Write("impulse-reforged/menumsgs/"..uid..".json", compiled)
 end
 
 --- Returns if a MenuMessage can be seen
