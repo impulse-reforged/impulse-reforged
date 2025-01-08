@@ -513,7 +513,7 @@ function GM:PlayerSay(ply, text, teamChat, newChat)
 
     text = strTrim(text, " ")
 
-    hook.Run("iPostPlayerSay", ply, text)
+    hook.Run("PostPlayerSay", ply, text)
 
     if ( string.StartWith(text, "/") ) then
         local args = string.Explode(" ", text)
@@ -550,7 +550,7 @@ function GM:PlayerSay(ply, text, teamChat, newChat)
         else
             ply:Notify("The " .. args[1] .. " command does not exist.")
         end
-    elseif ply:Alive() then
+    elseif ( ply:Alive() ) then
         text = hook.Run("ProcessICChatMessage", ply, text) or text
         text = hook.Run("ChatClassMessageSend", 1, text, ply) or text
 
