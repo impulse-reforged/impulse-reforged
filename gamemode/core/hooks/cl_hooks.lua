@@ -158,7 +158,6 @@ impulse.Settings:Define("hud_vignette", {name="Vignette enabled", category="HUD"
 impulse.Settings:Define("hud_iconcolours", {name="Icon colours enabled", category="HUD", type="tickbox", default=false})
 impulse.Settings:Define("hud_crosshair", {name="Crosshair enabled", category="HUD", type="tickbox", default=true})
 impulse.Settings:Define("view_thirdperson", {name="Thirdperson enabled", category="View", type="tickbox", default=false})
-impulse.Settings:Define("view_thirdperson_fov", {name="Thirdperson FOV", category="View", type="slider", default=100, minValue=75, maxValue=120})
 impulse.Settings:Define("view_thirdperson_offset_x", {name="Thirdperson X Offset", category="View", type="slider", default=75, minValue=-50, maxValue=50})
 impulse.Settings:Define("view_thirdperson_offset_y", {name="Thirdperson Y Offset", category="View", type="slider", default=20, minValue=-50, maxValue=50})
 impulse.Settings:Define("view_thirdperson_offset_z", {name="Thirdperson Z Offset", category="View", type="slider", default=5, minValue=-50, maxValue=50})
@@ -167,11 +166,10 @@ impulse.Settings:Define("view_thirdperson_smooth_origin", {name="Thirdperson Smo
 impulse.Settings:Define("view_thirdperson_smooth_angles", {name="Thirdperson Smoothness for Angles", category="View", type="tickbox", default=false})
 impulse.Settings:Define("view_firstperson_smooth_origin", {name="Firstperson Smoothness for Origin", category="View", type="tickbox", default=false})
 impulse.Settings:Define("view_firstperson_smooth_angles", {name="Firstperson Smoothness for Angles", category="View", type="tickbox", default=false})
-impulse.Settings:Define("view_firstperson_fov", {name="Firstperson FOV", category="View", type="slider", default=90, minValue=75, maxValue=120})
 impulse.Settings:Define("perf_mcore", {name="Multi-core rendering enabled", category="Performance", type="tickbox", default=false, onChanged = function(newValue)
     RunConsoleCommand("gmod_mcore_test", tostring(tonumber(newValue)))
 
-    if newValue == 1 then
+    if ( newValue == 1 ) then
         RunConsoleCommand("mat_queue_mode", "-1")
         RunConsoleCommand("cl_threaded_bone_setup", "1")
     else
@@ -189,27 +187,25 @@ impulse.Settings:Define("chat_pmpings", {name="PM and tag sound enabled", catego
 local loweredAngles = Angle(30, -30, -25)
 
 function GM:CalcViewModelView(weapon, viewmodel, oldEyePos, oldEyeAng, eyePos, eyeAngles)
-    if not IsValid(weapon) then return end
+    if ( !IsValid(weapon) ) then return end
 
     local vm_origin, vm_angles = eyePos, eyeAngles
 
-    do
-        local ply = LocalPlayer()
-        local raiseTarg = 0
+    local ply = LocalPlayer()
+    local raiseTarg = 0
 
-        if !ply:IsWeaponRaised() then
-            raiseTarg = 100
-        end
-
-        local frac = (ply.raiseFraction or 0) / 100
-        local rot = weapon.LowerAngles or loweredAngles
-
-        vm_angles:RotateAroundAxis(vm_angles:Up(), rot.p * frac)
-        vm_angles:RotateAroundAxis(vm_angles:Forward(), rot.y * frac)
-        vm_angles:RotateAroundAxis(vm_angles:Right(), rot.r * frac)
-
-        ply.raiseFraction = Lerp(FrameTime() * 2, ply.raiseFraction or 0, raiseTarg)
+    if ( !ply:IsWeaponRaised() ) then
+        raiseTarg = 100
     end
+
+    local frac = (ply.raiseFraction or 0) / 100
+    local rot = weapon.LowerAngles or loweredAngles
+
+    vm_angles:RotateAroundAxis(vm_angles:Up(), rot.p * frac)
+    vm_angles:RotateAroundAxis(vm_angles:Forward(), rot.y * frac)
+    vm_angles:RotateAroundAxis(vm_angles:Right(), rot.r * frac)
+
+    ply.raiseFraction = Lerp(FrameTime() * 2, ply.raiseFraction or 0, raiseTarg)
 
     local func = weapon.GetViewModelPosition
     if ( func ) then
@@ -231,26 +227,28 @@ end
 function GM:ShouldDrawLocalPlayer()
     if ( "falloverRagdoll" ) then
         local entity = Entity(LocalPlayer():GetNetVar("falloverRagdoll", 0))
-        if IsValid(entity) then
+        if ( IsValid(entity) ) then
             return false
         end
     end
 
-    if impulse.Settings:Get("view_thirdperson") then return true end
+    if ( impulse.Settings:Get("view_thirdperson") ) then
+        return true
+    end
 end
 
 local thirdperson_smooth_origin
 local thirdperson_smooth_angles
 local firstperson_smooth_origin
 local firstperson_smooth_angles
-function GM:CalcView(player, origin, angles, fov)
+function GM:CalcView(ply, origin, angles, fov)
     local view
 
-    if IsValid(impulse.SplashScreen) or (IsValid(impulse.MainMenu) and impulse.MainMenu:IsVisible() and !impulse.MainMenu.popup) then
+    if ( IsValid(impulse.SplashScreen) or ( IsValid(impulse.MainMenu) and impulse.MainMenu:IsVisible() and !impulse.MainMenu.popup ) ) then
         view = {
             origin = impulse.Config.MenuCamPos,
             angles = impulse.Config.MenuCamAng,
-            fov = impulse.Config.MenuCamFOV or 70
+            fov = impulse.Config.MenuCamFOV or 75
         }
 
         return view
@@ -258,14 +256,15 @@ function GM:CalcView(player, origin, angles, fov)
 
     if ( "falloverRagdoll" ) then
         local entity = Entity(LocalPlayer():GetNetVar("falloverRagdoll", 0))
-        if IsValid(entity) then return end
+        if ( IsValid(entity) ) then
+            return
+        end
     end
     
-    local ragdoll = player.Ragdoll
-
-    if ragdoll and IsValid(ragdoll) then
+    local ragdoll = ply.Ragdoll
+    if ( IsValid(ragdoll) ) then
         local eyes = ragdoll:GetAttachment(ragdoll:LookupAttachment("eyes"))
-        if not eyes then return end
+        if ( !eyes ) then return end
 
         local pos, ang = eyes.Pos, eyes.Ang
 
@@ -277,7 +276,7 @@ function GM:CalcView(player, origin, angles, fov)
             maxs = Vector(10, 10, 10),
             mask = MASK_SHOT_HULL,
             filter = function(ent)
-                if ent == ragdoll then
+                if ( ent == ragdoll ) then
                     return false
                 end
 
@@ -290,44 +289,43 @@ function GM:CalcView(player, origin, angles, fov)
         view = {
             origin = pos,
             angles = ang,
-            fov = 70
+            fov = 75
         }
 
         return view
     end
 
-    if impulse.Settings:Get("view_thirdperson") and player:GetViewEntity() == player then
-        if not thirdperson_smooth_origin then
+    if ( impulse.Settings:Get("view_thirdperson") and ply:GetViewEntity() == ply ) then
+        if ( !thirdperson_smooth_origin ) then
             thirdperson_smooth_origin = origin
         end
 
-        if not thirdperson_smooth_angles then
+        if ( !thirdperson_smooth_angles ) then
             thirdperson_smooth_angles = angles
         end
 
-        if firstperson_smooth_origin then
+        if ( firstperson_smooth_origin ) then
             firstperson_smooth_origin = nil
         end
 
-        if firstperson_smooth_angles then
+        if ( firstperson_smooth_angles ) then
             firstperson_smooth_angles = nil
         end
 
-        local angles = player:GetAimVector():Angle()
+        local angles = ply:GetAimVector():Angle()
         local targetpos = Vector(0, 0, 60)
 
-        if player:KeyDown(IN_DUCK) then
-            if player:GetVelocity():Length() > 0 then
+        if ( ply:KeyDown(IN_DUCK) ) then
+            if ( ply:GetVelocity():Length() > 0 ) then
                 targetpos.z = 50
             else
                 targetpos.z = 40
             end
         end
 
-        player:SetAngles(angles)
+        ply:SetAngles(angles)
 
         local pos = targetpos
-
         local offset = Vector(5, 5, 5)
 
         offset.x = impulse.Settings:Get("view_thirdperson_offset_x")
@@ -335,58 +333,57 @@ function GM:CalcView(player, origin, angles, fov)
         offset.z = impulse.Settings:Get("view_thirdperson_offset_z")
         angles.yaw = angles.yaw + 3
 
-        local t = {}
+        local traceData = {}
+        traceData.start = ply:GetPos() + pos
+        traceData.endpos = traceData.start + angles:Forward() * -offset.x
 
-        t.start = player:GetPos() + pos
-        t.endpos = t.start + angles:Forward() * -offset.x
-
-        t.endpos = t.endpos + angles:Right() * offset.y
-        t.endpos = t.endpos + angles:Up() * offset.z
-        t.mask = MASK_SHOT
-        t.filter = function(ent)
-            if ent == LocalPlayer() then
+        traceData.endpos = traceData.endpos + angles:Right() * offset.y
+        traceData.endpos = traceData.endpos + angles:Up() * offset.z
+        traceData.mask = MASK_SHOT
+        traceData.filter = function(ent)
+            if ( ent == LocalPlayer() ) then
                 return false
             end
             
-            if ent.GetNoDraw(ent) then
+            if ( ent.GetNoDraw(ent) ) then
                 return false
             end
 
             return true
         end
-        
-        local tr = util.TraceLine(t)
-        tr.mask = MASK_SHOT
 
-        pos = tr.HitPos
+        traceData = util.TraceLine(traceData)
+        traceData.mask = MASK_SHOT
 
-        if (tr.Fraction < 1.0) then
-            pos = pos + tr.HitNormal * 5
+        pos = traceData.HitPos
+
+        if ( traceData.Fraction < 1.0 ) then
+            pos = pos + traceData.HitNormal * 5
         end
 
-        local fov = impulse.Settings:Get("view_thirdperson_fov")
-        local wep = player:GetActiveWeapon()
-
-        if wep and IsValid(wep) and wep.GetIronsights and !wep.NoThirdpersonIronsights then
+        local wep = ply:GetActiveWeapon()
+        if ( IsValid(wep) and wep.GetIronsights and !wep.NoThirdpersonIronsights ) then
             fov = Lerp(FrameTime() * 15, wep.FOVMultiplier, wep:GetIronsights() and wep.IronsightsFOV or 1) * fov
         end
 
-        local delta = player.EyePos(player) - origin
+        local delta = ply:EyePos() - origin
 
-        if impulse.Settings:Get("view_thirdperson_smooth_origin") then
+        if ( impulse.Settings:Get("view_thirdperson_smooth_origin") ) then
             thirdperson_smooth_origin = LerpVector(FrameTime() * 10, thirdperson_smooth_origin, pos + delta)
         else
             thirdperson_smooth_origin = pos + delta
         end
         
-        if impulse.Settings:Get("view_thirdperson_smooth_angles") then
+        if ( impulse.Settings:Get("view_thirdperson_smooth_angles") ) then
             thirdperson_smooth_angles = LerpAngle(FrameTime() * 10, thirdperson_smooth_angles, angles)
         else
             thirdperson_smooth_angles = angles
         end
 
         -- if we havent done anything, dont return anything
-        if thirdperson_smooth_origin == origin and thirdperson_smooth_angles == angles and fov == 90 then return end
+        if ( thirdperson_smooth_origin == origin and thirdperson_smooth_angles == angles ) then
+            return
+        end
 
         return {
             origin = thirdperson_smooth_origin,
@@ -394,43 +391,42 @@ function GM:CalcView(player, origin, angles, fov)
             fov = fov
         }
     else
-        if thirdperson_smooth_origin then
+        if ( thirdperson_smooth_origin ) then
             thirdperson_smooth_origin = nil
         end
 
-        if thirdperson_smooth_angles then
+        if ( thirdperson_smooth_angles ) then
             thirdperson_smooth_angles = nil
         end
 
-        if not firstperson_smooth_origin then
+        if ( !firstperson_smooth_origin ) then
             firstperson_smooth_origin = origin
         end
 
-        if not firstperson_smooth_angles then
+        if ( !firstperson_smooth_angles ) then
             firstperson_smooth_angles = angles
         end
 
-        local fov = impulse.Settings:Get("view_firstperson_fov")
-
-        if impulse.Settings:Get("view_firstperson_smooth_origin") then
+        if ( impulse.Settings:Get("view_firstperson_smooth_origin") ) then
             firstperson_smooth_origin = LerpVector(FrameTime() * 10, firstperson_smooth_origin, origin)
         else
             firstperson_smooth_origin = origin
         end
 
-        if impulse.Settings:Get("view_firstperson_smooth_angles") then
+        if ( impulse.Settings:Get("view_firstperson_smooth_angles") ) then
             firstperson_smooth_angles = LerpAngle(FrameTime() * 10, firstperson_smooth_angles, angles)
         else
             firstperson_smooth_angles = angles
         end
 
         -- if we havent done anything, dont return anything
-        if firstperson_smooth_origin == origin and firstperson_smooth_angles == angles and fov == 90 then return end
+        if ( firstperson_smooth_origin == origin and firstperson_smooth_angles == angles ) then
+            return
+        end
 
         return {
             origin = firstperson_smooth_origin,
-            angles = firstperson_smooth_angles,
-            fov = fov
+            angles = firstperson_smooth_angles
         }
     end
 end
