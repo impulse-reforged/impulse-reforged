@@ -1387,22 +1387,6 @@ function GM:CanExitVehicle(veh, ply)
     return true
 end
 
-function GM:PlayerSetHandsModel(ply, hands)
-    local handModel = impulse.Teams.Stored[ply:Team()].handModel
-    if ( handModel ) then
-        hands:SetModel(handModel)
-        return
-    end
-
-    local simplemodel = player_manager.TranslateToPlayerModelName(ply:GetModel())
-    local info = player_manager.TranslatePlayerHands(simplemodel)
-    if ( info ) then
-        hands:SetModel(info.model)
-        hands:SetSkin(info.skin)
-        hands:SetBodyGroups(info.body)
-    end
-end
-
 function GM:PlayerSpray()
     return true
 end
