@@ -22,7 +22,7 @@ concommand.Add("impulse_set_group", function(ply, cmd, args)
 
         local targ = impulse.Util:FindPlayer(find)
         if IsValid(targ) then
-            targ:SetUserGroup(group)
+            targ:SetUserGroup(group, true)
             MsgC(Color(83, 143, 239), "[impulse-reforged] Set '" .. targ:SteamID64() .. " (" .. targ:Name() .. ")' to group '" .. group .. "'.\n")
 
             local query = mysql:Update("impulse_players")
