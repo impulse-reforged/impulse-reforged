@@ -333,6 +333,10 @@ function GM:PlayerLoadout(ply)
     ply:SetRunSpeed(impulse.Config.JogSpeed)
     ply:SetWalkSpeed(impulse.Config.WalkSpeed)
 
+    ply:SetupHands()
+
+    hook.Run("PostPlayerLoadout", ply)
+
     return true
 end
 
