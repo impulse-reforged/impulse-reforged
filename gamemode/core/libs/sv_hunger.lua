@@ -28,19 +28,19 @@ local PLAYER = FindMetaTable("Player")
 -- @realm server
 -- @int amount Amount of hunger (0-100)
 function PLAYER:SetHunger(amount)
-    self:SetNetVar("hunger", math.Clamp(amount, 0, 100))
+    self:SetLocalVar("hunger", math.Clamp(amount, 0, 100))
 end
 
 --- Gives the player the amount of hunger
 -- @realm server
 -- @int amount Amount of hunger (0-100)
 function PLAYER:FeedHunger(amount)
-    self:SetHunger(amount + self:GetNetVar("hunger", 100))
+    self:SetHunger(amount + self:GetLocalVar("hunger", 100))
 end
 
 --- Takes the amount of hunger from the player
 -- @realm server
 -- @int amount Amount of hunger (0-100)
 function PLAYER:TakeHunger(amount)
-    self:SetHunger(self:GetNetVar("hunger", 100) - amount)
+    self:SetHunger(self:GetLocalVar("hunger", 100) - amount)
 end

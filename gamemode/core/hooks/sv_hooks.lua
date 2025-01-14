@@ -158,10 +158,10 @@ function GM:PlayerSetup(ply, data)
     end
 
 	ply:SetNetVar("roleplayName", data.rpname)
-	ply:SetNetVar("xp", data.xp)
+	ply:SetLocalVar("xp", data.xp)
 
-	ply:SetNetVar("money", data.money)
-	ply:SetNetVar("bankMoney", data.bankmoney)
+	ply:SetLocalVar("money", data.money)
+	ply:SetLocalVar("bankMoney", data.bankmoney)
 
     local jsonData = util.JSONToTable(data.data or "") or {}
 
@@ -1033,7 +1033,7 @@ function GM:PlayerThink(ply)
                 ply:TakeHunger(1)
             end
 
-            if ( ply:GetNetVar("hunger", 100) < 1 ) then
+            if ( ply:GetHunger() < 1 ) then
                 if ( ply:Health() > 10 ) then
                     ply:TakeDamage(1, ply, ply)
                 end
@@ -1045,7 +1045,7 @@ function GM:PlayerThink(ply)
         end
 
         if ( plyTable.impulseNextHeal < curTime ) then
-            local hunger = ply:GetNetVar("hunger", 10)
+            local hunger = ply:GetHunger()
             if ( hunger >= 90 and ply:Health() < 75 ) then
                 ply:SetHealth(math.Clamp(ply:Health() + 1, 0, 75))
                 plyTable.impulseNextHeal = curTime + impulse.Config.HungerHealTime

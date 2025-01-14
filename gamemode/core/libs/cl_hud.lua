@@ -356,13 +356,13 @@ function GM:HUDPaint()
         surface.DrawTexturedRect(110, y+66+yAdd, 18, 16)
 
         surface.SetTextPos(136, y+86+yAdd)
-        surface.DrawText("Hunger: " .. LocalPlayer():GetNetVar("hunger", 100))
+        surface.DrawText("Hunger: " .. LocalPlayer():GetHunger())
         if seeColIcons == true then surface.SetDrawColor(hungerCol) end
         surface.SetMaterial(hungerIcon)
         surface.DrawTexturedRect(110, y+87+yAdd, 18, 18)
 
         surface.SetTextPos(136, y+108+yAdd)
-        surface.DrawText("Money: " .. impulse.Config.CurrencyPrefix .. LocalPlayer():GetNetVar("money", 0))
+        surface.DrawText("Money: " .. impulse.Config.CurrencyPrefix .. LocalPlayer():GetMoney())
         if seeColIcons == true then surface.SetDrawColor(moneyCol) end
         surface.SetMaterial(moneyIcon)
         surface.DrawTexturedRect(110, y+107+yAdd, 18, 18)
@@ -378,7 +378,7 @@ function GM:HUDPaint()
             aboveHUDUsed = true
         end
 
-        draw.DrawText(ply:GetNetVar("xp", 0) .. "XP", "Impulse-Elements19", 55, y+150+(yAdd-8), color_white, TEXT_ALIGN_LEFT)
+        draw.DrawText(ply:GetLocalVar("xp", 0) .. "XP", "Impulse-Elements19", 55, y+150+(yAdd-8), color_white, TEXT_ALIGN_LEFT)
         surface.SetMaterial(xpIcon)
         surface.DrawTexturedRect(30, y+150+(yAdd-8), 18, 18)
 
@@ -423,7 +423,7 @@ function GM:HUDPaint()
 
                 surface.SetFont("Impulse-Elements18-Shadow")
                 surface.SetTextPos(scrW-130, scrH-50)
-                surface.DrawText("Props: " .. ply:GetNetVar("propCount", 0) .. "/" .. ((ply:IsDonator() and impulse.Config.PropLimitDonator) or impulse.Config.PropLimit))
+                surface.DrawText("Props: " .. ply:GetLocalVar("propCount", 0) .. "/" .. ((ply:IsDonator() and impulse.Config.PropLimitDonator) or impulse.Config.PropLimit))
             end
         end
 

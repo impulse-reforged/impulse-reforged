@@ -7,7 +7,7 @@ local PLAYER = FindMetaTable("Player")
 -- @realm shared
 -- @treturn int amount Amount of XP a player has
 function PLAYER:GetXP()
-    return tonumber(self:GetNetVar("xp", 0))
+    return tonumber(self:GetLocalVar("xp", 0))
 end
 
 if ( SERVER ) then
@@ -26,7 +26,7 @@ if ( SERVER ) then
             query:Execute()
         end
 
-        return self:SetNetVar("xp", amount)
+        return self:SetLocalVar("xp", amount)
     end
     
     --- Takes XP from a player

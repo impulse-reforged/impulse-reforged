@@ -6,7 +6,7 @@ function PANEL:Init()
     self:SetTitle("ATM")
     self:MakePopup()
 
-    local bankBalance = LocalPlayer():GetNetVar("bankMoney", 0)
+    local bankBalance = LocalPlayer():GetLocalVar("bankMoney", 0)
     local prefix = impulse.Config.CurrencyPrefix
     local parent = self
 
@@ -64,7 +64,7 @@ function PANEL:SetBalance(m)
 end
 
 function PANEL:Think()
-    local curMoney = LocalPlayer():GetNetVar("bankMoney", 0)
+    local curMoney = LocalPlayer():GetLocalVar("bankMoney", 0)
     self.lastMoney = self.lastMoney or curMoney
 
     if self.lastMoney != curMoney then

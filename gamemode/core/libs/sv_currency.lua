@@ -51,6 +51,10 @@ end
 
 local PLAYER = FindMetaTable("Player")
 
+--- Set's the amount of money a player has
+-- @realm server
+-- @int amount The amount of money to set for the player
+-- @treturn int amount The new amount of money the player has received
 function PLAYER:SetMoney(amount)
     if ( !self.impulseBeenSetup or self.impulseBeenSetup == false ) then return end
     if ( !isnumber(amount) or amount < 0 or amount >= 1 / 0 ) then return end
@@ -60,9 +64,13 @@ function PLAYER:SetMoney(amount)
     query:Where("steamid", self:SteamID64())
     query:Execute()
 
-    return self:SetNetVar("money", amount)
+    return self:SetLocalVar("money", amount)
 end
 
+--- Set's the amount of bank money a player has
+-- @realm server
+-- @int amount The amount of bank money to set for the player
+-- @treturn int amount The new amount of bank money the player has received
 function PLAYER:SetBankMoney(amount)
     if ( !self.impulseBeenSetup or self.impulseBeenSetup == false ) then return end
     if ( !isnumber(amount) or amount < 0 or amount >= 1 / 0 ) then return end
@@ -72,21 +80,31 @@ function PLAYER:SetBankMoney(amount)
     query:Where("steamid", self:SteamID64())
     query:Execute()
 
-    return self:SetNetVar("bankMoney", amount)
+    return self:SetLocalVar("bankMoney", amount)
 end
 
-function PLAYER:GiveBankMoney(amount)
-    return self:SetBankMoney(self:GetBankMoney() + amount)
-end
-
-function PLAYER:TakeBankMoney(amount)
-    return self:SetBankMoney(self:GetBankMoney() - amount)
-end
-
+--- Gives the player the amount of money
+-- @realm server
+-- @int amount Amount of money to give to the player
 function PLAYER:GiveMoney(amount)
     return self:SetMoney(self:GetMoney() + amount)
 end
 
+--- Takes the amount of money from the player
 function PLAYER:TakeMoney(amount)
     return self:SetMoney(self:GetMoney() - amount)
+end
+
+--- Gives the player the amount of bank money
+-- @realm server
+-- @int amount Amount of bank money to give to the player
+function PLAYER:GiveBankMoney(amount)
+    return self:SetBankMoney(self:GetBankMoney() + amount)
+end
+
+--- Takes the amount of bank money from the player
+-- @realm server
+-- @int amount Amount of bank money to take from the player
+function PLAYER:TakeBankMoney(amount)
+    return self:SetBankMoney(self:GetBankMoney() - amount)
 end

@@ -19,5 +19,5 @@ local PLAYER = FindMetaTable("Player")
 -- @realm shared
 -- @treturn int amount Amount of hunger a player has
 function PLAYER:GetHunger()
-    return tonumber(self:GetNetVar("hunger", 100))
+    return tonumber(self:GetLocalVar("hunger", 100))
 end

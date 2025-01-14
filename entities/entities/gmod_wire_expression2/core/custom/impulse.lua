@@ -9,32 +9,6 @@ local function checkOwner(self)
 end
 
 __e2setcost(35)
-e2function number impulseGetPlayerMoney(entity ent)
-    if not IsValid(ent) then return end
-    if not ent:IsPlayer() then
-        return 0
-    end
-
-    return ent:GetMoney() or 0
-end
-
-e2function number impulseGetPlayerHunger(entity ent)
-    if not IsValid(ent) then return end
-    if not ent:IsPlayer() then
-        return 0
-    end
-
-    return ent:GetNetVar("hunger", 0) or 0
-end
-
-e2function number impulseGetPlayerXP(entity ent)
-    if not IsValid(ent) then return end
-    if not ent:IsPlayer() then
-        return 0
-    end
-
-    return ent:GetXP()
-end
 
 e2function string impulseGetItemClass(entity ent)
     if not IsValid(ent) then return end
