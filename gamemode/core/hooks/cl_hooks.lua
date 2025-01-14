@@ -254,7 +254,7 @@ function GM:CalcView(ply, origin, angles, fov)
         return view
     end
 
-    if ( "falloverRagdoll" ) then
+    if ( LocalPlayer():GetNetVar("falloverRagdoll", 0) ) then
         local entity = Entity(LocalPlayer():GetNetVar("falloverRagdoll", 0))
         if ( IsValid(entity) ) then
             return
