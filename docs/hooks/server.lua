@@ -93,7 +93,7 @@ end
 -- @entity ragdoll The ragdoll entity
 -- @entity ply The player who died
 -- @entity attacker The killer
-function PlayerRagdollPreSpawn()
+function PrePlayerDeathRagdoll()
 end
 
 --- Called when a player dies, you can drop loot in this hook

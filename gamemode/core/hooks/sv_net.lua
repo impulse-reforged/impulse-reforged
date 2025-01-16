@@ -1427,8 +1427,7 @@ net.Receive("impulseInvContainerDoMove", function(len, ply)
 
     if container:GetPos():DistToSqr(ply:GetPos()) > (120 ^ 2) then return end
 
-    local isLoot = container:GetLoot()
-
+    local isLoot = container.GetLoot and container:GetLoot() or false
     if isLoot then
         if ply:IsCP() then return end
     elseif container.Code and !container.Authorised[ply] then return end

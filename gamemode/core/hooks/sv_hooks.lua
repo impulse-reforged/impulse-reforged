@@ -610,8 +610,6 @@ function GM:PlayerCanHearPlayersVoice(listener, speaker)
 end
 
 function GM:DoPlayerDeath(ply, attacker, dmginfo)
-    local vel = ply:GetVelocity()
-
     local ragCount = table.Count(ents.FindByClass("prop_ragdoll"))
     if ( ragCount > 32 ) then
         print("[impulse-reforged] Avoiding ragdoll body spawn for performance reasons .. . (rag count: " .. ragCount .. ")")
@@ -645,13 +643,12 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
         ragdoll:SetBodygroup(v.id, ply:GetBodygroup(v.id))
     end
 
-    hook.Run("PlayerRagdollPreSpawn", ragdoll, ply, attacker)
+    hook.Run("PrePlayerDeathRagdoll", ply, ragdoll)
 
     ragdoll:Spawn()
     ragdoll:SetCollisionGroup(COLLISION_GROUP_WORLD)
 
     local velocity = ply:GetVelocity()
-
     for i = 0, ragdoll:GetPhysicsObjectCount() - 1 do
         local physObj = ragdoll:GetPhysicsObjectNum(i)
         if ( IsValid(physObj) ) then
@@ -667,6 +664,8 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
         end
     end
 
+    hook.Run("PostPlayerDeathRagdoll", ply, ragdoll)
+
     timer.Simple(impulse.Config.BodyDeSpawnTime, function()
         if ( !IsValid(ragdoll) ) then return end
 
@@ -674,6 +673,8 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 
         timer.Simple(10, function()
             SafeRemoveEntity(ragdoll)
+
+            hook.Run("OnPlayerRagdollRemove", ply, ragdoll)
         end)
     end)
 
@@ -709,35 +710,39 @@ function GM:PlayerDeath(ply, killer)
 
     ply:UnEquipInventory()
 
-    local inv = ply:GetInventory()
-    local restorePoint = {}
-    local pos = ply:LocalToWorld(ply:OBBCenter())
-    local dropped = 0
+    local shouldSpawn = hook.Run("PlayerShouldDropDeathItems", ply, killer)
+    if ( shouldSpawn != false ) then
+        local inv = ply:GetInventory()
+        local restorePoint = {}
+        local pos = ply:LocalToWorld(ply:OBBCenter())
+        local dropped = 0
 
-    for k, v in pairs(inv) do
-        local class = impulse.Inventory:ClassToNetID(v.class)
-        local item = impulse.Inventory.Items[class]
+        for k, v in pairs(inv) do
+            local class = impulse.Inventory:ClassToNetID(v.class)
+            local item = impulse.Inventory.Items[class]
 
-        if ( !v.restricted ) then
-            table.insert(restorePoint, v.class)
-        end
+            if ( !v.restricted ) then
+                table.insert(restorePoint, v.class)
+            end
 
-        if ( item.DropOnDeath and !v.restricted ) then
-            local ent = impulse.Inventory:SpawnItem(v.class, pos)
-            ent.ItemClip = v.clip
+            if ( item.DropOnDeath and !v.restricted ) then
+                local ent = impulse.Inventory:SpawnItem(v.class, pos)
+                ent.ItemClip = v.clip
 
-            dropped = dropped + 1
+                dropped = dropped + 1
 
-            if ( dropped > 4 ) then
-                break
+                if ( dropped > 4 ) then
+                    break
+                end
             end
         end
+
+        hook.Run("PlayerDropDeathItems", ply, killer, pos, dropped, inv)
+
+        plyTable.InventoryRestorePoint = restorePoint
     end
 
-    hook.Run("PlayerDropDeathItems", ply, killer, pos, dropped, inv)
-
     ply:ClearInventory(1)
-    plyTable.InventoryRestorePoint = restorePoint
     plyTable.HasDied = true
 end
 

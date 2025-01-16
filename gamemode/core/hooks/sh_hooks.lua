@@ -55,3 +55,11 @@ function GM:Move(ply, mvData)
         mvData:SetSideSpeed(sideRatio * speed)
     end
 end
+
+function GM:IsContainer(ent)
+    if ( !IsValid(ent) ) then return false end
+
+    if ( ent:GetClass() == "impulse_container" ) then
+        return true
+    end
+end
