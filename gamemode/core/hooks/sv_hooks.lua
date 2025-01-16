@@ -81,6 +81,33 @@ function GM:PlayerInitialSpawn(ply)
                 ply:Freeze(false)
                 hook.Run("PlayerSetup", ply, db)
             end
+
+            if ( GExtension ) then
+                MsgC(Color(0, 255, 0), "[impulse-reforged] GExtension detected, skipping group setting for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'.\n")
+            elseif ( VyHub ) then
+                MsgC(Color(0, 255, 0), "[impulse-reforged] VyHub detected, skipping group setting for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'.\n")
+            else
+                if ( db.group ) then
+                    ply:SetUserGroup(db.group, true)
+                    MsgC(Color(0, 255, 0), "[impulse-reforged] Set '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")' to group '" .. db.group .. "'.\n")
+                else
+                    ply:SetUserGroup("user", true)
+                    MsgC(Color(255, 0, 0), "[impulse-reforged] No group found for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'. Defaulting to user.\n")
+    
+                    local queryGroup = mysql:Update("impulse_players")
+                    queryGroup:Update("group", "user")
+                    queryGroup:Where("steamid", ply:SteamID64())
+                    queryGroup:Callback(function(result)
+                        if ( !result ) then
+                            ply:Kick("Failed to update group in database.")
+                        end
+                    end)
+    
+                    queryGroup:Execute()
+    
+                    ply:SaveData()
+                end
+            end
         end)
 
         query:Execute()
