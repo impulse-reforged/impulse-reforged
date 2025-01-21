@@ -378,7 +378,7 @@ function GM:HUDPaint()
             aboveHUDUsed = true
         end
 
-        draw.DrawText(ply:GetLocalVar("xp", 0) .. "XP", "Impulse-Elements19", 55, y+150+(yAdd-8), color_white, TEXT_ALIGN_LEFT)
+        draw.DrawText(ply:GetXP() .. "XP", "Impulse-Elements19", 55, y+150+(yAdd-8), color_white, TEXT_ALIGN_LEFT)
         surface.SetMaterial(xpIcon)
         surface.DrawTexturedRect(30, y+150+(yAdd-8), 18, 18)
 

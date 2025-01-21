@@ -19,17 +19,17 @@ if ( SERVER ) then
     -- @realm server
     -- @string class Achievement class
     -- @bool[opt=false] skipPoints Wether to skip calculating the points from this achievement
-    function PLAYER:AchievementGive(name, skipPoints)
+    function PLAYER:AchievementGive(class, skipPoints)
         if not self.impulseData then return end
 
         self.impulseData.Achievements = self.impulseData.Achievements or {}
-        if self.impulseData.Achievements[name] then return end
+        if self.impulseData.Achievements[class] then return end
 
-        self.impulseData.Achievements[name] = math.floor(os.time())
+        self.impulseData.Achievements[class] = math.floor(os.time())
         self:SaveData()
 
         net.Start("impulseAchievementGet")
-        net.WriteString(name)
+        net.WriteString(class)
         net.Send(self)
 
         if not skipPoints then
@@ -40,11 +40,11 @@ if ( SERVER ) then
     --- Takes an achievement from a player
     -- @realm server
     -- @string class Achievement class
-    function PLAYER:AchievementTake(name)
+    function PLAYER:AchievementTake(class)
         if not self.impulseData then return end
 
         self.impulseData.Achievements = self.impulseData.Achievements or {}
-        self.impulseData.Achievements[name] = nil
+        self.impulseData.Achievements[class] = nil
         self:SaveData()
     end
 
@@ -52,14 +52,14 @@ if ( SERVER ) then
     -- @realm server
     -- @string class Achievement class
     -- @treturn bool Has achievement
-    function PLAYER:AchievementHas(name)
+    function PLAYER:AchievementHas(class)
         if not self.impulseData then
             return false
         end
 
         self.impulseData.Achievements = self.impulseData.Achievements or {}
 
-        if self.impulseData.Achievements[name] then
+        if self.impulseData.Achievements[class] then
             return true
         end
 
@@ -69,14 +69,14 @@ if ( SERVER ) then
     --- Runs the achievement's check function and if it returns true, awards the achievement
     -- @realm server
     -- @string class Achievement class
-    function PLAYER:AchievementCheck(name)
+    function PLAYER:AchievementCheck(class)
         if not self.impulseData then return end
 
         self.impulseData.Achievements = self.impulseData.Achievements or {}
-        local ach = impulse.Config.Achievements[name]
+        local ach = impulse.Config.Achievements[class]
 
-        if ach.OnJoin and ach.Check and !self:AchievementHas(name) and ach.Check(self) then
-            self:AchievementGive(name)
+        if ach.OnJoin and ach.Check and !self:AchievementHas(class) and ach.Check(self) then
+            self:AchievementGive(class)
         end
     end
 

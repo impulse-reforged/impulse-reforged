@@ -7,28 +7,28 @@ local setHealthCommand = {
     description = "Sets health of the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
-        local hp = arg[2]
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local amount = args[2]
 
-        if not hp or not tonumber(hp) then return end
+        if ( !amount or !tonumber(amount) ) then return end
 
-        if not ply:IsLeadAdmin() then
-            hp = math.Clamp(hp, 1, 100)
+        if ( !ply:IsLeadAdmin() ) then
+            amount = math.Clamp(amount, 1, 100)
         end
 
  
-        if targ and IsValid(targ) then
-            targ:SetHealth(hp)
-            ply:Notify("You have set " .. targ:Nick() .. "'s health to " .. hp .. ".")
+        if ( IsValid(target) ) then
+            target:SetHealth(amount)
+            ply:Notify("You have set " .. target:Nick() .. "'s health to " .. amount .. ".")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") health to " .. hp .. ".")
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") health to " .. amount .. ".")
                 end
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -40,27 +40,27 @@ local setArmorCommand = {
     description = "Sets armor of the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
-        local hp = arg[2]
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local amount = args[2]
 
-        if not hp or not tonumber(hp) then return end
+        if ( !amount or !tonumber(amount) ) then return end
 
-        if not ply:IsLeadAdmin() then
-            hp = math.Clamp(hp, 1, 100)
+        if ( !ply:IsLeadAdmin() ) then
+            amount = math.Clamp(amount, 1, 100)
         end
 
-        if targ and IsValid(targ) then
-            targ:SetArmor(hp)
-            ply:Notify("You have set " .. targ:Nick() .. "'s armor to " .. hp .. ".")
+        if ( IsValid(target) ) then
+            target:SetArmor(amount)
+            ply:Notify("You have set " .. target:Nick() .. "'s armor to " .. amount .. ".")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") armor to " .. hp .. ".")
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") armor to " .. amount .. ".")
                 end
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -71,55 +71,109 @@ local setHungerCommand = {
     description = "Sets hunger of the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
-        local hp = arg[2]
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local amount = args[2]
 
-        if not hp or not tonumber(hp) then return end
+        if ( !amount or !tonumber(amount) ) then return end
 
-        if not ply:IsLeadAdmin() then
-            hp = math.Clamp(hp, 1, 100)
+        if ( !ply:IsLeadAdmin() ) then
+            amount = math.Clamp(amount, 1, 100)
         end
 
-        if targ and IsValid(targ) then
-            targ:SetHunger(hp)
-            ply:Notify("You have set " .. targ:Nick() .. "'s hunger to " .. hp .. ".")
+        if ( IsValid(target) ) then
+            target:SetHunger(amount)
+            ply:Notify("You have set " .. target:Nick() .. "'s hunger to " .. amount .. ".")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") hunger to " .. hp .. ".")
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") hunger to " .. amount .. ".")
                 end
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
 
 impulse.RegisterChatCommand("/sethunger", setHungerCommand)
 
+local setMoneyCommand = {
+    description = "Sets money of the specified player.",
+    requiresArg = true,
+    superAdminOnly = true,
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local amount = args[2]
+
+        if ( !amount or !tonumber(amount) ) then return end
+
+        if ( IsValid(target) ) then
+            target:SetMoney(amount)
+            ply:Notify("You have set " .. target:Nick() .. "'s money to " .. amount .. ".")
+
+            for k, v in player.Iterator() do
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") money to " .. amount .. ".")
+                end
+            end
+        else
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
+        end
+    end
+}
+
+impulse.RegisterChatCommand("/setmoney", setMoneyCommand)
+
+local setBankMoneyCommand = {
+    description = "Sets bank money of the specified player.",
+    requiresArg = true,
+    superAdminOnly = true,
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local amount = args[2]
+
+        if ( !amount or !tonumber(amount) ) then return end
+
+        if ( IsValid(target) ) then
+            target:SetBankMoney(amount)
+            ply:Notify("You have set " .. target:Nick() .. "'s bank money to " .. amount .. ".")
+
+            for k, v in player.Iterator() do
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") bank money to " .. amount .. ".")
+                end
+            end
+        else
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
+        end
+    end
+}
+
+impulse.RegisterChatCommand("/setbankmoney", setBankMoneyCommand)
+
 local fixLegsCommand = {
     description = "Fixes the legs of the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
 
-        if targ and IsValid(targ) then
-            if targ:HasBrokenLegs() then
-                targ:FixLegs()
-                ply:Notify("You have fixed " .. targ:Nick() .. "'s legs.")
+        if ( IsValid(target) ) then
+            if ( target:HasBrokenLegs() ) then
+                target:FixLegs()
+                ply:Notify("You have fixed " .. target:Nick() .. "'s legs.")
 
                 for k, v in player.Iterator() do
-                    if v:IsLeadAdmin() then
-                        v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has fixed " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") legs.")
+                    if ( v:IsLeadAdmin() ) then
+                        v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has fixed " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") legs.")
                     end
                 end
             else
-                ply:Notify(targ:Nick() .. " does not have broken legs.")
+                ply:Notify(target:Nick() .. " does not have broken legs.")
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -130,29 +184,29 @@ local setClassCommand = {
     description = "Sets the class of the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
-        if not arg[2] then
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        if ( !args[2] ) then
             return ply:Notify("No class specified.")
         end
 
-        local id, class = impulse.Teams:FindClass(arg[2])
+        local id, class = impulse.Teams:FindClass(args[2])
 
         if not class then
             return ply:Notify("Invalid class.")
         end
 
-        if targ and IsValid(targ) then
-            targ:SetTeamClass(id)
-            ply:Notify("You have set " .. targ:Nick() .. "'s class to " .. class.name .. ".")
+        if ( IsValid(target) ) then
+            target:SetTeamClass(id)
+            ply:Notify("You have set " .. target:Nick() .. "'s class to " .. class.name .. ".")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") class to " .. class.name .. ".")
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") class to " .. class.name .. ".")
                 end
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -163,30 +217,29 @@ local setRankCommand = {
     description = "Sets the rank of the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
-        if not arg[2] then
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        if ( !args[2] ) then
             return ply:Notify("No rank specified.")
         end
 
-        local id, rank = impulse.Teams:FindRank(arg[2])
-
-        if not rank then
+        local id, rank = impulse.Teams:FindRank(args[2])
+        if ( !rank ) then
             return ply:Notify("Invalid rank.")
         end
 
-        if targ and IsValid(targ) then
-            if targ:SetTeamRank(id) then
-                ply:Notify("You have set " .. targ:Nick() .. "'s rank to " .. rank.name .. ".")
+        if ( IsValid(target) ) then
+            if ( target:SetTeamRank(id) ) then
+                ply:Notify("You have set " .. target:Nick() .. "'s rank to " .. rank.name .. ".")
 
                 for k, v in player.Iterator() do
-                    if v:IsLeadAdmin() then
-                        v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") rank to " .. rank.name .. ".")
+                    if ( v:IsLeadAdmin() ) then
+                        v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") rank to " .. rank.name .. ".")
                     end
                 end
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -197,9 +250,9 @@ local setSavedModelCommand = {
     description = "Sets the saved model of the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
-        local newModel = arg[2]
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local newModel = args[2]
         if not newModel then
             return ply:Notify("No model specified.")
         end
@@ -208,24 +261,24 @@ local setSavedModelCommand = {
             return ply:Notify("Invalid model.")
         end
 
-        if targ and IsValid(targ) then
+        if ( IsValid(target) ) then
             local query = mysql:Update("impulse_players")
             query:Update("model", newModel)
-            query:Where("steamid", targ:SteamID64())
+            query:Where("steamid", target:SteamID64())
             query:Execute()
     
-            targ.impulseDefaultModel = newModel
-            targ:SetModel(newModel)
+            target.impulseDefaultModel = newModel
+            target:SetModel(newModel)
 
-            ply:Notify("You have set " .. targ:Nick() .. "'s saved model to " .. newModel .. ".")
+            ply:Notify("You have set " .. target:Nick() .. "'s saved model to " .. newModel .. ".")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") saved model to " .. newModel .. ".")
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") saved model to " .. newModel .. ".")
                 end
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -236,9 +289,9 @@ local setModelCommand = {
     description = "Sets the model of the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
-        local newModel = arg[2]
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local newModel = args[2]
         if not newModel then
             return ply:Notify("No model specified.")
         end
@@ -247,18 +300,18 @@ local setModelCommand = {
             return ply:Notify("Invalid model.")
         end
 
-        if targ and IsValid(targ) then
-            targ:SetModel(newModel)
+        if ( IsValid(target) ) then
+            target:SetModel(newModel)
 
-            ply:Notify("You have set " .. targ:Nick() .. "'s model to " .. newModel .. ".")
+            ply:Notify("You have set " .. target:Nick() .. "'s model to " .. newModel .. ".")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") model to " .. newModel .. ".")
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") model to " .. newModel .. ".")
                 end
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -269,9 +322,9 @@ local setSavedSkinCommand = {
     description = "Sets the saved skin of the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
-        local newSkin = arg[2]
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local newSkin = args[2]
         if not newSkin then
             return ply:Notify("No skin specified.")
         end
@@ -280,24 +333,24 @@ local setSavedSkinCommand = {
             return ply:Notify("Invalid skin.")
         end
 
-        if targ and IsValid(targ) then
+        if ( IsValid(target) ) then
             local query = mysql:Update("impulse_players")
             query:Update("skin", newSkin)
-            query:Where("steamid", targ:SteamID64())
+            query:Where("steamid", target:SteamID64())
             query:Execute()
     
-            targ.impulseDefaultSkin = newSkin
-            targ:SetSkin(newSkin)
+            target.impulseDefaultSkin = newSkin
+            target:SetSkin(newSkin)
 
-            ply:Notify("You have set " .. targ:Nick() .. "'s saved skin to " .. newSkin .. ".")
+            ply:Notify("You have set " .. target:Nick() .. "'s saved skin to " .. newSkin .. ".")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") saved skin to " .. newSkin .. ".")
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") saved skin to " .. newSkin .. ".")
                 end
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -308,9 +361,9 @@ local setSkinCommand = {
     description = "Sets the skin of the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
-        local newSkin = arg[2]
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local newSkin = args[2]
         if not newSkin then
             return ply:Notify("No skin specified.")
         end
@@ -319,18 +372,18 @@ local setSkinCommand = {
             return ply:Notify("Invalid skin.")
         end
 
-        if targ and IsValid(targ) then
-            targ:SetSkin(newSkin)
+        if ( IsValid(target) ) then
+            target:SetSkin(newSkin)
 
-            ply:Notify("You have set " .. targ:Nick() .. "'s skin to " .. newSkin .. ".")
+            ply:Notify("You have set " .. target:Nick() .. "'s skin to " .. newSkin .. ".")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") skin to " .. newSkin .. ".")
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") skin to " .. newSkin .. ".")
                 end
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -341,27 +394,27 @@ local setSavedNameCommand = {
     description = "Sets the saved name of the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
-        local newName = arg[2]
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local newName = args[2]
         if not newName then
             return ply:Notify("No name specified.")
         end
 
-        newName = table.concat(arg, " ", 2)
+        newName = table.concat(args, " ", 2)
 
-        if targ and IsValid(targ) then
-            targ:SetRPName(newName, true)
+        if ( IsValid(target) ) then
+            target:SetRPName(newName, true)
 
-            ply:Notify("You have set " .. targ:Nick() .. "'s saved name to " .. newName .. ".")
+            ply:Notify("You have set " .. target:Nick() .. "'s saved name to " .. newName .. ".")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") saved name to " .. newName .. ".")
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") saved name to " .. newName .. ".")
                 end
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -372,27 +425,27 @@ local setNameCommand = {
     description = "Sets the name of the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
-        local newName = arg[2]
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local newName = args[2]
         if not newName then
             return ply:Notify("No name specified.")
         end
 
-        newName = table.concat(arg, " ", 2)
+        newName = table.concat(args, " ", 2)
 
-        if targ and IsValid(targ) then
-            targ:SetRPName(newName)
+        if ( IsValid(target) ) then
+            target:SetRPName(newName)
 
-            ply:Notify("You have set " .. targ:Nick() .. "'s name to " .. newName .. ".")
+            ply:Notify("You have set " .. target:Nick() .. "'s name to " .. newName .. ".")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") name to " .. newName .. ".")
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") name to " .. newName .. ".")
                 end
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -403,20 +456,20 @@ local respawnCommand = {
     description = "Respawns the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
 
-        if targ and IsValid(targ) then
-            targ:Spawn()
-            ply:Notify("You have respawned " .. targ:Nick() .. ".")
+        if ( IsValid(target) ) then
+            target:Spawn()
+            ply:Notify("You have respawned " .. target:Nick() .. ".")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has respawned " .. targ:Nick() .. " (" .. targ:SteamID64() .. ").")
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has respawned " .. target:Nick() .. " (" .. target:SteamID64() .. ").")
                 end
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -427,23 +480,23 @@ local addXPCommand = {
     description = "Adds XP to the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
-        local xp = tonumber(arg[2])
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local xp = tonumber(args[2])
 
         if not xp or not tonumber(xp) then return end
 
-        if targ and IsValid(targ) then
-            targ:AddXP(xp)
-            ply:Notify("You have added " .. xp .. " XP to " .. targ:Nick() .. ".")
+        if ( IsValid(target) ) then
+            target:AddXP(xp)
+            ply:Notify("You have added " .. xp .. " XP to " .. target:Nick() .. ".")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has added " .. xp .. " XP to " .. targ:Nick() .. " (" .. targ:SteamID64() .. ").")
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has added " .. xp .. " XP to " .. target:Nick() .. " (" .. target:SteamID64() .. ").")
                 end
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -454,23 +507,23 @@ local setXPCommand = {
     description = "Sets XP of the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
-        local xp = tonumber(arg[2])
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local xp = tonumber(args[2])
 
         if not xp or not tonumber(xp) then return end
 
-        if targ and IsValid(targ) then
-            targ:SetXP(xp)
-            ply:Notify("You have set " .. targ:Nick() .. "'s XP to " .. xp .. ".")
+        if ( IsValid(target) ) then
+            target:SetXP(xp)
+            ply:Notify("You have set " .. target:Nick() .. "'s XP to " .. xp .. ".")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") XP to " .. xp .. ".")
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") XP to " .. xp .. ".")
                 end
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -481,23 +534,23 @@ local takeXPCommand = {
     description = "Takes XP from the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
-        local xp = tonumber(arg[2])
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local xp = tonumber(args[2])
 
         if not xp or not tonumber(xp) then return end
 
-        if targ and IsValid(targ) then
-            targ:TakeXP(xp)
-            ply:Notify("You have taken " .. xp .. " XP from " .. targ:Nick() .. ".")
+        if ( IsValid(target) ) then
+            target:TakeXP(xp)
+            ply:Notify("You have taken " .. xp .. " XP from " .. target:Nick() .. ".")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has taken " .. xp .. " XP from " .. targ:Nick() .. " (" .. targ:SteamID64() .. ").")
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has taken " .. xp .. " XP from " .. target:Nick() .. " (" .. target:SteamID64() .. ").")
                 end
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -508,24 +561,24 @@ local addSkillXPCommand = {
     description = "Adds skill XP to the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
-        local skill = arg[2]
-        local xp = tonumber(arg[3])
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local skill = args[2]
+        local xp = tonumber(args[3])
 
         if not xp or not tonumber(xp) then return end
 
-        if targ and IsValid(targ) then
-            targ:AddSkillXP(skill, xp)
-            ply:Notify("You have added " .. xp .. " XP to " .. targ:Nick() .. "'s " .. skill .. " skill.")
+        if ( IsValid(target) ) then
+            target:AddSkillXP(skill, xp)
+            ply:Notify("You have added " .. xp .. " XP to " .. target:Nick() .. "'s " .. skill .. " skill.")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has added " .. xp .. " XP to " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") " .. skill .. " skill.")
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has added " .. xp .. " XP to " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") " .. skill .. " skill.")
                 end
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -536,24 +589,24 @@ local setSkillXPCommand = {
     description = "Sets skill XP of the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
-        local skill = arg[2]
-        local xp = tonumber(arg[3])
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local skill = args[2]
+        local xp = tonumber(args[3])
 
         if not xp or not tonumber(xp) then return end
 
-        if targ and IsValid(targ) then
-            targ:SetSkillXP(skill, xp)
-            ply:Notify("You have set " .. targ:Nick() .. "'s " .. skill .. " skill XP to " .. xp .. ".")
+        if ( IsValid(target) ) then
+            target:SetSkillXP(skill, xp)
+            ply:Notify("You have set " .. target:Nick() .. "'s " .. skill .. " skill XP to " .. xp .. ".")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") " .. skill .. " skill XP to " .. xp .. ".")
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") " .. skill .. " skill XP to " .. xp .. ".")
                 end
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -564,24 +617,24 @@ local takeSkillXPCommand = {
     description = "Takes skill XP from the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
-        local skill = arg[2]
-        local xp = tonumber(arg[3])
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local skill = args[2]
+        local xp = tonumber(args[3])
 
         if not xp or not tonumber(xp) then return end
 
-        if targ and IsValid(targ) then
-            targ:TakeSkillXP(skill, xp)
-            ply:Notify("You have taken " .. xp .. " XP from " .. targ:Nick() .. "'s " .. skill .. " skill.")
+        if ( IsValid(target) ) then
+            target:TakeSkillXP(skill, xp)
+            ply:Notify("You have taken " .. xp .. " XP from " .. target:Nick() .. "'s " .. skill .. " skill.")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has taken " .. xp .. " XP from " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") " .. skill .. " skill.")
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has taken " .. xp .. " XP from " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") " .. skill .. " skill.")
                 end
             end
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -592,24 +645,24 @@ local quizBypassCommand = {
     description = "Bypasses a quiz from a team, allowing the player to join without taking it.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local targ = impulse.Util:FindPlayer(arg[1])
-        local data = impulse.Teams:FindTeam(arg[2])
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local data = impulse.Teams:FindTeam(args[2])
 
         if not data then
             return ply:Notify("You entered and incorrect team name or index.")
         end
 
-        if targ and IsValid(targ) then
+        if ( IsValid(target) ) then
             if not data.quiz then
                 return ply:Notify("This team does not have a quiz!")
             end
 
-            ply:Notify("You have bypassed " .. targ:Nick() .. "'s " .. data.name .. " quiz.")
+            ply:Notify("You have bypassed " .. target:Nick() .. "'s " .. data.name .. " quiz.")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has bypassed " .. targ:Nick() .. "'s (" .. targ:SteamID64() .. ") " .. data.name .. " quiz.")
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has bypassed " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") " .. data.name .. " quiz.")
                 end
             end
 
@@ -619,7 +672,7 @@ local quizBypassCommand = {
             ply:SetData("quiz", quizData)
             ply:SaveData()
         else
-            return ply:Notify("Could not find player: " .. tostring(arg[1]))
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
         end
     end
 }
@@ -630,13 +683,13 @@ local kickCommand = {
     description = "Kicks the specified player from the server.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        local name = arg[1]
+    onRun = function(ply, args, rawText)
+        local name = args[1]
         local plyTarget = impulse.Util:FindPlayer(name)
 
         local reason = ""
 
-        for v, k in pairs(arg) do
+        for v, k in pairs(args) do
             if v != 1 then
                 reason = reason .. " " .. k
             end
@@ -651,7 +704,7 @@ local kickCommand = {
             plyTarget:Kick(reason or "Kicked by a game moderator.")
 
             for k, v in player.Iterator() do
-                if v:IsLeadAdmin() then
+                if ( v:IsLeadAdmin() ) then
                     v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has kicked " .. plyTarget:Nick() .. " (" .. plyTarget:SteamID64() .. ") from the server.")
                 end
             end
@@ -668,11 +721,11 @@ if GExtension then
         description = "Bans the specified player from the server. (time in minutes)",
         requiresArg = true,
         adminOnly = true,
-        onRun = function(ply, arg, rawText)
-            local name = arg[1]
+        onRun = function(ply, args, rawText)
+            local name = args[1]
             local plyTarget = impulse.Util:FindPlayer(name)
 
-            local time = arg[2]
+            local time = args[2]
 
             if not time or not tonumber(time) then
                 return ply:Notify("No time value supplied.")
@@ -686,7 +739,7 @@ if GExtension then
 
             local reason = ""
 
-            for v, k in pairs(arg) do
+            for v, k in pairs(args) do
                 if v > 2 then
                     reason = reason .. " " .. k
                 end
@@ -769,12 +822,12 @@ if GExtension then
         description = "Warns the specified player (reason is required).",
         requiresArg = true,
         adminOnly = true,
-        onRun = function(ply, arg, rawText)
-            local name = arg[1]
+        onRun = function(ply, args, rawText)
+            local name = args[1]
             local plyTarget = impulse.Util:FindPlayer(name)
             local reason = ""
 
-            for v, k in pairs(arg) do
+            for v, k in pairs(args) do
                 if v > 1 then
                     reason = reason .. " " .. k
                 end

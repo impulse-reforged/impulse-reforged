@@ -39,18 +39,18 @@ impulse.Util.Type = impulse.Util.Type or {
 -- @usage impulse.Util:Include("cl_init.lua", "client")
 -- @usage impulse.Util:Include("sv_hooks.lua", "server")
 function impulse.Util:Include(fileName, realm)
-    if (!fileName) then
+    if ( !fileName ) then
         error("[impulse] No file name specified for including.")
     end
 
     --MsgC(Color(83, 143, 239), "[impulse-reforged] [util] Including file \""..fileName.."\"...\n")
 
     -- Only include server-side if we're on the server.
-    if ((realm == "server" or fileName:find("sv_")) and SERVER) then
+    if ( ( realm == "server" or fileName:find("sv_") ) and SERVER ) then
         return include(fileName)
     -- Shared is included by both server and client.
-    elseif (realm == "shared" or fileName:find("shared.lua") or fileName:find("sh_")) then
-        if (SERVER) then
+    elseif ( realm == "shared" or fileName:find("shared.lua") or fileName:find("sh_") ) then
+        if ( SERVER ) then
             -- Send the file to the client if shared so they can run it.
             AddCSLuaFile(fileName)
         end
@@ -58,7 +58,7 @@ function impulse.Util:Include(fileName, realm)
         return include(fileName)
     -- File is sent to client, included on client.
     elseif (realm == "client" or fileName:find("cl_")) then
-        if (SERVER) then
+        if ( SERVER ) then
             AddCSLuaFile(fileName)
         else
             return include(fileName)
@@ -78,7 +78,7 @@ function impulse.Util:IncludeDir(directory, bFromLua)
     local baseDir = "impulse-reforged"
 
     -- If we're in a schema, include relative to the schema.
-    if (SCHEMA_NAME) then
+    if ( SCHEMA_NAME ) then
         baseDir = SCHEMA_NAME .. "/schema/"
     else
         baseDir = baseDir .. "/gamemode/"
@@ -431,4 +431,14 @@ function impulse.Util:FindInCrosshair(ply, target, range)
     if ( originVector:Dot(direction:GetNormalized()) > range ) then return true end
 
     return false
+end
+
+--- Sends a chat message to all players
+-- @realm shared
+-- @tab package Chat message package
+-- @usage impulse.Util:AddChatText(Color(255, 0, 0), "Hello, ", Color(0, 255, 0), "world!")
+function impulse.Util:AddChatText(...)
+    for k, v in player.Iterator() do
+        v:AddChatText(...)
+    end
 end

@@ -14,10 +14,11 @@ if ( SERVER ) then
     --- Sets the amount of XP a player has
     -- @realm server
     -- @int amount The amount of XP to set for the player
+    -- @opt[opt=false] bNoSave If true, the XP will not be saved to the database
     -- @treturn int amount The new amount of XP the player has received
     function PLAYER:SetXP(amount, bNoSave)
         if ( !self.impulseBeenSetup or self.impulseBeenSetup == false ) then return end
-        if ( !isnumber(amount) or amount < 0 or amount >= 1 / 0 ) then return end
+        if ( !isnumber(amount) or amount < 0 ) then return end
 
         if ( !bNoSave ) then
             local query = mysql:Update("impulse_players")
@@ -34,7 +35,7 @@ if ( SERVER ) then
     -- @int amount The amount of XP to take from the player
     function PLAYER:TakeXP(amount)
         if ( !self.impulseBeenSetup or self.impulseBeenSetup == false ) then return end
-        if ( !isnumber(amount) or amount < 0 or amount >= 1 / 0 ) then return end
+        if ( !isnumber(amount) or amount < 0 ) then return end
 
         self:SetXP(self:GetXP() - amount)
 
@@ -46,7 +47,7 @@ if ( SERVER ) then
     -- @int amount The amount of XP to add to the player
     function PLAYER:AddXP(amount)
         if ( !self.impulseBeenSetup or self.impulseBeenSetup == false ) then return end
-        if ( !isnumber(amount) or amount < 0 or amount >= 1 / 0 ) then return end
+        if ( !isnumber(amount) or amount < 0 ) then return end
 
         self:SetXP(self:GetXP() + amount)
 
@@ -56,12 +57,12 @@ if ( SERVER ) then
     --- Gives XP with a message to the player
     -- @realm server
     function PLAYER:GiveTimedXP()
+        local amount = impulse.Config.XPGet
         if ( self:IsDonator() ) then
-            self:AddXP(impulse.Config.XPGetDonator)
-            self:Notify("You have received " .. impulse.Config.XPGetDonator .. " XP for playing.")
-        else
-            self:AddXP(impulse.Config.XPGet)
-            self:Notify("You have received " .. impulse.Config.XPGet .. " XP for playing.")
+            amount = impulse.Config.XPGetDonator
         end
+
+        self:AddXP(amount)
+        self:Notify("You have received " .. amount .. " XP for playing.")
     end
 end

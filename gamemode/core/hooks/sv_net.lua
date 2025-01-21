@@ -1633,11 +1633,11 @@ net.Receive("impulseGroupDoRankAdd", function(len, ply)
     impulse.Group.Groups[name].Ranks[newName or rankName] = permissions
 
     if nChange then
-        impulse.Group.RankShift(name, rankName, newName)
+        impulse.Group:RankShift(name, rankName, newName)
     end
 
-    impulse.Group.NetworkRanksToOnline(name)
-    impulse.Group.UpdateRanks(groupData.ID, impulse.Group.Groups[name].Ranks)
+    impulse.Group:NetworkRanksToOnline(name)
+    impulse.Group:UpdateRanks(groupData.ID, impulse.Group.Groups[name].Ranks)
 end)
 
 local INVITE_ANTISPAM = INVITE_ANTISPAM or {}
@@ -1747,10 +1747,10 @@ net.Receive("impulseGroupDoRankRemove", function(len, ply)
 
     if r[99] or r[0] then return end
 
-    impulse.Group.RankShift(name, rankName, impulse.Group.GetDefaultRank(name))
+    impulse.Group:RankShift(name, rankName, impulse.Group:GetDefaultRank(name))
     impulse.Group.Groups[name].Ranks[rankName] = nil
-    impulse.Group.NetworkRanksToOnline(name)
-    impulse.Group.UpdateRanks(groupData.ID, impulse.Group.Groups[name].Ranks)
+    impulse.Group:NetworkRanksToOnline(name)
+    impulse.Group:UpdateRanks(groupData.ID, impulse.Group.Groups[name].Ranks)
 end)
 
 net.Receive("impulseGroupDoSetRank", function(len, ply)
@@ -1799,9 +1799,9 @@ net.Receive("impulseGroupDoSetRank", function(len, ply)
         targEnt:Notify(ply:Nick().." set your group rank to "..rankName..".")
         n = targEnt:Nick()
     else
-        impulse.Group.UpdatePlayerRank(targ, rankName)
+        impulse.Group:UpdatePlayerRank(targ, rankName)
         impulse.Group.Groups[name].Members[targ].Rank = rankName
-        impulse.Group.NetworkMemberToOnline(name, targ)
+        impulse.Group:NetworkMemberToOnline(name, targ)
     end
 
     ply:Notify("You set the group rank of "..n.." to "..rankName..".")
@@ -1846,9 +1846,9 @@ net.Receive("impulseGroupDoRemove", function(len, ply)
         targEnt:Notify(ply:Nick().." has removed you from the "..name.." group.")
         n = targEnt:Nick()
     else
-        impulse.Group.RemovePlayer(targ, groupData.ID)
+        impulse.Group:RemovePlayer(targ, groupData.ID)
         impulse.Group.Groups[name].Members[targ] = nil
-        impulse.Group.NetworkMemberRemoveToOnline(name, targ)
+        impulse.Group:NetworkMemberRemoveToOnline(name, targ)
     end
 
     ply:Notify("You removed "..n.." from the group.")
@@ -1883,7 +1883,7 @@ net.Receive("impulseGroupDoCreate", function(len, ply)
 
     local slots = ply:IsDonator() and impulse.Config.GroupMaxMembersVIP or impulse.Config.GroupMaxMembers
 
-    impulse.Group.Create(name, ply.impulseID, slots, 30, nil, function(groupid)
+    impulse.Group:Create(name, ply.impulseID, slots, 30, nil, function(groupid)
         if not IsValid(ply) then return end
 
         if not groupid then
@@ -1892,7 +1892,7 @@ net.Receive("impulseGroupDoCreate", function(len, ply)
 
         ply:TakeMoney(impulse.Config.GroupMakeCost)
 
-        impulse.Group.AddPlayer(ply:SteamID64(), groupid, "Owner", function()
+        impulse.Group:AddPlayer(ply:SteamID64(), groupid, "Owner", function()
             if not IsValid(ply) then return end
 
             ply:GroupLoad(groupid, "Owner")
@@ -1929,8 +1929,8 @@ net.Receive("impulseGroupDoDelete", function(len, ply)
     end
 
     impulse.Group.Groups[name] = nil
-    impulse.Group.Remove(groupData.ID)
-    impulse.Group.RemovePlayerMass(groupData.ID)
+    impulse.Group:Remove(groupData.ID)
+    impulse.Group:RemovePlayerMass(groupData.ID)
 
     ply:Notify("You deleted the "..name.." group.")
 end)
@@ -1979,8 +1979,8 @@ net.Receive("impulseGroupDoSetColor", function(len, ply)
 
     col.a = 255
 
-    impulse.Group.SetMetaData(name, nil, col)
-    impulse.Group.NetworkMetaDataToOnline(name)
+    impulse.Group:SetMetaData(name, nil, col)
+    impulse.Group:NetworkMetaDataToOnline(name)
 
     ply:Notify("You have updated the colour of your group.")
 end)
@@ -2008,8 +2008,8 @@ net.Receive("impulseGroupDoSetInfo", function(len, ply)
 
     info = string.sub(info, 1, 1024)
 
-    impulse.Group.SetMetaData(name, info)
-    impulse.Group.NetworkMetaDataToOnline(name)
+    impulse.Group:SetMetaData(name, info)
+    impulse.Group:NetworkMetaDataToOnline(name)
 
     ply:Notify("You have updated the info for your group.")
 end)

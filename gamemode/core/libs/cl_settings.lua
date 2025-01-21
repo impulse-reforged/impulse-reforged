@@ -62,53 +62,53 @@ impulse.Settings.Stored = {}
 --         print("Textbox setting changed to: "..newVal)
 --     end
 -- })
-function impulse.Settings:Define(name, settingdata)
-    if not settingdata then
+function impulse.Settings:Define(name, settingData)
+    if not settingData then
         return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Data is nil, attempted name: "..name.."\n")
     end
 
-    if not type(settingdata) == "table" then
+    if not type(settingData) == "table" then
         return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Data is not a table, attempted name: "..name.."\n")
     end
 
-    if not settingdata.name then
+    if not settingData.name then
         return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Name is nil, attempted name: "..name.."\n")
     end
 
-    if not settingdata.type then
+    if not settingData.type then
         return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Type is nil, attempted name: "..name.."\n")
     end
 
-    if settingdata.default == nil then
+    if settingData.default == nil then
         return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Default is nil, attempted name: "..name.."\n")
     end
 
-    if settingdata.type == "slider" then
-        if not settingdata.minValue then
-            settingdata.minValue = 0
+    if settingData.type == "slider" then
+        if not settingData.minValue then
+            settingData.minValue = 0
         end
 
-        if not settingdata.maxValue then
-            settingdata.maxValue = 100
+        if not settingData.maxValue then
+            settingData.maxValue = 100
         end
 
-        if not settingdata.decimals then
-            settingdata.decimals = 0
+        if not settingData.decimals then
+            settingData.decimals = 0
         end
-    elseif settingdata.type == "dropdown" then
-        if not settingdata.options then
+    elseif settingData.type == "dropdown" then
+        if not settingData.options then
             return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Options is nil, attempted name: "..name.."\n")
         end
     end
 
-    if not settingdata.category then
-        settingdata.category = "Other"
+    if not settingData.category then
+        settingData.category = "Other"
     end
 
-    self.Stored[name] = settingdata
+    self.Stored[name] = settingData
     self:Load()
 
-    return settingdata
+    return settingData
 end
 
 local toBool = tobool
@@ -166,18 +166,18 @@ end
 -- @realm client
 -- @string name Setting class name
 -- @param value New value
-function impulse.Settings:Set(name, newValue)
+function impulse.Settings:Set(name, value)
     local settingData = self.Stored[name]
     if settingData then
-        if type(newValue) == "boolean" then -- convert them boolz to intz. it's basically a gang war
-            newValue = newValue and 1 or 0
+        if type(value) == "boolean" then -- convert them boolz to intz. it's basically a gang war
+            value = value and 1 or 0
         end
 
-        cookie.Set("impulse-setting-"..name, newValue)
-        settingData.value = newValue
+        cookie.Set("impulse-setting-"..name, value)
+        settingData.value = value
 
         if settingData.onChanged then
-            settingData.onChanged(newValue)
+            settingData.onChanged(value)
         end
 
         return

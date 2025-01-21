@@ -36,7 +36,7 @@ net.Receive("impulseOpsSTDoGroupRemove", function(len, ply)
     local groupData = impulse.Group.Groups[name]
 
     if not groupData or not groupData.ID then
-        impulse.Group.RemoveByName(name)
+        impulse.Group:RemoveByName(name)
         ply:Notify("No loaded group found, however, we have attempted to remove it from the database.")
         return
     end
@@ -51,8 +51,8 @@ net.Receive("impulseOpsSTDoGroupRemove", function(len, ply)
         end
     end
 
-    impulse.Group.Remove(groupData.ID)
-    impulse.Group.RemovePlayerMass(groupData.ID)
+    impulse.Group:Remove(groupData.ID)
+    impulse.Group:RemovePlayerMass(groupData.ID)
     impulse.Group.Groups[name] = nil
 
     ply:Notify("The "..name.." group has been removed.")

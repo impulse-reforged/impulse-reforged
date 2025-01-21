@@ -124,7 +124,6 @@ function PLAYER:UpdateDefaultModelSkin()
     net.Send(self)
 end
 
--- divert from slow nwvar shit
 function PLAYER:GetPropCount(skip)
     if ( !self:IsValid() ) then return end
 

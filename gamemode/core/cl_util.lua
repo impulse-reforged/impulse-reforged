@@ -198,7 +198,11 @@ end
 local baseWidth, baseHeight = 1280, 720
 local targetWidth, targetHeight = 3840, 2160
 
---- @realm client
+--- Scales a font size based on the current screen resolution. This is useful for making sure text is always readable
+-- regardless of the resolution.
+-- @realm client
+-- @int baseSize Base font size to scale from
+-- @treturn int Scaled font size
 function impulse.Util:DynamicScaleFontSize(baseSize)
     local screenWidth, screenHeight = ScrW(), ScrH()
     local baseScale = baseHeight / screenHeight

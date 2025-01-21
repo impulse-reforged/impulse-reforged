@@ -18,7 +18,7 @@ function imgui.IsDeveloperMode()
     return not imgui.DisableDeveloperMode and devCvar:GetInt() > 0
 end
 
-local _devMode = false // cached local variable updated once in a while
+local _devMode = false -- cached local variable updated once in a while
 
 function imgui.Hook(name, id, callback)
     local hookUniqifier = debug.getinfo(4).short_src
@@ -29,17 +29,17 @@ local localPlayer
 local gState = {}
 
 local function shouldAcceptInput()
-    // don't process input during non-main renderpass
+    -- don't process input during non-main renderpass
     if render.GetRenderTarget() != nil then return false end
 
-    // don't process input if we're doing VGUI stuff (and not in context menu)
+    -- don't process input if we're doing VGUI stuff (and not in context menu)
     if vgui.CursorVisible() and vgui.GetHoveredPanel() != g_ContextMenu then return false end
 
     return true
 end
 
 imgui.Hook("PreRender", "Input", function()
-    // calculate mouse state
+    -- calculate mouse state
     if shouldAcceptInput() then
         local useBind = input.LookupBinding("+use", true)
         local attackBind = input.LookupBinding("+attack", true)
@@ -96,20 +96,20 @@ function imgui.Start3D2D(pos, angles, scale, distanceHide, distanceFadeStart)
     local eyePos = localPlayer:EyePos()
     local eyePosToPos = pos - eyePos
 
-    // OPTIMIZATION: Test that we are in front of the UI
+    -- OPTIMIZATION: Test that we are in front of the UI
     do
         local normal = angles:Up()
         local dot = eyePosToPos:Dot(normal)
 
         if _devMode then gState._devDot = dot end
 
-        // since normal is pointing away from surface towards viewer, dot<0 is visible
+        -- since normal is pointing away from surface towards viewer, dot<0 is visible
         if dot >= 0 then
             return false
         end
     end
 
-    // OPTIMIZATION: Distance based fade/hide
+    -- OPTIMIZATION: Distance based fade/hide
     if distanceHide then
         local distance = eyePosToPos:Length()
         if distance > distanceHide then
@@ -135,7 +135,7 @@ function imgui.Start3D2D(pos, angles, scale, distanceHide, distanceFadeStart)
 
     cam.Start3D2D(pos, angles, scale)
 
-    // calculate mousepos
+    -- calculate mousepos
     if not vgui.CursorVisible() or vgui.IsHoveringWorld() then
         local tr = localPlayer:GetEyeTrace()
         local eyepos = tr.StartPos
@@ -160,7 +160,7 @@ function imgui.Start3D2D(pos, angles, scale, distanceHide, distanceFadeStart)
             else
                 local diff = pos - hitPos
 
-                // This cool code is from Willox's keypad CalculateCursorPos
+                -- This cool code is from Willox's keypad CalculateCursorPos
                 local x = diff:Dot(-angles:Forward()) / scale
                 local y = diff:Dot(-angles:Right()) / scale
 
@@ -217,7 +217,7 @@ end
 function imgui.ExpandRenderBoundsFromRect(x, y, w, h)
     local ent = gState.entity
     if IsValid(ent) then
-        // make sure we're not applying same expansion twice
+        -- make sure we're not applying same expansion twice
         local expansion = ent._imguiRBExpansion
         if expansion then
             local ex, ey, ew, eh = unpack(expansion)
@@ -373,15 +373,15 @@ function imgui.IsPressed()
     return shouldAcceptInput() and gState.pressed
 end
 
-// String->Bool mappings for whether font has been created
+-- String->Bool mappings for whether font has been created
 local _createdFonts = {}
 
-// Cached IMGUIFontNamd->GModFontName
+-- Cached IMGUIFontNamd->GModFontName
 local _imguiFontToGmodFont = {}
 
 local EXCLAMATION_BYTE = string.byte("!")
 function imgui.xFont(font, defaultSize)
-    // special font
+    -- special font
     if string.byte(font, 1) == EXCLAMATION_BYTE then
 
         local existingGFont = _imguiFontToGmodFont[font]
@@ -389,7 +389,7 @@ function imgui.xFont(font, defaultSize)
             return existingGFont
         end
 
-        // Font not cached; parse the font
+        -- Font not cached; parse the font
         local name, size = font:match("!([^@]+)@(.+)")
         if size then size = tonumber(size) end
 
