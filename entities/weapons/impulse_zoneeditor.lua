@@ -110,9 +110,11 @@ else
         draw.SimpleText("STATE: "..(self.State or "Nothing selected"), "BudgetLabel", 100, 120)
         draw.SimpleText("Warning, when you click your current position\nwill be registered, not your weapon aim position!", "BudgetLabel", 100, 140)
 
-        for k, v in pairs(impulse.Config.Zones) do
-            local cent = (LerpVector(.5, v.pos1, v.pos2)):ToScreen()
-            draw.SimpleText(v.name, "BudgetLabel", cent.x, cent.y, impulse.Util:GetUniqueColour(v.name))
+        for _, data in ipairs(impulse.Config.Zones or {}) do
+            if ( !data.pos1 or !data.pos2 ) then continue end
+
+            local cent = (LerpVector(.5, data.pos1, data.pos2)):ToScreen()
+            draw.SimpleText(data.name, "BudgetLabel", cent.x, cent.y, impulse.Util:GetUniqueColour(data.name))
         end
     end
 
@@ -123,10 +125,12 @@ else
             local col
             local cent
 
-            for name,k in pairs(impulse.Config.Zones) do
-                pos1 = k.pos1
-                pos2 = k.pos2
-                col = impulse.Util:GetUniqueColour(k.name)
+            for _, data in ipairs(impulse.Config.Zones or {}) do
+                if ( !data.pos1 or !data.pos2 ) then continue end
+
+                pos1 = data.pos1
+                pos2 = data.pos2
+                col = impulse.Util:GetUniqueColour(data.name)
 
                 -- i cba to do this maths, this is from ns
                 local c1, c2, c3, c4
