@@ -64,10 +64,10 @@ function impulse.Schema:Load()
 
     -- Load the current map config if it exists
     local map = game.GetMap()
-    path = name .. "/schema/config/maps/" .. map
+    path = name .. "/schema/config/maps/" .. map .. ".lua"
     if ( file.Exists(path, "LUA") ) then
-        MsgC(Color(83, 143, 239), "[impulse-reforged] Loading map config for \"" .. map .. "\" in Schema \"" .. name .. "\"...\n")
-        impulse.Util:Include(path, true)
+        MsgC(Color(0, 255, 0), "[impulse-reforged] Loading map config for \"" .. map .. "\" in Schema \"" .. name .. "\".\n")
+        impulse.Util:Include(path, "shared")
     else
         MsgC(Color(255, 0, 0), "[impulse-reforged] Failed to find map config for \"" .. map .. "\" in Schema \"" .. name .. "\".\n")
     end
