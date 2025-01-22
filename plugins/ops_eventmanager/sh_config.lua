@@ -1366,7 +1366,7 @@ impulse.Ops.EventManager.Config.Events = {
             rf:AddRecipientsByTeam(TEAM_CP)
             rf:AddRecipientsByTeam(TEAM_OTA)
 
-            net.Start("impulseHL2RPObjectiveSendEvent")
+            net.Start("impulseHL2RP.ObjectiveSendEvent")
             net.WriteString(prop["message"])
             net.WriteUInt(prop["length"], 8)
             net.Send(rf)
