@@ -325,25 +325,20 @@ net.Receive("impulseSkillUpdate", function()
 end)
 
 net.Receive("impulseBenchUse", function()
-    if impulse_craft and IsValid(impulse_craft) then
-        impulse_craft:Remove()
-    end
-
-    impulse_craft = vgui.Create("impulseCraftingMenu")
-    impulse_craft:SetupCrafting()
+    vgui.Create("impulseCraftingMenu")
 end)
 
 net.Receive("impulseMixDo", function()
-    if impulse_craft and IsValid(impulse_craft) and impulse_craft.UseItem and impulse_craft.UseMix then
-        impulse_craft:DoCraft(impulse_craft.UseItem, impulse_craft.UseMix)
+    if ( IsValid(impulse.CraftingMenu) and impulse.CraftingMenu.UseItem and impulse.CraftingMenu.UseMix ) then
+        impulse.CraftingMenu:DoCraft(impulse.CraftingMenu.UseItem, impulse.CraftingMenu.UseMix)
     end
 end)
 
 net.Receive("impulseVendorUse", function()
-    if impulse_vendor and IsValid(impulse_vendor) then return end
+    if impulse.VendorMenu and IsValid(impulse.VendorMenu) then return end
 
-    impulse_vendor = vgui.Create("impulseVendorMenu")
-    impulse_vendor:SetupVendor()
+    impulse.VendorMenu = vgui.Create("impulseVendorMenu")
+    impulse.VendorMenu:SetupVendor()
 end)
 
 net.Receive("impulseVendorUseDownload", function()
@@ -356,10 +351,10 @@ net.Receive("impulseVendorUseDownload", function()
     impulse.Vendor.Data[vendor].Buy = buy
     impulse.Vendor.Data[vendor].Sell = sell
 
-    if impulse_vendor and IsValid(impulse_vendor) then return end
+    if impulse.VendorMenu and IsValid(impulse.VendorMenu) then return end
 
-    impulse_vendor = vgui.Create("impulseVendorMenu")
-    impulse_vendor:SetupVendor()
+    impulse.VendorMenu = vgui.Create("impulseVendorMenu")
+    impulse.VendorMenu:SetupVendor()
 end)
 
 net.Receive("impulseViewWhitelists", function()
