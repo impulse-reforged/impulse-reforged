@@ -1,51 +1,48 @@
 local PANEL = {}
 
 function PANEL:Init()
-    self:SetSize(780, 610)
+    if ( IsValid(impulse.CraftingMenu) ) then
+        impulse.CraftingMenu:Remove()
+    end
+
+    impulse.CraftingMenu = self
+
+    self:SetSize(ScrW() / 1.5, ScrH() / 1.5)
     self:Center()
     self:SetTitle("")
     self:MakePopup()
+
+    self:SetupCrafting()
 end
 
-local bodyCol = Color(50, 50, 50, 210)
 function PANEL:SetupCrafting()
     local ply = LocalPlayer()
 
-    local trace = {}
-    trace.start = ply:EyePos()
-    trace.endpos = trace.start + ply:GetAimVector() * 120
-    trace.filter = ply
+    local traceData = util.TraceLine({
+        start = ply:EyePos(),
+        endpos = ply:EyePos() + ply:GetAimVector() * 96,
+        filter = ply
+    })
 
-    local tr = util.TraceLine(trace)
-
-    if not tr.Entity or not IsValid(tr.Entity) or tr.Entity:GetClass() != "impulse_bench" then
+    if ( !traceData.Entity or !IsValid(traceData.Entity) or traceData.Entity:GetClass() != "impulse_bench" ) then
         return self:Remove()
     end
 
-    self.bench = tr.Entity
+    self.bench = traceData.Entity
 
-    local benchType = tr.Entity:GetBenchType()
+    local benchType = traceData.Entity:GetBenchType()
     local benchClass = impulse.Inventory.Benches[benchType]
     local panel = self
 
     self:SetTitle(benchClass.Name)
 
-    self.upper = vgui.Create("DPanel", self)
-    self.upper:SetTall(40)
-    self.upper:Dock(TOP)
-    self.upper:DockMargin(0, 0, 0, 5)
-
-    function self.upper:Paint(w, h)
-        return true
-    end
-
     self.mixes = {}
 
-    self.craftLbl = vgui.Create("DLabel", self.upper)
-    self.craftLbl:SetPos(5, 5)
-    self.craftLbl:SetFont("Impulse-Elements22-Shadow")
-    self.craftLbl:SetText("Crafting Level: "..LocalPlayer():GetSkillLevel("craft"))
-    self.craftLbl:SizeToContents()
+    self.craftingLevel = self:Add("DLabel")
+    self.craftingLevel:Dock(TOP)
+    self.craftingLevel:SetFont("Impulse-Elements22-Shadow")
+    self.craftingLevel:SetText("Crafting Level: " .. LocalPlayer():GetSkillLevel("craft"))
+    self.craftingLevel:SizeToContents()
 
     self.scroll = vgui.Create("DScrollPanel", self)
     self.scroll:Dock(FILL)
@@ -117,37 +114,61 @@ function PANEL:Think()
 end
 
 function PANEL:ShowNormal(should)
-    if should then
+    if ( should ) then
         self.scroll:Show()
-        self.craftLbl:Show()
-        self.upper:Show()
+        self.craftingLevel:Show()
     else
         self.scroll:Hide()
-        self.craftLbl:Hide()
-        self.upper:Hide()
+        self.craftingLevel:Hide()
     end
 end
 
 function PANEL:PaintOver(w, h)
-    if self.IsCrafting then
-        draw.SimpleText("Crafting "..self.CraftingItem.."...", "Impulse-Elements22-Shadow", w / 2, 380, color_white, TEXT_ALIGN_CENTER)
-    end
+    -- if ( self.IsCrafting ) then
+    --     draw.SimpleText("Crafting " .. self.CraftingItem .. "...", "Impulse-Elements22-Shadow", w / 2, h - ScreenScale(16) / 2 - ScreenScale(8), color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    -- end
 end
 
 function PANEL:DoCraft(item, mix)
-    local wide = self:GetWide()
     local panel = self
     local length = impulse.Inventory:GetCraftingTime(mix)
 
     self:ShowNormal(false)
     self:ShowCloseButton(false)
+
     self.IsCrafting = true
     self.CraftingItem = item.Name
 
-    self.craftBar = vgui.Create("DProgress", self)
-    self.craftBar:SetPos((wide / 2) - 300, 410)
-    self.craftBar:SetSize(600, 38)
+    self.craftBar = self:Add("DProgress")
+    self.craftBar:Dock(BOTTOM)
+    self.craftBar:DockMargin(ScreenScale(8), 0, ScreenScale(8), ScreenScale(8))
+    self.craftBar:SetTall(ScreenScale(16))
     self.craftBar:SetFraction(0.5)
+
+    self.crafting = self.craftBar:Add("DLabel")
+    self.crafting:Dock(FILL)
+    self.crafting:SetFont("Impulse-Elements22-Shadow")
+    self.crafting:SetText("Crafting " .. item.Name)
+    self.crafting:SetContentAlignment(5)
+    self.crafting.dots = 0
+    self.crafting.nextDot = CurTime() + 0.5
+    self.crafting.Think = function(this)
+        if ( CurTime() < this.nextDot ) then return end
+        this.nextDot = CurTime() + 0.5
+
+        this.dots = this.dots + 1
+        if ( this.dots > 3 ) then
+            this.dots = 0
+        end
+
+        local str = "Crafting " .. item.Name
+        for i = 1, this.dots do
+            str = str .. "."
+        end
+
+        this:SetText(str)
+    end
+
     self.StartTime = CurTime()
     self.EndTime = CurTime() + length
 
@@ -179,8 +200,8 @@ function PANEL:DoCraft(item, mix)
 
     self.model = vgui.Create("DModelPanel", self)
     self.model:SetPaintBackground(false)
-    self.model:SetPos((wide / 2) - 150, 100)
-    self.model:SetSize(300, 300)
+    self.model:SetSize(self:GetWide() / 2, self:GetTall() / 2)
+    self.model:SetPos(self:GetWide() / 2 - (self.model:GetWide() / 2), self:GetTall() / 2 - (self.model:GetTall() / 2))
     self.model:SetMouseInputEnabled(true)
     self.model:SetModel(item.Model)
     self.model:SetSkin(item.Skin or 0)
@@ -221,3 +242,9 @@ function PANEL:DoCraft(item, mix)
 end
 
 vgui.Register("impulseCraftingMenu", PANEL, "DFrame")
+
+if ( IsValid(impulse.CraftingMenu) ) then
+    impulse.CraftingMenu:Remove()
+
+    vgui.Create("impulseCraftingMenu")
+end

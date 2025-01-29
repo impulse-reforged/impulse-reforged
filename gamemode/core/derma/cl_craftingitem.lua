@@ -1,10 +1,18 @@
+local bodyCol = Color(50, 50, 50, 210)
+local secCol = Color(209, 209, 209, 255)
+local noCol = Color(215, 40, 40, 255)
+
 local PANEL = {}
 
 function PANEL:Init()
-    self.model = vgui.Create("DModelPanel", self)
+    self:SetTall(ScreenScale(24))
+
+    self.model = self:Add("DModelPanel")
+    self.model:Dock(LEFT)
+    self.model:DockMargin(0, 0, 8, 0)
+    self.model:SetWide(self:GetTall())
     self.model:SetPaintBackground(false)
     self.model:SetCursor("none")
-    self:SetTall(86)
 end
 
 function PANEL:SetMix(mix)
@@ -13,8 +21,8 @@ function PANEL:SetMix(mix)
     local id = impulse.Inventory:ClassToNetID(class)
     local item = impulse.Inventory.Items[id]
 
-    if not item then
-        print("[impulse-reforged] Could not find item: "..class.." for use in mix: "..mix.Class.."!")
+    if ( !item ) then
+        print("[impulse-reforged] Could not find item: " .. class .. " for use in mix: " .. mix.Class .. "!")
         return self:Remove()
     end
 
@@ -23,64 +31,75 @@ function PANEL:SetMix(mix)
 
     local panel = self
 
-    self.model:SetPos(0, 0)
-    self.model:SetSize(80, 80)
     self.model:SetMouseInputEnabled(true)
     self.model:SetModel(item.Model)
     self.model:SetSkin(item.Skin or 0)
     self.model:SetFOV(item.FOV or 35)
 
-    function self.model:LayoutEntity(ent)
+    self.model.LayoutEntity = function(this, ent)
         ent:SetAngles(Angle(0, 90, 0))
 
-        if panel.Item.Material then
+        if ( panel.Item.Material ) then
             ent:SetMaterial(panel.Item.Material)
         end
 
-        if not item.NoCenter then
-            self:SetLookAt(vector_origin)
+        if ( !item.NoCenter ) then
+            this:SetLookAt(vector_origin)
         end
     end
 
     local camPos = self.model.Entity:GetPos()
     camPos:Add(Vector(0, 25, 25))
 
-    local min, max = self.model.Entity:GetRenderBounds()
-
-    if item.CamPos then
+    if ( item.CamPos ) then
         self.model:SetCamPos(item.CamPos)
     else
         self.model:SetCamPos(camPos -  Vector(10, 0, 16))
     end
 
-    self.model:SetLookAt((max + min) / 2)
+    local min, max = self.model.Entity:GetRenderBounds()
+    self.model:SetLookAt(( max + min ) / 2)
 
-    self.craftBtn = vgui.Create("DButton", self)
-    self.craftBtn:Dock(RIGHT)
-    self.craftBtn:SetText("Craft")
-    self.craftBtn:SetFont("Impulse-Elements17")
-    self.craftBtn:SetDisabled(true)
-
-    function self.craftBtn:DoClick()
+    self.craft = self:Add("DButton")
+    self.craft:Dock(RIGHT)
+    self.craft:DockMargin(8, 8, 8, 8)
+    self.craft:SetText("Craft")
+    self.craft:SetFont("Impulse-Elements17")
+    self.craft:SetWide(self:GetTall())
+    self.craft:SetDisabled(true)
+    self.craft.DoClick = function(this)
         panel.dad.UseItem = panel.Item
         panel.dad.UseMix = panel.Mix
 
         net.Start("impulseMixTry")
-        net.WriteUInt(panel.Mix.NetworkID, 8)
+            net.WriteUInt(panel.Mix.NetworkID, 8)
         net.SendToServer()
     end
 
     self.canCraft = true
 
-    function self.craftBtn:Think()
-        local level = LocalPlayer():GetSkillLevel("craft")
 
-        if panel.Mix.Level > level or not panel.canCraft then
-            self:SetDisabled(true)
-        else
-            self:SetDisabled(false)
-        end
-    end
+    self.title = self:Add("DLabel")
+    self.title:Dock(TOP)
+    self.title:DockMargin(0, 8, 0, 0)
+    self.title:SetFont("Impulse-Elements19-Shadow")
+    self.title:SetTextColor(item.Colour or color_white)
+    self.title:SetText(item.Name)
+    self.title:SetContentAlignment(4)
+
+    self.level = self:Add("DLabel")
+    self.level:Dock(TOP)
+    self.level:SetFont("Impulse-Elements16")
+    self.level:SetTextColor(mix.Level > LocalPlayer():GetSkillLevel("craft") and noCol or secCol)
+    self.level:SetText("Level: " .. mix.Level)
+    self.level:SetContentAlignment(4)
+    
+    self.required = self:Add("DLabel")
+    self.required:Dock(TOP)
+    self.required:SetFont("Impulse-Elements16")
+    self.required:SetTextColor(secCol)
+    self.required:SetText("Required items:")
+    self.required:SetContentAlignment(4)
 
     self:RefreshCanCraft()
 end
@@ -89,70 +108,47 @@ function PANEL:RefreshCanCraft()
     local mix = self.Mix
 
     self.canCraft = true
-    local required = "<font=Impulse-Elements17>"
 
-    for v, k in pairs(mix.Input) do
-        local id = impulse.Inventory:ClassToNetID(v)
+    self.required:Clear()
 
-        if id then
-            local name = (impulse.Inventory.Items[id] and impulse.Inventory.Items[id].Name) or "PANIC! INVALID ITEM!!! AHHHH!!"
+    local index = 0
+    local row = 0
+    for k, v in pairs(mix.Input) do
+        local id = impulse.Inventory:ClassToNetID(k)
+        if ( id ) then
+            local name = impulse.Inventory.Items[id].Name
             local has, amount = LocalPlayer():HasInventoryItem(id)
-            local need = k.take or 1
+            local need = v.take or 1
             amount = amount or 0
 
-            if amount < need then
-                required = required.."<colour=120, 120, 120, 255>"
+            local color = secCol
+            if ( amount < need ) then
                 self.canCraft = false
-            else
-                required = required.."<colour=255, 255, 255, 255>"
+                color = noCol
             end
 
-            required = required..name.." ("..amount.."/"..need..") "
+            local lbl = self.required:Add("DLabel")
+            lbl:Dock(LEFT)
+            lbl:DockMargin(index == 0 and impulse.Util:GetTextWidth("Required items: ", "Impulse-Elements16") or 4, 0, 0, 0)
+            lbl:SetFont("Impulse-Elements16")
+            lbl:SetTextColor(color)
+            lbl:SetText(name .. " (" .. amount .. "/" .. need .. ")")
+            lbl:SizeToContents()
 
-            required = required.."</colour>"
+            self.required:SizeToChildren(false, true)
+
+            index = index + 1
         end
     end
 
-    required = required.."</font>"
-
-    if canCraft then
-        self.craftBtn:SetDisabled(false)
+    if ( self.canCraft ) then
+        self.craft:SetDisabled(false)
     end
-
-    self.requiredMarkup = markup.Parse(required, 620)
 end
 
-local bodyCol = Color(50, 50, 50, 210)
-local secCol = Color(209, 209, 209, 255)
-local noCol = Color(215, 40, 40, 255)
-function PANEL:Paint(w, h)
+function PANEL:Paint(width, height)
     surface.SetDrawColor(bodyCol)
-    surface.DrawRect(0, 0, w, h)
-
-    local item = self.Item
-    local mix = self.Mix
-    local level = LocalPlayer():GetSkillLevel("craft")
-
-    if item then
-        surface.SetTextColor(item.Colour or color_white)
-        surface.SetFont("Impulse-Elements19-Shadow")
-        surface.SetTextPos(82, 10)
-        surface.DrawText(item.Name)
-
-        if mix.Level > level then
-            surface.SetTextColor(noCol)
-        else
-            surface.SetTextColor(secCol)
-        end
-
-        surface.SetFont("Impulse-Elements16")
-        surface.SetTextPos(82, 28)
-        surface.DrawText("Level: "..mix.Level)
-
-        if self.requiredMarkup then
-            self.requiredMarkup:Draw(82, 44, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
-        end
-    end
+    surface.DrawRect(0, 0, width, height)
 end
 
 
