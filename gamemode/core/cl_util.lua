@@ -278,16 +278,32 @@ function impulse.Util:GetUniqueColour(hash)
     return uColoursLive[hash]
 end
 
+--- Returns the text size of a string using the specified font
+-- @realm client
+-- @string text Text to measure
+-- @string[opt="Impulse-Elements20"] font Font to use
+-- @treturn number Width of the text
+-- @treturn number Height of the text
 function impulse.Util:GetTextSize(text, font)
     surface.SetFont(font or "Impulse-Elements20")
     return surface.GetTextSize(text)
 end
 
+--- Returns the text width of a string using the specified font
+-- @realm client
+-- @string text Text to measure
+-- @string[opt="Impulse-Elements20"] font Font to use
+-- @treturn number Width of the text
 function impulse.Util:GetTextWidth(text, font)
     surface.SetFont(font or "Impulse-Elements20")
-    return surface.GetTextSize(text)
+    return select(1, surface.GetTextSize(text))
 end
 
+--- Returns the text height of a string using the specified font
+-- @realm client
+-- @string text Text to measure
+-- @string[opt="Impulse-Elements20"] font Font to use
+-- @treturn number Height of the text
 function impulse.Util:GetTextHeight(text, font)
     surface.SetFont(font or "Impulse-Elements20")
     return select(2, surface.GetTextSize(text))
