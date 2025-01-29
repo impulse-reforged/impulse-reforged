@@ -639,7 +639,7 @@ end
 function GM:DoPlayerDeath(ply, attacker, dmginfo)
     local ragCount = table.Count(ents.FindByClass("prop_ragdoll"))
     if ( ragCount > 32 ) then
-        print("[impulse-reforged] Avoiding ragdoll body spawn for performance reasons .. . (rag count: " .. ragCount .. ")")
+        print("[impulse-reforged] Avoiding ragdoll body spawn for performance reasons... (rag count: " .. ragCount .. ")")
         return
     end
 

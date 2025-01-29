@@ -84,7 +84,7 @@ local function DrawPlayerInfo(target, alpha)
     draw.DrawText(target:KnownName(), "Impulse-Elements18-Shadow", pos.x, pos.y, col, 1)
 
     if target:GetNetVar("typing", false) then
-        draw.DrawText("Typing .. .", "Impulse-Elements16-Shadow", pos.x, pos.y + 15, ColorAlpha(color_white, alpha), 1)
+        draw.DrawText("Typing...", "Impulse-Elements16-Shadow", pos.x, pos.y + 15, ColorAlpha(color_white, alpha), 1)
     elseif target:GetNetVar("arrested", false) and LocalPlayer():CanArrest(target) then
         draw.DrawText("(F2 to unrestrain | E to drag)", "Impulse-Elements16-Shadow", pos.x, pos.y + 15, ColorAlpha(color_white, alpha), 1)
     end
