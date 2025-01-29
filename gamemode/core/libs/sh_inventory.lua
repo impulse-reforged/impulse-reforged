@@ -30,30 +30,28 @@ local countX = 1
 -- @internal
 function impulse.Inventory:RegisterItem(item)
     local class = item.WeaponClass
-    local attClass = item.AttachmentClass
+    local attachmentClass = item.AttachmentClass
 
-    if class then
+    if ( class ) then
         function item:OnEquip(ply, data, uid, sec)
-            local wep = ply:Give(class)
+            local weapon = ply:Give(class)
+            if ( IsValid(weapon) ) then
+                weapon:SetClip1(item.WeaponOverrideClip or self.clip or 0)
 
-            if wep and IsValid(wep) then
-                wep:SetClip1(item.WeaponOverrideClip or self.clip or 0)
-
-                if item.WeaponOverrideClip then
-                    wep.PairedItem = uid
+                if ( item.WeaponOverrideClip ) then
+                    weapon.PairedItem = uid
                 end
             end
         end
 
         function item:UnEquip(ply)
-            local wep = ply:GetWeapon(class)
-
-            if wep and IsValid(wep) then
-                self.clip = wep:Clip1()
+            local weapon = ply:GetWeapon(class)
+            if ( IsValid(weapon) ) then
+                self.clip = weapon:Clip1()
                 ply:StripWeapon(class)
             end
 
-            if ply.InvAttachments then
+            if ( ply.InvAttachments ) then
                 local uid = ply.InvAttachments[class]
 
                 if uid and ply:HasInventoryItemSpecific(uid) then
@@ -62,17 +60,15 @@ function impulse.Inventory:RegisterItem(item)
                 end
             end
         end
-    elseif attClass then
+    elseif ( attachmentClass ) then
         function item:CanEquip(ply)
-            if ply.doForcedInvEquip then
+            if ( ply.doForcedInvEquip ) then
                 ply.doForcedInvEquip = nil
                 return true -- hacky needs replacement
             end
 
-            local weps = ply:GetWeapons()
-
-            for v, k in pairs(weps) do
-                if IsValid(k) and k.IsLongsword and k.Attachments and k.Attachments[attClass] then
+            for k, v in pairs(ply:GetWeapons()) do
+                if ( IsValid(v) and v.IsLongsword and v.Attachments and v.Attachments[attachmentClass] ) then
                     return true
                 end
             end
@@ -81,21 +77,19 @@ function impulse.Inventory:RegisterItem(item)
         end
 
         function item:OnEquip(ply, class, uid)
-            local wep = ply:GetActiveWeapon()
+            local weapon = ply:GetActiveWeapon()
 
-            wep:GiveAttachment(attClass)
+            weapon:GiveAttachment(attachmentClass)
 
             ply.InvAttachments = ply.InvAttachments or {}
-            ply.InvAttachments[wep:GetClass()] = uid
+            ply.InvAttachments[weapon:GetClass()] = uid
         end
 
         function item:UnEquip(ply, class, uid)
-            local weps = ply:GetWeapons()
-
-            for v, k in pairs(weps) do
-                if IsValid(k) and k.IsLongsword and k.Attachments and k.Attachments[attClass] and k:HasAttachment(attClass) then
-                    k:TakeAttachment(attClass)
-                    ply.InvAttachments[k:GetClass()] = nil
+            for k, v in pairs(ply:GetWeapons()) do
+                if ( IsValid(v) and v.IsLongsword and v.Attachments and v.Attachments[attachmentClass] and v:HasAttachment(attachmentClass) ) then
+                    v:TakeAttachment(attachmentClass)
+                    ply.InvAttachments[v:GetClass()] = nil
                     return
                 end
             end
@@ -107,7 +101,7 @@ function impulse.Inventory:RegisterItem(item)
     local craftSound = item.CraftSound
     local craftTime = item.CraftTime
 
-    if craftSound or craftTime then
+    if ( craftSound or craftTime ) then
         impulse.Inventory.CraftInfo[item.UniqueID] = {
             time = craftTime or nil,
             sound = craftSound or nil

@@ -453,13 +453,13 @@ end
 
 function GM:StartChat()
     net.Start("impulseChatState")
-    net.WriteBool(true)
+        net.WriteBool(true)
     net.SendToServer()
 end
 
 function GM:FinishChat()
     net.Start("impulseChatState")
-    net.WriteBool(false)
+        net.WriteBool(false)
     net.SendToServer()
 end
 
