@@ -29,8 +29,8 @@ function impulse.chatBox.buildBox()
         derma.SkinHook( "Paint", "Frame", self, w, h )
     end
     impulse.chatBox.oldPaint = impulse.chatBox.frame.Paint
-    impulse.chatBox.frame.Think = function()
-        if input.IsKeyDown( KEY_ESCAPE ) then
+    impulse.chatBox.frame.OnKeyCodePressed = function( self, code )
+        if code == KEY_ESCAPE then
             impulse.chatBox.hideBox()
         end
     end
