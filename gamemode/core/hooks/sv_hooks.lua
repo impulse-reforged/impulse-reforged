@@ -818,7 +818,7 @@ function GM:OnPlayerChangedTeam(ply)
     if ( plyTable.BuyableTeamRemove ) then
         for v, k in pairs(plyTable.BuyableTeamRemove) do
             if ( IsValid(v) and v.BuyableOwner == ply ) then
-                SafeEntityRemove(v)
+                SafeRemoveEntity(v)
             end
         end
     end
@@ -952,7 +952,7 @@ function GM:InitPostEntity()
 
     for k, v in ents.Iterator() do
         if ( v.impulseSaveEnt or v.IsZoneTrigger ) then
-            SafeEntityRemove(v)
+            SafeRemoveEntity(v)
         end
     end
 
@@ -972,14 +972,14 @@ function GM:InitPostEntity()
         -- Slower version
         -- for k, v in ents.Iterator() do
         --     if ( impulse.Config.BlacklistEnts[v:GetClass()] ) then
-        --         SafeEntityRemove(v)
+        --         SafeRemoveEntity(v)
         --     end
         -- end
 
         -- Faster version
         for k, v in pairs(impulse.Config.BlacklistEnts) do
             for _, ent in ipairs(ents.FindByClass(k)) do
-                SafeEntityRemove(ent)
+                SafeRemoveEntity(ent)
             end
         end
     end

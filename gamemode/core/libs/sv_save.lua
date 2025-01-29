@@ -115,7 +115,7 @@ concommand.Add("impulse_save_all", function(ply, cmd, args)
         end
     end
 
-    file.Write("impulse-reforged/saves/" .. map .. ".json", util.TableToJSON(savedEnts, true))
+    file.Write("impulse-reforged/saves/" .. string.lower(game.GetMap()) .. ".json", util.TableToJSON(savedEnts, true))
 
     ply:AddChatText("All marked entities have been saved, and have been written to the save file.")
 end, nil, "Saves all marked entities.", FCVAR_CLIENTCMD_CAN_EXECUTE)
