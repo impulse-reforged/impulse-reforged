@@ -57,9 +57,9 @@ if ( SERVER ) then
     --- Gives XP with a message to the player
     -- @realm server
     function PLAYER:GiveTimedXP()
-        local amount = impulse.Config.XPGet
+        local amount = impulse.Config.XPGet or 5
         if ( self:IsDonator() ) then
-            amount = impulse.Config.XPGetDonator
+            amount = impulse.Config.XPGetDonator or 10
         end
 
         self:AddXP(amount)
