@@ -248,7 +248,7 @@ net.Receive("impulseATMWithdraw", function(len, ply)
 
     if ply:CanAffordBank(amount) then
         ply:TakeBankMoney(amount)
-        ply:GiveMoney(amount)
+        ply:AddMoney(amount)
         ply:Notify("You have withdrawn "..impulse.Config.CurrencyPrefix..amount.." from your bank account.")
     else
         ply:Notify("You cannot afford to withdraw this amount of money.")
@@ -267,7 +267,7 @@ net.Receive("impulseATMDeposit", function(len, ply)
 
     if ply:CanAfford(amount) then
         ply:TakeMoney(amount)
-        ply:GiveBankMoney(amount)
+        ply:AddBankMoney(amount)
         ply:Notify("You have deposited "..impulse.Config.CurrencyPrefix..amount.." to your bank account.")
     else
         ply:Notify("You cannot afford to deposit this amount of money.")
@@ -415,17 +415,16 @@ net.Receive("impulseBuyItem", function(len, ply)
 end)
 
 net.Receive("impulseChatState", function(len, ply)
-    if (ply.nextChatState or 0) < CurTime() then
-        local isTyping = net.ReadBool()
-        local state = ply:GetNetVar("typing", false)
+    if ( ( ply.impulseNextChatState or 0 ) > CurTime() ) then return end
+    ply.impulseNextChatState = CurTime() + 0.02
 
-        if state != isTyping then
-            ply:SetNetVar("typing", isTyping)
+    local isTyping = net.ReadBool()
+    local state = ply:GetNetVar("typing", false)
 
-            hook.Run("ChatStateChanged", ply, state, isTyping)
-        end
+    if ( state != isTyping ) then
+        ply:SetNetVar("typing", isTyping)
 
-        ply.nextChatState = CurTime() + .02
+        hook.Run("ChatStateChanged", ply, state, isTyping)
     end
 end)
 
@@ -468,7 +467,7 @@ net.Receive("impulseDoorSell", function(len, ply)
 
     if IsValid(traceEnt) and ply:IsDoorOwner(traceEnt:GetNetVar("doorOwners", nil)) and traceEnt:GetDoorMaster() == ply and hook.Run("CanEditDoor", ply, traceEnt) != false then
         ply:RemoveDoorMaster(traceEnt)
-        ply:GiveMoney(impulse.Config.DoorPrice - 2)
+        ply:AddMoney(impulse.Config.DoorPrice - 2)
 
         ply:Notify("You have sold a door for "..impulse.Config.CurrencyPrefix..(impulse.Config.DoorPrice - 2)..".")
 
@@ -648,7 +647,7 @@ net.Receive("impulseSellAllDoors", function(len, ply)
     ply.impulseOwnedDoors = {}
 
     local amount = sold * (impulse.Config.DoorPrice - 2)
-    ply:GiveMoney(amount)
+    ply:AddMoney(amount)
     ply:Notify("You have sold all your doors for "..impulse.Config.CurrencyPrefix..amount..".")
 end)
 
@@ -1307,7 +1306,7 @@ net.Receive("impulseVendorSell", function(len, ply)
     ply:TakeInventoryItem(itemid)
 
     if buyData.Cost then
-        ply:GiveMoney(buyData.Cost)
+        ply:AddMoney(buyData.Cost)
         ply:Notify("You have sold a "..itemName.." for "..impulse.Config.CurrencyPrefix..buyData.Cost..".")
     else
         ply:Notify("You have handed over a "..itemName..".")

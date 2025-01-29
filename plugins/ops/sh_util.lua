@@ -125,6 +125,60 @@ local setMoneyCommand = {
 
 impulse.RegisterChatCommand("/setmoney", setMoneyCommand)
 
+local addMoneyCommand = {
+    description = "Adds money to the specified player.",
+    requiresArg = true,
+    superAdminOnly = true,
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local amount = args[2]
+
+        if ( !amount or !tonumber(amount) ) then return end
+
+        if ( IsValid(target) ) then
+            target:AddMoney(amount)
+            ply:Notify("You have added " .. amount .. " to " .. target:Nick() .. "'s money.")
+
+            for k, v in player.Iterator() do
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has added " .. amount .. " to " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") money.")
+                end
+            end
+        else
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
+        end
+    end
+}
+
+impulse.RegisterChatCommand("/addmoney", addMoneyCommand)
+
+local takeMoneyCommand = {
+    description = "Takes money from the specified player.",
+    requiresArg = true,
+    superAdminOnly = true,
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local amount = args[2]
+
+        if ( !amount or !tonumber(amount) ) then return end
+
+        if ( IsValid(target) ) then
+            target:TakeMoney(amount)
+            ply:Notify("You have taken " .. amount .. " from " .. target:Nick() .. "'s money.")
+
+            for k, v in player.Iterator() do
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has taken " .. amount .. " from " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") money.")
+                end
+            end
+        else
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
+        end
+    end
+}
+
+impulse.RegisterChatCommand("/takemoney", takeMoneyCommand)
+
 local setBankMoneyCommand = {
     description = "Sets bank money of the specified player.",
     requiresArg = true,
@@ -151,6 +205,60 @@ local setBankMoneyCommand = {
 }
 
 impulse.RegisterChatCommand("/setbankmoney", setBankMoneyCommand)
+
+local addBankMoneyCommand = {
+    description = "Adds bank money to the specified player.",
+    requiresArg = true,
+    superAdminOnly = true,
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local amount = args[2]
+
+        if ( !amount or !tonumber(amount) ) then return end
+
+        if ( IsValid(target) ) then
+            target:AddBankMoney(amount)
+            ply:Notify("You have added " .. amount .. " to " .. target:Nick() .. "'s bank money.")
+
+            for k, v in player.Iterator() do
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has added " .. amount .. " to " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") bank money.")
+                end
+            end
+        else
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
+        end
+    end
+}
+
+impulse.RegisterChatCommand("/addbankmoney", addBankMoneyCommand)
+
+local takeBankMoneyCommand = {
+    description = "Takes bank money from the specified player.",
+    requiresArg = true,
+    superAdminOnly = true,
+    onRun = function(ply, args, rawText)
+        local target = impulse.Util:FindPlayer(args[1])
+        local amount = args[2]
+
+        if ( !amount or !tonumber(amount) ) then return end
+
+        if ( IsValid(target) ) then
+            target:TakeBankMoney(amount)
+            ply:Notify("You have taken " .. amount .. " from " .. target:Nick() .. "'s bank money.")
+
+            for k, v in player.Iterator() do
+                if ( v:IsLeadAdmin() ) then
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. ply:SteamName() .. " (" .. ply:SteamID64() .. ") has taken " .. amount .. " from " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") bank money.")
+                end
+            end
+        else
+            return ply:Notify("Could not find player: " .. tostring(args[1]))
+        end
+    end
+}
+
+impulse.RegisterChatCommand("/takebankmoney", takeBankMoneyCommand)
 
 local fixLegsCommand = {
     description = "Fixes the legs of the specified player.",

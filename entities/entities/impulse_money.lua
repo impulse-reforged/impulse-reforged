@@ -32,7 +32,7 @@ if ( SERVER ) then
     function ENT:Use(activator)
         if activator:IsPlayer() then
             self:Remove()
-            activator:GiveMoney(self.money)
+            activator:AddMoney(self.money)
             activator:Notify("You have picked up "..impulse.Config.CurrencyPrefix..self.money..".")
         end
     end

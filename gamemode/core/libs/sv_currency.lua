@@ -57,8 +57,7 @@ local PLAYER = FindMetaTable("Player")
 -- @opt[opt=false] bNoSave If true, the money will not be saved to the database
 -- @treturn int amount The new amount of money the player has received
 function PLAYER:SetMoney(amount, bNoSave)
-    if ( !self.impulseBeenSetup or self.impulseBeenSetup == false ) then return end
-    if ( !isnumber(amount) or amount < 0 ) then return end
+    if ( !self.impulseBeenSetup ) then return end
 
     if ( !bNoSave ) then
         local query = mysql:Update("impulse_players")
@@ -67,7 +66,9 @@ function PLAYER:SetMoney(amount, bNoSave)
         query:Execute()
     end
 
-    return self:SetLocalVar("money", amount)
+    self:SetLocalVar("money", amount)
+
+    return amount
 end
 
 --- Set's the amount of bank money a player has
@@ -76,8 +77,7 @@ end
 -- @opt[opt=false] bNoSave If true, the bank money will not be saved to the database
 -- @treturn int amount The new amount of bank money the player has received
 function PLAYER:SetBankMoney(amount, bNoSave)
-    if ( !self.impulseBeenSetup or self.impulseBeenSetup == false ) then return end
-    if ( !isnumber(amount) or amount < 0 ) then return end
+    if ( !self.impulseBeenSetup ) then return end
 
     if ( !bNoSave ) then
         local query = mysql:Update("impulse_players")
@@ -86,13 +86,15 @@ function PLAYER:SetBankMoney(amount, bNoSave)
         query:Execute()
     end
 
-    return self:SetLocalVar("bankMoney", amount)
+    self:SetLocalVar("bankmoney", amount)
+
+    return amount
 end
 
 --- Gives the player the amount of money
 -- @realm server
 -- @int amount Amount of money to give to the player
-function PLAYER:GiveMoney(amount)
+function PLAYER:AddMoney(amount)
     return self:SetMoney(self:GetMoney() + amount)
 end
 
@@ -106,7 +108,7 @@ end
 --- Gives the player the amount of bank money
 -- @realm server
 -- @int amount Amount of bank money to give to the player
-function PLAYER:GiveBankMoney(amount)
+function PLAYER:AddBankMoney(amount)
     return self:SetBankMoney(self:GetBankMoney() + amount)
 end
 

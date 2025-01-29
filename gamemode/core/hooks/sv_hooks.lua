@@ -323,7 +323,7 @@ function GM:PlayerSetup(ply, data)
 
             if ( money == 0 ) then return end
 
-            ply:GiveBankMoney(money)
+            ply:AddBankMoney(money)
             
             net.Start("impulseGetRefund")
             net.WriteUInt(table.Count(names), 8)
