@@ -62,25 +62,27 @@ impulse.Settings.Stored = {}
 --         print("Textbox setting changed to: "..newVal)
 --     end
 -- })
+
+local logs = impulse.Logs
 function impulse.Settings:Define(name, settingData)
     if not settingData then
-        return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Data is nil, attempted name: "..name.."\n")
+        logs.Error("Could not Define Setting. Data is nil, attempted name: "..name)
     end
 
     if not type(settingData) == "table" then
-        return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Data is not a table, attempted name: "..name.."\n")
+        logs.Error("Could not Define Setting. Data is not a table, attempted name: "..name)
     end
 
     if not settingData.name then
-        return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Name is nil, attempted name: "..name.."\n")
+        logs.Error("Could not Define Setting. Name is nil, attempted name: "..name)
     end
 
     if not settingData.type then
-        return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Type is nil, attempted name: "..name.."\n")
+        logs.Error("Could not Define Setting. Type is nil, attempted name: "..name)
     end
 
     if settingData.default == nil then
-        return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Default is nil, attempted name: "..name.."\n")
+        logs.Error("Could not Define Setting. Default is nil, attempted name: "..name)
     end
 
     if settingData.type == "slider" then
@@ -97,7 +99,7 @@ function impulse.Settings:Define(name, settingData)
         end
     elseif settingData.type == "dropdown" then
         if not settingData.options then
-            return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not Define Setting. Options is nil, attempted name: "..name.."\n")
+            logs.Error("Could not Define Setting. Options is nil, attempted name: "..name)
         end
     end
 
@@ -141,7 +143,7 @@ end
 function impulse.Settings:Load()
     for v, k in pairs(self.Stored) do
         if not k then
-            MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not load setting. Please contact a developer, attempted name: "..v.."\n")
+            logs.Error("Could not load setting. Please contact a developer. Attempted name: "..v)
             continue
         end
 
@@ -183,7 +185,7 @@ function impulse.Settings:Set(name, value)
         return
     end
 
-    return MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not SetSetting. Please contact a developer, attempted name: "..name.."\n")
+    return logs.Error("Could not SetSetting. Please contact a developer, attempted name: "..name)
 end
 
 concommand.Add("impulse_settings_reset", function()
@@ -191,5 +193,5 @@ concommand.Add("impulse_settings_reset", function()
         impulse.Settings:Set(v, k.default)
     end
 
-    MsgC(Color(0, 255, 0), "[impulse-reforged] Settings reset to default.\n")
+    return logs.Success("Settings reset to default.")
 end)

@@ -1,6 +1,8 @@
 impulse.Plugins = impulse.Plugins or {}
 impulse.Plugins.List = impulse.Plugins.List or {}
 
+local logs = impulse.Logs
+
 function impulse.Plugins:LoadEntities(path)
     local files, folders
 
@@ -90,7 +92,7 @@ function impulse.Plugins:LoadEntities(path)
 end
 
 function impulse.Plugins:Load(path)
-    MsgC(Color(83, 143, 239), "[impulse-reforged] Loading plugins...\n")
+    logs.Info("Loading plugins...")
 
     path = path or "impulse-reforged/plugins"
 
@@ -99,7 +101,7 @@ function impulse.Plugins:Load(path)
 
     for k, v in ipairs(folders) do
         if ( disabledPlugins and disabledPlugins[v] ) then
-            MsgC(Color(255, 255, 0), "[impulse-reforged] Skipping disabled plugin: " .. v .. "\n")
+            logs.Debug("Skipping disabled plugin: " .. v)
             continue
         end
 
@@ -129,7 +131,7 @@ function impulse.Plugins:Load(path)
 
     for k, v in ipairs(files) do
         if ( disabledPlugins and disabledPlugins[v] ) then
-            MsgC(Color(255, 255, 0), "[impulse-reforged] Skipping disabled plugin: " .. v .. "\n")
+            logs.Debug("Skipping disabled plugin: " .. v)
             continue
         end
 
@@ -147,5 +149,5 @@ function impulse.Plugins:Load(path)
         PLUGIN = nil
     end
 
-    MsgC(Color(0, 255, 0), "[impulse-reforged] Loaded plugins.\n")
+    logs.Success("Loaded plugins.")
 end

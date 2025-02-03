@@ -1,3 +1,5 @@
+local logs = impulse.Logs
+
 local PANEL = {}
 
 function PANEL:Init()
@@ -14,14 +16,14 @@ function PANEL:Init()
     function(error) 
         if IsValid(self) then 
             self:Remove()
-            print("[impulse-reforged] Failed to load newsfeed. Error: "..error)
+            logs.Error("Failed to load newsfeed. Error: "..error)
         end 
     end)
 end
 
 function PANEL:SetupNews(newsData)
     if not newsData then
-        return print("[impulse-reforged] Failed to load newsfeed.")
+        return logs.Error("Failed to load newsfeed.")
     end
     
     for v,postData in pairs(newsData) do

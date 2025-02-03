@@ -1,3 +1,5 @@
+local logs = impulse.Logs
+
 function GM:PlayerUseSpawnSaver(ply)
     return false
 end
@@ -6,7 +8,7 @@ function GM:DatabaseConnected()
     -- Create the SQL tables if they do not exist.
     impulse.Database:LoadTables()
 
-    MsgC(Color(0, 255, 0), "Database Type: " .. impulse.Database.Config.adapter .. ".\n")
+    logs.Database("Database type: " .. impulse.Database.Config.adapter .. ".")
 
     if ( impulse.Database.Config.dev and impulse.Database.Config.dev.preview ) then
         GetConVar("impulse_preview"):SetBool(true)
@@ -83,16 +85,16 @@ function GM:PlayerInitialSpawn(ply)
             end
 
             if ( GExtension ) then
-                MsgC(Color(0, 255, 0), "[impulse-reforged] GExtension detected, skipping group setting for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'.\n")
+                logs.Database("GExtension detected, skipping group setting for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'.")
             elseif ( VyHub ) then
-                MsgC(Color(0, 255, 0), "[impulse-reforged] VyHub detected, skipping group setting for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'.\n")
+                logs.Database("VyHub detected, skipping group setting for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'.")
             else
                 if ( db.group ) then
                     ply:SetUserGroup(db.group, true)
-                    MsgC(Color(0, 255, 0), "[impulse-reforged] Set '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")' to group '" .. db.group .. "'.\n")
+                    logs.Database("Set '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")' to group '" .. db.group .. "'.")
                 else
                     ply:SetUserGroup("user", true)
-                    MsgC(Color(255, 0, 0), "[impulse-reforged] No group found for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'. Defaulting to user.\n")
+                    logs.Database("No group found for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'. Defaulting to user.")
     
                     local queryGroup = mysql:Update("impulse_players")
                     queryGroup:Update("group", "user")
@@ -639,7 +641,7 @@ end
 function GM:DoPlayerDeath(ply, attacker, dmginfo)
     local ragCount = table.Count(ents.FindByClass("prop_ragdoll"))
     if ( ragCount > 32 ) then
-        print("[impulse-reforged] Avoiding ragdoll body spawn for performance reasons... (rag count: " .. ragCount .. ")")
+        logs.Debug("Avoiding ragdoll body spawn for performance reasons... (rag count: " .. ragCount .. ")")
         return
     end
 

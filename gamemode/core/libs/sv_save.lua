@@ -6,6 +6,8 @@ impulse.Save = impulse.Save or {}
 file.CreateDir("impulse-reforged")
 file.CreateDir("impulse-reforged/saves")
 
+
+local logs = impulse.Logs
 function impulse.Save:Load()
     local map = string.lower(game.GetMap())
     if ( file.Exists("impulse-reforged/saves/" .. map .. ".json", "DATA") ) then
@@ -13,7 +15,7 @@ function impulse.Save:Load()
         for k, v in pairs(savedEnts) do
             local ent = ents.Create(v.class)
             if ( !IsValid(ent) ) then
-                print("[impulse-reforged] [save] Entity " .. v.class .. " does not exist! Skipping!")
+                logs.Error("[save] Entity " .. v.class .. " does not exist! Skipping!")
                 continue
             end
 

@@ -1,3 +1,5 @@
+local logs = impulse.Logs
+
 local function IsSteamID(str)
     return string.match(str, "STEAM_%d:%d:%d+")
 end
@@ -10,20 +12,20 @@ concommand.Add("impulse_set_group", function(ply, cmd, args)
     if ( !IsValid(ply) or ply:IsSuperAdmin() or ply:IsListenServerHost() ) then
         local find = args[1]
         if !find then
-            MsgC(Color(255, 0, 0), "[impulse-reforged] No player target specified.\n")
+            logs.Error("No player target specified.")
             return
         end
 
         local group = args[2]
         if !group then
-            MsgC(Color(255, 0, 0), "[impulse-reforged] No group specified.\n")
+            logs.Error("No group specified.")
             return
         end
 
         local targ = impulse.Util:FindPlayer(find)
         if IsValid(targ) then
             targ:SetUserGroup(group, true)
-            MsgC(Color(83, 143, 239), "[impulse-reforged] Set '" .. targ:SteamID64() .. " (" .. targ:Name() .. ")' to group '" .. group .. "'.\n")
+            logs.Info("Set '" .. targ:SteamID64() .. " (" .. targ:Name() .. ")' to group '" .. group .. "'.\n")
 
             local query = mysql:Update("impulse_players")
             query:Update("group", group)
@@ -32,7 +34,7 @@ concommand.Add("impulse_set_group", function(ply, cmd, args)
 
             return
         else
-            MsgC(Color(255, 200, 0), "[impulse-reforged] Target not found, checking for SteamID64...\n")
+            logs.Warning("Target not found, checking for SteamID64...\n")
         end
 
         local steamid
@@ -43,7 +45,7 @@ concommand.Add("impulse_set_group", function(ply, cmd, args)
         end
         
         if !steamid then
-            MsgC(Color(255, 0, 0), "[impulse-reforged] Target not found, and '" .. find .. "' is not a valid SteamID64.\n")
+            logs.Error("Target not found, and '" .. find .. "' is not a valid SteamID64.")
             return
         end
 
@@ -52,6 +54,6 @@ concommand.Add("impulse_set_group", function(ply, cmd, args)
         query:Where("steamid", steamid)
         query:Execute()
 
-        MsgC(Color(83, 143, 239), "[impulse-reforged] Set '" .. steamid .. "' to group '" .. group .. "'.\n")
+        logs.Success("Set '" .. steamid .. "' to group '" .. group .. "'.\n")
     end
 end)
