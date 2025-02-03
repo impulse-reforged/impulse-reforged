@@ -1,3 +1,5 @@
+local logs = impulse.Logs
+
 function GM:ForceDermaSkin()
     return "impulse"
 end
@@ -17,7 +19,7 @@ function GM:OnSchemaLoaded()
         local data = util.JSONToTable(f)
 
         if not data then
-            print("[impulse-reforged] Error loading menu message "..v.."!")
+            logs.Error("Error loading menu message "..k.."!")
             continue
         end
 
