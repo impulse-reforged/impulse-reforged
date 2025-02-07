@@ -969,14 +969,6 @@ function GM:InitPostEntity()
     end
 
     if ( impulse.Config.BlacklistEnts ) then
-        -- Slower version
-        -- for k, v in ents.Iterator() do
-        --     if ( impulse.Config.BlacklistEnts[v:GetClass()] ) then
-        --         SafeRemoveEntity(v)
-        --     end
-        -- end
-
-        -- Faster version
         for k, v in pairs(impulse.Config.BlacklistEnts) do
             for _, ent in ipairs(ents.FindByClass(k)) do
                 SafeRemoveEntity(ent)
@@ -985,6 +977,7 @@ function GM:InitPostEntity()
     end
 
     impulse.Save:Load()
+
     LoadButtons()
 
     hook.Run("PostInitPostEntity")
