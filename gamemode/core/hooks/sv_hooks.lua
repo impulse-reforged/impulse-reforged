@@ -8,7 +8,7 @@ function GM:DatabaseConnected()
     -- Create the SQL tables if they do not exist.
     impulse.Database:LoadTables()
 
-    logs.Database("Database type: " .. impulse.Database.Config.adapter .. ".")
+    logs:Database("Database type: " .. impulse.Database.Config.adapter .. ".")
 
     if ( impulse.Database.Config.dev and impulse.Database.Config.dev.preview ) then
         GetConVar("impulse_preview"):SetBool(true)
@@ -85,16 +85,16 @@ function GM:PlayerInitialSpawn(ply)
             end
 
             if ( GExtension ) then
-                logs.Database("GExtension detected, skipping group setting for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'.")
+                logs:Database("GExtension detected, skipping group setting for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'.")
             elseif ( VyHub ) then
-                logs.Database("VyHub detected, skipping group setting for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'.")
+                logs:Database("VyHub detected, skipping group setting for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'.")
             else
                 if ( db.group ) then
                     ply:SetUserGroup(db.group, true)
-                    logs.Database("Set '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")' to group '" .. db.group .. "'.")
+                    logs:Database("Set '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")' to group '" .. db.group .. "'.")
                 else
                     ply:SetUserGroup("user", true)
-                    logs.Database("No group found for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'. Defaulting to user.")
+                    logs:Database("No group found for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'. Defaulting to user.")
     
                     local queryGroup = mysql:Update("impulse_players")
                     queryGroup:Update("group", "user")
@@ -641,7 +641,7 @@ end
 function GM:DoPlayerDeath(ply, attacker, dmginfo)
     local ragCount = table.Count(ents.FindByClass("prop_ragdoll"))
     if ( ragCount > 32 ) then
-        logs.Debug("Avoiding ragdoll body spawn for performance reasons... (rag count: " .. ragCount .. ")")
+        logs:Debug("Avoiding ragdoll body spawn for performance reasons... (rag count: " .. ragCount .. ")")
         return
     end
 

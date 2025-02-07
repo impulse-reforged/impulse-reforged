@@ -18,27 +18,27 @@ local default = {
 -- @internal
 -- @usage impulse.Schema:Load() -- Called by impulse:Boot()
 function impulse.Schema:Load()
-    logs.Info("Starting schema load ...")
+    logs:Info("Starting schema load ...")
 
     local name = engine.ActiveGamemode()
     if ( name == "impulse-reforged" ) then
-        logs.Error("Attempted to load Schema \"impulse-reforged\", aborting. This is the framework!")
+        logs:Error("Attempted to load Schema \"impulse-reforged\", aborting. This is the framework!")
         SetGlobalString("impulse_fatalerror", "Failed to load Schema \"impulse-reforged\", aborting. This is the framework!")
         return
     end
 
-    logs.Info("Loading Schema \"" .. name .. "\"...")
+    logs:Info("Loading Schema \"" .. name .. "\"...")
 
     if ( SERVER and !file.IsDir(name, "LUA") ) then
         SetGlobalString("impulse_fatalerror", "Failed to load Schema \"" .. name .. "\", does not exist.")
-        logs.Error("Failed to load Schema \"" .. name .. "\", does not exist.")
+        logs:Error("Failed to load Schema \"" .. name .. "\", does not exist.")
         return
     end
 
     local path = name .. "/schema/sh_schema.lua"
     if ( !file.Exists(path, "LUA") ) then
         SetGlobalString("impulse_fatalerror", "Failed to load Schema \"" .. name .. "\", no sh_schema.lua found.")
-        logs.Error("Failed to load Schema \"" .. name .. "\", no sh_schema.lua found.")
+        logs:Error("Failed to load Schema \"" .. name .. "\", no sh_schema.lua found.")
         return
     end
 
@@ -68,10 +68,10 @@ function impulse.Schema:Load()
     local map = game.GetMap()
     path = name .. "/schema/config/maps/" .. map .. ".lua"
     if ( file.Exists(path, "LUA") ) then
-        logs.Info("Loading map config for \"" .. map .. "\" in Schema \"" .. name .. "\".")
+        logs:Info("Loading map config for \"" .. map .. "\" in Schema \"" .. name .. "\".")
         impulse.Util:Include(path, "shared")
     else
-        logs.Error("Failed to find map config for \"" .. map .. "\" in Schema \"" .. name .. "\".")
+        logs:Error("Failed to find map config for \"" .. map .. "\" in Schema \"" .. name .. "\".")
     end
 
     hook.Run("PostConfigLoad")
@@ -91,7 +91,7 @@ function impulse.Schema:Load()
 
     hook.Run("OnSchemaLoaded")
 
-    logs.Success("Schema \"" .. name .. "\" loaded successfully.")
+    logs:Success("Schema \"" .. name .. "\" loaded successfully.")
 end
 
 --- Boots a specified object from a foreign schema using the piggbacking system
@@ -100,7 +100,7 @@ end
 -- @string object The folder in the schema to load
 -- @usage impulse.Schema:PiggyBoot("impulse-hl2rp", "items")
 function impulse.Schema:PiggyBoot(schema, object)
-    logs.Info("[" .. schema .. "] Loading " .. object .. " (via PiggyBoot)")
+    logs:Info("[" .. schema .. "] Loading " .. object .. " (via PiggyBoot)")
     impulse.Util:IncludeDir(schema .. "/" .. object)
 end
 
@@ -110,6 +110,6 @@ end
 -- @string plugin The plugin folder name
 -- @usage impulse.Schema:PiggyBootPlugin("impulse-hl2rp", "pluginname")
 function impulse.Schema:PiggyBootPlugin(schema, plugin)
-    logs.Info("[" .. schema .. "] [plugins] Loading plugin (via PiggyBoot) \"" .. plugin .. "\"")
+    logs:Info("[" .. schema .. "] [plugins] Loading plugin (via PiggyBoot) \"" .. plugin .. "\"")
     self:LoadPlugin(schema .. "/plugins/" .. plugin, plugin)
 end

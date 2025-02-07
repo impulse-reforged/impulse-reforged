@@ -34,7 +34,7 @@ function impulse.Loot.GenerateFromPool(pool)
         ANTICRASH_ATTEMPTS = ANTICRASH_ATTEMPTS + 1
 
         if ANTICRASH_ATTEMPTS > 32 then
-            logs.Warning("HIGH LOOT GENERATION ATTEMPTS WARNING! ("..pool..") ("..ANTICRASH_ATTEMPTS..")")
+            logs:Warning("HIGH LOOT GENERATION ATTEMPTS WARNING! ("..pool..") ("..ANTICRASH_ATTEMPTS..")")
             print("Please make sure this lootpool is NOT impossible to compute!")    
         end
 

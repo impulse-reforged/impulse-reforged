@@ -33,7 +33,7 @@ function PANEL:Init()
         if name == false then return msg(rejectReason, "impulse", "OK") end
 
         Derma_Query("Are you sure you are finished?\nYou can edit your character later, but it will cost a fee.", "impulse", "Yes", function()
-            logs.Info("Sending character data to server...")
+            logs:Info("Sending character data to server...")
 
             net.Start("impulseCharacterCreate")
             net.WriteString(characterName)

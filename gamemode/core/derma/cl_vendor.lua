@@ -27,11 +27,11 @@ function PANEL:SetupVendor()
     local vendorType = npc:GetVendor()
 
     if not vendorType then
-        logs.Warning("Vendor has no VendorType set!")
+        logs:Warning("Vendor has no VendorType set!")
     end
 
     if not impulse.Vendor.Data[vendorType] then
-        return logs.Error("VendorType "..vendorType.." is invalid!")
+        return logs:Error("VendorType "..vendorType.." is invalid!")
     end
 
     self.NPC = npc
@@ -90,14 +90,14 @@ function PANEL:SetupVendor()
             local itemid = impulse.Inventory:ClassToNetID(v)
 
             if not itemid then
-                logs.Error(""..v.." is invalid!")
+                logs:Error(""..v.." is invalid!")
                 continue
             end
 
             local item = impulse.Inventory.Items[itemid]
 
             if not item then
-                logs.Error("Failed to resolve ItemID "..itemid.."! (Class "..v..")!")
+                logs:Error("Failed to resolve ItemID "..itemid.."! (Class "..v..")!")
                 continue
             end
 
@@ -115,14 +115,14 @@ function PANEL:SetupVendor()
             local itemid = impulse.Inventory:ClassToNetID(v)
 
             if not itemid then
-                logs.Error(""..v.." is invalid!")
+                logs:Error(""..v.." is invalid!")
                 continue
             end
 
             local item = impulse.Inventory.Items[itemid]
 
             if not item then
-                logs.Error("Failed to resolve ItemID "..itemid.."! (Class "..v..")!")
+                logs:Error("Failed to resolve ItemID "..itemid.."! (Class "..v..")!")
                 continue
             end
 

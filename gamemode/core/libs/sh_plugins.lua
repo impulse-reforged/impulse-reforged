@@ -92,7 +92,7 @@ function impulse.Plugins:LoadEntities(path)
 end
 
 function impulse.Plugins:Load(path)
-    logs.Info("Loading plugins...")
+    logs:Info("Loading plugins...")
 
     path = path or "impulse-reforged/plugins"
 
@@ -101,7 +101,7 @@ function impulse.Plugins:Load(path)
 
     for k, v in ipairs(folders) do
         if ( disabledPlugins and disabledPlugins[v] ) then
-            logs.Debug("Skipping disabled plugin: " .. v)
+            logs:Debug("Skipping disabled plugin: " .. v)
             continue
         end
 
@@ -131,7 +131,7 @@ function impulse.Plugins:Load(path)
 
     for k, v in ipairs(files) do
         if ( disabledPlugins and disabledPlugins[v] ) then
-            logs.Debug("Skipping disabled plugin: " .. v)
+            logs:Debug("Skipping disabled plugin: " .. v)
             continue
         end
 
@@ -149,5 +149,5 @@ function impulse.Plugins:Load(path)
         PLUGIN = nil
     end
 
-    logs.Success("Loaded plugins.")
+    logs:Success("Loaded plugins.")
 end

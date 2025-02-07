@@ -19,7 +19,7 @@ function GM:OnSchemaLoaded()
         local data = util.JSONToTable(f)
 
         if not data then
-            logs.Error("Error loading menu message "..k.."!")
+            logs:Error("Error loading menu message "..k.."!")
             continue
         end
 

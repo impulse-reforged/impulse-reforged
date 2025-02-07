@@ -113,7 +113,7 @@ end
 -- @treturn entity Spawned item
 function impulse.Inventory:SpawnItem(class, pos, bannedPlayer, killTime)
     local itemID = impulse.Inventory:ClassToNetID(class)
-    if not itemID then return logs.Error("Attempting to spawn nil item!") end
+    if not itemID then return logs:Error("Attempting to spawn nil item!") end
     
     local item = ents.Create("impulse_item")
     item:SetItem(itemID)
@@ -140,7 +140,7 @@ end
 -- @treturn entity Spawned workbench
 function impulse.Inventory:SpawnBench(class, pos, ang)
     local benchClass = impulse.Inventory.Benches[class]
-    if not benchClass then return logs.Error("Attempting to spawn nil bench!") end
+    if not benchClass then return logs:Error("Attempting to spawn nil bench!") end
 
     local bench = ents.Create("impulse_bench")
     bench:SetBench(benchClass)

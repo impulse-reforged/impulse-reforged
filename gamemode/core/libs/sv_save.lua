@@ -15,7 +15,7 @@ function impulse.Save:Load()
         for k, v in pairs(savedEnts) do
             local ent = ents.Create(v.class)
             if ( !IsValid(ent) ) then
-                logs.Error("[save] Entity " .. v.class .. " does not exist! Skipping!")
+                logs:Error("[save] Entity " .. v.class .. " does not exist! Skipping!")
                 continue
             end
 

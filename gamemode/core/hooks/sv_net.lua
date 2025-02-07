@@ -134,7 +134,7 @@ net.Receive("impulseCharacterCreate", function(len, ply)
     query:Callback(function(result)
         -- If we already have a rp name, we can't create a new character
         if istable(result) and #result > 0 and result[1].rpname and result[1].rpname != "" then
-            logs.Info(ply:SteamName().." attempted to create a new character when they already have one.")
+            logs:Info(ply:SteamName().." attempted to create a new character when they already have one.")
             ply:Kick("You already have a character, stop trying to exploit.")
             return
         end
@@ -181,7 +181,7 @@ net.Receive("impulseCharacterCreate", function(len, ply)
                     playtime = 0
                 }
 
-                logs.Debug(ply:SteamName().." has created their character with the name \""..charName.."\".")
+                logs:Debug(ply:SteamName().." has created their character with the name \""..charName.."\".")
 
                 ply:Freeze(false)
                 ply:AllowScenePVSControl(false) -- stop cutscene

@@ -24,7 +24,7 @@ function PANEL:SetMix(mix)
     local item = impulse.Inventory.Items[id]
 
     if ( !item ) then
-        logs.Error("Could not find item: " .. class .. " for use in mix: " .. mix.Class .. "!")
+        logs:Error("Could not find item: " .. class .. " for use in mix: " .. mix.Class .. "!")
         return self:Remove()
     end
 

@@ -66,23 +66,23 @@ impulse.Settings.Stored = {}
 local logs = impulse.Logs
 function impulse.Settings:Define(name, settingData)
     if not settingData then
-        logs.Error("Could not Define Setting. Data is nil, attempted name: "..name)
+        logs:Error("Could not Define Setting. Data is nil, attempted name: "..name)
     end
 
     if not type(settingData) == "table" then
-        logs.Error("Could not Define Setting. Data is not a table, attempted name: "..name)
+        logs:Error("Could not Define Setting. Data is not a table, attempted name: "..name)
     end
 
     if not settingData.name then
-        logs.Error("Could not Define Setting. Name is nil, attempted name: "..name)
+        logs:Error("Could not Define Setting. Name is nil, attempted name: "..name)
     end
 
     if not settingData.type then
-        logs.Error("Could not Define Setting. Type is nil, attempted name: "..name)
+        logs:Error("Could not Define Setting. Type is nil, attempted name: "..name)
     end
 
     if settingData.default == nil then
-        logs.Error("Could not Define Setting. Default is nil, attempted name: "..name)
+        logs:Error("Could not Define Setting. Default is nil, attempted name: "..name)
     end
 
     if settingData.type == "slider" then
@@ -99,7 +99,7 @@ function impulse.Settings:Define(name, settingData)
         end
     elseif settingData.type == "dropdown" then
         if not settingData.options then
-            logs.Error("Could not Define Setting. Options is nil, attempted name: "..name)
+            logs:Error("Could not Define Setting. Options is nil, attempted name: "..name)
         end
     end
 
@@ -143,7 +143,7 @@ end
 function impulse.Settings:Load()
     for v, k in pairs(self.Stored) do
         if not k then
-            logs.Error("Could not load setting. Please contact a developer. Attempted name: "..v)
+            logs:Error("Could not load setting. Please contact a developer. Attempted name: "..v)
             continue
         end
 
@@ -185,7 +185,7 @@ function impulse.Settings:Set(name, value)
         return
     end
 
-    return logs.Error("Could not SetSetting. Please contact a developer, attempted name: "..name)
+    return logs:Error("Could not SetSetting. Please contact a developer, attempted name: "..name)
 end
 
 concommand.Add("impulse_settings_reset", function()
@@ -193,5 +193,5 @@ concommand.Add("impulse_settings_reset", function()
         impulse.Settings:Set(v, k.default)
     end
 
-    return logs.Success("Settings reset to default.")
+    return logs:Success("Settings reset to default.")
 end)

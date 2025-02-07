@@ -12,20 +12,20 @@ concommand.Add("impulse_set_group", function(ply, cmd, args)
     if ( !IsValid(ply) or ply:IsSuperAdmin() or ply:IsListenServerHost() ) then
         local find = args[1]
         if !find then
-            logs.Error("No player target specified.")
+            logs:Error("No player target specified.")
             return
         end
 
         local group = args[2]
         if !group then
-            logs.Error("No group specified.")
+            logs:Error("No group specified.")
             return
         end
 
         local targ = impulse.Util:FindPlayer(find)
         if IsValid(targ) then
             targ:SetUserGroup(group, true)
-            logs.Info("Set '" .. targ:SteamID64() .. " (" .. targ:Name() .. ")' to group '" .. group .. "'.\n")
+            logs:Info("Set '" .. targ:SteamID64() .. " (" .. targ:Name() .. ")' to group '" .. group .. "'.\n")
 
             local query = mysql:Update("impulse_players")
             query:Update("group", group)
@@ -34,7 +34,7 @@ concommand.Add("impulse_set_group", function(ply, cmd, args)
 
             return
         else
-            logs.Warning("Target not found, checking for SteamID64...\n")
+            logs:Warning("Target not found, checking for SteamID64...\n")
         end
 
         local steamid
@@ -45,7 +45,7 @@ concommand.Add("impulse_set_group", function(ply, cmd, args)
         end
         
         if !steamid then
-            logs.Error("Target not found, and '" .. find .. "' is not a valid SteamID64.")
+            logs:Error("Target not found, and '" .. find .. "' is not a valid SteamID64.")
             return
         end
 
@@ -54,6 +54,6 @@ concommand.Add("impulse_set_group", function(ply, cmd, args)
         query:Where("steamid", steamid)
         query:Execute()
 
-        logs.Success("Set '" .. steamid .. "' to group '" .. group .. "'.\n")
+        logs:Success("Set '" .. steamid .. "' to group '" .. group .. "'.\n")
     end
 end)
