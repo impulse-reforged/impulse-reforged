@@ -5,6 +5,8 @@ impulse.Schema = impulse.Schema or {}
 
 SCHEMA = {}
 
+local logs =  impulse.Logs
+
 local default = {
     Name = "Unknown",
     Description = "No description available.",
@@ -16,27 +18,27 @@ local default = {
 -- @internal
 -- @usage impulse.Schema:Load() -- Called by impulse:Boot()
 function impulse.Schema:Load()
-    MsgC(Color(255, 255, 0), "[impulse-reforged] Starting schema load ...\n")
+    logs.Info("Starting schema load ...")
 
     local name = engine.ActiveGamemode()
     if ( name == "impulse-reforged" ) then
-        MsgC(Color(255, 0, 0), "[impulse-reforged] Attempted to load Schema \"impulse-reforged\", aborting. This is the framework!\n")
+        logs.Error("Attempted to load Schema \"impulse-reforged\", aborting. This is the framework!")
         SetGlobalString("impulse_fatalerror", "Failed to load Schema \"impulse-reforged\", aborting. This is the framework!")
         return
     end
 
-    MsgC(Color(83, 143, 239), "[impulse-reforged] Loading \"" .. name .. "\" schema...\n")
+    logs.Info("Loading Schema \"" .. name .. "\"...")
 
     if ( SERVER and !file.IsDir(name, "LUA") ) then
         SetGlobalString("impulse_fatalerror", "Failed to load Schema \"" .. name .. "\", does not exist.")
-        MsgC(Color(255, 0, 0), "[impulse-reforged] Failed to load Schema \"" .. name .. "\", does not exist.\n")
+        logs.Error("Failed to load Schema \"" .. name .. "\", does not exist.")
         return
     end
 
     local path = name .. "/schema/sh_schema.lua"
     if ( !file.Exists(path, "LUA") ) then
         SetGlobalString("impulse_fatalerror", "Failed to load Schema \"" .. name .. "\", no sh_schema.lua found.")
-        MsgC(Color(255, 0, 0), "[impulse-reforged] Failed to load Schema \"" .. name .. "\", no sh_schema.lua found.\n")
+        logs.Error("Failed to load Schema \"" .. name .. "\", no sh_schema.lua found.")
         return
     end
 
@@ -66,10 +68,10 @@ function impulse.Schema:Load()
     local map = game.GetMap()
     path = name .. "/schema/config/maps/" .. map .. ".lua"
     if ( file.Exists(path, "LUA") ) then
-        MsgC(Color(0, 255, 0), "[impulse-reforged] Loading map config for \"" .. map .. "\" in Schema \"" .. name .. "\".\n")
+        logs.Info("Loading map config for \"" .. map .. "\" in Schema \"" .. name .. "\".")
         impulse.Util:Include(path, "shared")
     else
-        MsgC(Color(255, 0, 0), "[impulse-reforged] Failed to find map config for \"" .. map .. "\" in Schema \"" .. name .. "\".\n")
+        logs.Error("Failed to find map config for \"" .. map .. "\" in Schema \"" .. name .. "\".")
     end
 
     hook.Run("PostConfigLoad")
@@ -89,7 +91,7 @@ function impulse.Schema:Load()
 
     hook.Run("OnSchemaLoaded")
 
-    MsgC(Color(0, 255, 0), "[impulse-reforged] Schema \"" .. name .. "\" loaded successfully.\n")
+    logs.Success("Schema \"" .. name .. "\" loaded successfully.")
 end
 
 --- Boots a specified object from a foreign schema using the piggbacking system
@@ -98,7 +100,7 @@ end
 -- @string object The folder in the schema to load
 -- @usage impulse.Schema:PiggyBoot("impulse-hl2rp", "items")
 function impulse.Schema:PiggyBoot(schema, object)
-    MsgC(Color(83, 143, 239), "[impulse-reforged] [" .. schema .. "] Loading " .. object .. " (via PiggyBoot)\n")
+    logs.Info("[" .. schema .. "] Loading " .. object .. " (via PiggyBoot)")
     impulse.Util:IncludeDir(schema .. "/" .. object)
 end
 
@@ -108,6 +110,6 @@ end
 -- @string plugin The plugin folder name
 -- @usage impulse.Schema:PiggyBootPlugin("impulse-hl2rp", "pluginname")
 function impulse.Schema:PiggyBootPlugin(schema, plugin)
-    MsgC(Color(83, 143, 239), "[impulse-reforged] [" .. schema .. "] [plugins] Loading plugin (via PiggyBoot) \"" .. plugin .. "\"\n")
+    logs.Info("[" .. schema .. "] [plugins] Loading plugin (via PiggyBoot) \"" .. plugin .. "\"")
     self:LoadPlugin(schema .. "/plugins/" .. plugin, plugin)
 end
