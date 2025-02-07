@@ -1,3 +1,5 @@
+local logs = impulse.Logs
+
 local bodyCol = Color(50, 50, 50, 210)
 local secCol = Color(209, 209, 209, 255)
 local noCol = Color(215, 40, 40, 255)
@@ -22,7 +24,7 @@ function PANEL:SetMix(mix)
     local item = impulse.Inventory.Items[id]
 
     if ( !item ) then
-        print("[impulse-reforged] Could not find item: " .. class .. " for use in mix: " .. mix.Class .. "!")
+        logs.Error("Could not find item: " .. class .. " for use in mix: " .. mix.Class .. "!")
         return self:Remove()
     end
 

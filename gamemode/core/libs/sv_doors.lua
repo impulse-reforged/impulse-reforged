@@ -1,6 +1,7 @@
 impulse.Doors = impulse.Doors or {}
 impulse.Doors.Data = impulse.Doors.Data or {}
 
+local logs = impulse.Logs
 local eMeta = FindMetaTable("Entity")
 local fileName = "impulse-reforged/doors/"..game.GetMap()
 
@@ -21,8 +22,8 @@ function impulse.Doors:Save()
             end
         end
     end
-
-    print("[impulse-reforged] Saving doors to impulse-reforged/doors/"..game.GetMap()..".json | Doors saved: "..#doors)
+    
+    logs.Debug("Saving doors to impulse-reforged/doors/"..game.GetMap()..".json | Doors saved: "..#doors)
     file.Write(fileName..".json", util.TableToJSON(doors))
 end
 
@@ -73,7 +74,7 @@ function impulse.Doors:Load()
                 if doorData.group then doorEnt:SetNetVar("doorGroup", doorData.group) end
                 if doorData.buyable != nil then doorEnt:SetNetVar("doorBuyable", false) end
 
-                print("[impulse-reforged] Warning! Added door by HammerID value because it could not be found via pos. Door index: "..doorIndex..". Please investigate.")
+                logs.Warning("Added door by HammerID value because it could not be found via pos. Door index: "..doorIndex..". Please investigate.")
             end
         end
 
