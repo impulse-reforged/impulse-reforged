@@ -6,7 +6,7 @@ end
 
 function PLAYER:GetZoneName()
     local data = impulse.Config.Zones[self.impulseZone]
-    if self.impulseZone and data.name then
+    if self.impulseZone and data and data.name then
         return data.name
     else
         return ""
@@ -15,7 +15,7 @@ end
 
 function PLAYER:GetZoneDescription()
     local data = impulse.Config.Zones[self.impulseZone]
-    if self.impulseZone and data.description then
+    if self.impulseZone and data and data.description then
         return data.description
     else
         return ""
