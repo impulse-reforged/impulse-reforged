@@ -54,7 +54,7 @@ function PANEL:Init()
         self.infoClassRank:SizeToContents()
 
         if ( rankName and rankName != "" ) then
-            self.infoClassRank:SetText(className .. " - " .. rankName)
+            self.infoClassRank:SetText(className  ..  " - "  ..  rankName)
         end
     else
         if ( rankName and rankName != "" ) then
@@ -67,11 +67,11 @@ function PANEL:Init()
         end
     end
 
-    self:SetupItems(w, h)
+    self:SetupItems(width, height)
 end
 
 function PANEL:SetupItems()
-    local w, h = self:GetSize()
+    local width, height = self:GetSize()
 
     if self.tabs and IsValid(self.tabs) then
         self.tabs:Remove()
@@ -95,7 +95,7 @@ function PANEL:SetupItems()
 
     self.invScroll = vgui.Create("DScrollPanel", self.tabs)
     self.invScroll:SetPos(0, 0)
-    self.invScroll:SetSize(w - math.Clamp(s, 100, 270), h - 42)
+    self.invScroll:SetSize(width - math.Clamp(s, 100, 270), height - 42)
 
     self.items = {}
     self.itemsPanels = {}
@@ -121,7 +121,7 @@ function PANEL:SetupItems()
                 local item = self.invScroll:Add("impulseInventoryItem")
                 item:Dock(TOP)
                 item:DockMargin(0, 0, 15, 5)
-                item:SetItem(k, w)
+                item:SetItem(k, width)
                 item.InvID = v
                 item.InvPanel = self
                 self.items[k.id] = item
@@ -142,34 +142,34 @@ function PANEL:SetupItems()
 
     self.tabs:AddSheet("Inventory", self.invScroll)
 
-    self:SetupSkills(w, h)
+    self:SetupSkills(width, height)
 end
 
 local bodyCol = Color(50, 50, 50, 210)
-function PANEL:SetupSkills(w, h)
+function PANEL:SetupSkills(width, height)
     self.skillScroll = vgui.Create("DScrollPanel", self.tabs)
-    self.skillScroll:SetPos(0, 0)
-    self.skillScroll:SetSize(w - 270, h - 42)
+    self.skillScroll:Dock(FILL)
+    self.skillScroll:DockPadding(ScreenScale(4), ScreenScaleH(4), ScreenScale(4), ScreenScaleH(4))
 
     for v, k in pairs(impulse.Skills.Skills) do
         local skillBg = self.skillScroll:Add("DPanel")
-        skillBg:SetTall(80)
         skillBg:Dock(TOP)
-        skillBg:DockMargin(0, 0, 15, 5)
+        skillBg:DockMargin(0, 0, 0, ScreenScaleH(4))
+        skillBg:SetTall(ScreenScaleH(24))
         skillBg.Skill = v
 
         local level = LocalPlayer():GetSkillLevel(v)
         local xp = LocalPlayer():GetSkillXP(v)
 
-        function skillBg:Paint(w, h)
+        function skillBg:Paint(width, height)
             surface.SetDrawColor(bodyCol)
-            surface.DrawRect(0, 0, w, h)
+            surface.DrawRect(0, 0, width, height)
 
             local skill = self.Skill
             local skillName = impulse.Skills.GetNiceName(skill)
 
-            draw.DrawText(skillName.." - Level "..level, "Impulse-Elements22-Shadow", 5, 3, color_white, TEXT_ALIGN_LEFT)
-            draw.DrawText("Total skill: "..xp.."XP", "Impulse-Elements16-Shadow", w - 5, 7, color_white, TEXT_ALIGN_RIGHT)
+            draw.DrawText(skillName .. " - Level " .. level, "Impulse-Elements16-Shadow", ScreenScale(2), ScreenScaleH(2), color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+            draw.DrawText("Total skill: " .. xp .. "XP", "Impulse-Elements16-Shadow", width - ScreenScale(2), ScreenScaleH(2), color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 
             return true
         end
@@ -179,8 +179,8 @@ function PANEL:SetupSkills(w, h)
         local perc = (xp - lastXp) / (nextXp - lastXp)
 
         local bar = vgui.Create("DProgress", skillBg)
-        bar:SetPos(20, 30)
-        bar:SetSize(self.skillScroll:GetWide() - 73, 40)
+        bar:Dock(FILL)
+        bar:DockMargin(ScreenScale(2), ScreenScaleH(10), ScreenScale(2), ScreenScaleH(2))
 
         if level == 10 then
             bar:SetFraction(1)
@@ -189,15 +189,15 @@ function PANEL:SetupSkills(w, h)
             bar:SetFraction(perc)
         end
 
-        function bar:PaintOver(w, h)
+        function bar:PaintOver(width, height)
             if level != 10 then
-                draw.DrawText(math.Round(perc * 100, 1).."% to next level", "Impulse-Elements18-Shadow", w / 2, 10, color_white, TEXT_ALIGN_CENTER)
+                draw.DrawText(math.Round(perc * 100, 1) .. "% to next level", "Impulse-Elements18-Shadow", width / 2, 10, color_white, TEXT_ALIGN_CENTER)
             else
-                draw.DrawText("Mastered", "Impulse-Elements18-Shadow", w / 2, 10, color_white, TEXT_ALIGN_CENTER)
+                draw.DrawText("Mastered", "Impulse-Elements18-Shadow", width / 2, 10, color_white, TEXT_ALIGN_CENTER)
             end
 
-            draw.DrawText(lastXp.."XP", "Impulse-Elements16-Shadow", 10, 10, color_white)
-            draw.DrawText(nextXp.."XP", "Impulse-Elements16-Shadow", w - 10, 10, color_white, TEXT_ALIGN_RIGHT)
+            draw.DrawText(lastXp .. "XP", "Impulse-Elements16-Shadow", 10, 10, color_white)
+            draw.DrawText(nextXp .. "XP", "Impulse-Elements16-Shadow", width - 10, 10, color_white, TEXT_ALIGN_RIGHT)
         end
     end
 
@@ -209,8 +209,8 @@ function PANEL:FindItemPanelByID(id)
 end
 
 local grey = Color(209, 209, 209)
-function PANEL:PaintOver(w, h)
-    draw.SimpleText(self.invWeight.."kg/"..impulse.Config.InventoryMaxWeight.."kg", "Impulse-Elements18-Shadow", w - 18, 40, grey, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
+function PANEL:PaintOver(width, height)
+    draw.SimpleText(self.invWeight .. "kg/" .. impulse.Config.InventoryMaxWeight .. "kg", "Impulse-Elements18-Shadow", width - ScreenScale(6), ScreenScaleH(14), grey, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP)
 end
 
 vgui.Register("impulseInventory", PANEL, "DFrame")
