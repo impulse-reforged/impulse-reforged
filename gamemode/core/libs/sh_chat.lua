@@ -55,7 +55,7 @@ local oocCommand = {
         end
 
         client.OOCLimit = client.OOCLimit or ((client:IsDonator() and impulse.Config.OOCLimitVIP) or impulse.Config.OOCLimit)
-        local timeLeft = timer.TimeLeft(client:UserID().."impulseOOCLimit")
+        local timeLeft = timer.TimeLeft(client:UserID() .. "impulseOOCLimit") or 0
 
         if client.OOCLimit < 1 and !client:IsAdmin() then
             return client:Notify("You have ran out of OOC messages. Wait "..string.NiceTime(timeLeft).." for more.")
