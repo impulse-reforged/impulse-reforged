@@ -68,7 +68,12 @@ function PANEL:LayoutEntity()
 
     if (self.copyLocalSequence) then
         entity:SetSequence(LocalPlayer():GetSequence())
-        entity:SetPoseParameter("move_yaw", 360 * LocalPlayer():GetPoseParameter("move_yaw") - 180)
+
+        for i = 0, entity:GetNumPoseParameters() - 1 do
+            local name = entity:GetPoseParameterName(i)
+            local value = LocalPlayer():GetPoseParameter(name)
+            entity:SetPoseParameter(name, value)
+        end
     end
 
     self:RunAnimation()
