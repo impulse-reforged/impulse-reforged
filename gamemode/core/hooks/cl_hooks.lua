@@ -85,7 +85,7 @@ function GM:Think()
 
     if (nextLoopThink or 0) < CurTime() then
         for v, k in player.Iterator() do
-            local isArrested = k:GetNetVar("arrested", false)
+            local isArrested = k:GetRelay("arrested", false)
 
             if isArrested != (k.BoneArrested or false) then
                 k:SetHandsBehindBack(isArrested)
@@ -193,21 +193,21 @@ function GM:CalcViewModelView(weapon, viewmodel, oldEyePos, oldEyeAng, eyePos, e
 
     local vm_origin, vm_angles = eyePos, eyeAngles
 
-    local ply = LocalPlayer()
+    local client = LocalPlayer()
     local raiseTarg = 0
 
-    if ( !ply:IsWeaponRaised() ) then
+    if ( !client:IsWeaponRaised() ) then
         raiseTarg = 100
     end
 
-    local frac = (ply.raiseFraction or 0) / 100
+    local frac = (client.raiseFraction or 0) / 100
     local rot = weapon.LowerAngles or loweredAngles
 
     vm_angles:RotateAroundAxis(vm_angles:Up(), rot.p * frac)
     vm_angles:RotateAroundAxis(vm_angles:Forward(), rot.y * frac)
     vm_angles:RotateAroundAxis(vm_angles:Right(), rot.r * frac)
 
-    ply.raiseFraction = Lerp(FrameTime() * 2, ply.raiseFraction or 0, raiseTarg)
+    client.raiseFraction = Lerp(FrameTime() * 2, client.raiseFraction or 0, raiseTarg)
 
     local func = weapon.GetViewModelPosition
     if ( func ) then
@@ -228,7 +228,7 @@ end
 
 function GM:ShouldDrawLocalPlayer()
     if ( "falloverRagdoll" ) then
-        local entity = Entity(LocalPlayer():GetNetVar("falloverRagdoll", 0))
+        local entity = Entity(LocalPlayer():GetRelay("falloverRagdoll", 0))
         if ( IsValid(entity) ) then
             return false
         end
@@ -243,7 +243,7 @@ local thirdperson_smooth_origin
 local thirdperson_smooth_angles
 local firstperson_smooth_origin
 local firstperson_smooth_angles
-function GM:CalcView(ply, origin, angles, fov)
+function GM:CalcView(client, origin, angles, fov)
     local view
 
     if ( IsValid(impulse.SplashScreen) or ( IsValid(impulse.MainMenu) and impulse.MainMenu:IsVisible() and !impulse.MainMenu.popup ) ) then
@@ -256,14 +256,14 @@ function GM:CalcView(ply, origin, angles, fov)
         return view
     end
 
-    if ( LocalPlayer():GetNetVar("falloverRagdoll", 0) ) then
-        local entity = Entity(LocalPlayer():GetNetVar("falloverRagdoll", 0))
+    if ( LocalPlayer():GetRelay("falloverRagdoll", 0) ) then
+        local entity = Entity(LocalPlayer():GetRelay("falloverRagdoll", 0))
         if ( IsValid(entity) ) then
             return
         end
     end
     
-    local ragdoll = ply.Ragdoll
+    local ragdoll = client.Ragdoll
     if ( IsValid(ragdoll) ) then
         local eyes = ragdoll:GetAttachment(ragdoll:LookupAttachment("eyes"))
         if ( !eyes ) then return end
@@ -297,7 +297,7 @@ function GM:CalcView(ply, origin, angles, fov)
         return view
     end
 
-    if ( impulse.Settings:Get("view_thirdperson") and ply:GetViewEntity() == ply ) then
+    if ( impulse.Settings:Get("view_thirdperson") and client:GetViewEntity() == client ) then
         if ( !thirdperson_smooth_origin ) then
             thirdperson_smooth_origin = origin
         end
@@ -314,18 +314,18 @@ function GM:CalcView(ply, origin, angles, fov)
             firstperson_smooth_angles = nil
         end
 
-        local angles = ply:GetAimVector():Angle()
+        local angles = client:GetAimVector():Angle()
         local targetpos = Vector(0, 0, 60)
 
-        if ( ply:KeyDown(IN_DUCK) ) then
-            if ( ply:GetVelocity():Length() > 0 ) then
+        if ( client:KeyDown(IN_DUCK) ) then
+            if ( client:GetVelocity():Length() > 0 ) then
                 targetpos.z = 50
             else
                 targetpos.z = 40
             end
         end
 
-        ply:SetAngles(angles)
+        client:SetAngles(angles)
 
         local pos = targetpos
         local offset = Vector(5, 5, 5)
@@ -336,7 +336,7 @@ function GM:CalcView(ply, origin, angles, fov)
         angles.yaw = angles.yaw + 3
 
         local traceData = {}
-        traceData.start = ply:GetPos() + pos
+        traceData.start = client:GetPos() + pos
         traceData.endpos = traceData.start + angles:Forward() * -offset.x
 
         traceData.endpos = traceData.endpos + angles:Right() * offset.y
@@ -363,12 +363,12 @@ function GM:CalcView(ply, origin, angles, fov)
             pos = pos + traceData.HitNormal * 5
         end
 
-        local wep = ply:GetActiveWeapon()
+        local wep = client:GetActiveWeapon()
         if ( IsValid(wep) and wep.GetIronsights and !wep.NoThirdpersonIronsights ) then
             fov = Lerp(FrameTime() * 15, wep.FOVMultiplier, wep:GetIronsights() and wep.IronsightsFOV or 1) * fov
         end
 
-        local delta = ply:EyePos() - origin
+        local delta = client:EyePos() - origin
 
         if ( impulse.Settings:Get("view_thirdperson_smooth_origin") ) then
             thirdperson_smooth_origin = LerpVector(FrameTime() * 10, thirdperson_smooth_origin, pos + delta)
@@ -467,7 +467,7 @@ end
 
 function GM:OnContextMenuOpen()
     if LocalPlayer():Team() == 0 or not LocalPlayer():Alive() or impulse_ActiveWorkbar then return end
-    if LocalPlayer():GetNetVar("arrested", false) then return end
+    if LocalPlayer():GetRelay("arrested", false) then return end
 
     local canUse = hook.Run("CanUseInventory", LocalPlayer())
 
@@ -511,8 +511,8 @@ local blockNormalTabs = {
 }
 
 function GM:PostReloadToolsMenu()
-    local ply = LocalPlayer()
-    if ( !IsValid(ply) or ply:Team() == 0 ) then return end
+    local client = LocalPlayer()
+    if ( !IsValid(client) or client:Team() == 0 ) then return end
 
     local spawnMenu = g_SpawnMenu
 
@@ -525,12 +525,12 @@ function GM:PostReloadToolsMenu()
                 table.insert(closeMe, k.Tab)
             end
 
-            if ply and ply.IsAdmin and ply.IsDonator then -- when u first load ply doesnt exist
-                if blockNormalTabs[k.Name] and !ply:IsAdmin() then
+            if client and client.IsAdmin and client.IsDonator then -- when u first load client doesnt exist
+                if blockNormalTabs[k.Name] and !client:IsAdmin() then
                     table.insert(closeMe, k.Tab)
                 end
 
-                if k.Name == "#spawnmenu.category.vehicles" and !ply:IsDonator() then
+                if k.Name == "#spawnmenu.category.vehicles" and !client:IsDonator() then
                     table.insert(closeMe, k.Tab)
                 end
             end
@@ -608,9 +608,9 @@ end
 
 gameevent.Listen("player_spawn")
 hook.Add("player_spawn", "impulsePlayerSpawn", function(data)
-    local ply = Player(data.userid)
+    local client = Player(data.userid)
 
-    if ply == LocalPlayer() then
+    if client == LocalPlayer() then
         hook.Run("PostReloadToolsMenu")
     end
 end)

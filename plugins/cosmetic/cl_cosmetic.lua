@@ -1,62 +1,62 @@
 impulse.Cosmetics = impulse.Cosmetics or {}
 
-function MakeCosmetic(ply, id, bone, data, slot)
-    ply.Cosmetics = ply.Cosmetics or {}
+function MakeCosmetic(client, id, bone, data, slot)
+    client.Cosmetics = client.Cosmetics or {}
 
-    SafeRemoveEntity(ply.Cosmetics[slot])
+    SafeRemoveEntity(client.Cosmetics[slot])
 
-    ply.Cosmetics[slot] = ClientsideModel(data.model, RENDERGROUP_BOTH)
-    ply.Cosmetics[slot]:SetNoDraw(true)
+    client.Cosmetics[slot] = ClientsideModel(data.model, RENDERGROUP_BOTH)
+    client.Cosmetics[slot]:SetNoDraw(true)
 
     if data.bodygroups then
-        ply.Cosmetics[slot]:SetBodyGroups(data.bodygroups)
+        client.Cosmetics[slot]:SetBodyGroups(data.bodygroups)
     end
 
     if data.skin then
-        ply.Cosmetics[slot]:SetSkin(data.skin)
+        client.Cosmetics[slot]:SetSkin(data.skin)
     end
 
     if data.onEntLoad then
-        if ply:GetClass() == "class C_BaseFlex" then -- ui support
-            data.onEntLoad(LocalPlayer(), ply.Cosmetics[slot])
+        if client:GetClass() == "class C_BaseFlex" then -- ui support
+            data.onEntLoad(LocalPlayer(), client.Cosmetics[slot])
         else
-            data.onEntLoad(ply, ply.Cosmetics[slot])
+            data.onEntLoad(client, client.Cosmetics[slot])
         end
     end
 
     local t = LocalPlayer():Team()
 
-    if ply:IsPlayer() then
-        t = ply:Team()
+    if client:IsPlayer() then
+        t = client:Team()
     end
 
     if data.teamCustomScale and data.teamCustomScale[t] then
-        ply.Cosmetics[slot]:SetModelScale(ply.Cosmetics[slot]:GetModelScale() * data.teamCustomScale[t])
-    elseif ply:IsFemale() and data.femaleScale then
-        ply.Cosmetics[slot]:SetModelScale(ply.Cosmetics[slot]:GetModelScale() * data.femaleScale)
+        client.Cosmetics[slot]:SetModelScale(client.Cosmetics[slot]:GetModelScale() * data.teamCustomScale[t])
+    elseif client:IsFemale() and data.femaleScale then
+        client.Cosmetics[slot]:SetModelScale(client.Cosmetics[slot]:GetModelScale() * data.femaleScale)
     else
-        ply.Cosmetics[slot]:SetModelScale(ply.Cosmetics[slot]:GetModelScale() * data.scale)
+        client.Cosmetics[slot]:SetModelScale(client.Cosmetics[slot]:GetModelScale() * data.scale)
     end
 
     if data.matrixScale then
         local mat = Matrix()
         mat:Scale(data.matrixScale)
-        ply.Cosmetics[slot]:EnableMatrix("RenderMultiply", mat)
+        client.Cosmetics[slot]:EnableMatrix("RenderMultiply", mat)
     end
 
     if data.subMaterials then
         for v, k in pairs(data.subMaterials) do
-            ply.Cosmetics[slot]:SetSubMaterial(v, k)
+            client.Cosmetics[slot]:SetSubMaterial(v, k)
         end
     end
 
-    ply.Cosmetics[slot].drawdata = data
-    ply.Cosmetics[slot].bone = bone
-    ply.Cosmetics[slot].owner = ply
+    client.Cosmetics[slot].drawdata = data
+    client.Cosmetics[slot].bone = bone
+    client.Cosmetics[slot].owner = client
 end
 
-function RemoveCosmetic(ply, ent, slot)
-    ply.Cosmetics[slot] = nil
+function RemoveCosmetic(client, ent, slot)
+    client.Cosmetics[slot] = nil
     SafeRemoveEntity(ent)
 end
 
@@ -148,9 +148,9 @@ hook.Add("PostPlayerDraw", "impulseCosmeticDraw", function(k)
         end
     end
 
-    local faceCos = k:GetNetVar("cosmeticFace") -- uses bone 6 face
-    local hatCos = k:GetNetVar("cosmeticHead") -- uses bone 6 face
-    local chestCos = k:GetNetVar("cosmeticChest") -- uses bone 1 spine
+    local faceCos = k:GetRelay("cosmeticFace") -- uses bone 6 face
+    local hatCos = k:GetRelay("cosmeticHead") -- uses bone 6 face
+    local chestCos = k:GetRelay("cosmeticChest") -- uses bone 1 spine
 
     if faceCos then
         if faceCos != (k.lastFace or -1) then
@@ -260,9 +260,9 @@ hook.Add("SetupInventoryModel", "impulseDrawCosmetics", function(panel)
             end
         end
 
-        local faceCos = LocalPlayer():GetNetVar("cosmeticFace") -- uses bone 6 face
-        local hatCos = LocalPlayer():GetNetVar("cosmeticHead") -- uses bone 6 face
-        local chestCos = LocalPlayer():GetNetVar("cosmeticChest") -- uses bone 1 spine
+        local faceCos = LocalPlayer():GetRelay("cosmeticFace") -- uses bone 6 face
+        local hatCos = LocalPlayer():GetRelay("cosmeticHead") -- uses bone 6 face
+        local chestCos = LocalPlayer():GetRelay("cosmeticChest") -- uses bone 1 spine
 
         if faceCos then
             if faceCos != self.lastFaceI then

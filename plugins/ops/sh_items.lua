@@ -95,45 +95,45 @@ local giveItemCommand = {
     description = "Gives a player the specified item. Use /itemspawner instead.",
     requiresArg = true,
     superAdminOnly = true,
-    onRun = function(ply, arg, rawText)
-        if not ply:IsSuperAdmin() then return end
+    onRun = function(client, arg, rawText)
+        if not client:IsSuperAdmin() then return end
 
         local steamid = arg[1]
         local item = arg[2]
 
         if not item then
-            return ply:Notify("No item uniqueID supplied.")
+            return client:Notify("No item uniqueID supplied.")
         end
 
         if steamid:len() > 25 then
-            return ply:Notify("SteamID64 too long.")
+            return client:Notify("SteamID64 too long.")
         end
 
         local query = mysql:Select("impulse_players")
         query:Select("id")
         query:Where("steamid", steamid)
         query:Callback(function(result)
-            if not IsValid(ply) then return end
+            if not IsValid(client) then return end
 
             if not result or #result < 1 then
-                return ply:Notify("This Steam account has not joined the server yet or the SteamID64 is invalid.")
+                return client:Notify("This Steam account has not joined the server yet or the SteamID64 is invalid.")
             end
 
             if not impulse.Inventory.ItemsStored[item] then
-                return ply:Notify("Item: "..item.." does not exist.")
+                return client:Notify("Item: "..item.." does not exist.")
             end
 
             local target = player.GetBySteamID64(steamid)
 
             if target and IsValid(target) then
                 target:GiveItem(item)
-                return ply:Notify("You have given "..target:Nick().." a "..item..".")
+                return client:Notify("You have given "..target:Nick().." a "..item..".")
             end
 
             local impulseID = result[1].id
 
             impulse.Inventory:AddItem(impulseID, item)
-            ply:Notify("Offline player ("..steamid..") has been given a "..item..".")
+            client:Notify("Offline player ("..steamid..") has been given a "..item..".")
         end)
 
         query:Execute()
@@ -145,11 +145,11 @@ impulse.RegisterChatCommand("/giveitem", giveItemCommand)
 local itemSpawnerCommand = {
     description = "Opens the item spawner.",
     superAdminOnly = true,
-    onRun = function(ply, arg, rawText)
-        if not ply:IsSuperAdmin() then return end
+    onRun = function(client, arg, rawText)
+        if not client:IsSuperAdmin() then return end
 
         net.Start("impulseOpsItemSpawner")
-        net.Send(ply)
+        net.Send(client)
     end
 }
 

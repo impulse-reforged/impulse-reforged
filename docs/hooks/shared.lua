@@ -5,14 +5,14 @@
 
 --- Controls wether a player can use their inventory, returning false stops all inventory interaction and stops the inventory from displaying
 -- @realm shared
--- @entity ply The player that is trying to use their inventory
+-- @entity client The player that is trying to use their inventory
 -- @treturn bool Can use inventory
-function CanUseInventory(ply)
+function CanUseInventory(client)
 end
 
 --- Called to decide what the known name of a player should be
 -- @realm shared
--- @entity ply The player to get the name of
+-- @entity client The player to get the name of
 -- @treturn string The known name
 function PlayerGetKnownName()
 end
@@ -37,7 +37,7 @@ end
 
 --- Called to decide if a player can change team
 -- @realm shared
--- @entity ply The player
+-- @entity client The player
 -- @int team The team to switch to
 -- @treturn bool Can we switch team?
 function CanPlayerChangeTeam()

@@ -186,13 +186,13 @@ function impulse.Util:MakeWorkbar(time, text, onDone, popup)
     end
 end
 
-function impulse.Util:PlayGesture(ply, gesture, slot)
-    if ( !ply ) then ply = LocalPlayer() end
-    if ( !IsValid(ply) ) then return end
+function impulse.Util:PlayGesture(client, gesture, slot)
+    if ( !client ) then client = LocalPlayer() end
+    if ( !IsValid(client) ) then return end
 
     if ( !slot ) then slot = GESTURE_SLOT_CUSTOM end
 
-    ply:AddVCDSequenceToGestureSlot(slot, ply:LookupSequence(gesture), 0, 1)
+    client:AddVCDSequenceToGestureSlot(slot, client:LookupSequence(gesture), 0, 1)
 end
 
 local baseWidth, baseHeight = 1280, 720
@@ -356,7 +356,7 @@ function impulse.Util:DrawLogo(x, y, w, h, bCentered)
     end
 end
 
-concommand.Add("impulse_play_intro", function(ply, cmd, args)
+concommand.Add("impulse_play_intro", function(client, cmd, args)
     local music = impulse.Config.IntroMusic
     local introScenes = impulse.Config.IntroScenes
     if introScenes then

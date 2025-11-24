@@ -94,7 +94,7 @@ if ( SERVER ) then
             val = val + 60
         end
 
-        self:SetNetVar("achievementPoints", val)
+        self:SetRelay("achievementPoints", val)
         return val
     end
 end

@@ -1,19 +1,31 @@
 local PANEL = {}
 
 function PANEL:Init()
-    self:SetSize(ScrW() / 1.5, ScrH() * .7)
+    self:SetSize(ScrW() / 1.25, ScrH() / 1.25)
     self:Center()
     self:CenterHorizontal()
     self:SetTitle("")
     self:ShowCloseButton(false)
     self:SetDraggable(false)
-    --self:MakePopup()
     self:MoveToFront()
+    self:SetKeyboardInputEnabled(false)
 
-    local w, h = self:GetSize()
+    local model = LocalPlayer():GetModel()
+    local skin = LocalPlayer():GetSkin()
 
-    self.infoName = vgui.Create("DLabel", self)
-    self.infoName:SetPos(15, 40)
+    self.modelPreview = vgui.Create("impulseModelPanel", self)
+    self.modelPreview:Dock(LEFT)
+    self.modelPreview:DockPadding(ScreenScale(4), ScreenScaleH(4), ScreenScale(4), 0)
+    self.modelPreview:SetWide(self:GetWide() / 4)
+    self.modelPreview:SetModel(model, skin)
+    self.modelPreview:MoveToBack()
+    self.modelPreview:SetCursor("arrow")
+
+    self.modelPreview:SetFOV(self:GetWide() / self:GetTall() * 20)
+    self.modelPreview.copyLocalSequence = true
+
+    self.infoName = vgui.Create("DLabel", self.modelPreview)
+    self.infoName:Dock(TOP)
     self.infoName:SetText(LocalPlayer():Nick())
     self.infoName:SetFont("Impulse-Elements24-Shadow")
     self.infoName:SizeToContents()
@@ -23,8 +35,8 @@ function PANEL:Init()
     end
 
     local plyTeam = LocalPlayer():Team()
-    self.infoTeam = vgui.Create("DLabel", self)
-    self.infoTeam:SetPos(15, 64)
+    self.infoTeam = vgui.Create("DLabel", self.modelPreview)
+    self.infoTeam:Dock(TOP)
     self.infoTeam:SetText(team.GetName(plyTeam))
     self.infoTeam:SetFont("Impulse-Elements19-Shadow")
     self.infoTeam:SetColor(team.GetColor(plyTeam))
@@ -33,47 +45,25 @@ function PANEL:Init()
     local className = LocalPlayer():GetTeamClassName()
     local rankName = LocalPlayer():GetTeamRankName()
 
-    if ( className != "Default" ) then
-        self.infoClassRank = vgui.Create("DLabel", self)
-        self.infoClassRank:SetPos(15, 80)
+    if ( className != "" ) then
+        self.infoClassRank = vgui.Create("DLabel", self.modelPreview)
+        self.infoClassRank:Dock(TOP)
         self.infoClassRank:SetFont("Impulse-Elements19-Shadow")
         self.infoClassRank:SetText(className)
         self.infoClassRank:SetColor(team.GetColor(plyTeam))
         self.infoClassRank:SizeToContents()
-    end
 
-    local model = LocalPlayer():GetModel()
-    local skin = LocalPlayer():GetSkin()
-
-    self.modelPreview = vgui.Create("impulseModelPanel", self)
-    self.modelPreview:SetPos(0, 80)
-    self.modelPreview:SetSize(270, h * .75)
-    self.modelPreview:SetModel(model, skin)
-    self.modelPreview:MoveToBack()
-    self.modelPreview:SetCursor("arrow")
-
-    self.modelPreview:SetFOV((324 / ScrH()) * 100)
-
-    function self.modelPreview:LayoutEntity(ent)
-        ent:SetAngles(Angle(-1, 45, 0))
-        ent:SetPos(Vector(0, 0, 2.5))
-        self:RunAnimation()
-
-        if ( !self.setup ) then
-            for k, v in pairs(LocalPlayer():GetBodyGroups()) do
-                ent:SetBodygroup(v.id, LocalPlayer():GetBodygroup(v.id))
-            end
-
-            for k, v in pairs(LocalPlayer():GetMaterials()) do
-                local mat = LocalPlayer():GetSubMaterial(k - 1)
-                if ( mat != v ) then
-                    ent:SetSubMaterial(k - 1, mat)
-                end
-            end
-
-            hook.Run("SetupInventoryModel", self, ent)
-
-            self.setup = true
+        if ( rankName and rankName != "" ) then
+            self.infoClassRank:SetText(className .. " - " .. rankName)
+        end
+    else
+        if ( rankName and rankName != "" ) then
+            self.infoClassRank = vgui.Create("DLabel", self.modelPreview)
+            self.infoClassRank:Dock(TOP)
+            self.infoClassRank:SetFont("Impulse-Elements19-Shadow")
+            self.infoClassRank:SetText(rankName)
+            self.infoClassRank:SetColor(team.GetColor(plyTeam))
+            self.infoClassRank:SizeToContents()
         end
     end
 
@@ -90,8 +80,8 @@ function PANEL:SetupItems()
     local s = 270
 
     self.tabs = vgui.Create("DPropertySheet", self)
-    self.tabs:SetPos(s, 40)
-    self.tabs:SetSize(w - s, h - 42)
+    self.tabs:Dock(FILL)
+    self.tabs:DockMargin(ScreenScale(4), ScreenScaleH(4), ScreenScale(4), ScreenScaleH(4))
     self.tabs.tabScroller:DockMargin(-1, 0, -1, 0)
     self.tabs.tabScroller:SetOverlap(0)
 

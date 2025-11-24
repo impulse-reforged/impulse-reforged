@@ -1,37 +1,45 @@
 local PANEL = {}
 
 function PANEL:Init()
-    self:SetSize(200, 600)
+    self:SetSize(ScreenScale(64), ScrH() / 1.75)
     self:Center()
     self:SetTitle("Entity Interaction")
     self:MakePopup()
 
-    self.addY = 0
+    self.list = vgui.Create("DScrollPanel", self)
+    self.list:Dock(FILL)
+    self.list:InvalidateParent(true)
+    self.list:GetVBar():SetWide(0)
 end
 
 function PANEL:AddAction(icon, name, onClick)
-    self.btn = vgui.Create("DImageButton", self)
-    self.btn:SetSize(90, 90)
-    self.btn:SetPos(55, 40 + self.addY)
-    self.btn:SetImage(icon)
+    local actionButton = vgui.Create("DButton", self.list)
+    actionButton:Dock(TOP)
+    actionButton:SetText("")
+    actionButton:SetSize(self.list:GetWide(), self.list:GetWide())
 
-    function self.btn:Paint()
-        if self:IsHovered() then
-            self:SetColor(impulse.Config.MainColour)
+    local actionIcon = vgui.Create("DImage", actionButton)
+    actionIcon:SetSize(actionButton:GetTall() * 0.75, actionButton:GetTall() * 0.75)
+    actionIcon:Center()
+    actionIcon:SetImage(icon)
+
+    actionButton.Paint = function(this)
+        if ( this:IsHovered() ) then
+            actionIcon:SetImageColor(impulse.Config.MainColour)
         else
-            self:SetColor(color_white)
+            actionIcon:SetImageColor(color_white)
         end
     end
 
-    self.btn.DoClick = onClick
+    actionButton.DoClick = onClick
 
-    self.iconLbl = vgui.Create("DLabel", self)
-    self.iconLbl:SetText(name)
-    self.iconLbl:SetFont("Impulse-Elements18")
-    self.iconLbl:SizeToContents()
-    self.iconLbl:SetPos(100-(self.iconLbl:GetWide()/2), self.addY+140)
+    local actionLabel = vgui.Create("DLabel", actionButton)
+    actionLabel:SetText(name)
+    actionLabel:SetFont("Impulse-Elements18")
+    actionLabel:SizeToContents()
+    actionLabel:SetPos(actionButton:GetTall() / 2 - actionLabel:GetWide() / 2, actionButton:GetTall() - actionLabel:GetTall() * 2)
 
-    self.addY = self.addY + 125
+    actionIcon:SetY(actionIcon:GetY() - actionLabel:GetTall())
 
     self.hasAction = true
 end
@@ -42,9 +50,9 @@ end
 
 function PANEL:SetDoor(door)
     local panel = self
-    local doorOwners = door:GetNetVar("doorOwners", nil)
-    local doorGroup = door:GetNetVar("doorGroup", nil)
-    local doorBuyable = door:GetNetVar("doorBuyable", true)
+    local doorOwners = door:GetRelay("doorOwners", nil)
+    local doorGroup = door:GetRelay("doorGroup", nil)
+    local doorBuyable = door:GetRelay("doorBuyable", true)
     local isDoorMaster = false
     if doorOwners and doorOwners[1] == LocalPlayer():EntIndex() then
         isDoorMaster = true
@@ -79,7 +87,7 @@ function PANEL:SetDoor(door)
 
         if LocalPlayer():IsDoorOwner(doorOwners) and isDoorMaster and (customCanEditDoor or customCanEditDoor == nil) then
             self:AddAction("impulse-reforged/icons/group-256.png", "Permissions", function()
-                doorOwners = door:GetNetVar("doorOwners", nil)
+                doorOwners = door:GetRelay("doorOwners", nil)
 
                 local perm = DermaMenu()
 
@@ -156,8 +164,8 @@ function PANEL:SetDoor(door)
     if not self.hasAction then return self:Remove() end
 end
 
-function PANEL:SetPlayer(ply)
-    if LocalPlayer():IsCP() and LocalPlayer():CanArrest(ply) and ply:GetNetVar("arrested", false) then
+function PANEL:SetPlayer(client)
+    if LocalPlayer():IsCP() and LocalPlayer():CanArrest(client) and client:GetRelay("arrested", false) then
         self:AddAction("impulse-reforged/icons/search-3-256.png", "Search Inventory", function()
             LocalPlayer():ConCommand("say /invsearch")
 
@@ -172,7 +180,7 @@ function PANEL:SetPlayer(ply)
         end)
     end
 
-    hook.Run("PlayerMenuAddOptions", self, ply)
+    hook.Run("PlayerMenuAddOptions", self, client)
 
     if not self.hasAction then return self:Remove() end
 end

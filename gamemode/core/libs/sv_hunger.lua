@@ -5,18 +5,18 @@ impulse.Hunger = impulse.Hunger or {}
 
 --- Set the hunger amount of a player
 -- @realm server
--- @player ply Player to set hunger
+-- @player client Player to set hunger
 -- @int amount Amount of hunger (0-100)
-function impulse.Hunger:SetHunger(ply, amount)
-    ply:SetHunger(amount)
+function impulse.Hunger:SetHunger(client, amount)
+    client:SetHunger(amount)
 end
 
 --- Feed's the player the amount of hunger
 -- @realm server
--- @player ply Player to feed hunger
+-- @player client Player to feed hunger
 -- @int amount Amount of hunger (0-100)
-function impulse.Hunger:FeedHunger(ply, amount)
-    ply:FeedHunger(amount)
+function impulse.Hunger:FeedHunger(client, amount)
+    client:FeedHunger(amount)
 end
 
 --- Player class methods
@@ -29,7 +29,7 @@ local PLAYER = FindMetaTable("Player")
 -- @int amount Amount of hunger (0-100)
 -- @treturn int The new hunger amount
 function PLAYER:SetHunger(amount)
-    return self:SetLocalVar("hunger", math.Clamp(amount, 0, 100))
+    return self:SetRelay("hunger", math.Clamp(amount, 0, 100))
 end
 
 --- Gives the player the amount of hunger
@@ -37,7 +37,7 @@ end
 -- @int amount Amount of hunger (0-100)
 -- @treturn int The new hunger amount
 function PLAYER:FeedHunger(amount)
-    return self:SetHunger(amount + self:GetLocalVar("hunger", 100))
+    return self:SetHunger(amount + self:GetRelay("hunger", 100))
 end
 
 --- Takes the amount of hunger from the player
@@ -45,5 +45,5 @@ end
 -- @int amount Amount of hunger (0-100)
 -- @treturn int The new hunger amount
 function PLAYER:TakeHunger(amount)
-    return self:SetHunger(self:GetLocalVar("hunger", 100) - amount)
+    return self:SetHunger(self:GetRelay("hunger", 100) - amount)
 end

@@ -55,11 +55,11 @@ function impulse.Util:FindEmptyPos(pos, ignore, distance, step, area)
     return pos
 end
 
-function impulse.Util:PlayGesture(ply, gesture, slot)
+function impulse.Util:PlayGesture(client, gesture, slot)
     local slot = slot or GESTURE_SLOT_CUSTOM
 
     net.Start("impulsePlayGesture")
-        net.WritePlayer(ply)
+        net.WritePlayer(client)
         net.WriteString(gesture)
         net.WriteInt(slot, 16)
     net.Broadcast()

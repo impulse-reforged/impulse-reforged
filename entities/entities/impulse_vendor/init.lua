@@ -60,8 +60,8 @@ function ENT:Initialize()
     end
 end
 
-function ENT:SpawnFunction(ply, trace, class)
-    local angles = (trace.HitPos - ply:GetPos()):Angle()
+function ENT:SpawnFunction(client, trace, class)
+    local angles = (trace.HitPos - client:GetPos()):Angle()
     angles.r = 0
     angles.p = 0
     angles.y = angles.y + 180
@@ -82,7 +82,7 @@ function ENT:Use(activator, caller)
         return activator:Notify("You can not use this vendor.")    
     end
 
-    if activator:GetNetVar("arrested", false) or not activator:Alive() then return end
+    if activator:GetRelay("arrested", false) or not activator:Alive() then return end
 
     if self.Vendor.DownloadTrades then
         local dBuy = pon.encode(self.Vendor.Buy)

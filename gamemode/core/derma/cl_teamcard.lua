@@ -1,92 +1,135 @@
 local PANEL = {}
 
+--- Parses model data and returns model path, skin, and bodygroups
+-- @param modelData string or table - Can be "model.mdl", {"model.mdl", skin}, or {"model.mdl", skin, {bodygroups}}
+-- @return string model, number skin, table bodygroups
+local function ParseModelData(modelData)
+    if ( type(modelData) == "string" ) then
+        return modelData, nil, nil
+    elseif ( type(modelData) == "table" ) then
+        local model = modelData[1]
+        local skin = modelData[2]
+        local bodygroups = modelData[3]
+        
+        -- Handle random skin if it's a table
+        if ( type(skin) == "table" ) then
+            skin = skin[math.random(#skin)]
+        end
+        
+        -- Handle random bodygroup values if they're tables
+        if ( bodygroups and type(bodygroups) == "table" ) then
+            local parsedBodygroups = {}
+            for name, value in pairs(bodygroups) do
+                if ( type(value) == "table" ) then
+                    parsedBodygroups[name] = value[math.random(#value)]
+                else
+                    parsedBodygroups[name] = value
+                end
+            end
+            bodygroups = parsedBodygroups
+        end
+        
+        return model, skin, bodygroups
+    end
+    return nil, nil, nil
+end
+
 function PANEL:Init()
     self.colour = Color(60,255,105,150)
     self.name = "error"
+
     self:SetCursor("hand")
+    self:SetHeight(ScreenScaleH(16))
 end
 
 function PANEL:SetTeam(teamID)
+    self.teamID = teamID
+    local teamData = impulse.Teams.Stored[teamID]
     self.colour = team.GetColor(teamID)
     self.name = team.GetName(teamID)
     self.players = #team.GetPlayers(teamID)
     self.playerCount = self.players
-    self.model = impulse_defaultModel or "models/Humans/Group01/male_02.mdl" 
+    self.model = impulse_defaultModel or "models/Humans/Group01/male_02.mdl"
     self.skin = impulse_defaultSkin or 0
-    self.bodygroups = impulse.Teams.Stored[teamID].bodygroups
+    self.bodygroups = teamData.bodygroups or {}
     self.requirements = ""
-    local teamData = impulse.Teams.Stored[teamID]
 
-    if teamData.limit then
-        if teamData.percentLimit and teamData.percentLimit == true then
-            self.playerCount = self.players.."/"..math.ceil((teamData.limit * player.GetCount()))
+    if ( teamData.limit ) then
+        if ( teamData.percentLimit and teamData.percentLimit == true ) then
+            self.playerCount = self.players .. "/" .. math.ceil(teamData.limit * player.GetCount())
         else
-            self.playerCount = self.players.."/"..teamData.limit
+            self.playerCount = self.players .. "/" .. teamData.limit
         end
     end
 
-    if teamData.model then
-        self.model = teamData.model
-        self.skin = 0
+    local modelData
+    if ( teamData.models ) then
+        modelData = teamData.models[math.random(#teamData.models)]
+    elseif ( teamData.model ) then
+        modelData = teamData.model
     end
 
-    if teamData.xp > 0 then
-        self.requirements = teamData.xp.."XP"
+    if ( modelData ) then
+        self.model, self.skin, self.bodygroups = ParseModelData(modelData)
     end
 
-    if teamData.donatorOnly and teamData.donatorOnly == true then
-        self.requirements = self.requirements.." (Donator only)"
+    if ( teamData.xp and teamData.xp > 0 ) then
+        self.requirements = teamData.xp .. "XP"
     end
 
-     self.modelIcon = vgui.Create("impulseSpawnIcon", self)
-    self.modelIcon:SetPos(10,4)
-    self.modelIcon:SetSize(52,52)
-    self.modelIcon:SetModel(self.model, self.skin)
+    if ( teamData.donatorOnly and teamData.donatorOnly == true ) then
+        self.requirements = self.requirements .. " (Donator only)"
+    end
+
+    self.modelIcon = vgui.Create("impulseSpawnIcon", self)
+    self.modelIcon:Dock(LEFT)
+    self.modelIcon:SetWide(self:GetTall())
+    self.modelIcon:SetModel(self.model, self.skin or 0)
     self.modelIcon:SetTooltip(false)
     self.modelIcon:SetDisabled(true)
     self.modelIcon:SetDrawBorder(false)
+    self.modelIcon.LayoutEntity = function(this, ent)
+        if ( !IsValid(ent) ) then return end
 
-    if self.bodygroups then
-         timer.Simple(0, function()
-            if not IsValid(self.modelIcon) then return end
-
-            local ent = self.modelIcon.Entity
-
-            if IsValid(ent) then
-                for v,bodygroupData in pairs(self.bodygroups) do
-                    ent:SetBodygroup(bodygroupData[1], (bodygroupData[2]) or 0)
-                end
+        -- Apply model-specific bodygroups if any
+        if ( self.bodygroups ) then
+            for name, value in pairs(self.bodygroups) do
+                ent:SetBodygroup(ent:FindBodygroupByName(name), value)
             end
-        end)
-     end
+        end
+    end
 end
 
 local gradient = Material("vgui/gradient-l")
 local outlineCol = Color(190,190,190,240)
 local darkCol = Color(30,30,30,200)
 
-function PANEL:Paint(w,h)
+function PANEL:Paint(width, height)
     -- Frame
-    surface.SetDrawColor(outlineCol)
-    surface.DrawOutlinedRect(0,0,w, h)
+    surface.SetMaterial(gradient)
     surface.SetDrawColor(self.colour)
-     surface.SetMaterial(gradient)
-     surface.DrawTexturedRect(1,1,w-1,h-2)
+    surface.DrawTexturedRect(0, 0, width, height)
+
     surface.SetDrawColor(darkCol)
-     surface.DrawTexturedRect(1,1,w-1,h-2)
+    surface.DrawTexturedRect(0, 0, width, height)
 
     -- team name
     surface.SetFont("Impulse-Elements18-Shadow")
     surface.SetTextColor(color_white)
-    surface.SetTextPos(65,10)
+    surface.SetTextPos(65, 10)
     surface.DrawText(self.name)
 
     -- team requirements
-    surface.SetTextPos(65,25)
+    surface.SetTextPos(65, 25)
     surface.DrawText(self.requirements)
 
-     -- team size
-    draw.SimpleText(self.playerCount, "Impulse-Elements18-Shadow", w-15, 10, nil, TEXT_ALIGN_RIGHT)
+    -- team size
+    draw.SimpleText(self.playerCount, "Impulse-Elements18-Shadow", width - 15, 10, nil, TEXT_ALIGN_RIGHT)
+end
+
+function PANEL:PaintOver(width, height)
+    surface.SetDrawColor(outlineCol)
+    surface.DrawOutlinedRect(0,0,width, height)
 end
 
 vgui.Register("impulseTeamCard", PANEL, "DPanel")

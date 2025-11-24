@@ -2,9 +2,9 @@ properties.Add("impulse_save_mark", {
     MenuLabel = "[impulse-reforged] Mark for Save",
     Order = 9999,
     MenuIcon = "icon16/arrow_up.png",
-    Filter = function(self, ent, ply)
+    Filter = function(self, ent, client)
         if ( !IsValid(ent) ) then return false end
-        if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
+        if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
 
         return true
     end,
@@ -13,13 +13,13 @@ properties.Add("impulse_save_mark", {
             net.WriteEntity(ent)
         self:MsgEnd()
     end,
-    Receive = function(self, length, ply)
+    Receive = function(self, length, client)
         local ent = net.ReadEntity()
 
-        if not self:Filter(ent, ply) then return end
+        if not self:Filter(ent, client) then return end
 
         ent.impulseSaveEnt = true
-        ply:AddChatText("Marked "..ent:GetClass().." for saving.")
+        client:AddChatText("Marked "..ent:GetClass().." for saving.")
     end
 })
 
@@ -27,9 +27,9 @@ properties.Add("impulse_save_unmark", {
     MenuLabel = "[impulse-reforged] Unmark for Save",
     Order = 9999,
     MenuIcon = "icon16/arrow_down.png",
-    Filter = function(self, ent, ply)
+    Filter = function(self, ent, client)
         if ( !IsValid(ent) ) then return false end
-        if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
+        if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
 
         return true
     end,
@@ -38,13 +38,13 @@ properties.Add("impulse_save_unmark", {
             net.WriteEntity(ent)
         self:MsgEnd()
     end,
-    Receive = function(self, length, ply)
+    Receive = function(self, length, client)
         local ent = net.ReadEntity()
 
-        if not self:Filter(ent, ply) then return end
+        if not self:Filter(ent, client) then return end
 
         ent.impulseSaveEnt = nil
-        ply:AddChatText("Removed "..ent:GetClass().." for saving.")
+        client:AddChatText("Removed "..ent:GetClass().." for saving.")
     end
 })
 
@@ -52,9 +52,9 @@ properties.Add("impulse_save_keyvalue", {
     MenuLabel = "[impulse-reforged] Set Key/Value",
     Order = 9999,
     MenuIcon = "icon16/tag_blue_add.png",
-    Filter = function(self, ent, ply)
+    Filter = function(self, ent, client)
         if ( !IsValid(ent) ) then return false end
-        if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
+        if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
 
         return true
     end,
@@ -81,15 +81,15 @@ properties.Add("impulse_save_keyvalue", {
             self:MsgEnd()
         end)
     end,
-    Receive = function(self, length, ply)
+    Receive = function(self, length, client)
         local ent = net.ReadEntity()
         local key = net.ReadString()
         local value = net.ReadString()
 
-        if not self:Filter(ent, ply) then return end
+        if not self:Filter(ent, client) then return end
 
         if not key or not value then
-            return ply:AddChatText("Missing key/value.")
+            return client:AddChatText("Missing key/value.")
         end
 
         if ent.impulseSaveEnt then
@@ -103,9 +103,9 @@ properties.Add("impulse_save_keyvalue", {
 
             ent.impulseSaveKeyValue = ent.impulseSaveKeyValue or {}
             ent.impulseSaveKeyValue[key] = value
-            ply:AddChatText("Key/Value ("..key.."="..(value or "VALUE REMOVED")..") pair set on "..ent:GetClass()..".")
+            client:AddChatText("Key/Value ("..key.."="..(value or "VALUE REMOVED")..") pair set on "..ent:GetClass()..".")
         else
-            ply:AddChatText("Mark this entity for saving first.")
+            client:AddChatText("Mark this entity for saving first.")
         end
     end
 })
@@ -114,9 +114,9 @@ properties.Add("impulse_save_printkeyvalues", {
     MenuLabel = "[impulse-reforged] Print Key/Values",
     Order = 9999,
     MenuIcon = "icon16/tag_blue.png",
-    Filter = function(self, ent, ply)
+    Filter = function(self, ent, client)
         if ( !IsValid(ent) ) then return false end
-        if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
+        if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
 
         return true
     end,
@@ -125,19 +125,19 @@ properties.Add("impulse_save_printkeyvalues", {
             net.WriteEntity(ent)
         self:MsgEnd()
     end,
-    Receive = function(self, length, ply)
+    Receive = function(self, length, client)
         local ent = net.ReadEntity()
 
-        if not self:Filter(ent, ply) then return end
+        if not self:Filter(ent, client) then return end
 
         if ent.impulseSaveEnt then
             if not ent.impulseSaveKeyValue then
-                return ply:AddChatText("Entity has no keyvalue table.")
+                return client:AddChatText("Entity has no keyvalue table.")
             end
 
-            ply:AddChatText(table.ToString(ent.impulseSaveKeyValue))
+            client:AddChatText(table.ToString(ent.impulseSaveKeyValue))
         else
-            ply:AddChatText("Entity not saving marked.")
+            client:AddChatText("Entity not saving marked.")
         end
     end
 })
@@ -146,9 +146,9 @@ properties.Add("impulse_save_all", {
     MenuLabel = "[impulse-reforged] Save All",
     Order = 9999,
     MenuIcon = "icon16/disk.png",
-    Filter = function(self, ent, ply)
+    Filter = function(self, ent, client)
         if ( !IsValid(ent) ) then return false end
-        if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
+        if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
 
         return true
     end,
@@ -156,9 +156,9 @@ properties.Add("impulse_save_all", {
         self:MsgStart()
         self:MsgEnd()
     end,
-    Receive = function(self, length, ply)
-        if not ply:IsSuperAdmin() then return end
+    Receive = function(self, length, client)
+        if not client:IsSuperAdmin() then return end
 
-        ply:ConCommand("impulse_save_all")
+        client:ConCommand("impulse_save_all")
     end
 })

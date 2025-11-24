@@ -95,7 +95,7 @@ function PANEL:SetInv(invdata)
     function self.finish:DoClick()
         panel:Remove()
 
-        if not IsValid(panel.ply) then
+        if not IsValid(panel.client) then
             LocalPlayer():Notify("Player left the server.")
         end
 
@@ -103,7 +103,7 @@ function PANEL:SetInv(invdata)
 
         if count > 0 then
             net.Start("impulseOpsRemoveInv")
-            net.WriteUInt(panel.ply:EntIndex(), 8)
+            net.WriteUInt(panel.client:EntIndex(), 8)
             net.WriteUInt(count, 16)
             for v, k in pairs(panel.taking) do
                 net.WriteUInt(k, 16)
@@ -115,7 +115,7 @@ end
 
 function PANEL:SetPlayer(ent)
     self:SetTitle(ent:Nick().."'s Inventory")
-    self.ply = ent
+    self.client = ent
 end
 
 vgui.Register("impulseSearchMenuAdmin", PANEL, "DFrame")

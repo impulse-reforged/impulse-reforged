@@ -44,7 +44,7 @@ This ensures consistency even if NPCs or players were present before the system 
 <br/>
 <br/>
 ### Dispositions
-The system uses `npc:AddEntityRelationship(ply, disposition, priority)` to set dispositions, where:
+The system uses `npc:AddEntityRelationship(client, disposition, priority)` to set dispositions, where:
 - `disposition` is the NPC's attitude toward the player (e.g., hostile, friendly).
 - `priority` is set to `99` to prioritize these relationships.
 <br/>
@@ -81,14 +81,14 @@ impulse.Relationships = impulse.Relationships or {}
 -- Looks up the player's team configuration to find relationship dispositions 
 -- and applies these to matching NPCs in the world.
 -- @realm server
--- @param ply The player whose team relationships should be applied
-function impulse.Relationships:ApplyTeamRelationships(ply)
-    local teamData = impulse.Teams:FindTeam(ply:Team())
+-- @param client The player whose team relationships should be applied
+function impulse.Relationships:ApplyTeamRelationships(client)
+    local teamData = impulse.Teams:FindTeam(client:Team())
     if ( !teamData or !teamData.relationships ) then return end
 
     for npcClass, disposition in pairs(teamData.relationships) do
         for _, npc in ipairs(ents.FindByClass(npcClass)) do
-            npc:AddEntityRelationship(ply, disposition, 0)
+            npc:AddEntityRelationship(client, disposition, 0)
         end
     end
 end
@@ -99,12 +99,12 @@ end
 -- @realm server
 -- @param npc The NPC entity to initialize relationships for
 function impulse.Relationships:InitNPCRelationships(npc)
-    for _, ply in player.Iterator() do
-        local teamData = impulse.Teams:FindTeam(ply:Team())
+    for _, client in player.Iterator() do
+        local teamData = impulse.Teams:FindTeam(client:Team())
         if ( teamData and teamData.relationships ) then
             local disposition = teamData.relationships[npc:GetClass()]
             if ( disposition ) then
-                npc:AddEntityRelationship(ply, disposition, 0)
+                npc:AddEntityRelationship(client, disposition, 0)
             end
         end
     end
@@ -115,9 +115,9 @@ end
 -- for the NPC class. If no disposition is found, returns `nil`.
 -- @realm server
 -- @param npc The NPC entity
--- @param ply The player entity
-function impulse.Relationships:GetTeamDisposition(npc, ply)
-    local teamData = impulse.Teams:FindTeam(ply:Team())
+-- @param client The player entity
+function impulse.Relationships:GetTeamDisposition(npc, client)
+    local teamData = impulse.Teams:FindTeam(client:Team())
     if ( !teamData or !teamData.relationships ) then return end
 
     local disposition = teamData.relationships[npc:GetClass()]
@@ -132,19 +132,19 @@ hook.Add("OnEntityCreated", "impulse.Relationships.OnEntityCreated", function(en
     end
 end)
 
-hook.Add("OnPlayerChangedTeam", "impulse.Relationships.OnPlayerChangedTeam", function(ply, oldTeam, newTeam)
-    impulse.Relationships:ApplyTeamRelationships(ply)
+hook.Add("OnPlayerChangedTeam", "impulse.Relationships.OnPlayerChangedTeam", function(client, oldTeam, newTeam)
+    impulse.Relationships:ApplyTeamRelationships(client)
 end)
 
-hook.Add("PlayerSpawn", "impulse.Relationships.PlayerSpawn", function(ply)
-    impulse.Relationships:ApplyTeamRelationships(ply)
+hook.Add("PlayerSpawn", "impulse.Relationships.PlayerSpawn", function(client)
+    impulse.Relationships:ApplyTeamRelationships(client)
 end)
 
-hook.Add("PlayerDeath", "impulse.Relationships.PlayerDeath", function(ply)
+hook.Add("PlayerDeath", "impulse.Relationships.PlayerDeath", function(client)
     for _, npc in ents.Iterator() do
         if ( !IsValid(npc) or !npc:IsNPC() ) then continue end
 
-        npc:AddEntityRelationship(ply, D_LI, 0)
+        npc:AddEntityRelationship(client, D_LI, 0)
     end
 end)
 

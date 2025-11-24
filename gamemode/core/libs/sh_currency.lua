@@ -9,14 +9,14 @@ local PLAYER = FindMetaTable("Player")
 -- @realm shared
 -- @treturn number The player's money
 function PLAYER:GetMoney()
-    return tonumber(self:GetLocalVar("money", 0))
+    return tonumber(self:GetRelay("money", 0))
 end
 
 --- Returns the player's bank money
 -- @realm shared
 -- @treturn number The player's bank money
 function PLAYER:GetBankMoney()
-    return tonumber(self:GetLocalVar("bankMoney", 0))
+    return tonumber(self:GetRelay("bankMoney", 0))
 end
 
 --- Returns wether the player has enough money to afford the amount

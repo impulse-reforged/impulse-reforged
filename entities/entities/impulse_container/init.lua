@@ -126,12 +126,12 @@ function ENT:CanHoldItem(class)
     return self:GetStorageWeight() + weight <= self:GetCapacity()
 end
 
-function ENT:AddAuthorised(ply)
-    self.Authorised[ply] = true
+function ENT:AddAuthorised(client)
+    self.Authorised[client] = true
 end
 
-function ENT:AddUser(ply)
-    self.Users[ply] = true
+function ENT:AddUser(client)
+    self.Users[client] = true
 
     net.Start("impulseInvContainerOpen")
     net.WriteUInt(table.Count(self.Inventory), 8)
@@ -144,14 +144,14 @@ function ENT:AddUser(ply)
         net.WriteUInt(amount, 8)
     end
 
-    net.Send(ply)
+    net.Send(client)
 
-    ply.currentContainer = self
+    client.currentContainer = self
 end
 
-function ENT:RemoveUser(ply)
-    self.Users[ply] = nil
-    ply.currentContainer = nil
+function ENT:RemoveUser(client)
+    self.Users[client] = nil
+    client.currentContainer = nil
 end
 
 function ENT:UpdateUsers()
@@ -178,7 +178,7 @@ end
 
 function ENT:Use(activator, caller)
     if activator:IsPlayer() and activator:Alive() then
-        if activator:GetNetVar("arrested", false) then 
+        if activator:GetRelay("arrested", false) then 
             return activator:Notify("You cannot access a container when detained.") 
         end
 

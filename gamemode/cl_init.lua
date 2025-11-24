@@ -1,15 +1,15 @@
-local ply
+local client
 local _LocalPlayer = LocalPlayer
 function LocalPlayer()
-    ply = _LocalPlayer()
+    client = _LocalPlayer()
 
     if IsValid(pl) then
         LocalPlayer = function()
-            return ply
+            return client
         end
     end
 
-    return ply
+    return client
 end
 
 DeriveGamemode("sandbox")
@@ -73,16 +73,16 @@ local winners = {}
 
 -- Please don't ever remove credit or users/badges from this section. People worked hard on this. Thanks!
 impulse.Badges = {
-    staff = {Material("icon16/shield.png"), "This player is a staff member.", function(ply) return not ply:IsIncognito() and ply:IsAdmin() end},
-    donator = {Material("icon16/coins.png"), "This player is a donator.", function(ply) return ply:IsDonator() end},
-    exdev = {Material("icon16/cog_go.png"), "This player is a ex impulse developer.", function(ply) return ply:SteamID() == "STEAM_0:1:102639297" end},
-    dev = {Material("icon16/cog.png"), "This player is a impulse developer.", function(ply) return not ply:IsIncognito() and ply:IsDeveloper() end},
-    vin = {Material("impulse-reforged/vin.png"), "Hi, it's me vin! The creator of impulse.", function(ply) return not ply:IsIncognito() and (ply:SteamID() == "STEAM_0:1:95921723") end},
-    supertester = {Material("icon16/bug.png"), "This player made large contributions to the testing of impulse.", function(ply) return (superTesters[ply:SteamID()] or false) end},
-    competition = {Material("icon16/rosette.png"), "This player has won a competition.", function(ply) return winners[ply:SteamID()] end},
-    mapper = {Material("icon16/map.png"), "This player is a mapper that has collaborated with impulse.", function(ply) return mappers[ply:SteamID()] end},
-    eventteam = {Material("icon16/controller.png"), "This player is the leader of the event team.", function(ply) return eventTeam[ply:SteamID()] end},
-    communitymanager = {Material("icon16/transmit.png"), "This player is a community manager. Feel free to ask them questions.", function(ply) return ply:GetUserGroup() == "communitymanager" end}
+    staff = {Material("icon16/shield.png"), "This player is a staff member.", function(client) return not client:IsIncognito() and client:IsAdmin() end},
+    donator = {Material("icon16/coins.png"), "This player is a donator.", function(client) return client:IsDonator() end},
+    exdev = {Material("icon16/cog_go.png"), "This player is a ex impulse developer.", function(client) return client:SteamID() == "STEAM_0:1:102639297" end},
+    dev = {Material("icon16/cog.png"), "This player is a impulse developer.", function(client) return not client:IsIncognito() and client:IsDeveloper() end},
+    vin = {Material("impulse-reforged/vin.png"), "Hi, it's me vin! The creator of impulse.", function(client) return not client:IsIncognito() and (client:SteamID() == "STEAM_0:1:95921723") end},
+    supertester = {Material("icon16/bug.png"), "This player made large contributions to the testing of impulse.", function(client) return (superTesters[client:SteamID()] or false) end},
+    competition = {Material("icon16/rosette.png"), "This player has won a competition.", function(client) return winners[client:SteamID()] end},
+    mapper = {Material("icon16/map.png"), "This player is a mapper that has collaborated with impulse.", function(client) return mappers[client:SteamID()] end},
+    eventteam = {Material("icon16/controller.png"), "This player is the leader of the event team.", function(client) return eventTeam[client:SteamID()] end},
+    communitymanager = {Material("icon16/transmit.png"), "This player is a community manager. Feel free to ask them questions.", function(client) return client:GetUserGroup() == "communitymanager" end}
 }
 
 MsgC(Color(0, 255, 0), "[impulse-reforged] Completed client load...\n")

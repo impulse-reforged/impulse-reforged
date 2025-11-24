@@ -19,11 +19,11 @@ function PLAYER:Arrest()
     self:SetRunSpeed(impulse.Config.WalkSpeed - 30)
     self:SetWalkSpeed(impulse.Config.WalkSpeed - 30)
 
-    self:SetNetVar("arrested", true)
+    self:SetRelay("arrested", true)
 end
 
 function PLAYER:UnArrest()
-    self:SetNetVar("arrested", false)
+    self:SetRelay("arrested", false)
 
     if ( self.impulseArrestedWeapons ) then
         for k, v in ipairs(self.impulseArrestedWeapons) do
@@ -41,13 +41,13 @@ function PLAYER:UnArrest()
     self:StripAmmo()
 end
 
-function PLAYER:DragPlayer(ply)
-    if ( self:CanArrest(ply) and ply:GetNetVar("arrested", false) ) then
-        ply.impulseArrestedDragger = self
-        self.impulseArrestedDragging = ply
-        impulse.Arrest.Dragged[ply] = true
+function PLAYER:DragPlayer(client)
+    if ( self:CanArrest(client) and client:GetRelay("arrested", false) ) then
+        client.impulseArrestedDragger = self
+        self.impulseArrestedDragging = client
+        impulse.Arrest.Dragged[client] = true
 
-        self:Say("/me starts dragging "..ply:Name()..".")
+        self:Say("/me starts dragging "..client:Name()..".")
     end
 end
 
@@ -87,7 +87,7 @@ function PLAYER:Jail(time, jailData)
         doCellMates = true
     end
 
-    if ( !self:GetNetVar("arrested", false) ) then
+    if ( !self:GetRelay("arrested", false) ) then
         self:Arrest()
     end
 

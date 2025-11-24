@@ -156,8 +156,8 @@ end
 if ( SERVER ) then
     util.AddNetworkString("impulseLootEditorSet")
 
-    net.Receive("impulseLootEditorSet", function(len, ply)
-        if not ply:IsSuperAdmin() then return end
+    net.Receive("impulseLootEditorSet", function(len, client)
+        if not client:IsSuperAdmin() then return end
         
         local pool = net.ReadString()
         local ent = net.ReadEntity()
@@ -180,7 +180,7 @@ if ( SERVER ) then
         container:SetAngles(entAng)
         container:Spawn()
 
-        ply:Notify("Lootable container for with pool as "..pool.." created. Please mark and save the generated entity.")
+        client:Notify("Lootable container for with pool as "..pool.." created. Please mark and save the generated entity.")
     end)
 end
 

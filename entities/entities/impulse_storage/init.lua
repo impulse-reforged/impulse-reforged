@@ -22,14 +22,14 @@ function ENT:OnTakeDamage(dmg)
     return false
 end
 
-function ENT:CanPlayerUse(ply)
+function ENT:CanPlayerUse(client)
     if not self.impulseSaveKeyValue or not self.impulseSaveKeyValue["MasterDoor"] then return true end
 
     local door = ents.GetMapCreatedEntity(self.impulseSaveKeyValue["MasterDoor"])
 
     if not door:IsValid() or not door:IsDoor() then return true end
 
-    if ply.impulseOwnedDoors and ply.impulseOwnedDoors[door] then
+    if client.impulseOwnedDoors and client.impulseOwnedDoors[door] then
         return true
     else
         return false
@@ -38,7 +38,7 @@ end
 
 function ENT:Use(activator, caller)
     if activator:IsPlayer() and activator:Alive() then
-        if activator:GetNetVar("arrested", false) then 
+        if activator:GetRelay("arrested", false) then 
             return activator:Notify("You cannot access your storage when detained.") 
         end
 
@@ -58,4 +58,3 @@ function ENT:Use(activator, caller)
         activator.currentStorage = self
     end
 end
-

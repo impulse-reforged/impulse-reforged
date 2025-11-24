@@ -12,7 +12,7 @@ local PLAYER = FindMetaTable("Entity")
 --- Sends a chat message to the player
 -- @realm shared
 -- @tab package Chat message package
--- @usage ply:AddChatText(Color(255, 0, 0), "Hello, ", Color(0, 255, 0), "world!")
+-- @usage client:AddChatText(Color(255, 0, 0), "Hello, ", Color(0, 255, 0), "world!")
 function PLAYER:AddChatText(...)
     local package = {...}
     
@@ -28,7 +28,7 @@ end
 --- Plays a sound on the player's client
 -- @realm shared
 -- @string sound Sound path
--- @usage ply:SurfacePlaySound("ambient/levels/labs/electric_explosion1.wav")
+-- @usage client:SurfacePlaySound("ambient/levels/labs/electric_explosion1.wav")
 function PLAYER:SurfacePlaySound(sound)
     if ( SERVER ) then
         net.Start("impulseSurfaceSound")

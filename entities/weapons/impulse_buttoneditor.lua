@@ -132,8 +132,8 @@ else
                     output = [[{
     desc = "Desc or remove line for no desc",
     pos = ]]..pos..[[,
-    customCheck = function(ply)
-        return ply:IsAdmin()
+    customCheck = function(client)
+        return client:IsAdmin()
     end
 }]]
 
@@ -149,7 +149,7 @@ else
                 "disabled", function()
                     output = [[{
     pos = ]]..pos..[[,
-    customCheck = function(ply)
+    customCheck = function(client)
         return false
     end
 }]]

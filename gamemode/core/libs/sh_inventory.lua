@@ -33,8 +33,8 @@ function impulse.Inventory:RegisterItem(item)
     local attachmentClass = item.AttachmentClass
 
     if ( class ) then
-        function item:OnEquip(ply, data, uid, sec)
-            local weapon = ply:Give(class)
+        function item:OnEquip(client, data, uid, sec)
+            local weapon = client:Give(class)
             if ( IsValid(weapon) ) then
                 weapon:SetClip1(item.WeaponOverrideClip or self.clip or 0)
 
@@ -44,30 +44,30 @@ function impulse.Inventory:RegisterItem(item)
             end
         end
 
-        function item:UnEquip(ply)
-            local weapon = ply:GetWeapon(class)
+        function item:UnEquip(client)
+            local weapon = client:GetWeapon(class)
             if ( IsValid(weapon) ) then
                 self.clip = weapon:Clip1()
-                ply:StripWeapon(class)
+                client:StripWeapon(class)
             end
 
-            if ( ply.InvAttachments ) then
-                local uid = ply.InvAttachments[class]
+            if ( client.InvAttachments ) then
+                local uid = client.InvAttachments[class]
 
-                if uid and ply:HasInventoryItemSpecific(uid) then
-                    ply.doForcedInvEquip = true
-                    ply:SetInventoryItemEquipped(uid, false)
+                if uid and client:HasInventoryItemSpecific(uid) then
+                    client.doForcedInvEquip = true
+                    client:SetInventoryItemEquipped(uid, false)
                 end
             end
         end
     elseif ( attachmentClass ) then
-        function item:CanEquip(ply)
-            if ( ply.doForcedInvEquip ) then
-                ply.doForcedInvEquip = nil
+        function item:CanEquip(client)
+            if ( client.doForcedInvEquip ) then
+                client.doForcedInvEquip = nil
                 return true -- hacky needs replacement
             end
 
-            for k, v in pairs(ply:GetWeapons()) do
+            for k, v in pairs(client:GetWeapons()) do
                 if ( IsValid(v) and v.IsLongsword and v.Attachments and v.Attachments[attachmentClass] ) then
                     return true
                 end
@@ -76,25 +76,25 @@ function impulse.Inventory:RegisterItem(item)
             return false
         end
 
-        function item:OnEquip(ply, class, uid)
-            local weapon = ply:GetActiveWeapon()
+        function item:OnEquip(client, class, uid)
+            local weapon = client:GetActiveWeapon()
 
             weapon:GiveAttachment(attachmentClass)
 
-            ply.InvAttachments = ply.InvAttachments or {}
-            ply.InvAttachments[weapon:GetClass()] = uid
+            client.InvAttachments = client.InvAttachments or {}
+            client.InvAttachments[weapon:GetClass()] = uid
         end
 
-        function item:UnEquip(ply, class, uid)
-            for k, v in pairs(ply:GetWeapons()) do
+        function item:UnEquip(client, class, uid)
+            for k, v in pairs(client:GetWeapons()) do
                 if ( IsValid(v) and v.IsLongsword and v.Attachments and v.Attachments[attachmentClass] and v:HasAttachment(attachmentClass) ) then
                     v:TakeAttachment(attachmentClass)
-                    ply.InvAttachments[v:GetClass()] = nil
+                    client.InvAttachments[v:GetClass()] = nil
                     return
                 end
             end
 
-            ply.InvAttachments = {} -- if the loop fails clear attach table
+            client.InvAttachments = {} -- if the loop fails clear attach table
         end
     end
 

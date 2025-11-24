@@ -63,8 +63,8 @@ function impulse.Inventory:PrintAll()
     query:Execute()
 end
 
-concommand.Add("impulse_inventory_printall", function(ply)
-    if ( !IsValid(ply) or !ply:IsSuperAdmin() ) then return end
+concommand.Add("impulse_inventory_printall", function(client)
+    if ( !IsValid(client) or !client:IsSuperAdmin() ) then return end
 
     impulse.Inventory:PrintAll()
 end)

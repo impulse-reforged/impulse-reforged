@@ -19,12 +19,12 @@ function PANEL:Init()
 
 end
 
-function PANEL:Setup( ply )
+function PANEL:Setup( client )
 
-    self.ply = ply
-    self.LabelName:SetText( ply:KnownName() )
+    self.client = client
+    self.LabelName:SetText( client:KnownName() )
     
-    self.Color = team.GetColor( ply:Team() )
+    self.Color = team.GetColor( client:Team() )
     
     self:InvalidateLayout()
 
@@ -32,9 +32,9 @@ end
 
 function PANEL:Paint( w, h )
 
-    if ( !IsValid( self.ply ) ) then return end
-    local vol = self.ply:VoiceVolume()
-    local col =  team.GetColor(self.ply:Team())
+    if ( !IsValid( self.client ) ) then return end
+    local vol = self.client:VoiceVolume()
+    local col =  team.GetColor(self.client:Team())
 
     draw.RoundedBox( 4, 0, 0, w, h, Color(0, 0, 0, 235))
     draw.RoundedBox( 4, 0, 0, w, h, Color(vol * col.r, vol * col.g, vol * col.b, 170) )
@@ -43,8 +43,8 @@ end
 
 function PANEL:Think()
     
-    if ( IsValid( self.ply ) ) then
-        self.LabelName:SetText( self.ply:KnownName() )
+    if ( IsValid( self.client ) ) then
+        self.LabelName:SetText( self.client:KnownName() )
     end
 
     if ( self.fadeAnim ) then
@@ -57,9 +57,9 @@ function PANEL:FadeOut( anim, delta, data )
     
     if ( anim.Finished ) then
     
-        if ( IsValid( PlayerVoicePanels[ self.ply ] ) ) then
-            PlayerVoicePanels[ self.ply ]:Remove()
-            PlayerVoicePanels[ self.ply ] = nil
+        if ( IsValid( PlayerVoicePanels[ self.client ] ) ) then
+            PlayerVoicePanels[ self.client ]:Remove()
+            PlayerVoicePanels[ self.client ] = nil
             return
         end
         
@@ -71,33 +71,33 @@ end
 
 derma.DefineControl( "VoiceNotify", "", PANEL, "DPanel" )
 
-function GM:PlayerStartVoice( ply )
+function GM:PlayerStartVoice( client )
 
     if ( !IsValid( g_VoicePanelList ) ) then return end
     
     -- There'd be an exta one if voice_loopback is on, so remove it.
-    GAMEMODE:PlayerEndVoice( ply )
+    GAMEMODE:PlayerEndVoice( client )
 
 
-    if ( IsValid( PlayerVoicePanels[ ply ] ) ) then
+    if ( IsValid( PlayerVoicePanels[ client ] ) ) then
 
-        if ( PlayerVoicePanels[ ply ].fadeAnim ) then
-            PlayerVoicePanels[ ply ].fadeAnim:Stop()
-            PlayerVoicePanels[ ply ].fadeAnim = nil
+        if ( PlayerVoicePanels[ client ].fadeAnim ) then
+            PlayerVoicePanels[ client ].fadeAnim:Stop()
+            PlayerVoicePanels[ client ].fadeAnim = nil
         end
 
-        PlayerVoicePanels[ ply ]:SetAlpha( 255 )
+        PlayerVoicePanels[ client ]:SetAlpha( 255 )
 
         return
 
     end
 
-    if ( !IsValid( ply ) ) then return end
+    if ( !IsValid( client ) ) then return end
 
     local pnl = g_VoicePanelList:Add( "VoiceNotify" )
-    pnl:Setup( ply )
+    pnl:Setup( client )
     
-    PlayerVoicePanels[ ply ] = pnl
+    PlayerVoicePanels[ client ] = pnl
 
 end
 
@@ -114,14 +114,14 @@ local function VoiceClean()
 end
 timer.Create( "VoiceClean", 10, 0, VoiceClean )
 
-function GM:PlayerEndVoice( ply )
+function GM:PlayerEndVoice( client )
 
-    if ( IsValid( PlayerVoicePanels[ ply ] ) ) then
+    if ( IsValid( PlayerVoicePanels[ client ] ) ) then
 
-        if ( PlayerVoicePanels[ ply ].fadeAnim ) then return end
+        if ( PlayerVoicePanels[ client ].fadeAnim ) then return end
 
-        PlayerVoicePanels[ ply ].fadeAnim = Derma_Anim( "FadeOut", PlayerVoicePanels[ ply ], PlayerVoicePanels[ ply ].FadeOut )
-        PlayerVoicePanels[ ply ].fadeAnim:Start( 2 )
+        PlayerVoicePanels[ client ].fadeAnim = Derma_Anim( "FadeOut", PlayerVoicePanels[ client ], PlayerVoicePanels[ client ].FadeOut )
+        PlayerVoicePanels[ client ].fadeAnim:Start( 2 )
 
     end
 

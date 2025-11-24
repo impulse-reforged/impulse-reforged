@@ -61,7 +61,7 @@ local substitutions = {
 
 function OwOifyText(text, doPrefix, doSuffix)
     if doPrefix then
-        text = prefixes[math.random(1, #prefixes)] .. text
+        text = prefixes[math.random(#prefixes)] .. text
     end
 
     for v, k in pairs(substitutions) do -- probably slow
@@ -69,7 +69,7 @@ function OwOifyText(text, doPrefix, doSuffix)
     end
 
     if doSuffix then
-        text = text .. suffixes[math.random(1, #suffixes)]
+        text = text .. suffixes[math.random(#suffixes)]
     end
 
     return text

@@ -2,22 +2,22 @@ if ( SERVER ) then
     util.AddNetworkString("impulseOpsNamechange")
     util.AddNetworkString("impulseOpsDoNamechange")
 
-    net.Receive("impulseOpsDoNamechange", function(len, ply)
-        if not ply.NameChangeForced then return end
+    net.Receive("impulseOpsDoNamechange", function(len, client)
+        if not client.NameChangeForced then return end
 
         local charName = net.ReadString()
 
         local canUse, output = impulse.CanUseName(charName)
 
         if not canUse then
-            ply:Kick("Inappropriate roleplay name.")
+            client:Kick("Inappropriate roleplay name.")
             return
         end
 
-        ply:SetRPName(output, true)
-        ply:Notify("You have changed your name to "..output..".")
+        client:SetRPName(output, true)
+        client:Notify("You have changed your name to "..output..".")
 
-        ply.NameChangeForced = nil
+        client.NameChangeForced = nil
     end)
 else
     local nameChangeText = "You have been forced to change your name by a game moderator as it was deemed inappropriate.\nPlease change your name below to something more sutable.\nEXAMPLE: John Doe"
@@ -69,7 +69,7 @@ local changeNameCommand =  {
     description = "Force changes the specified players name.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
+    onRun = function(client, arg, rawText)
         local name = arg[1]
         local plyTarget = impulse.Util:FindPlayer(name)
 
@@ -78,9 +78,9 @@ local changeNameCommand =  {
             net.Send(plyTarget)
 
             plyTarget.NameChangeForced = true
-            ply:Notify(plyTarget:Name().." has been forced name-changed.")
+            client:Notify(plyTarget:Name().." has been forced name-changed.")
         else
-            return ply:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find player: "..tostring(name))
         end
     end
 }

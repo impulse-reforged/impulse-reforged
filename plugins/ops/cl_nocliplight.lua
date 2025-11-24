@@ -10,17 +10,17 @@ local cols = {
     ["White"] = Color(192, 255, 255)
 }
 function PLUGIN:Think()
-    local ply = LocalPlayer()
-    if ( !ply:IsAdmin() or ply:GetMoveType() != MOVETYPE_NOCLIP or !ply:Alive() or ply:InVehicle() ) then
+    local client = LocalPlayer()
+    if ( !client:IsAdmin() or client:GetMoveType() != MOVETYPE_NOCLIP or !client:Alive() or client:InVehicle() ) then
         OPS_LIGHT = false
         lightOn = false
         return
     end
 
     if lightOn then
-        dLight = DynamicLight(ply:EntIndex())
+        dLight = DynamicLight(client:EntIndex())
         if dLight then
-            dLight.pos = ply:EyePos()
+            dLight.pos = client:EyePos()
 
             local col = cols[impulse.Settings:Get("admin_lightcol")]
             dLight.r = col.r

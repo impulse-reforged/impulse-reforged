@@ -242,7 +242,7 @@ net.Receive("impulseInvDoSearch", function()
     end, true)
 end)
 
-net.Receive("impulseInvStorageOpen", function(len, ply)
+net.Receive("impulseInvStorageOpen", function(len, client)
     impulse_storage = vgui.Create("impulseInventoryStorage")
 end)
 
@@ -612,13 +612,13 @@ net.Receive("impulseGetButtons", function()
 end)
 
 net.Receive("impulsePlayGesture", function()
-    local ply = net.ReadPlayer()
-    if ( !IsValid(ply) ) then return end
+    local client = net.ReadPlayer()
+    if ( !IsValid(client) ) then return end
 
     local gesture = net.ReadString()
     local slot = net.ReadInt(16)
 
-    impulse.Util:PlayGesture(ply, gesture, slot)
+    impulse.Util:PlayGesture(client, gesture, slot)
 end)
 
 net.Receive("impulseClearWorkbar", function()

@@ -12,20 +12,20 @@ function ENT:Initialize()
     self.KillTime = CurTime() + 1000
 end
 
-function ENT:Use(ply)
+function ENT:Use(client)
     net.Start("impulseReadNote")
     net.WriteString(self.letterText)
-    net.Send(ply)
+    net.Send(client)
 end
 
 function ENT:SetText(text)
     self.letterText = text
 end
 
-function ENT:SetPlayerOwner(ply)
-    self.playerOwner = ply
+function ENT:SetPlayerOwner(client)
+    self.playerOwner = client
 
-    ply.letterCount = (ply.letterCount or 0) + 1
+    client.letterCount = (client.letterCount or 0) + 1
 end
 
 function ENT:OnRemove()

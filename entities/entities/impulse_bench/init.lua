@@ -50,7 +50,7 @@ end
 
 function ENT:Use(activator, caller)
     if activator:IsPlayer() and activator:Alive() then
-        if activator:GetNetVar("arrested", false) then
+        if activator:GetRelay("arrested", false) then
             return activator:Notify("You cannot access this when detained.")
         end
 
@@ -72,4 +72,3 @@ function ENT:Use(activator, caller)
         activator.currentBench = self
     end
 end
-

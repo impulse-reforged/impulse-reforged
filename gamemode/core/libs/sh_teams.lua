@@ -50,8 +50,6 @@ end
 function impulse.Teams:FindTeam(identifier)
     if ( !identifier ) then return end
 
-    tostring(identifier)
-
     for k, v in ipairs(impulse.Teams.Stored) do
         if ( impulse.Util:StringMatches(tostring(v.name), identifier) ) then
             return v
@@ -64,16 +62,14 @@ end
 function impulse.Teams:FindClass(identifier)
     if ( !identifier ) then return end
 
-    tostring(identifier)
-
     for k, v in ipairs(impulse.Teams.Stored) do
         if ( !v.classes ) then continue end
 
-        for k, v in ipairs(v.classes) do
-            if ( impulse.Util:StringMatches(tostring(v.name), identifier) ) then
-                return v
-            elseif ( k == tonumber(identifier) ) then
-                return v
+        for k2, v2 in ipairs(v.classes) do
+            if ( impulse.Util:StringMatches(tostring(v2.name), identifier) ) then
+                return v2
+            elseif ( k2 == tonumber(identifier) ) then
+                return v2
             end
         end
     end
@@ -82,16 +78,14 @@ end
 function impulse.Teams:FindRank(identifier)
     if ( !identifier ) then return end
 
-    tostring(identifier)
-    
     for k, v in ipairs(impulse.Teams.Stored) do
         if ( !v.ranks ) then continue end
 
-        for k, v in ipairs(v.ranks) do
-            if ( impulse.Util:StringMatches(tostring(v.name), identifier) ) then
-                return v
-            elseif ( k == tonumber(identifier) ) then
-                return kv
+        for k2, v2 in ipairs(v.ranks) do
+            if ( impulse.Util:StringMatches(tostring(v2.name), identifier) ) then
+                return v2
+            elseif ( k2 == tonumber(identifier) ) then
+                return v2
             end
         end
     end
@@ -105,7 +99,7 @@ function PLAYER:CanBecomeTeam(teamID, notify)
 
     if ( !self:Alive() ) then return false end
 
-    if ( self:GetNetVar("arrested", false) ) then return false end
+    if ( self:GetRelay("arrested", false) ) then return false end
 
     if ( teamID == self:Team() ) then return false end
 
@@ -161,11 +155,9 @@ end
 function PLAYER:CanBecomeTeamClass(classID, forced)
     local teamData = impulse.Teams:FindTeam(self:Team())
     local classData = teamData.classes[classID]
-    local classPlayers = 0
-
     if ( !classData ) then return end
 
-    if not self:Alive() then
+    if ( !self:Alive() ) then
         return false, "You are not alive, bro how the fuck did this happen man?"
     end
 
@@ -175,7 +167,7 @@ function PLAYER:CanBecomeTeamClass(classID, forced)
     end
     ]]
 
-    if classData.whitelistLevel and classData.whitelistUID then
+    if ( classData.whitelistLevel and classData.whitelistUID ) then
         if ( !self:HasTeamWhitelist(classData.whitelistUID, classData.whitelistLevel) ) then
             local add = classData.whitelistFailMessage or ""
             return false, "You must be whitelisted to play as this rank. "..add
@@ -190,25 +182,25 @@ function PLAYER:CanBecomeTeamClass(classID, forced)
         local classPlayers = 0
 
         for v, k in player.Iterator() do
-            if not k:Team() == self:Team() then continue end
-            if k:GetTeamClass() == classID then
+            if ( k:Team() != self:Team() ) then continue end
+            if ( k:GetTeamClass() == classID ) then
                 classPlayers = classPlayers + 1
             end
         end
 
-        if classData.percentLimit and classData.percentLimit == true then
+        if ( classData.percentLimit and classData.percentLimit == true ) then
             local percentClass = classPlayers / player.GetCount()
-            if percentClass > classData.limit then
+            if ( percentClass > classData.limit ) then
                 return false, classData.name .. " is full."
             end
         else
-            if classPlayers >= classData.limit then
+            if ( classPlayers >= classData.limit ) then
                 return false, classData.name .. " is full."
             end
         end
     end
 
-    if classData.customCheck then
+    if ( classData.customCheck ) then
         local customCheck = classData.customCheck(self, classID)
         if ( customCheck != nil and customCheck == false ) then
             return false, "Failed custom check!"
@@ -221,21 +213,20 @@ end
 function PLAYER:CanBecomeTeamRank(rankID, forced)
     local teamData = impulse.Teams:FindTeam(self:Team())
     local rankData = teamData.ranks[rankID]
-    local rankPlayers = 0
 
     if ( !self:Alive() ) then
         return false, "You are not alive, bro how the fuck did this happen man?"
     end
 
     --[[
-    if self:GetTeamRank() == rankID then
+    if ( self:GetTeamRank() == rankID ) then
         return false, "You are already on this rank!"
     end
     ]]
 
     if ( rankData.whitelistLevel and !self:HasTeamWhitelist(self:Team(), rankData.whitelistLevel) ) then
         local add = rankData.whitelistFailMessage or ""
-        return false, "You must be whitelisted to play as this rank. "..add
+        return false, "You must be whitelisted to play as this rank. " .. add
     end
 
     if ( rankData.xp and rankData.xp > self:GetXP() and forced != true ) then
@@ -275,11 +266,11 @@ function PLAYER:CanBecomeTeamRank(rankID, forced)
 end
 
 function PLAYER:GetTeamClass()
-    return self:GetNetVar("class", nil)
+    return self:GetRelay("class", nil)
 end
 
 function PLAYER:GetTeamRank()
-    return self:GetNetVar("rank", nil)
+    return self:GetRelay("rank", nil)
 end
 
 function PLAYER:GetTeamClassName()
@@ -288,13 +279,13 @@ function PLAYER:GetTeamClassName()
     end
 
     local classData = impulse.Teams:FindTeam(self:Team()).ClassRef
-    local plyClass = self:GetNetVar("class", nil)
+    local plyClass = self:GetRelay("class", nil)
 
     if ( classData and plyClass ) then
         return classData[plyClass]
     end
 
-    return "Default"
+    return ""
 end
 
 function PLAYER:GetTeamRankName()
@@ -303,13 +294,13 @@ function PLAYER:GetTeamRankName()
     end
 
     local rankData = impulse.Teams:FindTeam(self:Team()).ranks
-    local plyRank = self:GetNetVar("rank", nil)
+    local plyRank = self:GetRelay("rank", nil)
 
     if ( rankData and plyRank ) then
         return rankData[plyRank].name
     end
 
-    return "Default"
+    return ""
 end
 
 function PLAYER:GetTeamData()
@@ -349,10 +340,10 @@ function PLAYER:GetAmbientSound()
     local teamData = self:GetTeamData()
 
     if ( rankData and rankData.ambientSounds ) then
-        return rankData.ambientSounds[math.random(1, #rankData.ambientSounds)]
+        return rankData.ambientSounds[math.random(#rankData.ambientSounds)]
     elseif ( classData and classData.ambientSounds ) then
-        return classData.ambientSounds[math.random(1, #classData.ambientSounds)]
+        return classData.ambientSounds[math.random(#classData.ambientSounds)]
     elseif ( teamData and teamData.ambientSounds ) then
-        return teamData.ambientSounds[math.random(1, #teamData.ambientSounds)]
+        return teamData.ambientSounds[math.random(#teamData.ambientSounds)]
     end
 end

@@ -8,8 +8,8 @@ local function IsSteamID64(str)
     return string.match(str, "7656119%d+")
 end
 
-concommand.Add("impulse_set_group", function(ply, cmd, args)
-    if ( !IsValid(ply) or ply:IsSuperAdmin() or ply:IsListenServerHost() ) then
+concommand.Add("impulse_set_group", function(client, cmd, args)
+    if ( !IsValid(client) or client:IsSuperAdmin() or client:IsListenServerHost() ) then
         local find = args[1]
         if !find then
             logs:Error("No player target specified.")

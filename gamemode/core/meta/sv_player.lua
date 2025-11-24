@@ -146,7 +146,7 @@ function PLAYER:GetPropCount(skip)
     end
 
     if not skip then
-        self:SetLocalVar("propCount", c)
+        self:SetRelay("propCount", c)
     end
 
     return c
@@ -163,7 +163,7 @@ function PLAYER:AddPropCount(ent)
 
     self:GetPropCount()
 
-    ent:CallOnRemove("GetPropCountUpdate", function(ent, ply) ply:GetPropCount() end, self)
+    ent:CallOnRemove("GetPropCountUpdate", function(ent, client) client:GetPropCount() end, self)
 end
 
 function PLAYER:ResetSubMaterials()

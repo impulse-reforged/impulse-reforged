@@ -102,6 +102,6 @@ end
 -- @bool[opt=false] refund Should this buyable be refunded on server crashes
 -- @int[opt=0] refundAdd The amount to add to the price in the event of a refund being issued
 -- @bool[opt=false] removeOnTeamSwitch Should the buyable be removed on team switch
--- @func[opt] postSpawn Called after the buyable is spawned (ent, ply) arguments passed
--- @func[opt] customCheck Determines if the buyable can be spawned based on return value (ply) arguments passed
+-- @func[opt] postSpawn Called after the buyable is spawned (ent, client) arguments passed
+-- @func[opt] customCheck Determines if the buyable can be spawned based on return value (client) arguments passed
 -- @table BuyableData

@@ -149,9 +149,9 @@ local function RemoveVelocity(ent, normalized)
     end
 end
 
-local function ThrowVelocity(ent, ply, power)
+local function ThrowVelocity(ent, client, power)
     local phys = ent:GetPhysicsObject()
-    local velocity = ply:GetAimVector()
+    local velocity = client:GetAimVector()
     velocity = velocity * power
 
     SetSubPhysMotionEnabled(ent, false)
@@ -260,22 +260,22 @@ end
 
 local down = Vector(0, 0, -1)
 function SWEP:AllowEntityDrop()
-    local ply = self:GetOwner()
+    local client = self:GetOwner()
     local ent = self.CarryHack
 
-    if not IsValid(ply) or not IsValid(ent) then return false end
+    if not IsValid(client) or not IsValid(ent) then return false end
 
-    local ground = ply:GetGroundEntity()
+    local ground = client:GetGroundEntity()
     if ground and (ground:IsWorld() or IsValid(ground)) then return true end
 
-    local diff = (ent:GetPos() - ply:GetShootPos()):GetNormalized()
+    local diff = (ent:GetPos() - client:GetShootPos()):GetNormalized()
 
     return down:Dot(diff) <= 0.75
 end
 
 local function IsPlayerStandsOn(ent)
-    for v,ply in player.Iterator() do
-        if ply:GetGroundEntity() == ent then
+    for v,client in player.Iterator() do
+        if client:GetGroundEntity() == ent then
             return true
         end
     end
@@ -353,24 +353,24 @@ function SWEP:PrimaryAttack()
         return
     end
 
-    local ply = self.Owner
+    local client = self.Owner
 
     local trace = {}
-    trace.start = ply:EyePos()
-    trace.endpos = trace.start + ply:GetAimVector() * 85
-    trace.filter = {ply, self}
+    trace.start = client:EyePos()
+    trace.endpos = trace.start + client:GetAimVector() * 85
+    trace.filter = {client, self}
 
     local traceEnt = util.TraceLine(trace).Entity
 
     if IsValid(traceEnt) then
         if traceEnt:IsDoor() then
-            local doorOwners, doorGroup = traceEnt:GetNetVar("doorOwners", nil), traceEnt:GetNetVar("doorGroup", nil)
+            local doorOwners, doorGroup = traceEnt:GetRelay("doorOwners", nil), traceEnt:GetRelay("doorGroup", nil)
 
-            if ply:CanLockUnlockDoor(doorOwners, doorGroup) then
+            if client:CanLockUnlockDoor(doorOwners, doorGroup) then
                 traceEnt:DoorLock()
                 traceEnt:EmitSound("doors/latchunlocked1.wav")
             else
-                ply:EmitSound("physics/wood/wood_crate_impact_hard3.wav", 100, math.random(90, 110))
+                client:EmitSound("physics/wood/wood_crate_impact_hard3.wav", 100, math.random(90, 110))
             end
         end
     end
@@ -378,12 +378,12 @@ end
 
 function SWEP:SecondaryAttack()
     if not IsFirstTimePredicted() then return end
-    local ply = self.Owner
+    local client = self.Owner
 
     local trace = {}
-    trace.start = ply:EyePos()
-    trace.endpos = trace.start + ply:GetAimVector() * PLAYER_PICKUP_RANGE
-    trace.filter = {ply, self}
+    trace.start = client:EyePos()
+    trace.endpos = trace.start + client:GetAimVector() * PLAYER_PICKUP_RANGE
+    trace.filter = {client, self}
 
     local trace = util.TraceLine(trace)
     local traceEnt = trace.Entity
@@ -391,13 +391,13 @@ function SWEP:SecondaryAttack()
     if SERVER and IsValid(traceEnt) then
         if trace.StartPos:DistToSqr(trace.HitPos) < 86 ^ 2 then
             if traceEnt:IsDoor() then
-                local doorOwners, doorGroup = traceEnt:GetNetVar("doorOwners", nil), traceEnt:GetNetVar("doorGroup", nil)
+                local doorOwners, doorGroup = traceEnt:GetRelay("doorOwners", nil), traceEnt:GetRelay("doorGroup", nil)
 
-                if ply:CanLockUnlockDoor(doorOwners, doorGroup) then
+                if client:CanLockUnlockDoor(doorOwners, doorGroup) then
                     traceEnt:DoorUnlock()
                     traceEnt:EmitSound("doors/latchunlocked1.wav")
                 else
-                    ply:EmitSound("physics/wood/wood_crate_impact_hard3.wav", 100, math.random(90, 110))
+                    client:EmitSound("physics/wood/wood_crate_impact_hard3.wav", 100, math.random(90, 110))
                 end
 
                 self:SetNextSecondaryFire(CurTime() + 0.5)
@@ -440,18 +440,18 @@ end
 
 function SWEP:AllowPickup(target)
     local phys = target:GetPhysicsObject()
-    local ply = self:GetOwner()
+    local client = self:GetOwner()
 
-    if IsValid(phys) and IsValid(ply) and target:GetClass() == "func_physbox" then return false end
+    if IsValid(phys) and IsValid(client) and target:GetClass() == "func_physbox" then return false end
 
     return (
-            IsValid(phys) and IsValid(ply) and
+            IsValid(phys) and IsValid(client) and
             (not phys:HasGameFlag(FVPHYSICS_NO_PLAYER_PICKUP)) and
             phys:GetMass() <= CARRY_WEIGHT_LIMIT and
             (not IsPlayerStandsOn(target)) and
             (target.CanPickup != false) and
-            hook.Run("GravGunPickupAllowed", ply, target) != false and
-            (target.GravGunPickupAllowed and (target:GravGunPickupAllowed(ply) != false) or true)
+            hook.Run("GravGunPickupAllowed", client, target) != false and
+            (target.GravGunPickupAllowed and (target:GravGunPickupAllowed(client) != false) or true)
     )
 end
 
@@ -466,8 +466,8 @@ function SWEP:DoPickup(throw)
         return
     end
 
-    local ply = self:GetOwner()
-    local trace = ply:GetEyeTrace(MASK_SHOT)
+    local client = self:GetOwner()
+    local trace = client:GetEyeTrace(MASK_SHOT)
 
     if IsValid(trace.Entity) then
         local ent = trace.Entity
@@ -477,11 +477,11 @@ function SWEP:DoPickup(throw)
 
         -- if the client messes with phys desync will occur
         if ( SERVER ) then
-            if (ply:EyePos() - trace.HitPos):Length() < self:GetRange(ent) then
+            if (client:EyePos() - trace.HitPos):Length() < self:GetRange(ent) then
                 if self:AllowPickup(ent) then
-                    if ent.CanHandsPickup and !ent.CanHandsPickup(ent, ply) then return end
+                    if ent.CanHandsPickup and !ent.CanHandsPickup(ent, client) then return end
                     self:Pickup()
-                    if ent.OnHandsPickup then ent.OnHandsPickup(ent, ply) end
+                    if ent.OnHandsPickup then ent.OnHandsPickup(ent, client) end
 
                     local delay = (ent:GetClass() == "prop_ragdoll") and 0.8 or 0.1
 
@@ -496,8 +496,8 @@ end
 function SWEP:Pickup()
     if CLIENT and IsValid(self.HoldingEntity) then return end
 
-    local ply = self:GetOwner()
-    local trace = ply:GetEyeTrace(MASK_SHOT)
+    local client = self:GetOwner()
+    local trace = client:GetEyeTrace(MASK_SHOT)
     local ent = trace.Entity
     self.HoldingEntity = ent
     local entPhys = ent:GetPhysicsObject()
@@ -518,7 +518,7 @@ function SWEP:Pickup()
             self.CarryHack:DrawShadow(false)
 
             self.CarryHack:SetHealth(999)
-            self.CarryHack:SetOwner(ply)
+            self.CarryHack:SetOwner(client)
             self.CarryHack:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
             self.CarryHack:SetSolid(SOLID_NONE)
 
@@ -546,7 +546,7 @@ function SWEP:Pickup()
 
             if not self.HoldingEntity:IsWeapon() then
                 self.PreviousOwner = self.HoldingEntity:GetOwner()
-                self.HoldingEntity:SetOwner(ply)
+                self.HoldingEntity:SetOwner(client)
             end
 
             local phys = self.CarryHack:GetPhysicsObject()

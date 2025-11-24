@@ -21,8 +21,8 @@ RPGROUP_PERMISSIONS = {
 local PLAYER = FindMetaTable("Player")
 
 function PLAYER:GroupHasPermission(act)
-    local group = self:GetNetVar("groupName", nil)
-    local rank = self:GetNetVar("groupRank", nil)
+    local group = self:GetRelay("groupName", nil)
+    local rank = self:GetRelay("groupRank", nil)
 
     if not group or not rank then return false end
 

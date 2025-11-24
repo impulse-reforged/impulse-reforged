@@ -2,7 +2,7 @@ local PLAYER = FindMetaTable("Player")
 
 function PLAYER:MakeAFK()
     if self.impulseAFKImmune then return end
-    
+
     self.impulseAFKState = true
 
     local playercount = player.GetCount()
@@ -11,7 +11,7 @@ function PLAYER:MakeAFK()
 
     if playercount >= limit and (impulse.Ops.EventManager.GetEventMode() or not self:IsDonator()) then
         if self:IsAdmin() then return end
-        
+
         self:Kick("You have been kicked for inactivity on a busy server. See you again soon!")
         return
     end

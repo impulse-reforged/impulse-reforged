@@ -1,34 +1,33 @@
 local PANEL = {}
 
 function PANEL:Init()
-    self:SetSize(SizeW(900), SizeH(900))
+    self:SetSize(ScrW() / 2, ScrH() / 1.25)
     self:Center()
     self:SetTitle("Scoreboard")
     self:ShowCloseButton(false)
     self:SetDraggable(false)
     self:MakePopup()
-     self:MoveToFront()
+    self:MoveToFront()
+    self:SetKeyboardInputEnabled(false)
 
-     self.scrollPanel = vgui.Create("DScrollPanel", self)
+    self.scrollPanel = vgui.Create("DScrollPanel", self)
     self.scrollPanel:Dock(FILL)
 
     local playerList = {}
-    for v, k in player.Iterator() do
-        if k:IsAdmin() and k:GetNetVar("incognito", false) then continue end
+    for _, client in player.Iterator() do
+        if ( client:IsAdmin() and client:GetRelay("incognito", false) ) then continue end
 
-        table.insert(playerList, k)
+        table.insert(playerList, client)
     end
 
     table.sort(playerList, function(a,b)
         return a:Team() > b:Team()
     end)
-    
-    for v, k in ipairs(playerList) do
+
+    for _, client in ipairs(playerList) do
         local playerCard = self.scrollPanel:Add("impulseScoreboardCard")
-        playerCard:SetPlayer(k)
-        playerCard:SetHeight(60)
         playerCard:Dock(TOP)
-        playerCard:DockMargin(0,0,0,0)
+        playerCard:SetPlayer(client)
     end
 end
 

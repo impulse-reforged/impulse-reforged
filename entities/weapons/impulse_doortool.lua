@@ -39,8 +39,8 @@ SWEP.NextGo = 0
 
 if ( CLIENT ) then
     function SWEP:PrimaryAttack()
-        local ply = self.Owner
-        local tr = ply:GetEyeTrace()
+        local client = self.Owner
+        local tr = client:GetEyeTrace()
         if IsValid(tr.Entity) then
             local ent = tr.Entity
             if ent:IsDoor() or ent:IsPropDoor() then
@@ -59,12 +59,12 @@ if ( CLIENT ) then
     function SWEP:Reload()
         if self.NextGo > CurTime() then return end
         self.NextGo = CurTime() + 0.1
-        local ply = self.Owner
-        local tr = ply:GetEyeTrace()
+        local client = self.Owner
+        local tr = client:GetEyeTrace()
         if IsValid(tr.Entity) then
             local ent = tr.Entity
             if ent:IsDoor() or ent:IsPropDoor() then
-                local b = ((ent:GetNetVar("doorBuyable", nil) != nil)) and 0 or 1
+                local b = ((ent:GetRelay("doorBuyable", nil) != nil)) and 0 or 1
                 RunConsoleCommand("impulse_door_sethidden",tostring(b))
             end
         end

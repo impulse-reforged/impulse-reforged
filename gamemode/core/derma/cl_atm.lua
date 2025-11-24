@@ -58,9 +58,9 @@ function PANEL:Init()
 end
 
 function PANEL:SetBalance(m)
-    self.balance:SetText("Balance: "..impulse.Config.CurrencyPrefix..m)
+    self.balance:SetText("Balance: " .. impulse.Config.CurrencyPrefix .. m)
     self.balance:SizeToContents()
-    self.balance:SetPos(100 - (self.balance:GetWide()/2), 30)
+    self.balance:SetPos(100 - (self.balance:GetWide() / 2), 30)
 end
 
 function PANEL:Think()
@@ -71,6 +71,5 @@ function PANEL:Think()
         self:SetBalance(curMoney)
     end
 end
-
 
 vgui.Register("impulseATMMenu", PANEL, "DFrame")

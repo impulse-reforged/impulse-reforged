@@ -6,13 +6,13 @@ local combineBanCommand = {
     description = "Gives the player a combine ban for the time specified (max of 1 week).",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
+    onRun = function(client, arg, rawText)
         local name = arg[1]
         local time = arg[2]
         local plyTarget = impulse.Util:FindPlayer(name)
 
         if not time or not tonumber(time) then
-            return ply:Notify("Please specific a valid time value in minutes.")
+            return client:Notify("Please specific a valid time value in minutes.")
         end
 
         time = tonumber(time)
@@ -32,14 +32,14 @@ local combineBanCommand = {
 
             local howLong = string.NiceTime(time)
 
-            ply:Notify("You have combine banned "..plyTarget:Nick().." for "..howLong..".")
-            plyTarget:Notify("You have been banned from the combine faction for "..howLong.." by a game moderator ("..ply:SteamName()..").")
+            client:Notify("You have combine banned "..plyTarget:Nick().." for "..howLong..".")
+            plyTarget:Notify("You have been banned from the combine faction for "..howLong.." by a game moderator ("..client:SteamName()..").")
 
             net.Start("opsGiveCombineBan")
             net.WriteUInt(time, 16)
             net.Send(plyTarget)
         else
-            return ply:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find player: "..tostring(name))
         end
     end
 }
@@ -50,7 +50,7 @@ local combineUnBanCommand = {
     description = "Removes a combine ban from a player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
+    onRun = function(client, arg, rawText)
         local name = arg[1]
         local plyTarget = impulse.Util:FindPlayer(name)
 
@@ -58,9 +58,9 @@ local combineUnBanCommand = {
             plyTarget.impulseData.CombineBan = nil
             plyTarget:SaveData()
 
-            ply:Notify("You have removed "..plyTarget:Nick().."'s combine ban.")
+            client:Notify("You have removed "..plyTarget:Nick().."'s combine ban.")
         else
-            return ply:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find player: "..tostring(name))
         end
     end
 }

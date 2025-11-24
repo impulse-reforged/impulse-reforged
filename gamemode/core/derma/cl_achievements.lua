@@ -3,7 +3,7 @@ local PANEL = {}
 function PANEL:Init()
     self:SetSize(640, 500)
     self:Center()
-    self:SetTitle("Achievements (you have "..LocalPlayer():GetNetVar("achievementPoints", 0).." achievement points)")
+    self:SetTitle("Achievements (you have "..LocalPlayer():GetRelay("achievementPoints", 0).." achievement points)")
     self:MakePopup()
 
     local panel = self

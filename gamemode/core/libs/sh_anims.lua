@@ -370,7 +370,7 @@ function impulse.Anim:SetModelClass(model, class)
     if not impulse.Anim[class] then
         error("'"..tostring(class).."' is not a valid animation class!")
     end
-    
+
     translations[model:lower()] = class
 end
 
@@ -387,7 +387,7 @@ function impulse.Anim:GetModelClass(model)
     local class = translations[model]
 
     class = class or "player"
-    
+
     return class
 end
 
@@ -402,34 +402,33 @@ impulse.Anim:SetModelClass("models/breen.mdl", "player")
 
 HOLDTYPE_TRANSLATOR = {}
 HOLDTYPE_TRANSLATOR[""] = "normal"
-HOLDTYPE_TRANSLATOR["physgun"] = "smg"
+HOLDTYPE_TRANSLATOR["camera"] = "smg"
 HOLDTYPE_TRANSLATOR["crossbow"] = "shotgun"
-HOLDTYPE_TRANSLATOR["rpg"] = "shotgun"
-HOLDTYPE_TRANSLATOR["slam"] = "normal"
-HOLDTYPE_TRANSLATOR["grenade"] = "grenade"
+HOLDTYPE_TRANSLATOR["duel"] = "pistol"
 HOLDTYPE_TRANSLATOR["fist"] = "normal"
+HOLDTYPE_TRANSLATOR["grenade"] = "grenade"
+HOLDTYPE_TRANSLATOR["knife"] = "melee"
+HOLDTYPE_TRANSLATOR["magic"] = "normal"
 HOLDTYPE_TRANSLATOR["melee2"] = "melee"
 HOLDTYPE_TRANSLATOR["passive"] = "normal"
-HOLDTYPE_TRANSLATOR["knife"] = "melee"
-HOLDTYPE_TRANSLATOR["duel"] = "pistol"
-HOLDTYPE_TRANSLATOR["camera"] = "smg"
-HOLDTYPE_TRANSLATOR["magic"] = "normal"
+HOLDTYPE_TRANSLATOR["physgun"] = "smg"
 HOLDTYPE_TRANSLATOR["revolver"] = "pistol"
+HOLDTYPE_TRANSLATOR["rpg"] = "shotgun"
+HOLDTYPE_TRANSLATOR["slam"] = "normal"
 
 PLAYER_HOLDTYPE_TRANSLATOR = {}
 PLAYER_HOLDTYPE_TRANSLATOR[""] = "normal"
+PLAYER_HOLDTYPE_TRANSLATOR["bugbait"] = "normal"
+PLAYER_HOLDTYPE_TRANSLATOR["duel"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["fist"] = "normal"
-PLAYER_HOLDTYPE_TRANSLATOR["pistol"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["grenade"] = "normal"
+PLAYER_HOLDTYPE_TRANSLATOR["knife"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["melee"] = "normal"
-PLAYER_HOLDTYPE_TRANSLATOR["slam"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["melee2"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["passive"] = "normal"
-PLAYER_HOLDTYPE_TRANSLATOR["knife"] = "normal"
-PLAYER_HOLDTYPE_TRANSLATOR["duel"] = "normal"
-PLAYER_HOLDTYPE_TRANSLATOR["bugbait"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["pistol"] = "normal"
 PLAYER_HOLDTYPE_TRANSLATOR["revolver"] = "normal"
+PLAYER_HOLDTYPE_TRANSLATOR["slam"] = "normal"
 
 local IsValid = IsValid
 local string  = string
@@ -438,38 +437,42 @@ local type = type
 local PLAYER_HOLDTYPE_TRANSLATOR = PLAYER_HOLDTYPE_TRANSLATOR
 local HOLDTYPE_TRANSLATOR = HOLDTYPE_TRANSLATOR
 
-function GM:TranslateActivity(ply, act)
-    local model = string.lower(ply.GetModel(ply))
+function GM:TranslateActivity(client, act)
+    local model = string.lower(client.GetModel(client))
     local class = impulse.Anim:GetModelClass(model) or "player"
-    local weapon = ply.GetActiveWeapon(ply)
+    local weapon = client.GetActiveWeapon(client)
 
     if class == "player" then
-        if IsValid(weapon) and !ply.IsWeaponRaised(ply) and ply.OnGround(ply) then
+        if IsValid(weapon) and !client.IsWeaponRaised(client) and client.OnGround(client) then
             local holdType = IsValid(weapon) and (weapon.HoldType or weapon.GetHoldType(weapon)) or "normal"
-            if not ply.IsWeaponRaised(ply) and ply.OnGround(ply) then
+            if not client.IsWeaponRaised(client) and client.OnGround(client) then
                 holdType = PLAYER_HOLDTYPE_TRANSLATOR[holdType] or "passive"
+
+                if ( ARC9 and weapon.HoldTypeHolstered and weapon.Class == ARC9:GetPhrase("eft_class_weapon_pist") ) then
+                    holdType = "normal"
+                end
             end
 
             local animTree = impulse.Anim.player[holdType]
 
             if animTree and animTree[act] then
                 if type(animTree[act]) == "string" then
-                    ply.CalcSeqOverride = ply.LookupSequence(ply, animTree[act])
+                    client.CalcSeqOverride = client.LookupSequence(client, animTree[act])
                     return
                 else
                     return animTree[act]
                 end
             end
         end
-        return self.BaseClass.TranslateActivity(self.BaseClass, ply, act)
+        return self.BaseClass.TranslateActivity(self.BaseClass, client, act)
     end
 
     local animTree = impulse.Anim[class]
 
     if animTree then
         local subClass = "normal"
-        if ply.InVehicle(ply) then
-            local vehicle = ply.GetVehicle(ply)
+        if client.InVehicle(client) then
+            local vehicle = client.GetVehicle(client)
             local class = vehicle:IsChair() and "chair" or vehicle:GetClass()
 
             if animTree.vehicle and animTree.vehicle[class] then
@@ -477,11 +480,11 @@ function GM:TranslateActivity(ply, act)
                 local fixvec = animTree.vehicle[class][2]
 
                 if fixvec then
-                    ply:SetLocalPos(fixvec)
+                    client:SetLocalPos(fixvec)
                 end
 
                 if type(act) == "string" then
-                    ply.CalcSeqOverride = ply.LookupSequence(ply, act)
+                    client.CalcSeqOverride = client.LookupSequence(client, act)
 
                     return
                 else
@@ -491,12 +494,12 @@ function GM:TranslateActivity(ply, act)
                 act = animTree.normal[ACT_MP_CROUCH_IDLE][1]
 
                 if type(act) == "string" then
-                    ply.CalcSeqOverride = ply:LookupSequence(act)
+                    client.CalcSeqOverride = client:LookupSequence(act)
                 end
                 return
             end
-        elseif ply.OnGround(ply) then
-            ply.ManipulateBonePosition(ply, 0, vector_origin)
+        elseif client.OnGround(client) then
+            client.ManipulateBonePosition(client, 0, vector_origin)
 
             if IsValid(weapon) then
                 subClass = weapon.HoldType or weapon.GetHoldType(weapon)
@@ -504,10 +507,10 @@ function GM:TranslateActivity(ply, act)
             end
 
             if animTree[subClass] and animTree[subClass][act] then
-                local act2 = animTree[subClass][act][ply:IsWeaponRaised() and 2 or 1]
+                local act2 = animTree[subClass][act][client:IsWeaponRaised() and 2 or 1]
 
                 if type(act2) == "string" then
-                    ply.CalcSeqOverride = ply.LookupSequence(ply, act2)
+                    client.CalcSeqOverride = client.LookupSequence(client, act2)
                     return
                 end
                 return act2
@@ -521,31 +524,31 @@ end
 local vectorAngle = FindMetaTable("Vector").Angle
 local normalizeAngle = math.NormalizeAngle
 
-function GM:CalcMainActivity(ply, velocity)
-    local eyeAngles = ply.EyeAngles(ply)
+function GM:CalcMainActivity(client, velocity)
+    local eyeAngles = client.EyeAngles(client)
     local yaw = vectorAngle(velocity)[2]
     local normalized = normalizeAngle(yaw - eyeAngles[2])
 
-    ply.SetPoseParameter(ply, "move_yaw", normalized)
+    client.SetPoseParameter(client, "move_yaw", normalized)
 
     if ( CLIENT ) then
-        ply.SetIK(ply, false)
+        client.SetIK(client, false)
     end
 
-    local oldSeqOverride = ply.CalcSeqOverride
-    local seqIdeal, seqOverride = self.BaseClass.CalcMainActivity(self.BaseClass, ply, velocity)
+    local oldSeqOverride = client.CalcSeqOverride
+    local seqIdeal, seqOverride = self.BaseClass.CalcMainActivity(self.BaseClass, client, velocity)
 
-    return seqIdeal, ply.impulseForceSeq or oldSeqOverride or ply.CalcSeqOverride
+    return seqIdeal, client.impulseForceSeq or oldSeqOverride or client.CalcSeqOverride
 end
 
-function GM:DoAnimationEvent(ply, event, data)
-    local model = ply:GetModel():lower()
+function GM:DoAnimationEvent(client, event, data)
+    local model = client:GetModel():lower()
     local class = impulse.Anim:GetModelClass(model)
 
     if class == "player" then
-        return self.BaseClass:DoAnimationEvent(ply, event, data)
+        return self.BaseClass:DoAnimationEvent(client, event, data)
     else
-        local weapon = ply:GetActiveWeapon()
+        local weapon = client:GetActiveWeapon()
 
         if IsValid(weapon) then
             local holdType = weapon.HoldType or weapon:GetHoldType()
@@ -554,22 +557,22 @@ function GM:DoAnimationEvent(ply, event, data)
             local animation = impulse.Anim[class][holdType]
 
             if event == PLAYERANIMEVENT_ATTACK_PRIMARY then
-                ply:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, animation.attack or ACT_GESTURE_RANGE_ATTACK_SMG1, true)
+                client:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, animation.attack or ACT_GESTURE_RANGE_ATTACK_SMG1, true)
                 return ACT_VM_PRIMARYATTACK
             elseif event == PLAYERANIMEVENT_ATTACK_SECONDARY then
-                ply:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, animation.attack or ACT_GESTURE_RANGE_ATTACK_SMG1, true)
+                client:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, animation.attack or ACT_GESTURE_RANGE_ATTACK_SMG1, true)
                 return ACT_VM_SECONDARYATTACK
             elseif event == PLAYERANIMEVENT_RELOAD then
-                ply:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, animation.reload or ACT_GESTURE_RELOAD_SMG1, true)
+                client:AnimRestartGesture(GESTURE_SLOT_ATTACK_AND_RELOAD, animation.reload or ACT_GESTURE_RELOAD_SMG1, true)
                 return ACT_INVALID
             elseif event == PLAYERANIMEVENT_JUMP then
-                ply.m_bJumping = true
-                ply.m_bFirstJumpFrame = true
-                ply.m_flJumpStartTime = CurTime()
-                ply:AnimRestartMainSequence()
+                client.m_bJumping = true
+                client.m_bFirstJumpFrame = true
+                client.m_flJumpStartTime = CurTime()
+                client:AnimRestartMainSequence()
                 return ACT_INVALID
             elseif event == PLAYERANIMEVENT_CANCEL_RELOAD then
-                ply:AnimResetGestureSlot(GESTURE_SLOT_ATTACK_AND_RELOAD)
+                client:AnimResetGestureSlot(GESTURE_SLOT_ATTACK_AND_RELOAD)
                 return ACT_INVALID
             end
         end
@@ -658,14 +661,14 @@ function PLAYER:IsWeaponRaised()
         end
     end
 
-    return self.GetNetVar(self, "weaponRaised", false)
+    return self.GetRelay(self, "weaponRaised", false)
 end
 
 if ( SERVER ) then
     util.AddNetworkString("impulseSeqSet")
-    
+
     function PLAYER:SetWeaponRaised(state)
-        self:SetNetVar("weaponRaised", state)
+        self:SetRelay("weaponRaised", state)
 
         local weapon = self:GetActiveWeapon()
         if ( IsValid(weapon) ) then
@@ -708,4 +711,13 @@ if ( CLIENT ) then
             ent.impulseForceSeq = sequence
         end
     end)
+
+-- Support for blocking TPIK in ARC9 when weapon is not raised
+    function GM:ARC9_Hook_BlockTPIK(weapon)
+        local owner = weapon:GetOwner()
+        if ( !owner or !owner:IsPlayer() ) then return false end
+        if ( !owner:IsWeaponRaised() ) then
+            return true
+        end
+    end
 end

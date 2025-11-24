@@ -3,7 +3,7 @@ local PANEL = {}
 function PANEL:Init()
     self.padding = ScreenScale(32)
 
-    self:SetSize(ScrW() / 1.5, ScrH() / 1.25)
+    self:SetSize(ScrW() / 2.5, ScrH() / 1.5)
     self:Center()
     self:SetTitle("Player menu")
     self:MakePopup()
@@ -17,14 +17,14 @@ function PANEL:Init()
     -- actions
     self.quickActions = vgui.Create("DPanel", self.tabSheet)
     self.quickActions:Dock(FILL)
-    function self.quickActions:Paint(w, h)
+    function self.quickActions:Paint(width, height)
         return true
     end
 
     -- teams
     self.teams = vgui.Create("DPanel", self.tabSheet)
     self.teams:Dock(FILL)
-    function self.teams:Paint(w, h)
+    function self.teams:Paint(width, height)
         return true
     end
 
@@ -38,7 +38,7 @@ function PANEL:Init()
     -- info
     self.info = vgui.Create("DPanel", self.tabSheet)
     self.info:Dock(FILL)
-    function self.info:Paint(w, h)
+    function self.info:Paint(width, height)
         return true
     end
 
@@ -59,24 +59,23 @@ function PANEL:QuickActions()
     self.quickActionsInner = vgui.Create("DPanel", self.quickActions)
     self.quickActionsInner:Dock(FILL)
 
-    local panel = self
-    function self.quickActionsInner:Paint(w, h)
-        surface.SetDrawColor(panel.darkOverlay)
-        surface.DrawRect(0, 0, w, h)
+    self.quickActionsInner.Paint = function(_, width, height)
+        surface.SetDrawColor(self.darkOverlay)
+        surface.DrawRect(0, 0, width, height)
         return true
     end
 
     self.collapsableOptions = vgui.Create("DCollapsibleCategory", self.quickActionsInner)
     self.collapsableOptions:SetLabel("Actions")
     self.collapsableOptions:Dock(TOP)
+
     local colInv = Color(0, 0, 0, 0)
-    function self.collapsableOptions:Paint()
-        self:SetBGColor(colInv)
+    self.collapsableOptions.Paint = function(this, width, height)
+        this:SetBGColor(colInv)
     end
 
-    function self.collapsableOptions:Toggle() -- allowing them to accordion causes bugs
-        return
-    end
+    -- allowing them to accordion causes bugs
+    self.collapsableOptions.Toggle = function(this) return end
 
     self.collapsableOptionsScroll = vgui.Create("DScrollPanel", self.collapsableOptions)
     self.collapsableOptionsScroll:Dock(FILL)
@@ -92,22 +91,22 @@ function PANEL:QuickActions()
     btn:SetText("Drop money")
     function btn:DoClick()
         Derma_StringRequest("impulse", "Enter amount of money to drop:", nil, function(amount)
-            LocalPlayer():ConCommand("say /dropmoney "..amount)
+            LocalPlayer():ConCommand("say /dropmoney " .. amount)
         end)
     end
 
-    local btn = self.list:Add("DButton")
+    btn = self.list:Add("DButton")
     btn:Dock(TOP)
     btn:SetText("Write a letter")
     function btn:DoClick()
         Derma_StringRequest("impulse", "Write letter content:", nil, function(text)
-            LocalPlayer():ConCommand("say /write "..text)
+            LocalPlayer():ConCommand("say /write " .. text)
         end)
     end
 
-    local btn = self.list:Add("DButton")
+    btn = self.list:Add("DButton")
     btn:Dock(TOP)
-    btn:SetText("Change RP name (requires "..impulse.Config.CurrencyPrefix..impulse.Config.RPNameChangePrice..")")
+    btn:SetText("Change RP name (requires " .. impulse.Config.CurrencyPrefix .. impulse.Config.RPNameChangePrice .. ")")
     function btn:DoClick()
         Derma_StringRequest("impulse", "Enter your new RP name:", nil, function(text)
             net.Start("impulseChangeRPName")
@@ -116,7 +115,7 @@ function PANEL:QuickActions()
         end)
     end
 
-    local btn = self.list:Add("DButton")
+    btn = self.list:Add("DButton")
     btn:Dock(TOP)
     btn:SetText("Sell all doors")
     function btn:DoClick()
@@ -125,12 +124,12 @@ function PANEL:QuickActions()
     end
 
     self.collapsableOptions = vgui.Create("DCollapsibleCategory", self.quickActionsInner)
-    self.collapsableOptions:SetLabel(team.GetName(LocalPlayer():Team()).." options")
+    self.collapsableOptions:SetLabel(team.GetName(LocalPlayer():Team()) .. " options")
     self.collapsableOptions:Dock(TOP)
     local colTeam = team.GetColor(LocalPlayer():Team())
-    function self.collapsableOptions:Paint(w, h)
+    function self.collapsableOptions:Paint(width, height)
         surface.SetDrawColor(colTeam)
-        surface.DrawRect(0, 0, w, 20)
+        surface.DrawRect(0, 0, width, 20)
         self:SetBGColor(colInv)
     end
 
@@ -150,21 +149,20 @@ function PANEL:QuickActions()
     local classes = impulse.Teams.Stored[LocalPlayer():Team()].classes
     if classes and LocalPlayer():InSpawn() then
         for v,classData in pairs(classes) do
-            if not classData.noMenu and LocalPlayer():GetTeamClass() != v then
-                local btn = self.list:Add("DButton")
+            if !classData.noMenu and LocalPlayer():GetTeamClass() != v then
+                btn = self.list:Add("DButton")
                 btn:Dock(TOP)
                 btn.classID = v
 
-                local btnText = "Become "..classData.name
+                local btnText = "Become " .. classData.name
                 if classData.xp then
-                    btnText = btnText.." ("..classData.xp.."XP)"
+                    btnText = btnText .. " (" .. classData.xp .. "XP)"
                 end
-                btn:SetText("Become "..classData.name.." ("..classData.xp.."XP)")
+                btn:SetText("Become " .. classData.name .. " (" .. classData.xp .. "XP)")
 
-                local panel = self
-                function btn:DoClick()
+                btn.DoClick = function()
                     net.Start("impulseClassChange")
-                    net.WriteUInt(btn.classID, 8)
+                        net.WriteUInt(btn.classID, 8)
                     net.SendToServer()
                 end
             end
@@ -173,39 +171,37 @@ function PANEL:QuickActions()
 end
 
 function PANEL:Teams()
+    self.teamsInner = vgui.Create("DScrollPanel", self.teams)
+    self.teamsInner:Dock(LEFT)
+    self.teamsInner:SetWide(self:GetWide() / 2)
+    self.teamsInner.Paint = function(this, width, height)
+        surface.SetDrawColor(self.darkOverlay)
+        surface.DrawRect(0, 0, width, height)
+    end
+
     self.modelPreview = vgui.Create("DModelPanel", self.teams)
-    self.modelPreview:SetPos(373, 0)
-    self.modelPreview:SetSize(300, 370)
-    self.modelPreview:MoveToBack()
+    self.modelPreview:Dock(TOP)
+    self.modelPreview:SetTall(self:GetTall() / 2)
     self.modelPreview:SetCursor("arrow")
     self.modelPreview:SetFOV(self.modelPreview:GetFOV() - 19)
-    function self.modelPreview:LayoutEntity(ent)
-        ent:SetAngles(Angle(0, 43, 0))
+    self.modelPreview.LayoutEntity = function(this, ent)
+        ent:SetAngles(Angle(0, 45 + math.sin(CurTime()) * 45 / 2, 0))
         --ent:SetSequence(ACT_IDLE)
         --self:RunAnimation()
     end
 
     self.descLbl = vgui.Create("DLabel", self.teams)
+    self.descLbl:Dock(TOP)
+    self.descLbl:DockMargin(ScreenScale(2), ScreenScaleH(2), ScreenScale(2), 0)
     self.descLbl:SetText("Description:")
     self.descLbl:SetFont("Impulse-Elements18")
     self.descLbl:SizeToContents()
-    self.descLbl:SetPos(410, 380)
 
     self.descLblT = vgui.Create("DLabel", self.teams)
+    self.descLblT:Dock(TOP)
+    self.descLblT:DockMargin(ScreenScale(2), 0, ScreenScale(2), ScreenScaleH(2))
     self.descLblT:SetText("")
     self.descLblT:SetFont("Impulse-Elements14")
-    self.descLblT:SetPos(410, 400)
-    self.descLblT:SetContentAlignment(7)
-    self.descLblT:SetSize(230, 230)
-
-    self.teamsInner = vgui.Create("DPanel", self.teams)
-    self.teamsInner:SetSize(400, 580)
-    local panel = self
-    function self.teamsInner:Paint(w, h)
-        surface.SetDrawColor(panel.darkOverlay)
-        surface.DrawRect(0, 0, w, h)
-        return true
-    end
 
     self.availibleTeams = vgui.Create("DCollapsibleCategory", self.teamsInner)
     self.availibleTeams:SetLabel("Available teams")
@@ -215,15 +211,6 @@ function PANEL:Teams()
         self:SetBGColor(colInv)
     end
 
-    self.availibleTeamsScroll = vgui.Create("DScrollPanel", self.availibleTeams)
-    self.availibleTeamsScroll:Dock(FILL)
-    self.availibleTeams:SetContents(self.availibleTeamsScroll)
-
-    local availibleList = vgui.Create("DIconLayout", self.availibleTeamsScroll)
-    availibleList:Dock(FILL)
-    availibleList:SetSpaceY(5)
-    availibleList:SetSpaceX(5)
-
     self.unavailibleTeams = vgui.Create("DCollapsibleCategory", self.teamsInner)
     self.unavailibleTeams:SetLabel("Unavailable teams")
     self.unavailibleTeams:Dock(TOP)
@@ -231,60 +218,52 @@ function PANEL:Teams()
         self:SetBGColor(colInv)
     end
 
-    self.unavailibleTeamsScroll = vgui.Create("DScrollPanel", self.unavailibleTeams)
-    self.unavailibleTeamsScroll:Dock(FILL)
-    self.unavailibleTeams:SetContents(self.unavailibleTeamsScroll)
-
-    local unavailibleList = vgui.Create("DIconLayout", self.unavailibleTeamsScroll)
-    unavailibleList:Dock(FILL)
-    unavailibleList:SetSpaceY(5)
-    unavailibleList:SetSpaceX(5)
-
-    for v, k in pairs(impulse.Teams.Stored) do
+    for k, v in SortedPairsByMemberValue(impulse.Teams.Stored, "name") do
         local selectedList
 
-        if (k.xp > LocalPlayer():GetXP()) or (k.donatorOnly and k.donatorOnly == true and LocalPlayer():IsDonator() == false) then
-            selectedList = unavailibleList
+        if (v.xp > LocalPlayer():GetXP()) or (v.donatorOnly and v.donatorOnly == true and LocalPlayer():IsDonator() == false) then
+            selectedList = self.unavailibleTeams
         else
-            selectedList = availibleList
+            selectedList = self.availibleTeams
         end
 
-        local teamCard = selectedList:Add("impulseTeamCard")
-        teamCard:SetTeam(v)
-        teamCard.team = v
+        local teamCard = vgui.Create("impulseTeamCard", selectedList)
         teamCard:Dock(TOP)
-        teamCard:SetHeight(60)
+        teamCard:SetTeam(k)
         teamCard:SetMouseInputEnabled(true)
-        
+
         local realSelf = self
 
         function teamCard:OnCursorEntered()
-            local model = impulse.Teams.Stored[self.team].model
-            local skin = impulse.Teams.Stored[self.team].skin or 0
-            local desc = impulse.Teams.Stored[self.team].description
-            local bodygroups = impulse.Teams.Stored[self.team].bodygroups
-
-            if not model then
-                model = impulse_defaultModel or "models/Humans/Group01/male_02.mdl" 
-                skin = impulse_defaultSkin or 0
-            end
+            local teamData = impulse.Teams.Stored[self.teamID]
+            local model = teamCard.model
+            local skin = teamCard.skin
 
             realSelf.modelPreview:SetModel(model)
-            realSelf.modelPreview.Entity:SetSkin(skin)
+            realSelf.modelPreview.Entity:SetSkin(skin or 0)
 
-            if bodygroups then
-                for v, bodygroupData in pairs(bodygroups) do
-                    realSelf.modelPreview.Entity:SetBodygroup(bodygroupData[1], (bodygroupData[2] or 0))
+            -- Reset all bodygroups first
+            for i = 0, realSelf.modelPreview.Entity:GetNumBodyGroups() - 1 do
+                realSelf.modelPreview.Entity:SetBodygroup(i, 0)
+            end
+
+            -- Apply model-specific bodygroups if any
+            local bodygroups = teamCard.bodygroups
+            if ( bodygroups ) then
+                for name, value in pairs(bodygroups) do
+                    realSelf.modelPreview.Entity:SetBodygroup(realSelf.modelPreview.Entity:FindBodygroupByName(name), value)
                 end
             end
 
-            realSelf.descLblT:SetText(desc)
+            realSelf.descLblT:SetText(teamData.description)
             realSelf.descLblT:SetWrap(true)
+            realSelf.descLblT:SizeToContents()
+            realSelf.descLblT:SetContentAlignment(7)
         end
 
         function teamCard:OnMousePressed()
             net.Start("impulseTeamChange")
-            net.WriteUInt(self.team, 8)
+                net.WriteUInt(self.teamID, 8)
             net.SendToServer()
 
             realSelf:Remove()
@@ -296,10 +275,9 @@ function PANEL:Business()
     self.businessInner = vgui.Create("DPanel", self.business)
     self.businessInner:Dock(FILL)
 
-    local panel = self
-    function self.businessInner:Paint(w, h)
-        surface.SetDrawColor(panel.darkOverlay)
-        surface.DrawRect(0, 0, w, h)
+    self.businessInner.Paint = function(_, width, height)
+        surface.SetDrawColor(self.darkOverlay)
+        surface.DrawRect(0, 0, width, height)
         return true
     end
 
@@ -310,8 +288,8 @@ function PANEL:Business()
     self.utilItems:SetLabel("Utilities")
     self.utilItems:Dock(TOP)
     local colInv = Color(0, 0, 0, 0)
-    function self.utilItems:Paint()
-        self:SetBGColor(colInv)
+    self.utilItems.Paint = function(this, width, height)
+        this:SetBGColor(colInv)
     end
 
     local utilList = vgui.Create("DIconLayout", self.utilItems)
@@ -323,7 +301,7 @@ function PANEL:Business()
     self.cat = {}
 
     for name,k in pairs(impulse.Business.Data) do
-        if not LocalPlayer():CanBuy(name) then continue end
+        if !LocalPlayer():CanBuy(name) then continue end
 
         local parent = nil
 
@@ -359,7 +337,7 @@ function PANEL:Business()
         end
 
         item:SetSize(58,58)
-        item:SetTooltip(name.." \n"..impulse.Config.CurrencyPrefix..k.price)
+        item:SetTooltip(name .. " \n" .. impulse.Config.CurrencyPrefix .. k.price)
         item.id = table.KeyFromValue(impulse.Business.Stored, name)
 
         function item:DoClick()
@@ -371,7 +349,7 @@ function PANEL:Business()
         local costLbl = vgui.Create("DLabel", item)
         costLbl:SetPos(5,35)
         costLbl:SetFont("Impulse-Elements18-Shadow")
-        costLbl:SetText(impulse.Config.CurrencyPrefix..k.price)
+        costLbl:SetText(impulse.Config.CurrencyPrefix .. k.price)
         costLbl:SizeToContents()
     end
 end
@@ -394,18 +372,18 @@ function PANEL:Info()
     commands:Dock(FILL)
 
     for v, k in pairs(impulse.chatCommands) do
-        local c = impulse.Config.MainColour
-                        
-        if k.adminOnly == true and LocalPlayer():IsAdmin() == false then 
-            continue 
+        local color = impulse.Config.MainColour
+
+        if k.adminOnly == true and LocalPlayer():IsAdmin() == false then
+            continue
         elseif k.adminOnly == true then
-            c = impulse.Config.InteractColour
+            color = impulse.Config.InteractColour
         end
-                        
-        if k.superAdminOnly == true and LocalPlayer():IsSuperAdmin() == false then 
-            continue 
+
+        if k.superAdminOnly == true and LocalPlayer():IsSuperAdmin() == false then
+            continue
         elseif k.superAdminOnly == true then
-            c = Color(255, 0, 0, 255)
+            color = Color(255, 0, 0, 255)
         end
 
         local command = commands:Add("DPanel", commands)
@@ -413,11 +391,11 @@ function PANEL:Info()
         command:Dock(TOP)
         command.name = v
         command.desc = k.description
-        command.col = c
+        command.color = color
 
-        function command:Paint()
-            draw.SimpleText(self.name, "Impulse-Elements22-Shadow", 5, 0, self.col)
-            draw.SimpleText(self.desc, "Impulse-Elements18-Shadow", 5, 20, color_white)
+        command.Paint = function(this, width, height)
+            draw.SimpleText(this.name, "Impulse-Elements22-Shadow", 5, 0, this.color)
+            draw.SimpleText(this.desc, "Impulse-Elements18-Shadow", 5, 20, color_white)
             return true
         end
     end
@@ -430,29 +408,31 @@ function PANEL:AddSheet(name, icon, pnl, loadFunc)
     local panel = self
     tab.Button:SetSize(self.padding, self.padding)
 
-    function tab.Button:Paint(w, h)
-        if panel.tabSheet.ActiveButton == self then
+    tab.Button.Paint = function(this, width, height)
+        if ( panel.tabSheet.ActiveButton == this ) then
             surface.SetDrawColor(impulse.Config.MainColour)
         else
             surface.SetDrawColor(color_white)
         end
-        surface.SetMaterial(icon)
-        surface.DrawTexturedRect(15, 0, w - 30, h - 30)
 
-        draw.SimpleText(name, "Impulse-Elements18", w / 2, h - 5, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
+        surface.SetMaterial(icon)
+        surface.DrawTexturedRect(15, 0, width - 30, height - 30)
+
+        draw.SimpleText(name, "Impulse-Elements18", width / 2, height - 5, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_BOTTOM)
 
         return true
     end
 
     local oldClick = tab.Button.DoClick
-    function tab.Button:DoClick()
+    tab.Button.DoClick = function(this)
         oldClick()
 
-        if loadFunc and !self.loaded then
+        if ( loadFunc and !this.loaded ) then
             loadFunc(panel)
-            self.loaded = true
+            this.loaded = true
         end
     end
+
     return tab.Button
 end
 

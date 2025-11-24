@@ -17,11 +17,11 @@ function PLAYER:CanLockUnlockDoor(doorOwners, doorGroup)
         local class = LocalPlayer():GetTeamClass()
         local rank = LocalPlayer():GetTeamRank()
 
-        if class != 0 and t.classes[class].doorGroup then
+        if class != 0 and t.classes and t.classes[class].doorGroup then
             teamDoorGroups = t.classes[class].doorGroup
         end
 
-        if rank != 0 and t.ranks[rank].doorGroup then
+        if rank != 0 and t.ranks and t.ranks[rank].doorGroup then
             teamDoorGroups = t.ranks[rank].doorGroup
         end
     end

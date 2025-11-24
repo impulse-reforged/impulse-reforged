@@ -1,6 +1,6 @@
 -- Get player's position and copy to clipboard
-concommand.Add("impulse_debug_pos", function(ply)
-    local pos = ply:GetPos()
+concommand.Add("impulse_debug_pos", function(client)
+    local pos = client:GetPos()
     local output = string.format("Vector(%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z)
 
     chat.AddText(output)
@@ -9,8 +9,8 @@ concommand.Add("impulse_debug_pos", function(ply)
 end)
 
 -- Get player's eye position and copy to clipboard
-concommand.Add("impulse_debug_eyepos", function(ply)
-    local pos = ply:EyePos()
+concommand.Add("impulse_debug_eyepos", function(client)
+    local pos = client:EyePos()
     local output = string.format("Vector(%.2f, %.2f, %.2f)", pos.x, pos.y, pos.z)
 
     chat.AddText(output)
@@ -19,8 +19,8 @@ concommand.Add("impulse_debug_eyepos", function(ply)
 end)
 
 -- Get player's eye angles and copy to clipboard
-concommand.Add("impulse_debug_ang", function(ply)
-    local ang = ply:EyeAngles()
+concommand.Add("impulse_debug_ang", function(client)
+    local ang = client:EyeAngles()
     local output = string.format("Angle(%.2f, %.2f, %.2f)", ang.p, ang.y, ang.r)
 
     chat.AddText(output)
@@ -29,7 +29,7 @@ concommand.Add("impulse_debug_ang", function(ply)
 end)
 
 -- Get the angles of the entity player is looking at and copy to clipboard
-concommand.Add("impulse_debug_ent_ang", function(ply)
+concommand.Add("impulse_debug_ent_ang", function(client)
     local entity = LocalPlayer():GetEyeTrace().Entity
     if ( !IsValid(entity) ) then
         return chat.AddText("You must be looking at an entity!")
@@ -45,7 +45,7 @@ concommand.Add("impulse_debug_ent_ang", function(ply)
 end)
 
 -- Get the position of the entity player is looking at and copy to clipboard
-concommand.Add("impulse_debug_ent_pos", function(ply)
+concommand.Add("impulse_debug_ent_pos", function(client)
     local entity = LocalPlayer():GetEyeTrace().Entity
     if ( !IsValid(entity) ) then
         return chat.AddText("You must be looking at an entity!")
@@ -61,8 +61,8 @@ concommand.Add("impulse_debug_ent_pos", function(ply)
 end)
 
 -- Print player's velocity to console
-concommand.Add("impulse_debug_velocity", function(ply)
-    local velocity = ply:GetVelocity()
+concommand.Add("impulse_debug_velocity", function(client)
+    local velocity = client:GetVelocity()
     local output = string.format("Velocity: Vector(%.2f, %.2f, %.2f)", velocity.x, velocity.y, velocity.z)
 
     chat.AddText(output)
@@ -70,7 +70,7 @@ concommand.Add("impulse_debug_velocity", function(ply)
 end)
 
 -- Get the model of the entity the player is looking at and copy to clipboard
-concommand.Add("impulse_debug_ent_model", function(ply)
+concommand.Add("impulse_debug_ent_model", function(client)
     local entity = LocalPlayer():GetEyeTrace().Entity
     if ( !IsValid(entity) ) then
         return chat.AddText("You must be looking at an entity!")
@@ -83,7 +83,7 @@ concommand.Add("impulse_debug_ent_model", function(ply)
 end)
 
 -- Get bone positions of the entity player is looking at
-concommand.Add("impulse_debug_ent_bones", function(ply)
+concommand.Add("impulse_debug_ent_bones", function(client)
     local entity = LocalPlayer():GetEyeTrace().Entity
     if ( !IsValid(entity) ) then
         return chat.AddText("You must be looking at an entity!")
@@ -99,10 +99,10 @@ concommand.Add("impulse_debug_ent_bones", function(ply)
 end)
 
 -- Print player health, armor, and ammo stats
-concommand.Add("impulse_debug_player_stats", function(ply)
+concommand.Add("impulse_debug_player_stats", function(client)
     local entity = LocalPlayer():GetEyeTrace().Entity
     if ( !IsValid(entity) ) then
-        entity = ply
+        entity = client
     end
 
     local name = entity:Nick() .. " (" .. entity:SteamName() .. " / " .. entity:SteamID64() .. ")"
@@ -116,17 +116,17 @@ concommand.Add("impulse_debug_player_stats", function(ply)
     SetClipboardText(output)
 end)
 
-concommand.Add("impulse_debug_toggle_hud", function(ply)
+concommand.Add("impulse_debug_toggle_hud", function(client)
     impulse_DevHud = !impulse_DevHud
 end)
 
-concommand.Add("impulse_debug_iconeditor", function(ply)
-    if ply:IsSuperAdmin() or ply:IsDeveloper() then
+concommand.Add("impulse_debug_iconeditor", function(client)
+    if client:IsSuperAdmin() or client:IsDeveloper() then
         vgui.Create("impulseIconEditor")
     end
 end)
 
-concommand.Add("impulse_debug_wtl", function(ply)
+concommand.Add("impulse_debug_wtl", function(client)
     local entity = LocalPlayer():GetEyeTrace().Entity
 
     if not entity or not IsValid(entity) then
@@ -155,7 +155,7 @@ concommand.Add("impulse_debug_wtl", function(ply)
     chat.AddText("Target entity selected as "..tostring(entity)..". Please run the command looking at the child entity for output.")
 end)
 
-concommand.Add("impulse_debug_dump", function(ply, cmd, arg)
+concommand.Add("impulse_debug_dump", function(client, cmd, arg)
     if arg[1] and arg[1] == "help" then
         print("Available memory targets: (does not include sub-targets)")
 
@@ -194,11 +194,11 @@ local format = [[
     pos = Vector(%s, %s, %s),
     ang = Angle(%s, %s, %s),]]
 
-concommand.Add("impulse_debug_intro", function(ply, cmd, args)
+concommand.Add("impulse_debug_intro", function(client, cmd, args)
     local bEnd = args[1]
-    local pos = ply:EyePos()
+    local pos = client:EyePos()
 
-    local output = string.format(format, pos.x, pos.y, pos.z, ply:EyeAngles().p, ply:EyeAngles().y, ply:EyeAngles().r)
+    local output = string.format(format, pos.x, pos.y, pos.z, client:EyeAngles().p, client:EyeAngles().y, client:EyeAngles().r)
     if bEnd then
         output = string.Replace(output, "pos", "endpos")
         output = string.Replace(output, "ang", "endang")

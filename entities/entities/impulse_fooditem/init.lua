@@ -9,13 +9,13 @@ function ENT:Initialize()
     self:PhysWake()
 end
 
-function ENT:Use(ply)
+function ENT:Use(client)
     if self.isDrink then
-        ply:EmitSound("impulse-reforged/drink.wav")
+        client:EmitSound("impulse-reforged/drink.wav")
     else
-        ply:EmitSound("impulse-reforged/eat.wav")
+        client:EmitSound("impulse-reforged/eat.wav")
     end
 
-    ply:FeedHunger(self.food)
+    client:FeedHunger(self.food)
     SafeRemoveEntity(self)
 end

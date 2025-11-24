@@ -71,8 +71,8 @@ function impulse.Save:Load()
     hook.Run("PostLoadSaveEnts")
 end
 
-concommand.Add("impulse_save_all", function(ply, cmd, args)
-    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
+concommand.Add("impulse_save_all", function(client, cmd, args)
+    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
 
     local savedEnts = {}
 
@@ -119,11 +119,11 @@ concommand.Add("impulse_save_all", function(ply, cmd, args)
 
     file.Write("impulse-reforged/saves/" .. string.lower(game.GetMap()) .. ".json", util.TableToJSON(savedEnts, true))
 
-    ply:AddChatText("All marked entities have been saved, and have been written to the save file.")
+    client:AddChatText("All marked entities have been saved, and have been written to the save file.")
 end, nil, "Saves all marked entities.", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
-concommand.Add("impulse_save_reload", function(ply)
-    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
+concommand.Add("impulse_save_reload", function(client)
+    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
 
     for k, v in ents.Iterator() do
         if ( v.impulseSaveEnt ) then
@@ -133,45 +133,45 @@ concommand.Add("impulse_save_reload", function(ply)
 
     impulse.Save:Load()
 
-    ply:AddChatText("All saved ents have been reloaded.")
+    client:AddChatText("All saved ents have been reloaded.")
 end, nil, "Reloads all saved entities.", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
-concommand.Add("impulse_save_mark", function(ply)
-    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
+concommand.Add("impulse_save_mark", function(client)
+    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
 
-    local ent = ply:GetEyeTrace().Entity
+    local ent = client:GetEyeTrace().Entity
     if ( !IsValid(ent) ) then
-        return ply:AddChatText("Invalid entity.")
+        return client:AddChatText("Invalid entity.")
     end
 
     ent.impulseSaveEnt = true
-    ply:AddChatText("Marked " .. ent:GetClass() .. " for saving.")
+    client:AddChatText("Marked " .. ent:GetClass() .. " for saving.")
 end, nil, "Marks an entity for saving.", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
-concommand.Add("impulse_save_unmark", function(ply)
-    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
+concommand.Add("impulse_save_unmark", function(client)
+    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
 
-    local ent = ply:GetEyeTrace().Entity
+    local ent = client:GetEyeTrace().Entity
     if ( !IsValid(ent) ) then
-        return ply:AddChatText("Invalid entity.")
+        return client:AddChatText("Invalid entity.")
     end
 
     ent.impulseSaveEnt = nil
-    ply:AddChatText("Removed " .. ent:GetClass() .. " for saving.")
+    client:AddChatText("Removed " .. ent:GetClass() .. " for saving.")
 end, nil, "Unmarks an entity for saving.", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
-concommand.Add("impulse_save_set_keyvalue", function(ply, cmd, args)
-    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
+concommand.Add("impulse_save_set_keyvalue", function(client, cmd, args)
+    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
 
-    local ent = ply:GetEyeTrace().Entity
+    local ent = client:GetEyeTrace().Entity
     if ( !IsValid(ent) ) then
-        return ply:AddChatText("Invalid entity.")
+        return client:AddChatText("Invalid entity.")
     end
 
     local key = args[1]
     local value = args[2]
     if ( !key or !value ) then
-        return ply:AddChatText("Invalid key/value pair.")
+        return client:AddChatText("Invalid key/value pair.")
     end
 
     if ( ent.impulseSaveEnt ) then
@@ -185,28 +185,28 @@ concommand.Add("impulse_save_set_keyvalue", function(ply, cmd, args)
 
         ent.impulseSaveKeyValue = ent.impulseSaveKeyValue or {}
         ent.impulseSaveKeyValue[key] = value
-        ply:AddChatText("Set keyvalue " .. key .. " to " .. tostring(value) .. " on " .. ent:GetClass() .. ".")
+        client:AddChatText("Set keyvalue " .. key .. " to " .. tostring(value) .. " on " .. ent:GetClass() .. ".")
     else
-        ply:AddChatText("Entity is not marked for saving, cannot set keyvalue.")
+        client:AddChatText("Entity is not marked for saving, cannot set keyvalue.")
     end
 end, nil, "Sets a keyvalue on a save marked entity.", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
-concommand.Add("impulse_save_print_keyvalues", function(ply)
-    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
+concommand.Add("impulse_save_print_keyvalues", function(client)
+    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
 
-    local ent = ply:GetEyeTrace().Entity
+    local ent = client:GetEyeTrace().Entity
     if ( !IsValid(ent) ) then
-        return ply:AddChatText("Invalid entity.")
+        return client:AddChatText("Invalid entity.")
     end
 
     if ( ent.impulseSaveEnt ) then
         if ( !ent.impulseSaveKeyValue ) then
-            return ply:AddChatText("Entity is marked for saving but has no keyvalues.")
+            return client:AddChatText("Entity is marked for saving but has no keyvalues.")
         end
 
-        ply:AddChatText(table.ToString(ent.impulseSaveKeyValue))
+        client:AddChatText(table.ToString(ent.impulseSaveKeyValue))
     else
-        ply:AddChatText("Entity is not marked for saving.")
+        client:AddChatText("Entity is not marked for saving.")
     end
 end, nil, "Prints keyvalues of a save marked entity.", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
@@ -223,21 +223,21 @@ impulse_save_wipe - Wipes the save file for the current map.
 
 If you need further help, please contact a developer.]]
 
-concommand.Add("impulse_save_help", function(ply)
-    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
+concommand.Add("impulse_save_help", function(client)
+    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
 
     for k, v in pairs(string.Explode("\n", help)) do
-        ply:AddChatText(v)
+        client:AddChatText(v)
     end
     
 end, nil, "Shows save system help.", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
-concommand.Add("impulse_save_wipe", function(ply)
-    if ( IsValid(ply) and !ply:IsSuperAdmin() ) then return end
+concommand.Add("impulse_save_wipe", function(client)
+    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
 
     local map = string.lower(game.GetMap())
     file.Delete("impulse-reforged/saves/" .. map .. ".json")
-    ply:AddChatText("Save file for this map has been wiped.")
+    client:AddChatText("Save file for this map has been wiped.")
 
     for k, v in ents.Iterator() do
         if ( v.impulseSaveEnt ) then

@@ -16,12 +16,12 @@ function PANEL:Init()
 end
 
 function PANEL:SetupCrafting()
-    local ply = LocalPlayer()
+    local client = LocalPlayer()
 
     local traceData = util.TraceLine({
-        start = ply:EyePos(),
-        endpos = ply:EyePos() + ply:GetAimVector() * 96,
-        filter = ply
+        start = client:EyePos(),
+        endpos = client:EyePos() + client:GetAimVector() * 96,
+        filter = client
     })
 
     if ( !traceData.Entity or !IsValid(traceData.Entity) or traceData.Entity:GetClass() != "impulse_bench" ) then
@@ -108,7 +108,7 @@ function PANEL:Think()
         return self:Remove()
     end
 
-    if LocalPlayer():GetNetVar("arrested", false) then
+    if LocalPlayer():GetRelay("arrested", false) then
         return self:Remove()
     end
 end

@@ -13,7 +13,7 @@ if ( SERVER ) then
 
         hook.Run("PlayerRPNameChanged", self, self:Name(), name)
 
-        self:SetNetVar("roleplayName", name)
+        self:SetRelay("roleplayName", name)
     end
 
     function PLAYER:GetSavedRPName()
@@ -75,12 +75,12 @@ function PLAYER:SteamName()
 end
 
 function PLAYER:Name()
-    return self:GetNetVar("roleplayName", self:SteamName())
+    return self:GetRelay("roleplayName", self:SteamName())
 end
 
 function PLAYER:KnownName()
     local custom = hook.Run("PlayerGetKnownName", self)
-    return custom or self:GetNetVar("roleplayName", self:SteamName())
+    return custom or self:GetRelay("roleplayName", self:SteamName())
 end
 
 PLAYER.GetName = PLAYER.Name

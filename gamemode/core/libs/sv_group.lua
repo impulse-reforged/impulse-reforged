@@ -213,12 +213,12 @@ function impulse.Group:RankShift(name, from, to)
 
     for v, k in pairs(group.Members) do
         if k.Rank == from then
-            local ply = player.GetBySteamID(v)
+            local client = player.GetBySteamID(v)
 
             impulse.Group.Groups[name].Members[v].Rank = to
 
-            if IsValid(ply) then
-                ply:GroupAdd(name, to, true)
+            if IsValid(client) then
+                client:GroupAdd(name, to, true)
             else
                 impulse.Group:NetworkMemberToOnline(name, v)
             end
@@ -277,7 +277,7 @@ function impulse.Group:NetworkMetaDataToOnline(name)
     local rf = RecipientFilter()
 
     for v, k in player.Iterator() do
-        local x = k:GetNetVar("groupName", nil)
+        local x = k:GetRelay("groupName", nil)
 
         if x and x == name then
             rf:AddPlayer(k)
@@ -306,7 +306,7 @@ function impulse.Group:NetworkMemberToOnline(name, sid)
     local rf = RecipientFilter()
 
     for v, k in player.Iterator() do
-        local x = k:GetNetVar("groupName", nil)
+        local x = k:GetRelay("groupName", nil)
 
         if x and x == name then
             rf:AddPlayer(k)
@@ -324,7 +324,7 @@ function impulse.Group:NetworkMemberRemoveToOnline(name, sid)
     local rf = RecipientFilter()
 
     for v, k in player.Iterator() do
-        local x = k:GetNetVar("groupName", nil)
+        local x = k:GetRelay("groupName", nil)
 
         if x and x == name then
             rf:AddPlayer(k)
@@ -350,7 +350,7 @@ function impulse.Group:NetworkRanksToOnline(name)
     local rf = RecipientFilter()
 
     for v, k in player.Iterator() do
-        local x = k:GetNetVar("groupName", nil)
+        local x = k:GetRelay("groupName", nil)
 
         if x and x == name then
             if k:GroupHasPermission(5) or k:GroupHasPermission(6) then
@@ -382,8 +382,8 @@ function impulse.Group:NetworkRankToOnline(name, rankName)
     local rf = RecipientFilter()
 
     for v, k in player.Iterator() do
-        local x = k:GetNetVar("groupName", nil)
-        local r = k:GetNetVar("groupRank", nil)
+        local x = k:GetRelay("groupName", nil)
+        local r = k:GetRelay("groupRank", nil)
 
         if x and x == name and r == rank then
             if k:GroupHasPermission(5) or k:GroupHasPermission(6) then continue end
@@ -418,8 +418,8 @@ local function postCompute(self, name, rank, skipDb)
 
     impulse.Group:NetworkMemberToOnline(name, self:SteamID64())
 
-    self:SetNetVar("groupName", name)
-    self:SetNetVar("groupRank", rank)
+    self:SetRelay("groupName", name)
+    self:SetRelay("groupRank", rank)
 
     if not skipDb then
         impulse.Group:NetworkAllMembers(self, name)
@@ -465,8 +465,8 @@ function PLAYER:GroupRemove(name)
     impulse.Group:ComputeMembers(name)
     impulse.Group:NetworkMemberRemoveToOnline(name, sid)
 
-    self:SetNetVar("groupName", nil)
-    self:SetNetVar("groupRank", nil)
+    self:SetRelay("groupName", nil)
+    self:SetRelay("groupRank", nil)
 end
 
 --- Loads a group for a player
@@ -498,8 +498,8 @@ function PLAYER:GroupLoad(groupID, rank)
 
         rank = rank or impulse.Group:GetDefaultRank(name)
 
-        self:SetNetVar("groupName", name)
-        self:SetNetVar("groupRank", rank)
+        self:SetRelay("groupName", name)
+        self:SetRelay("groupRank", rank)
 
         impulse.Group:NetworkRank(name, self, rank)
 

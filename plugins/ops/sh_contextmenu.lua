@@ -3,8 +3,8 @@ properties.Add( "ops_copysteamid", {
     Order = 1005, -- The order to display this property relative to other properties
     MenuIcon = "icon16/shield.png", -- The icon to display next to the property
 
-    Filter = function( self, ent, ply ) -- A function that determines whether an entity is valid for this property
-        if not ply:IsAdmin() then
+    Filter = function( self, ent, client ) -- A function that determines whether an entity is valid for this property
+        if not client:IsAdmin() then
             return false
         end
 
@@ -25,8 +25,8 @@ properties.Add( "ops_openplayercard", {
     Order = 1006, -- The order to display this property relative to other properties
     MenuIcon = "icon16/shield.png", -- The icon to display next to the property
 
-    Filter = function( self, ent, ply ) -- A function that determines whether an entity is valid for this property
-        if not ply:IsAdmin() then
+    Filter = function( self, ent, client ) -- A function that determines whether an entity is valid for this property
+        if not client:IsAdmin() then
             return false
         end
 
@@ -55,8 +55,8 @@ properties.Add( "ops_openplayercardprop", {
     Order = 5000, -- The order to display this property relative to other properties
     MenuIcon = "icon16/shield.png", -- The icon to display next to the property
 
-    Filter = function( self, ent, ply ) -- A function that determines whether an entity is valid for this property
-        if not ply:IsAdmin() then
+    Filter = function( self, ent, client ) -- A function that determines whether an entity is valid for this property
+        if not client:IsAdmin() then
             return false
         end
 

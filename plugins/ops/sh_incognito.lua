@@ -1,20 +1,20 @@
 local PLAYER = FindMetaTable("Player")
 
 function PLAYER:IsIncognito()
-    return tobool(self:GetNetVar("incognito", false))
+    return tobool(self:GetRelay("incognito", false))
 end
 
 local incognitoCommand = {
     description = "Toggles incognito mode. DO NOT USE FOR LONG PERIODS.",
     requiresArg = false,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
-        ply:SetNetVar("incognito", !ply:IsIncognito())
+    onRun = function(client, arg, rawText)
+        client:SetRelay("incognito", !client:IsIncognito())
 
-        if ply:IsIncognito() then
-            ply:Notify("You have entered incognito mode. Please go back to normal mode as soon as you can.")
+        if client:IsIncognito() then
+            client:Notify("You have entered incognito mode. Please go back to normal mode as soon as you can.")
         else
-            ply:Notify("You have exited incognito mode.")
+            client:Notify("You have exited incognito mode.")
         end
     end
 }

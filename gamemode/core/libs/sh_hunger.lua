@@ -6,8 +6,8 @@ impulse.Hunger = impulse.Hunger or {}
 --- Returns the amount of hunger a player has
 -- @realm shared
 -- @treturn int amount Amount of hunger a player has
-function impulse.Hunger:GetHunger(ply)
-    return ply:GetHunger()
+function impulse.Hunger:GetHunger(client)
+    return client:GetHunger()
 end
 
 --- Player class methods
@@ -19,5 +19,5 @@ local PLAYER = FindMetaTable("Player")
 -- @realm shared
 -- @treturn int amount Amount of hunger a player has
 function PLAYER:GetHunger()
-    return tonumber(self:GetLocalVar("hunger", 100))
+    return tonumber(self:GetRelay("hunger", 100))
 end

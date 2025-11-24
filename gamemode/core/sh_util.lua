@@ -98,8 +98,8 @@ if ( SERVER ) then
         net.Broadcast()
     end
 
-    concommand.Add("impulse_cinemessage", function(ply, cmd, args)
-        if ( !ply:IsSuperAdmin() ) then return end
+    concommand.Add("impulse_cinemessage", function(client, cmd, args)
+        if ( !client:IsSuperAdmin() ) then return end
 
         impulse:CinematicIntro(args[1] or "")
     end)
@@ -194,15 +194,15 @@ local idleZombVO = {
 -- > vo/npc/female01/question23.wav
 function impulse.Util:GetRandomAmbientVO(gender)
     if gender == "male" then
-        return "vo/npc/male01/"..idleVO[math.random(1, #idleVO)]
+        return "vo/npc/male01/"..idleVO[math.random(#idleVO)]
     elseif gender == "fisherman" then
-        return "lostcoast/vo/fisherman/"..idleFishVO[math.random(1, #idleFishVO)]
+        return "lostcoast/vo/fisherman/"..idleFishVO[math.random(#idleFishVO)]
     elseif gender == "cp" then
-        return "npc/metropolice/vo/"..idleCPVO[math.random(1, #idleCPVO)]
+        return "npc/metropolice/vo/"..idleCPVO[math.random(#idleCPVO)]
     elseif gender == "zombie" then
-        return idleZombVO[math.random(1, #idleZombVO)]
+        return idleZombVO[math.random(#idleZombVO)]
     else
-        return "vo/npc/female01/"..idleVO[math.random(1, #idleVO)]
+        return "vo/npc/female01/"..idleVO[math.random(#idleVO)]
     end
 end
 
@@ -399,7 +399,7 @@ end
 
 --- Finds a target in the player's crosshair, with an optional range.
 -- @realm shared
--- @player ply Player to find the target for
+-- @player client Player to find the target for
 -- @entity target Target entity to check
 -- @number[opt=0.9] range Range to check for the target
 -- @treturn bool Whether or not the target is in the player's crosshair
@@ -412,8 +412,8 @@ end
 -- @usage -- returns false if Entity(2) is not in Entity(1)'s crosshair within 0.1 range
 -- print(impulse.Util:FindInCrosshair(Entity(1), Entity(2), 0.1))
 -- > false
-function impulse.Util:FindInCrosshair(ply, target, range)
-    if ( !IsValid(ply) and !IsValid(target) ) then return end
+function impulse.Util:FindInCrosshair(client, target, range)
+    if ( !IsValid(client) and !IsValid(target) ) then return end
 
     if ( !IsValid(target) ) then return end
 
@@ -423,7 +423,7 @@ function impulse.Util:FindInCrosshair(ply, target, range)
 
     range = math.Clamp(range, 0, 1)
 
-    local origin, originVector = ply:EyePos(), ply:GetAimVector()
+    local origin, originVector = client:EyePos(), client:GetAimVector()
 
     local targetOrigin = target.EyePos and target:EyePos() or target:WorldSpaceCenter()
     local direction = targetOrigin - origin

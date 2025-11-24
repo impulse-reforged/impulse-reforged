@@ -6,8 +6,8 @@ if ( SERVER ) then
     util.AddNetworkString("opsE2Viewer")
     util.AddNetworkString("opsE2ViewerRemove")
 
-    net.Receive("opsE2ViewerRemove", function(len, ply)
-        if not ply:IsAdmin() then return end
+    net.Receive("opsE2ViewerRemove", function(len, client)
+        if not client:IsAdmin() then return end
 
         local chip = net.ReadEntity()
 
@@ -16,14 +16,14 @@ if ( SERVER ) then
         if chip:GetClass() != "gmod_wire_expression2" then return end
 
         chip:Remove()
-        ply:Notify("Expression chip removed.")
+        client:Notify("Expression chip removed.")
     end)
 end
 
 local e2ViewerCommand = {
     description = "Opens the E2 viewer tool.",
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
+    onRun = function(client, arg, rawText)
         local e2s = ents.FindByClass("gmod_wire_expression2")
 
         net.Start("opsE2Viewer")
@@ -38,9 +38,8 @@ local e2ViewerCommand = {
             net.WriteString(data.txt)
             net.WriteFloat(data.timebench)
         end
-        net.Send(ply)
+        net.Send(client)
     end
 }
 
 impulse.RegisterChatCommand("/e2viewer", e2ViewerCommand)
-

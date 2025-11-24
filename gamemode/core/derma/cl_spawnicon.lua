@@ -1,74 +1,71 @@
--- replacement for spawnicon that performs a live model render, this is from NUTSCRIPT https://github.com/Chessnut/NutScript/blob/f7479a2d9cc893240093252bd89ca5813c59ea71/gamemode/core/derma/cl_spawnicon.lua
+
+DEFINE_BASECLASS("DModelPanel")
 
 local PANEL = {}
-local MODEL_ANGLE = Angle(0, 45, 0)
 
 function PANEL:Init()
+    self.defaultEyeTarget = Vector(0, 0, 64)
     self:SetHidden(false)
 
     for i = 0, 5 do
         if (i == 1 or i == 5) then
             self:SetDirectionalLight(i, Color(155, 155, 155))
         else
-            self:SetDirectionalLight(i, color_white)
+            self:SetDirectionalLight(i, Color(255, 255, 255))
         end
     end
+end
 
-    self.OldSetModel = self.SetModel
-    self.SetModel = function(self, model, skin, hidden)
-        self:OldSetModel(model)
+function PANEL:SetModel(model, skin, hidden)
+    BaseClass.SetModel(self, model)
 
-        local entity = self.Entity
+    local entity = self.Entity
+    if (!IsValid(entity)) then return end
 
-        if (skin) then
-            entity:SetSkin(skin)
-        end
+    if (skin) then
+        entity:SetSkin(skin)
+    end
 
-        local sequence = entity:SelectWeightedSequence(ACT_IDLE)
+    local sequence = entity:SelectWeightedSequence(ACT_IDLE)
+    if (sequence <= 0) then
+        sequence = entity:LookupSequence("idle_unarmed")
+    end
 
-        if (sequence <= 0) then
-            sequence = entity:LookupSequence("idle_unarmed")
-        end
+    if (sequence > 0) then
+        entity:ResetSequence(sequence)
+    else
+        local found = false
 
-        if (sequence > 0) then
-            entity:ResetSequence(sequence)
-            entity:SetPlaybackRate(0)
-        else
-            local found = false
+        for _, v in ipairs(entity:GetSequenceList()) do
+            if ((v:lower():find("idle") or v:lower():find("fly")) and v != "idlenoise") then
+                entity:ResetSequence(v)
+                found = true
 
-            for k, v in ipairs(entity:GetSequenceList()) do
-                if ((v:lower():find("idle") or v:lower():find("fly")) and v != "idlenoise") then
-                    entity:ResetSequence(v)
-                    found = true
-
-                    break
-                end
-            end
-
-            if (!found) then
-                entity:ResetSequence(4)
+                break
             end
         end
 
-        entity:SetPlaybackRate(0)
-
-        local data = PositionSpawnIcon(entity, entity:GetPos())
-
-        if (data) then
-            self:SetFOV(data.fov)
-            self:SetCamPos(data.origin)
-            self:SetLookAng(data.angles)
+        if (!found) then
+            entity:ResetSequence(4)
         end
-
-        entity:SetIK(false)
-        entity:SetEyeTarget(Vector(0, 0, 64))
     end
+
+    local data = PositionSpawnIcon(entity, entity:GetPos())
+
+    if (data) then
+        self:SetFOV(data.fov)
+        self:SetCamPos(data.origin)
+        self:SetLookAng(data.angles)
+    end
+
+    entity:SetIK(false)
+    entity:SetEyeTarget(self.defaultEyeTarget)
 end
 
 function PANEL:SetHidden(hidden)
     if (hidden) then
         self:SetAmbientLight(color_black)
-        self:SetColor(color_black)
+        self:SetColor(Color(0, 0, 0))
 
         for i = 0, 5 do
             self:SetDirectionalLight(i, color_black)
@@ -81,13 +78,13 @@ function PANEL:SetHidden(hidden)
             if (i == 1 or i == 5) then
                 self:SetDirectionalLight(i, Color(155, 155, 155))
             else
-                self:SetDirectionalLight(i, color_white)
+                self:SetDirectionalLight(i, Color(255, 255, 255))
             end
         end
     end
 end
 
-function PANEL:LayoutEntity(ent)
+function PANEL:LayoutEntity()
     self:RunAnimation()
 end
 

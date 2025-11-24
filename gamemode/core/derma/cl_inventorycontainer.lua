@@ -11,12 +11,12 @@ function PANEL:Init()
 end
 
 function PANEL:SetupContainer()
-    local ply = LocalPlayer()
+    local client = LocalPlayer()
 
     local trace = {}
-    trace.start = ply:EyePos()
-    trace.endpos = trace.start + ply:GetAimVector() * 120
-    trace.filter = ply
+    trace.start = client:EyePos()
+    trace.endpos = trace.start + client:GetAimVector() * 120
+    trace.filter = client
 
     local tr = util.TraceLine(trace)
 
@@ -60,7 +60,7 @@ function PANEL:Think()
             return self:Remove()
         end
 
-        if LocalPlayer():GetNetVar("arrested", false) then
+        if LocalPlayer():GetRelay("arrested", false) then
             return self:Remove()
         end
     end

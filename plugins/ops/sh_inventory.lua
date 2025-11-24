@@ -2,8 +2,8 @@ if ( SERVER ) then
     util.AddNetworkString("impulseOpsViewInv")
     util.AddNetworkString("impulseOpsRemoveInv")
 
-    net.Receive("impulseOpsRemoveInv", function(len, ply)
-        if not ply:IsAdmin() then return end
+    net.Receive("impulseOpsRemoveInv", function(len, client)
+        if not client:IsAdmin() then return end
 
         local targ = net.ReadUInt(8)
         local invSize = net.ReadUInt(16)
@@ -20,7 +20,7 @@ if ( SERVER ) then
             end
         end
 
-        ply:Notify("Removed "..invSize.." items from "..targ:Nick().."'s inventory.")
+        client:Notify("Removed "..invSize.." items from "..targ:Nick().."'s inventory.")
     end)
 else
     net.Receive("impulseOpsViewInv", function()
@@ -50,12 +50,12 @@ local viewInvCommand = {
     description = "Allows you to view and delete items from the player specified.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
+    onRun = function(client, arg, rawText)
         local name = arg[1]
         local plyTarget = impulse.Util:FindPlayer(name)
 
         if plyTarget then
-            if not plyTarget.impulseBeenInventorySetup then return ply:Notify("Target is loading still...") end
+            if not plyTarget.impulseBeenInventorySetup then return client:Notify("Target is loading still...") end
 
             local inv = plyTarget:GetInventory(1)
             net.Start("impulseOpsViewInv")
@@ -70,9 +70,9 @@ local viewInvCommand = {
                 net.WriteUInt(v, 16)
             end
 
-            net.Send(ply)
+            net.Send(client)
         else
-            return ply:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find player: "..tostring(name))
         end
     end
 }
@@ -83,7 +83,7 @@ local restoreInvCommand = {
     description = "Restores a players inventory to the last state before death. (SteamID64 only)",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
+    onRun = function(client, arg, rawText)
         local name = arg[1]
         local plyTarget = player.GetBySteamID64(name)
 
@@ -98,18 +98,18 @@ local restoreInvCommand = {
                 plyTarget.InventoryRestorePoint = nil
 
                 plyTarget:Notify("Your inventory has been restored to its last state by a game moderator.")
-                ply:Notify("You have restored "..plyTarget:Nick().."'s inventory to the last state.")
+                client:Notify("You have restored "..plyTarget:Nick().."'s inventory to the last state.")
 
                 for v, k in player.Iterator() do
                     if k:IsLeadAdmin() then
-                        k:AddChatText(Color(135, 206, 235), "[ops] Moderator "..ply:SteamName().." restored "..plyTarget:SteamName().."'s inventory.")
+                        k:AddChatText(Color(135, 206, 235), "[ops] Moderator "..client:SteamName().." restored "..plyTarget:SteamName().."'s inventory.")
                     end
                 end
             else
-                return ply:Notify("No restore point found for this player.")
+                return client:Notify("No restore point found for this player.")
             end
         else
-            return ply:Notify("Could not find player: "..tostring(name).." (needs SteamID64 value)")
+            return client:Notify("Could not find player: "..tostring(name).." (needs SteamID64 value)")
         end
     end
 }

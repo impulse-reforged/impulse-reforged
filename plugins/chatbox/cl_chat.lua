@@ -333,10 +333,10 @@ end
 
 -- Stops the default chat box from being opened
 hook.Remove("PlayerBindPress", "impulse.chatBox_hijackbind")
-hook.Add("PlayerBindPress", "impulse.chatBox_hijackbind", function(ply, bind, pressed)
+hook.Add("PlayerBindPress", "impulse.chatBox_hijackbind", function(client, bind, pressed)
     if string.sub( bind, 1, 11 ) == "messagemode" then
-        if ply:InVehicle() then -- piano compatablity kill me
-            local p1 = ply:GetVehicle():GetParent()
+        if client:InVehicle() then -- piano compatablity kill me
+            local p1 = client:GetVehicle():GetParent()
 
             if p1 and IsValid(p1) then
                 local p2 = p1:GetParent()

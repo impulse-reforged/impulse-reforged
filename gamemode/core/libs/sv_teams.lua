@@ -1,10 +1,44 @@
 local PLAYER = FindMetaTable("Player")
 
+--- Parses model data and returns model path, skin, and bodygroups
+-- @param modelData string or table - Can be "model.mdl", {"model.mdl", skin}, or {"model.mdl", skin, {bodygroups}}
+-- @return string model, number skin, table bodygroups
+local function ParseModelData(modelData)
+    if ( type(modelData) == "string" ) then
+        return modelData, nil, nil
+    elseif ( type(modelData) == "table" ) then
+        local model = modelData[1]
+        local skin = modelData[2]
+        local bodygroups = modelData[3]
+        
+        -- Handle random skin if it's a table
+        if ( type(skin) == "table" ) then
+            skin = skin[math.random(#skin)]
+        end
+        
+        -- Handle random bodygroup values if they're tables
+        if ( bodygroups and type(bodygroups) == "table" ) then
+            local parsedBodygroups = {}
+            for name, value in pairs(bodygroups) do
+                if ( type(value) == "table" ) then
+                    parsedBodygroups[name] = value[math.random(#value)]
+                else
+                    parsedBodygroups[name] = value
+                end
+            end
+            bodygroups = parsedBodygroups
+        end
+        
+        return model, skin, bodygroups
+    end
+    return nil, nil, nil
+end
+
 PLAYER.OldSetTeam = PLAYER.OldSetTeam or PLAYER.SetTeam
 
 function PLAYER:SetTeam(teamID)
     local selfTable = self:GetTable()
-    
+
     local teamData = impulse.Teams.Stored[teamID]
     if ( !teamData ) then
         return false, "Invalid team ID!"
@@ -15,43 +49,48 @@ function PLAYER:SetTeam(teamID)
         return false, "You cannot join this team as it is full!"
     end
 
-    self:SetModel(teamData.model or selfTable.impulseDefaultModel)
-    self:SetSkin(teamData.skin or selfTable.impulseDefaultSkin)
-    print("Set model and skin")
-
-    if ( teamData.bodygroups ) then
-        for v, bodygroupData in pairs(teamData.bodygroups) do
-            self:SetBodygroup(bodygroupData[1], (bodygroupData[2] or math.random(0, self:GetBodygroupCount(bodygroupData[1]))))
-        end
+    local modelData
+    if ( teamData.models ) then
+        modelData = teamData.models[math.random(#teamData.models)]
+    elseif ( teamData.model ) then
+        modelData = teamData.model
     else
-        for i = 0, self:GetNumBodyGroups() - 1 do
-            self:SetBodygroup(i, 0)
+        modelData = selfTable.impulseDefaultModel
+    end
+
+    local model, skin, bodygroups = ParseModelData(modelData)
+    self:SetModel(model)
+    self:SetSkin(skin or selfTable.impulseDefaultSkin)
+
+    -- Reset all bodygroups first
+    for i = 0, self:GetNumBodyGroups() - 1 do
+        self:SetBodygroup(i, 0)
+    end
+
+    -- Apply model-specific bodygroups if any
+    if ( bodygroups ) then
+        for name, value in pairs(bodygroups) do
+            self:SetBodygroup(self:FindBodygroupByName(name), value)
         end
     end
-    print("Set bodygroups")
 
     self:ResetSubMaterials()
-    print("Reset sub materials")
 
     if ( self:HasBrokenLegs() ) then
         self:FixLegs()
-        print("Fixed legs")
     end
 
     if ( self:IsCP() or teamData.cp ) then
         self:StripAmmo()
-        print("Stripped ammo")
     end
 
     self:UnEquipInventory()
     self:ClearRestrictedInventory()
     self:StripWeapons()
-    print("Stripped weapons and inventory")
 
     if ( teamData.loadout ) then
         for k, v in pairs(teamData.loadout) do
             self:Give(v)
-            print("Gave weapon: " .. v)
         end
     end
 
@@ -60,30 +99,24 @@ function PLAYER:SetTeam(teamID)
     else
         self:SetRunSpeed(impulse.Config.JogSpeed)
     end
-    print("Set run speed to: " .. self:GetRunSpeed())
 
     selfTable.DoorGroups = teamData.doorGroup or {}
 
     if ( self:Team() != teamID ) then
         hook.Run("OnPlayerChangedTeam", self, self:Team(), teamID)
-        print("Player changed team from " .. self:Team() .. " to " .. teamID)
     end
 
-    self:SetNetVar("class", nil)
-    self:SetNetVar("rank", nil)
-    print("Set class and rank to nil")
+    self:SetRelay("class", nil)
+    self:SetRelay("rank", nil)
 
     self:OldSetTeam(teamID)
-    print("Set team to " .. teamID)
 
     if ( teamData.spawns ) then
-        self:SetPos(teamData.spawns[math.random(1, #teamData.spawns)])
-        print("Set player position to random spawn for team " .. teamData.name)
+        self:SetPos(teamData.spawns[math.random(#teamData.spawns)])
     end
 
     if ( teamData.onBecome ) then
         teamData.onBecome(self)
-        print("Ran onBecome for team " .. teamData.name)
     end
 
     return true
@@ -92,44 +125,48 @@ end
 function PLAYER:SetTeamClass(classID, skipLoadout)
     local teamData = impulse.Teams:FindTeam(self:Team())
     local classData = teamData.classes[classID]
-    local classPlayers = 0
-
-    if classData.model then
-        self:SetModel(classData.model)
+    
+    local modelData
+    if ( classData.models ) then
+        modelData = classData.models[math.random(#classData.models)]
+    elseif ( classData.model ) then
+        modelData = classData.model
     else
-        self:SetModel(teamData.model or self.impulseDefaultModel)
+        if ( teamData.models ) then
+            modelData = teamData.models[math.random(#teamData.models)]
+        elseif ( teamData.model ) then
+            modelData = teamData.model
+        else
+            modelData = self.impulseDefaultModel
+        end
     end
+
+    local model, skin, bodygroups = ParseModelData(modelData)
+    self:SetModel(model)
+    self:SetSkin(skin or self.impulseDefaultSkin)
 
     self:SetupHands()
 
-    if classData.skin then
-        self:SetSkin(classData.skin)
-    else
-        self:SetSkin(teamData.skin or self.impulseDefaultSkin)
-    end
-
+    -- Reset all bodygroups first
     for i = 0, self:GetNumBodyGroups() - 1 do
         self:SetBodygroup(i, 0)
     end
 
-    if classData.bodygroups then
-        for v, bodygroupData in pairs(classData.bodygroups) do
-            self:SetBodygroup(bodygroupData[1], (bodygroupData[2] or math.random(0, self:GetBodygroupCount(bodygroupData[1]))))
-        end
-    elseif teamData.bodygroups then
-        for v, bodygroupData in pairs(teamData.bodygroups) do
-            self:SetBodygroup(bodygroupData[1], (bodygroupData[2] or math.random(0, self:GetBodygroupCount(bodygroupData[1]))))
+    -- Apply model-specific bodygroups if any
+    if ( bodygroups ) then
+        for name, value in pairs(bodygroups) do
+            self:SetBodygroup(self:FindBodygroupByName(name), value)
         end
     end
 
-    if not skipLoadout then
+    if ( !skipLoadout ) then
         if ( self:HasBrokenLegs() ) then
             self:FixLegs()
         end
 
         self:StripWeapons()
 
-        if classData.loadout then
+        if ( classData.loadout ) then
             for v,weapon in pairs(classData.loadout) do
                 self:Give(weapon)
             end
@@ -138,7 +175,7 @@ function PLAYER:SetTeamClass(classID, skipLoadout)
                 self:Give(weapon)
             end
 
-            if classData.loadoutAdd then
+            if ( classData.loadoutAdd ) then
                 for v,weapon in pairs(classData.loadoutAdd) do
                     self:Give(weapon)
                 end
@@ -147,24 +184,24 @@ function PLAYER:SetTeamClass(classID, skipLoadout)
 
         self:ClearRestrictedInventory()
 
-        if classData.items then
-            for v,item in pairs(classData.items) do
-                for i=1, (item.amount or 1) do
+        if ( classData.items ) then
+            for v, item in pairs(classData.items) do
+                for i = 1, (item.amount or 1) do
                     self:GiveItem(item.class, 1, true)
                 end
             end
         else
-            if teamData.items then
-                for v,item in pairs(teamData.items) do
-                    for i=1, (item.amount or 1) do
+            if ( teamData.items ) then
+                for v, item in pairs(teamData.items) do
+                    for i = 1, (item.amount or 1) do
                         self:GiveItem(item.class, 1, true)
                     end
                 end
             end
 
-            if classData.itemsAdd then
-                for v,item in pairs(classData.itemsAdd) do
-                    for i=1, (item.amount or 1) do
+            if ( classData.itemsAdd ) then
+                for v, item in pairs(classData.itemsAdd) do
+                    for i = 1, (item.amount or 1) do
                         self:GiveItem(item.class, 1, true)
                     end
                 end
@@ -172,7 +209,7 @@ function PLAYER:SetTeamClass(classID, skipLoadout)
         end
     end
 
-    if classData.armour then
+    if ( classData.armour ) then
         self:SetArmor(classData.armour)
         self.MaxArmour = classData.armour
     else
@@ -180,17 +217,17 @@ function PLAYER:SetTeamClass(classID, skipLoadout)
         self.MaxArmour = nil
     end
 
-    if classData.doorGroup then
+    if ( classData.doorGroup ) then
         self.DoorGroups = classData.doorGroup
     else
         self.DoorGroups = teamData.doorGroup or {}
     end
 
-    if classData.onBecome then
+    if ( classData.onBecome ) then
         classData.onBecome(self)
     end
 
-    self:SetNetVar("class", classID)
+    self:SetRelay("class", classID)
 
     hook.Run("PlayerChangeClass", self, classID, classData.name)
 
@@ -202,37 +239,48 @@ function PLAYER:SetTeamRank(rankID)
     local classData = teamData.classes[self:GetTeamClass()]
     local rankData = teamData.ranks[rankID]
 
-    if !(classData) then self:Notify("Player does not have a valid class selected!") return false end
+    if ( !classData ) then self:Notify("Player does not have a valid class selected!") return false end
 
-    if rankData.model then
-        self:SetModel(rankData.model)
+    local modelData
+    if ( rankData.models ) then
+        modelData = rankData.models[math.random(#rankData.models)]
+    elseif ( rankData.model ) then
+        modelData = rankData.model
     else
-        if classData.model and self:GetModel() != classData.model then
-            self:SetModel(classData.model)
+        if ( classData.models ) then
+            modelData = classData.models[math.random(#classData.models)]
+        elseif ( classData.model ) then
+            modelData = classData.model
+        else
+            if ( teamData.models ) then
+                modelData = teamData.models[math.random(#teamData.models)]
+            elseif ( teamData.model ) then
+                modelData = teamData.model
+            end
         end
     end
 
-    self:SetupHands()
+    if ( modelData ) then
+        local model, skin, bodygroups = ParseModelData(modelData)
+        self:SetModel(model)
+        self:SetSkin(skin or self.impulseDefaultSkin)
 
-    if rankData.skin then
-        self:SetSkin(rankData.skin)
-    end
+        self:SetupHands()
 
-    if rankData.bodygroups then
-        for v, bodygroupData in pairs(rankData.bodygroups) do
-            self:SetBodygroup(bodygroupData[1], (bodygroupData[2] or math.random(0, self:GetBodygroupCount(bodygroupData[1]))))
-        end
-    elseif teamData.bodygroups then
-        for v, bodygroupData in pairs(teamData.bodygroups) do
-            self:SetBodygroup(bodygroupData[1], (bodygroupData[2] or math.random(0, self:GetBodygroupCount(bodygroupData[1]))))
-        end
-    else
+        -- Reset all bodygroups first
         for i = 0, self:GetNumBodyGroups() - 1 do
             self:SetBodygroup(i, 0)
         end
+
+        -- Apply model-specific bodygroups if any
+        if ( bodygroups ) then
+            for name, value in pairs(bodygroups) do
+                self:SetBodygroup(self:FindBodygroupByName(name), value)
+            end
+        end
     end
 
-    if rankData.subMaterial and !classData.noSubMats then
+    if ( rankData.subMaterial and !classData.noSubMats ) then
         for v, k in pairs(rankData.subMaterial) do
             self:SetSubMaterial(v - 1, k)
 
@@ -249,7 +297,7 @@ function PLAYER:SetTeamRank(rankID)
 
     self:StripWeapons()
 
-    if rankData.loadout then
+    if ( rankData.loadout ) then
         for v,weapon in pairs(rankData.loadout) do
             self:Give(weapon)
         end
@@ -258,13 +306,13 @@ function PLAYER:SetTeamRank(rankID)
             self:Give(weapon)
         end
 
-        if classData and classData.loadoutAdd then
+        if ( classData and classData.loadoutAdd ) then
             for v,weapon in pairs(classData.loadoutAdd) do
                 self:Give(weapon)
             end
         end
 
-        if rankData.loadoutAdd then
+        if ( rankData.loadoutAdd ) then
             for v,weapon in pairs(rankData.loadoutAdd) do
                 self:Give(weapon)
             end
@@ -273,53 +321,53 @@ function PLAYER:SetTeamRank(rankID)
 
     self:ClearRestrictedInventory()
 
-    if rankData.items then
+    if ( rankData.items ) then
         for v,item in pairs(rankData.items) do
-            for i=1, (item.amount or 1) do
+            for i = 1, (item.amount or 1) do
                 self:GiveItem(item.class, 1, true)
             end
         end
     else
-        if teamData.items then
+        if ( teamData.items ) then
             for v,item in pairs(teamData.items) do
-                for i=1, (item.amount or 1) do
+                for i = 1, (item.amount or 1) do
                     self:GiveItem(item.class, 1, true)
                 end
             end
         end
 
-        if classData.itemsAdd then
+        if ( classData.itemsAdd ) then
             for v,item in pairs(classData.itemsAdd) do
-                for i=1, (item.amount or 1) do
+                for i = 1, (item.amount or 1) do
                     self:GiveItem(item.class, 1, true)
                 end
             end
         end
 
-        if rankData.itemsAdd then
+        if ( rankData.itemsAdd ) then
             for v,item in pairs(rankData.itemsAdd) do
-                for i=1, (item.amount or 1) do
+                for i = 1, (item.amount or 1) do
                     self:GiveItem(item.class, 1, true)
                 end
             end
         end
     end
 
-    if rankData.doorGroup then
+    if ( rankData.doorGroup ) then
         self.DoorGroups = rankData.doorGroup
     else
-        if classData.doorGroup then
+        if ( classData.doorGroup ) then
             self.DoorGroups = classData.doorGroup
         else
             self.DoorGroups = teamData.doorGroup or {}
         end
     end
 
-    if rankData.onBecome then
+    if ( rankData.onBecome ) then
         rankData.onBecome(self)
     end
 
-    self:SetNetVar("rank", rankID)
+    self:SetRelay("rank", rankID)
 
     hook.Run("PlayerChangeRank", self, rankID, rankData.name)
 
@@ -391,7 +439,7 @@ function impulse.Teams.GetWhitelist(steamid, team, callback)
 end
 
 function PLAYER:HasTeamWhitelist(team, level)
-    if not self.Whitelists then return false end
+    if !self.Whitelists then return false end
 
     local whitelist = self.Whitelists[team]
 
@@ -410,7 +458,7 @@ function PLAYER:SetupWhitelists()
     self.Whitelists = {}
 
     impulse.Teams.GetAllWhitelistsPlayer(self:SteamID64(), function(result)
-        if not result or not IsValid(self) then return end
+        if !result or not IsValid(self) then return end
 
         for v, k in pairs(result) do
             local teamName = k.team

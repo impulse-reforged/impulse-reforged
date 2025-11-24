@@ -35,13 +35,6 @@ function impulse.Schema:Load()
         return
     end
 
-    local path = name .. "/schema/sh_schema.lua"
-    if ( !file.Exists(path, "LUA") ) then
-        SetGlobalString("impulse_fatalerror", "Failed to load Schema \"" .. name .. "\", no sh_schema.lua found.")
-        logs:Error("Failed to load Schema \"" .. name .. "\", no sh_schema.lua found.")
-        return
-    end
-
     -- Prepare the schema information
     for k, v in pairs(default) do
         if ( !SCHEMA[k] ) then
@@ -75,7 +68,7 @@ function impulse.Schema:Load()
     end
 
     hook.Run("PostConfigLoad")
-    
+
     path = name .. "/schema"
 
     -- Load schema scripts such as hooks, meta, etc.

@@ -2,39 +2,39 @@ local KEY_BLACKLIST = IN_ATTACK + IN_ATTACK2
 local isValid = IsValid
 local mathAbs = math.abs
 
-function GM:StartCommand(ply, cmd)
-    if not ply:IsWeaponRaised() then
+function GM:StartCommand(client, cmd)
+    if not client:IsWeaponRaised() then
         cmd:RemoveKey(KEY_BLACKLIST)
     end
 
     if ( SERVER ) then
-        local dragger = ply.impulseArrestedDragger
+        local dragger = client.impulseArrestedDragger
 
-        if isValid(dragger) and ply == dragger.impulseArrestedDragging and ply:Alive() and dragger:Alive() then
+        if isValid(dragger) and client == dragger.impulseArrestedDragging and client:Alive() and dragger:Alive() then
             cmd:ClearMovement()
             cmd:ClearButtons()
 
-            if ply:GetPos():DistToSqr(dragger:GetPos()) > (60 ^ 2) then
+            if client:GetPos():DistToSqr(dragger:GetPos()) > (60 ^ 2) then
                 cmd:SetForwardMove(200)
             end
 
-            cmd:SetViewAngles((dragger:GetShootPos() - ply:GetShootPos()):GetNormalized():Angle())
+            cmd:SetViewAngles((dragger:GetShootPos() - client:GetShootPos()):GetNormalized():Angle())
         end
     else
         cmd:RemoveKey(IN_ZOOM)
     end
 end
 
-function GM:PlayerSwitchWeapon(ply, oldWep, newWep)
+function GM:PlayerSwitchWeapon(client, oldWep, newWep)
     if ( SERVER ) then
-        ply:SetWeaponRaised(false)
+        client:SetWeaponRaised(false)
     end
 end
 
-function GM:Move(ply, mvData)
+function GM:Move(client, mvData)
     -- alt walk thing based on nutscripts
-    if ply.GetMoveType(ply) == MOVETYPE_WALK and ((ply.HasBrokenLegs(ply) and !ply.GetNetVar(ply, "arrested", false)) or mvData.KeyDown(mvData, IN_WALK)) then
-        local speed = ply:GetWalkSpeed()
+    if client.GetMoveType(client) == MOVETYPE_WALK and ((client.HasBrokenLegs(client) and !client.GetRelay(client, "arrested", false)) or mvData.KeyDown(mvData, IN_WALK)) then
+        local speed = client:GetWalkSpeed()
         local forwardRatio = 0
         local sideRatio = 0
         local ratio = impulse.Config.SlowWalkRatio

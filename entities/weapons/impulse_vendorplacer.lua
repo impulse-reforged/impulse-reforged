@@ -111,15 +111,15 @@ end
 if ( SERVER ) then
     util.AddNetworkString("impulseVendorPlace")
 
-    net.Receive("impulseVendorPlace", function(len, ply)
-        if not ply:IsSuperAdmin() then return end
+    net.Receive("impulseVendorPlace", function(len, client)
+        if not client:IsSuperAdmin() then return end
         
         local uniqueID = net.ReadString()
         
         if not impulse.Vendor.Data[uniqueID] then return end
         
-        local trace = ply:GetEyeTrace()
-        local ang = ply:EyeAngles()
+        local trace = client:GetEyeTrace()
+        local ang = client:EyeAngles()
         ang:RotateAroundAxis(ang:Right(), 180)
         ang:RotateAroundAxis(ang:Up(), 180)
         ang.x = 180
@@ -132,7 +132,7 @@ if ( SERVER ) then
         vendor:SetAngles(ang)
         vendor:Spawn()
 
-        ply:Notify("Vendor with Unique ID "..uniqueID.." created. Please mark and save the spawned vendor.")
+        client:Notify("Vendor with Unique ID "..uniqueID.." created. Please mark and save the spawned vendor.")
     end)
 end
 

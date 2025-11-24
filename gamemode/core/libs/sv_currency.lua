@@ -66,7 +66,7 @@ function PLAYER:SetMoney(amount, bNoSave)
         query:Execute()
     end
 
-    self:SetLocalVar("money", amount)
+    self:SetRelay("money", amount)
 
     return amount
 end
@@ -86,7 +86,7 @@ function PLAYER:SetBankMoney(amount, bNoSave)
         query:Execute()
     end
 
-    self:SetLocalVar("bankmoney", amount)
+    self:SetRelay("bankMoney", amount)
 
     return amount
 end

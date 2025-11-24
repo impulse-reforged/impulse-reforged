@@ -1,6 +1,6 @@
 local logs = impulse.Logs
 
-function GM:PlayerUseSpawnSaver(ply)
+function GM:PlayerUseSpawnSaver(client)
     return false
 end
 
@@ -23,91 +23,80 @@ function GM:DatabaseConnectionFailed()
     SetGlobalString("impulse_fatalerror", "Failed to connect to database. See server console for error.")
 end
 
-function GM:PlayerInitialSpawn(ply)
+function GM:PlayerInitialSpawn(client)
     local isNew = false
-    local plyTable = ply:GetTable()
+    local clientTable = client:GetTable()
 
-    ply:SetCanZoom(false)
+    client:SetCanZoom(false)
 
-    ply:LoadData(function(data)
-        if ( !IsValid(ply) ) then return end
-    
+    client:LoadData(function(data)
+        if ( !IsValid(client) ) then return end
+
         local address = impulse.Util:GetAddress()
-        local bNoCache = ply:GetData("lastIP", address) != address
-        ply:SetData("lastIP", address)
+        local bNoCache = client:GetData("lastIP", address) != address
+        client:SetData("lastIP", address)
 
         net.Start("impulseDataSync")
             net.WriteTable(data or {})
-            net.WriteUInt(plyTable.impulsePlayTime or 0, 32)
-        net.Send(ply)
+            net.WriteUInt(clientTable.impulsePlayTime or 0, 32)
+        net.Send(client)
 
         local query = mysql:Select("impulse_players")
-        query:Select("id")
-        query:Select("rpname")
-        query:Select("group")
-        query:Select("rpgroup")
-        query:Select("rpgrouprank")
-        query:Select("xp")
-        query:Select("money")
-        query:Select("bankmoney")
-        query:Select("model")
-        query:Select("skin")
-        query:Select("data")
-        query:Select("skills")
-        query:Select("ammo")
-        query:Select("firstjoin")
-        query:Select("lastjoin")
-        query:Select("address")
-        query:Select("playtime")
-        query:Where("steamid", ply:SteamID64())
+        query:Where("steamid", client:SteamID64())
         query:Callback(function(result)
-            if ( !IsValid(ply) ) then return end
+            if ( !IsValid(client) ) then return end
+
+            if ( !result or !result[1] ) then
+                ErrorNoHalt("[impulse] Failed to load player data for " .. client:SteamName() .. " (" .. client:SteamID64() .. ")\n")
+                client:Kick("Failed to load character data from database.")
+                return
+            end
 
             local db = result[1]
 
             -- Set the isNew flag to false if the player has already joined the server.
             isNew = db.rpname == nil or db.rpname == ""
-    
+
             net.Start("impulseChatText")
-                net.WriteTable({Color(150, 150, 200), ply:SteamName() .. " has connected to the server."})
+                net.WriteTable({Color(150, 150, 200), client:SteamName() .. " has connected to the server."})
             net.Broadcast()
-    
+
             if ( isNew ) then
                 net.Start("impulseJoinData")
                     net.WriteBool(isNew)
-                net.Send(ply)
-    
-                ply:Freeze(true)
-                hook.Run("PlayerFirstJoin", ply, db)
+                net.Send(client)
+
+                client:Freeze(true)
+                hook.Run("PlayerFirstJoin", client, db)
             else
-                ply:Freeze(false)
-                hook.Run("PlayerSetup", ply, db)
+                client:Freeze(false)
+                hook.Run("PlayerSetup", client, db)
             end
 
             if ( GExtension ) then
-                logs:Database("GExtension detected, skipping group setting for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'.")
+                logs:Database("GExtension detected, skipping group setting for '" .. client:SteamID64() .. " (" .. client:Name() .. ")'.")
             elseif ( VyHub ) then
-                logs:Database("VyHub detected, skipping group setting for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'.")
+                logs:Database("VyHub detected, skipping group setting for '" .. client:SteamID64() .. " (" .. client:Name() .. ")'.")
             else
                 if ( db.group ) then
-                    ply:SetUserGroup(db.group, true)
-                    logs:Database("Set '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")' to group '" .. db.group .. "'.")
+                    client:SetUserGroup(db.group, true)
+                    logs:Database("Set '" .. client:SteamID64() .. " (" .. client:Name() .. ")' to group '" .. db.group .. "'.")
                 else
-                    ply:SetUserGroup("user", true)
-                    logs:Database("No group found for '" .. ply:SteamID64() .. " (" .. ply:Name() .. ")'. Defaulting to user.")
-    
+                    client:SetUserGroup("user", true)
+                    logs:Database("No group found for '" .. client:SteamID64() .. " (" .. client:Name() .. ")'. Defaulting to user.")
+
                     local queryGroup = mysql:Update("impulse_players")
                     queryGroup:Update("group", "user")
-                    queryGroup:Where("steamid", ply:SteamID64())
+                    queryGroup:Where("steamid", client:SteamID64())
                     queryGroup:Callback(function(result)
                         if ( !result ) then
-                            ply:Kick("Failed to update group in database.")
+                            client:Kick("Failed to update group in database.")
                         end
                     end)
-    
+
                     queryGroup:Execute()
-    
-                    ply:SaveData()
+
+                    client:SaveData()
                 end
             end
         end)
@@ -115,55 +104,55 @@ function GM:PlayerInitialSpawn(ply)
         query:Execute()
     end)
 
-    local xpTimerName = "impulseXP." .. ply:UserID()
+    local xpTimerName = "impulseXP." .. client:UserID()
     timer.Create(xpTimerName, impulse.Config.XPTime, 0, function()
-        if ( !IsValid(ply) ) then
+        if ( !IsValid(client) ) then
             timer.Remove(xpTimerName)
             return
         end
 
-        if ( !ply:IsAFK() ) then
-            ply:GiveTimedXP()
+        if ( !client:IsAFK() ) then
+            client:GiveTimedXP()
         end
     end)
 
-    local oocTimerName = "impulseOOCLimit." .. ply:UserID()
+    local oocTimerName = "impulseOOCLimit." .. client:UserID()
     timer.Create(oocTimerName, 1800, 0, function()
-        if ( !IsValid(ply) ) then
+        if ( !IsValid(client) ) then
             timer.Remove(oocTimerName)
             return
         end
 
-        if ( ply:IsDonator() ) then
-            plyTable.OOCLimit = impulse.Config.OOCLimitVIP
+        if ( client:IsDonator() ) then
+            clientTable.OOCLimit = impulse.Config.OOCLimitVIP
         else
-            plyTable.OOCLimit = impulse.Config.OOCLimit
+            clientTable.OOCLimit = impulse.Config.OOCLimit
         end
 
         net.Start("impulseUpdateOOCLimit")
             net.WriteUInt(1800, 16)
             net.WriteBool(true)
-        net.Send(ply)
+        net.Send(client)
     end)
 
-    local loadTimerName = "impulseFullLoad." .. ply:UserID()
+    local loadTimerName = "impulseFullLoad." .. client:UserID()
     timer.Create(loadTimerName, 0.5, 0, function()
-        if ( !IsValid(ply) ) then
+        if ( !IsValid(client) ) then
             timer.Remove(loadTimerName)
             return
         end
 
-        if ( ply:GetModel() != "player/default.mdl" ) then
+        if ( client:GetModel() != "player/default.mdl" ) then
             timer.Remove(loadTimerName)
-            hook.Run("PlayerInitialSpawnLoaded", ply)
+            hook.Run("PlayerInitialSpawnLoaded", client)
         end
     end)
 
-    plyTable.impulseAFKTimer = CurTime() + 720
+    clientTable.impulseAFKTimer = CurTime() + 720
 end
 
-function GM:PlayerSetup(ply, data)
-    local plyTable = ply:GetTable()
+function GM:PlayerSetup(client, data)
+    local clientTable = client:GetTable()
 
     local playerCount = player.GetCount()
     local donatorCount = 0
@@ -174,57 +163,61 @@ function GM:PlayerSetup(ply, data)
     end
 
     local userCount = playerCount - donatorCount
-    if ( !ply:IsDonator() and userCount >= ( impulse.Config.UserSlots or 9999 ) ) then
+    if ( !client:IsDonator() and userCount >= ( impulse.Config.UserSlots or 9999 ) ) then
         local donateURL = impulse.Config.DonateURL
         local message = "The server is currently at full user capacity. Please try again later."
         if ( donateURL and donateURL != "" ) then
             message = message .. " Consider donating at " .. donateURL .. " to gain access to reserved slots."
         end
 
-        ply:Kick(message)
+        client:Kick(message)
 
         return
     end
 
-	ply:SetNetVar("roleplayName", data.rpname)
-	ply:SetLocalVar("xp", data.xp)
+    client:SetRelay("roleplayName", data.rpname)
 
-	ply:SetLocalVar("money", data.money)
-	ply:SetLocalVar("bankMoney", data.bankmoney)
+    local xpValue = tonumber(data.xp) or 0
+    local moneyValue = tonumber(data.money) or 0
+    local bankMoneyValue = tonumber(data.bankmoney) or 0
+
+    client:SetRelay("xp", xpValue)
+    client:SetRelay("money", moneyValue)
+    client:SetRelay("bankMoney", bankMoneyValue)
 
     local jsonData = util.JSONToTable(data.data or "") or {}
 
-    plyTable.impulseData = jsonData
-    plyTable.impulseID = data.id
+    clientTable.impulseData = jsonData
+    clientTable.impulseID = data.id
 
-    if ( plyTable.impulseData and plyTable.impulseData.Achievements ) then
-        local count = table.Count(plyTable.impulseData.Achievements)
+    if ( clientTable.impulseData and clientTable.impulseData.Achievements ) then
+        local count = table.Count(clientTable.impulseData.Achievements)
         if ( count > 0 ) then
             net.Start("impulseAchievementSync")
             net.WriteUInt(count, 8)
 
-            for k, v in pairs(plyTable.impulseData.Achievements) do
+            for k, v in pairs(clientTable.impulseData.Achievements) do
                 net.WriteString(k)
                 net.WriteUInt(v, 32)
             end
 
-            net.Send(ply)
+            net.Send(client)
         end
 
-        ply:CalculateAchievementPoints()
+        client:CalculateAchievementPoints()
     end
 
     local skills = util.JSONToTable(data.skills or "") or {}
-    plyTable.impulseSkills = skills
+    clientTable.impulseSkills = skills
 
-    for k, v in pairs(plyTable.impulseSkills) do
-        local xp = ply:GetSkillXP(k)
-        ply:NetworkSkill(k, xp)
+    for k, v in pairs(clientTable.impulseSkills) do
+        local xp = client:GetSkillXP(k)
+        client:NetworkSkill(k, xp)
     end
 
     local query = mysql:Update("impulse_players")
-    query:Update("ammo", util.TableToJSON(ply:GetAmmo()))
-    query:Where("steamid", ply:SteamID64())
+    query:Update("ammo", util.TableToJSON(client:GetAmmo()))
+    query:Where("steamid", client:SteamID64())
     query:Execute()
 
     local ammo = util.JSONToTable(data.ammo or "") or {}
@@ -237,27 +230,27 @@ function GM:PlayerSetup(ply, data)
         end
     end
 
-    plyTable.impulseAmmoToGive = give
+    clientTable.impulseAmmoToGive = give
 
-    plyTable.impulseDefaultModel = data.model
-    plyTable.impulseDefaultSkin = data.skin
-    plyTable.impulseDefaultName = data.rpname
+    clientTable.impulseDefaultModel = data.model
+    clientTable.impulseDefaultSkin = data.skin
+    clientTable.impulseDefaultName = data.rpname
 
-    ply:UpdateDefaultModelSkin()
-    ply:SetTeam(impulse.Config.DefaultTeam)
+    client:UpdateDefaultModelSkin()
+    client:SetTeam(impulse.Config.DefaultTeam)
 
-    local id = plyTable.impulseID
+    local id = clientTable.impulseID
     impulse.Inventory.Data[id] = {}
     impulse.Inventory.Data[id][INVENTORY_PLAYER] = {}
     impulse.Inventory.Data[id][INVENTORY_STORAGE] = {}
 
-    plyTable.InventoryWeight = 0
-    plyTable.InventoryWeightStorage = 0
-    plyTable.InventoryRegister = {}
-    plyTable.InventoryStorageRegister = {}
-    plyTable.InventoryEquipGroups = {}
+    clientTable.InventoryWeight = 0
+    clientTable.InventoryWeightStorage = 0
+    clientTable.InventoryRegister = {}
+    clientTable.InventoryStorageRegister = {}
+    clientTable.InventoryEquipGroups = {}
 
-    hook.Run("PreEarlyInventorySetup", ply)
+    hook.Run("PreEarlyInventorySetup", client)
 
     local query = mysql:Select("impulse_inventory")
     query:Select("id")
@@ -266,8 +259,8 @@ function GM:PlayerSetup(ply, data)
     query:Select("storagetype")
     query:Where("ownerid", data.id)
     query:Callback(function(result)
-        if ( IsValid(ply) and type(result) == "table" and #result > 0 ) then
-            local userid = plyTable.impulseID
+        if ( IsValid(client) and type(result) == "table" and #result > 0 ) then
+            local userid = clientTable.impulseID
             local userInv = impulse.Inventory.Data[userid]
 
             for k, v in pairs(result) do
@@ -278,32 +271,32 @@ function GM:PlayerSetup(ply, data)
                 if ( !userInv[storagetype] ) then
                     userInv[storagetype] = {}
                 end
-                
-                ply:GiveItem(v.uniqueid, v.storagetype, false, true)
+
+                client:GiveItem(v.uniqueid, v.storagetype, false, true)
             end
         end
 
-        if ( IsValid(ply) ) then
-            plyTable.impulseBeenInventorySetup = true
-            hook.Run("PostInventorySetup", ply)
+        if ( IsValid(client) ) then
+            clientTable.impulseBeenInventorySetup = true
+            hook.Run("PostInventorySetup", client)
         end
     end)
 
     query:Execute()
 
-    ply:SetupWhitelists()
+    client:SetupWhitelists()
 
-    local rankColor = impulse.Config.RankColours[ply:GetUserGroup()]
+    local rankColor = impulse.Config.RankColours[client:GetUserGroup()]
     if ( rankColor ) then
-        ply:SetWeaponColor(Vector(rankColor.r / 255, rankColor.g / 255, rankColor.b / 255))
+        client:SetWeaponColor(Vector(rankColor.r / 255, rankColor.g / 255, rankColor.b / 255))
     end
 
     local query = mysql:Select("impulse_refunds")
     query:Select("item")
-    query:Where("steamid", ply:SteamID64())
+    query:Where("steamid", client:SteamID64())
     query:Callback(function(result)
-        if ( IsValid(ply) and type(result) == "table" and #result > 0 ) then
-            local sid = ply:SteamID64()
+        if ( IsValid(client) and type(result) == "table" and #result > 0 ) then
+            local sid = client:SteamID64()
             local money = 0
             local names = {}
 
@@ -325,8 +318,8 @@ function GM:PlayerSetup(ply, data)
 
             if ( money == 0 ) then return end
 
-            ply:AddBankMoney(money)
-            
+            client:AddBankMoney(money)
+
             net.Start("impulseGetRefund")
             net.WriteUInt(table.Count(names), 8)
             net.WriteUInt(money, 16)
@@ -336,71 +329,71 @@ function GM:PlayerSetup(ply, data)
                 net.WriteUInt(v, 8)
             end
 
-            net.Send(ply)
+            net.Send(client)
         end
     end)
 
     query:Execute()
 
     if ( data.rpgroup ) then
-        ply:GroupLoad(data.rpgroup, data.rpgrouprank or nil)
+        client:GroupLoad(data.rpgroup, data.rpgrouprank or nil)
     end
 
-    plyTable.impulseBeenSetup = true
+    clientTable.impulseBeenSetup = true
 
-    hook.Run("PostSetupPlayer", ply)
+    hook.Run("PostSetupPlayer", client)
 end
 
-function GM:PlayerLoadout(ply)
-    if ( ply:Team() == 0 ) then return end
+function GM:PlayerLoadout(client)
+    if ( client:Team() == 0 ) then return end
 
-    local data = ply:GetTeamData()
+    local data = client:GetTeamData()
     if ( data and data.spawns ) then
-        ply:SetPos(data.spawns[math.random(1, #data.spawns)])
+        client:SetPos(data.spawns[math.random(#data.spawns)])
     end
 
-    ply:SetRunSpeed(impulse.Config.JogSpeed)
-    ply:SetWalkSpeed(impulse.Config.WalkSpeed)
+    client:SetRunSpeed(impulse.Config.JogSpeed)
+    client:SetWalkSpeed(impulse.Config.WalkSpeed)
 
-    ply:SetupHands()
+    client:SetupHands()
 
-    hook.Run("PostPlayerLoadout", ply)
+    hook.Run("PostPlayerLoadout", client)
 
     return true
 end
 
-function GM:PostSetupPlayer(ply)
-    local plyTable = ply:GetTable()
-    plyTable.impulseData.Achievements = plyTable.impulseData.Achievements or {}
+function GM:PostSetupPlayer(client)
+    local clientTable = client:GetTable()
+    clientTable.impulseData.Achievements = clientTable.impulseData.Achievements or {}
 
     for k, v in pairs(impulse.Config.Achievements) do
-        ply:AchievementCheck(k)
+        client:AchievementCheck(k)
     end
 
-    ply:Spawn()
+    client:Spawn()
 end
 
-function GM:PlayerInitialSpawnLoaded(ply)
-    local jailTime = impulse.Arrest.DisconnectRemember[ply:SteamID64()]
+function GM:PlayerInitialSpawnLoaded(client)
+    local jailTime = impulse.Arrest.DisconnectRemember[client:SteamID64()]
 
-    local plyTable = ply:GetTable()
-    if ( plyTable.ammoToGive ) then
-        for v, k in pairs(plyTable.ammoToGive) do
+    local clientTable = client:GetTable()
+    if ( clientTable.ammoToGive ) then
+        for v, k in pairs(clientTable.ammoToGive) do
             if ( game.GetAmmoID(v) != -1 ) then
-                ply:GiveAmmo(k, v)
+                client:GiveAmmo(k, v)
             end
         end
 
-        plyTable.ammoToGive = nil
+        clientTable.ammoToGive = nil
     end
 
     if ( jailTime ) then
-        ply:Arrest()
-        ply:Jail(jailTime)
-        impulse.Arrest.DisconnectRemember[ply:SteamID64()] = nil
+        client:Arrest()
+        client:Jail(jailTime)
+        impulse.Arrest.DisconnectRemember[client:SteamID64()] = nil
     end
 
-    local steamID64 = ply:SteamID64()
+    local steamID64 = client:SteamID64()
     if ( GExtension and GExtension.Warnings[steamID64] ) then
         local bans = GExtension:GetBans(steamID64)
         local warns = GExtension.Warnings[steamID64]
@@ -408,86 +401,86 @@ function GM:PlayerInitialSpawnLoaded(ply)
         net.Start("opsGetRecord")
             net.WriteUInt(table.Count(warns), 8)
             net.WriteUInt(table.Count(bans), 8)
-        net.Send(ply)
+        net.Send(client)
     end
 end
 
-function GM:PlayerSpawn(ply)
-    local plyTable = ply:GetTable()
-    local cellID = plyTable.InJail
+function GM:PlayerSpawn(client)
+    local clientTable = client:GetTable()
+    local cellID = clientTable.InJail
 
-    if ( plyTable.InJail ) then
+    if ( clientTable.InJail ) then
         local pos = impulse.Config.PrisonCells[cellID]
-        ply:SetPos(impulse.Util:FindEmptyPos(pos, {self}, 150, 30, Vector(16, 16, 64)))
-        ply:SetEyeAngles(impulse.Config.PrisonAngle)
-        ply:Arrest()
+        client:SetPos(impulse.Util:FindEmptyPos(pos, {self}, 150, 30, Vector(16, 16, 64)))
+        client:SetEyeAngles(impulse.Config.PrisonAngle)
+        client:Arrest()
 
         return
     end
 
-    local killSilent = plyTable.IsKillSilent
+    local killSilent = clientTable.IsKillSilent
     if ( killSilent ) then
-        plyTable.IsKillSilent = false
+        clientTable.IsKillSilent = false
 
-        for k, v in pairs(plyTable.TempWeapons) do
-            local weapon = ply:Give(v.weapon)
+        for k, v in pairs(clientTable.TempWeapons) do
+            local weapon = client:Give(v.weapon)
             weapon:SetClip1(v.clip)
         end
 
-        for k, v in pairs(plyTable.TempAmmo) do
-            ply:SetAmmo(v, k)
+        for k, v in pairs(clientTable.TempAmmo) do
+            client:SetAmmo(v, k)
         end
 
-        if ( plyTable.TempSelected ) then
-            ply:SelectWeapon(plyTable.TempSelected)
-            ply:SetWeaponRaised(plyTable.TempSelectedRaised)
+        if ( clientTable.TempSelected ) then
+            client:SelectWeapon(clientTable.TempSelected)
+            client:SetWeaponRaised(clientTable.TempSelectedRaised)
         end
 
         return
     end
 
-    if ( ply:GetNetVar("arrested", false) ) then
-        ply:SetNetVar("arrested", false)
+    if ( client:GetRelay("arrested", false) ) then
+        client:SetRelay("arrested", false)
     end
 
-    if ( ply:HasBrokenLegs() ) then
-        ply:FixLegs()
+    if ( client:HasBrokenLegs() ) then
+        client:FixLegs()
     end
 
-    if ( plyTable.impulseBeenSetup ) then
-        ply:SetTeam(impulse.Config.DefaultTeam)
+    if ( clientTable.impulseBeenSetup ) then
+        client:SetTeam(impulse.Config.DefaultTeam)
 
-        if ( plyTable.HasDied ) then
-            ply:SetHunger(70)
+        if ( clientTable.HasDied ) then
+            client:SetHunger(70)
         else
-            ply:SetHunger(100)
+            client:SetHunger(100)
         end
     end
 
-    plyTable.impulseArrestedWeapons = nil
-    plyTable.SpawnProtection = true
+    clientTable.impulseArrestedWeapons = nil
+    clientTable.SpawnProtection = true
 
-    ply:SetJumpPower(impulse.Config.JumpPower or 160)
+    client:SetJumpPower(impulse.Config.JumpPower or 160)
 
     timer.Simple(10, function()
-        if ( !IsValid(ply) ) then return end
+        if ( !IsValid(client) ) then return end
 
-        plyTable.SpawnProtection = false
+        clientTable.SpawnProtection = false
     end)
 
-    hook.Run("PlayerLoadout", ply)
+    hook.Run("PlayerLoadout", client)
 end
 
-function GM:PlayerDisconnected(ply)
-    local userID = ply:UserID()
-    local steamID = ply:SteamID64()
-    local entIndex = ply:EntIndex()
-    local arrested = ply:GetNetVar("arrested", false)
+function GM:PlayerDisconnected(client)
+    local userID = client:UserID()
+    local steamID = client:SteamID64()
+    local entIndex = client:EntIndex()
+    local arrested = client:GetRelay("arrested", false)
 
-    local plyTable = ply:GetTable()
-    local dragger = plyTable.impulseArrestedDragger
+    local clientTable = client:GetTable()
+    local dragger = clientTable.impulseArrestedDragger
     if ( IsValid(dragger) ) then
-        impulse.Arrest.Dragged[ply] = nil
+        impulse.Arrest.Dragged[client] = nil
         dragger.impulseArrestedDragging = nil
     end
 
@@ -496,55 +489,55 @@ function GM:PlayerDisconnected(ply)
         timer.Remove(loadTimerName)
     end
 
-    local jailCell = plyTable.InJail
+    local jailCell = clientTable.InJail
     if ( jailCell ) then
         timer.Remove("impulsePrison." .. userID)
         local duration = impulse.Arrest.Prison[jailCell][entIndex].duration
         impulse.Arrest.Prison[jailCell][entIndex] = nil
         impulse.Arrest.DisconnectRemember[steamID] = duration
-    elseif ( plyTable.impulseBeingJailed ) then
-        impulse.Arrest.DisconnectRemember[steamID] = plyTable.impulseBeingJailed
+    elseif ( clientTable.impulseBeingJailed ) then
+        impulse.Arrest.DisconnectRemember[steamID] = clientTable.impulseBeingJailed
     elseif ( arrested ) then
         impulse.Arrest.DisconnectRemember[steamID] = impulse.Config.MaxJailTime
     end
 
-    if ( plyTable.CanHear ) then
+    if ( clientTable.CanHear ) then
         for k, v in player.Iterator() do
             if ( !v.CanHear ) then continue end
-            v.CanHear[ply] = nil
+            v.CanHear[client] = nil
         end
     end
 
-    if ( plyTable.impulseID ) then
-        impulse.Inventory.Data[plyTable.impulseID] = nil
+    if ( clientTable.impulseID ) then
+        impulse.Inventory.Data[clientTable.impulseID] = nil
 
-        if ( !ply:IsCP() ) then
+        if ( !client:IsCP() ) then
             local query = mysql:Update("impulse_players")
-            query:Update("ammo", util.TableToJSON(ply:GetAmmo()))
+            query:Update("ammo", util.TableToJSON(client:GetAmmo()))
             query:Where("steamid", steamID)
             query:Execute()
         end
     end
 
-    if ( plyTable.impulseOwnedDoors ) then
-        for k, v in pairs(plyTable.impulseOwnedDoors) do
+    if ( clientTable.impulseOwnedDoors ) then
+        for k, v in pairs(clientTable.impulseOwnedDoors) do
             if ( !IsValid(k) ) then continue end
 
-            if ( k:GetDoorMaster() == ply ) then
+            if ( k:GetDoorMaster() == client ) then
                 local noUnlock = k.NoDCUnlock or false
-                ply:RemoveDoorMaster(k, noUnlock)
+                client:RemoveDoorMaster(k, noUnlock)
             else
-                ply:RemoveDoorUser(k)
+                client:RemoveDoorUser(k)
             end
         end
     end
 
-    if ( IsValid(plyTable.impulseInventorySearching) ) then
-        plyTable.impulseInventorySearching:Freeze(false)
+    if ( IsValid(clientTable.impulseInventorySearching) ) then
+        clientTable.impulseInventorySearching:Freeze(false)
     end
 
     for k, v in pairs(ents.FindByClass("impulse_item")) do
-        if ( v.ItemOwner and v.ItemOwner == ply ) then
+        if ( v.ItemOwner and v.ItemOwner == client ) then
             v.RemoveIn = CurTime() + impulse.Config.InventoryItemDeSpawnTime
         end
     end
@@ -559,13 +552,13 @@ end
 local talkCol = Color(255, 255, 100)
 local infoCol = Color(135, 206, 250)
 local strTrim = string.Trim
-function GM:PlayerSay(ply, text, teamChat, newChat)
-    local plyTable = ply:GetTable()
-    if ( !plyTable.impulseBeenSetup or teamChat ) then return "" end
+function GM:PlayerSay(client, text, teamChat, newChat)
+    local clientTable = client:GetTable()
+    if ( !clientTable.impulseBeenSetup or teamChat ) then return "" end
 
     text = strTrim(text, " ")
 
-    hook.Run("PostPlayerSay", ply, text)
+    hook.Run("PostPlayerSay", client, text)
 
     if ( string.StartWith(text, "/") ) then
         local args = string.Explode(" ", text)
@@ -577,42 +570,42 @@ function GM:PlayerSay(ply, text, teamChat, newChat)
                 end
             end
 
-            if ( command.adminOnly and !ply:IsAdmin() ) then
-                ply:Notify("You must be an admin to use this command.")
+            if ( command.adminOnly and !client:IsAdmin() ) then
+                client:Notify("You must be an admin to use this command.")
                 return ""
             end
 
-            if ( command.leadAdminOnly and !ply:IsLeadAdmin() ) then
-                ply:Notify("You must be a lead admin to use this command.")
+            if ( command.leadAdminOnly and !client:IsLeadAdmin() ) then
+                client:Notify("You must be a lead admin to use this command.")
                 return ""
             end
 
-            if ( command.superAdminOnly and !ply:IsSuperAdmin() ) then
-                ply:Notify("You must be a super admin to use this command.")
+            if ( command.superAdminOnly and !client:IsSuperAdmin() ) then
+                client:Notify("You must be a super admin to use this command.")
                 return ""
             end
 
             if ( command.requiresArg and ( !args[2] or string.Trim(args[2]) == "" ) ) then return "" end
-            if ( command.requiresAlive and !ply:Alive() ) then return "" end
+            if ( command.requiresAlive and !client:Alive() ) then return "" end
 
             text = string.sub(text, string.len(args[1]) + 2)
 
             table.remove(args, 1)
-            command.onRun(ply, args, text)
+            command.onRun(client, args, text)
         else
-            ply:Notify("The " .. args[1] .. " command does not exist.")
+            client:Notify("The " .. args[1] .. " command does not exist.")
         end
-    elseif ( ply:Alive() ) then
-        text = hook.Run("ProcessICChatMessage", ply, text) or text
-        text = hook.Run("ChatClassMessageSend", 1, text, ply) or text
+    elseif ( client:Alive() ) then
+        text = hook.Run("ProcessICChatMessage", client, text) or text
+        text = hook.Run("ChatClassMessageSend", 1, text, client) or text
 
         for k, v in player.Iterator() do
-            if ( ply:GetPos() - v:GetPos() ):LengthSqr() <= ( impulse.Config.TalkDistance ^ 2 ) then
-                v:SendChatClassMessage(1, text, ply)
+            if ( client:GetPos() - v:GetPos() ):LengthSqr() <= ( impulse.Config.TalkDistance ^ 2 ) then
+                v:SendChatClassMessage(1, text, client)
             end
         end
 
-        hook.Run("PostChatClassMessageSend", 1, text, ply)
+        hook.Run("PostChatClassMessageSend", 1, text, client)
     end
 
     return ""
@@ -638,7 +631,7 @@ function GM:PlayerCanHearPlayersVoice(listener, speaker)
     return canHear, true
 end
 
-function GM:DoPlayerDeath(ply, attacker, dmginfo)
+function GM:DoPlayerDeath(client, attacker, dmginfo)
     local ragCount = table.Count(ents.FindByClass("prop_ragdoll"))
     if ( ragCount > 32 ) then
         logs:Debug("Avoiding ragdoll body spawn for performance reasons... (rag count: " .. ragCount .. ")")
@@ -646,15 +639,15 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
     end
 
     local ragdoll = ents.Create("prop_ragdoll")
-    ragdoll:SetModel(ply:GetModel())
-    ragdoll:SetPos(ply:GetPos())
-    ragdoll:SetSkin(ply:GetSkin())
-    ragdoll.DeadPlayer = ply
+    ragdoll:SetModel(client:GetModel())
+    ragdoll:SetPos(client:GetPos())
+    ragdoll:SetSkin(client:GetSkin())
+    ragdoll.DeadPlayer = client
     ragdoll.Killer = attacker
     ragdoll.DmgInfo = dmginfo
 
-    local plyTable = ply:GetTable()
-    if ( plyTable.impulseLastFall and plyTable.impulseLastFall > CurTime() - 0.5 ) then
+    local clientTable = client:GetTable()
+    if ( clientTable.impulseLastFall and clientTable.impulseLastFall > CurTime() - 0.5 ) then
         ragdoll.FallDeath = true
     end
 
@@ -668,16 +661,16 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
     ragdoll.CanConstrain = false
     ragdoll.NoCarry = true
 
-    for k, v in pairs(ply:GetBodyGroups()) do
-        ragdoll:SetBodygroup(v.id, ply:GetBodygroup(v.id))
+    for k, v in pairs(client:GetBodyGroups()) do
+        ragdoll:SetBodygroup(v.id, client:GetBodygroup(v.id))
     end
 
-    hook.Run("PrePlayerDeathRagdoll", ply, ragdoll)
+    hook.Run("PrePlayerDeathRagdoll", client, ragdoll)
 
     ragdoll:Spawn()
     ragdoll:SetCollisionGroup(COLLISION_GROUP_WORLD)
 
-    local velocity = ply:GetVelocity()
+    local velocity = client:GetVelocity()
     for i = 0, ragdoll:GetPhysicsObjectCount() - 1 do
         local physObj = ragdoll:GetPhysicsObjectNum(i)
         if ( IsValid(physObj) ) then
@@ -685,7 +678,7 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
 
             local index = ragdoll:TranslatePhysBoneToBone(i)
             if ( index ) then
-                local pos, ang = ply:GetBonePosition(index)
+                local pos, ang = client:GetBonePosition(index)
 
                 physObj:SetPos(pos)
                 physObj:SetAngles(ang)
@@ -693,7 +686,7 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
         end
     end
 
-    hook.Run("PostPlayerDeathRagdoll", ply, ragdoll)
+    hook.Run("PostPlayerDeathRagdoll", client, ragdoll)
 
     timer.Simple(impulse.Config.BodyDeSpawnTime, function()
         if ( !IsValid(ragdoll) ) then return end
@@ -703,47 +696,47 @@ function GM:DoPlayerDeath(ply, attacker, dmginfo)
         timer.Simple(10, function()
             SafeRemoveEntity(ragdoll)
 
-            hook.Run("OnPlayerRagdollRemove", ply, ragdoll)
+            hook.Run("OnPlayerRagdollRemove", client, ragdoll)
         end)
     end)
 
     timer.Simple(0.1, function()
-        if ( !IsValid(ragdoll) or !IsValid(ply) ) then return end
+        if ( !IsValid(ragdoll) or !IsValid(client) ) then return end
 
         net.Start("impulseRagdollLink")
             net.WriteEntity(ragdoll)
-        net.Send(ply)
+        net.Send(client)
     end)
 
     return true
 end
 
-function GM:PlayerDeath(ply, killer)
+function GM:PlayerDeath(client, killer)
     local wait = impulse.Config.RespawnTime
-    if ( ply:IsDonator() ) then
+    if ( client:IsDonator() ) then
         wait = impulse.Config.RespawnTimeDonator
     end
 
-    local plyTable = ply:GetTable()
-    plyTable.impulseRespawnWait = CurTime() + wait
+    local clientTable = client:GetTable()
+    clientTable.impulseRespawnWait = CurTime() + wait
 
-    local money = ply:GetMoney()
+    local money = client:GetMoney()
     if ( money > 0 ) then
-        ply:SetMoney(0)
-        impulse.Currency:SpawnMoney(ply:GetPos(), money)
+        client:SetMoney(0)
+        impulse.Currency:SpawnMoney(client:GetPos(), money)
     end
 
-    if ( !plyTable.impulseBeenInventorySetup ) then
+    if ( !clientTable.impulseBeenInventorySetup ) then
         return
     end
 
-    ply:UnEquipInventory()
+    client:UnEquipInventory()
 
-    local shouldSpawn = hook.Run("PlayerShouldDropDeathItems", ply, killer)
+    local shouldSpawn = hook.Run("PlayerShouldDropDeathItems", client, killer)
     if ( shouldSpawn != false ) then
-        local inv = ply:GetInventory()
+        local inv = client:GetInventory()
         local restorePoint = {}
-        local pos = ply:LocalToWorld(ply:OBBCenter())
+        local pos = client:LocalToWorld(client:OBBCenter())
         local dropped = 0
 
         for k, v in pairs(inv) do
@@ -766,42 +759,42 @@ function GM:PlayerDeath(ply, killer)
             end
         end
 
-        hook.Run("PlayerDropDeathItems", ply, killer, pos, dropped, inv)
+        hook.Run("PlayerDropDeathItems", client, killer, pos, dropped, inv)
 
-        plyTable.InventoryRestorePoint = restorePoint
+        clientTable.InventoryRestorePoint = restorePoint
     end
 
-    ply:ClearInventory(1)
-    plyTable.HasDied = true
+    client:ClearInventory(1)
+    clientTable.HasDied = true
 end
 
-function GM:PlayerSilentDeath(ply)
-    local plyTable = ply:GetTable()
-    plyTable.IsKillSilent = true
-    plyTable.TempWeapons = {}
+function GM:PlayerSilentDeath(client)
+    local clientTable = client:GetTable()
+    clientTable.IsKillSilent = true
+    clientTable.TempWeapons = {}
 
-    for k, v in pairs(ply:GetWeapons()) do
-        plyTable.TempWeapons[k] = {weapon = v:GetClass(), clip = v:Clip1()}
+    for k, v in pairs(client:GetWeapons()) do
+        clientTable.TempWeapons[k] = {weapon = v:GetClass(), clip = v:Clip1()}
     end
 
-    plyTable.TempAmmo = ply:GetAmmo()
+    clientTable.TempAmmo = client:GetAmmo()
 
-    local weapon = ply:GetActiveWeapon()
+    local weapon = client:GetActiveWeapon()
     if ( IsValid(weapon) ) then
-        plyTable.TempSelected = weapon:GetClass()
-        plyTable.TempSelectedRaised = ply:IsWeaponRaised()
+        clientTable.TempSelected = weapon:GetClass()
+        clientTable.TempSelectedRaised = client:IsWeaponRaised()
     end
 end
 
 local nextDeathThink = 0
-function GM:PlayerDeathThink(ply)
+function GM:PlayerDeathThink(client)
     local curTime = CurTime()
     if ( curTime < nextDeathThink ) then return end
     nextDeathThink = curTime + 0.5
 
-    local plyTable = ply:GetTable()
-    if ( !plyTable.impulseRespawnWait or plyTable.impulseRespawnWait < CurTime() ) then
-        ply:Spawn()
+    local clientTable = client:GetTable()
+    if ( !clientTable.impulseRespawnWait or clientTable.impulseRespawnWait < CurTime() ) then
+        client:Spawn()
     end
 
     return true
@@ -815,52 +808,52 @@ function GM:CanPlayerSuicide()
     return false
 end
 
-function GM:OnPlayerChangedTeam(ply)
-    local plyTable = ply:GetTable()
-    if ( plyTable.BuyableTeamRemove ) then
-        for v, k in pairs(plyTable.BuyableTeamRemove) do
-            if ( IsValid(v) and v.BuyableOwner == ply ) then
+function GM:OnPlayerChangedTeam(client)
+    local clientTable = client:GetTable()
+    if ( clientTable.BuyableTeamRemove ) then
+        for v, k in pairs(clientTable.BuyableTeamRemove) do
+            if ( IsValid(v) and v.BuyableOwner == client ) then
                 SafeRemoveEntity(v)
             end
         end
     end
 end
 
-function GM:SetupPlayerVisibility(ply)
-    local plyTable = ply:GetTable()
-    if ( plyTable.extraPVS ) then
-        AddOriginToPVS(plyTable.extraPVS)
+function GM:SetupPlayerVisibility(client)
+    local clientTable = client:GetTable()
+    if ( clientTable.extraPVS ) then
+        AddOriginToPVS(clientTable.extraPVS)
     end
 
-    if ( plyTable.extraPVS2 ) then
-        AddOriginToPVS(plyTable.extraPVS2)
+    if ( clientTable.extraPVS2 ) then
+        AddOriginToPVS(clientTable.extraPVS2)
     end
 end
 
-function GM:KeyPress(ply, key)
-    if ( ply:IsAFK() ) then
-        ply:UnMakeAFK()
+function GM:KeyPress(client, key)
+    if ( client:IsAFK() ) then
+        client:UnMakeAFK()
     end
 
-    local plyTable = ply:GetTable()
-    plyTable.impulseAFKTimer = CurTime() + impulse.Config.AFKTime
+    local clientTable = client:GetTable()
+    clientTable.impulseAFKTimer = CurTime() + impulse.Config.AFKTime
 
     if ( key == IN_RELOAD ) then
-        timer.Create("impulseRaiseWait" .. ply:SteamID64(), impulse.Config.WeaponRaiseTime or 0.3, 1, function()
-            if ( IsValid(ply) ) then
-                ply:ToggleWeaponRaised()
+        timer.Create("impulseRaiseWait" .. client:SteamID64(), impulse.Config.WeaponRaiseTime or 0.3, 1, function()
+            if ( IsValid(client) ) then
+                client:ToggleWeaponRaised()
             end
         end)
-    elseif key == IN_USE and !ply:InVehicle() then
+    elseif key == IN_USE and !client:InVehicle() then
         local trace = {}
-        trace.start = ply:GetShootPos()
-        trace.endpos = trace.start + ply:GetAimVector() * 96
-        trace.filter = ply
+        trace.start = client:GetShootPos()
+        trace.endpos = trace.start + client:GetAimVector() * 96
+        trace.filter = client
 
         local entity = util.TraceLine(trace).Entity
-        if ( IsValid(entity) and entity:IsPlayer() and ply:CanArrest(entity) ) then
+        if ( IsValid(entity) and entity:IsPlayer() and client:CanArrest(entity) ) then
             if ( !entity.impulseArrestedDragger ) then
-                ply:DragPlayer(entity)
+                client:DragPlayer(entity)
             else
                 entity:StopDrag()
             end
@@ -868,10 +861,10 @@ function GM:KeyPress(ply, key)
     end
 end
 
-function GM:PlayerUse(ply, entity)
-    local plyTable = ply:GetTable()
-    if ( ( plyTable.useNext or 0)  > CurTime() ) then return false end
-    plyTable.useNext = CurTime() + 0.3
+function GM:PlayerUse(client, entity)
+    local clientTable = client:GetTable()
+    if ( ( clientTable.useNext or 0)  > CurTime() ) then return false end
+    clientTable.useNext = CurTime() + 0.3
 
     local buttons = impulse.Config.Buttons
     if ( !buttons or table.Count(buttons) < 1 ) then return end
@@ -882,24 +875,24 @@ function GM:PlayerUse(ply, entity)
     local btnData = impulse.Config.Buttons[btnKey]
     if ( !btnData ) then return end
 
-    if ( btnData.customCheck and !btnData.customCheck(ply, entity) ) then
-        plyTable.useNext = CurTime() + 1
+    if ( btnData.customCheck and !btnData.customCheck(client, entity) ) then
+        clientTable.useNext = CurTime() + 1
         return false
     end
 
     if ( btnData.doorgroup ) then
-        local teamDoorGroups = plyTable.DoorGroups
+        local teamDoorGroups = clientTable.DoorGroups
         if ( !teamDoorGroups or !table.HasValue(teamDoorGroups, btnData.doorgroup) ) then
-            plyTable.useNext = CurTime() + 1
-            ply:Notify("You don't have access to use this button.")
+            clientTable.useNext = CurTime() + 1
+            client:Notify("You don't have access to use this button.")
             return false
         end
     end
 end
 
-function GM:KeyRelease(ply, key)
+function GM:KeyRelease(client, key)
     if ( key == IN_RELOAD ) then
-        timer.Remove("impulseRaiseWait" .. ply:SteamID64())
+        timer.Remove("impulseRaiseWait" .. client:SteamID64())
     end
 end
 
@@ -989,24 +982,24 @@ function GM:PostCleanupMap()
     hook.Run("InitPostEntity")
 end
 
-function GM:GetFallDamage(ply, speed)
-    local plyTable = ply:GetTable()
-    plyTable.impulseLastFall = CurTime()
+function GM:GetFallDamage(client, speed)
+    local clientTable = client:GetTable()
+    clientTable.impulseLastFall = CurTime()
 
     local dmg = speed * 0.05
     if ( speed > 780 ) then
         dmg = dmg + 75
     end
 
-    local shouldBreakLegs = hook.Run("PlayerShouldBreakLegs", ply, dmg)
+    local shouldBreakLegs = hook.Run("PlayerShouldBreakLegs", client, dmg)
     if ( shouldBreakLegs != nil and shouldBreakLegs == false ) then
         return dmg
     end
 
-    local strength = ply:GetSkillLevel("strength")
+    local strength = client:GetSkillLevel("strength")
     local r = math.random(0, 20 + (strength * 2))
-    if ( r <= 20 and dmg < ply:Health() ) then
-        ply:BreakLegs()
+    if ( r <= 20 and dmg < client:Health() ) then
+        client:BreakLegs()
     end
 
     return dmg
@@ -1041,84 +1034,84 @@ end
 
 local nextAFK = 0
 local nextPlayerThink = 0
-function GM:PlayerThink(ply)
+function GM:PlayerThink(client)
     local curTime = CurTime()
     if ( curTime < nextPlayerThink ) then return end
     nextPlayerThink = curTime + 0.2
 
-    if ( !IsValid(ply) or ply:Team() == 0 ) then return end
+    if ( !IsValid(client) or client:Team() == 0 ) then return end
 
-    local plyTable = ply:GetTable()
-    if ( !plyTable.impulseNextHunger ) then
-        plyTable.impulseNextHunger = curTime + impulse.Config.HungerTime
+    local clientTable = client:GetTable()
+    if ( !clientTable.impulseNextHunger ) then
+        clientTable.impulseNextHunger = curTime + impulse.Config.HungerTime
     end
 
-    if ( !plyTable.impulseNextHeal ) then
-        plyTable.impulseNextHeal = curTime + impulse.Config.HungerHealTime
+    if ( !clientTable.impulseNextHeal ) then
+        clientTable.impulseNextHeal = curTime + impulse.Config.HungerHealTime
     end
 
-    if ( ply:Alive() ) then
-        if ( plyTable.impulseNextHunger < curTime ) then
-            local shouldTakeHunger = hook.Run("PlayerShouldGetHungry", ply)
+    if ( client:Alive() ) then
+        if ( clientTable.impulseNextHunger < curTime ) then
+            local shouldTakeHunger = hook.Run("PlayerShouldGetHungry", client)
             if ( shouldTakeHunger == nil or shouldTakeHunger ) then
-                ply:TakeHunger(1)
+                client:TakeHunger(1)
             end
 
-            if ( ply:GetHunger() < 1 ) then
-                if ( ply:Health() > 10 ) then
-                    ply:TakeDamage(1, ply, ply)
+            if ( client:GetHunger() < 1 ) then
+                if ( client:Health() > 10 ) then
+                    client:TakeDamage(1, client, client)
                 end
 
-                plyTable.impulseNextHunger = curTime + 1
+                clientTable.impulseNextHunger = curTime + 1
             else
-                plyTable.impulseNextHunger = curTime + impulse.Config.HungerTime
+                clientTable.impulseNextHunger = curTime + impulse.Config.HungerTime
             end
         end
 
-        if ( plyTable.impulseNextHeal < curTime ) then
-            local hunger = ply:GetHunger()
-            if ( hunger >= 90 and ply:Health() < 75 ) then
-                ply:SetHealth(math.Clamp(ply:Health() + 1, 0, 75))
-                plyTable.impulseNextHeal = curTime + impulse.Config.HungerHealTime
+        if ( clientTable.impulseNextHeal < curTime ) then
+            local hunger = client:GetHunger()
+            if ( hunger >= 90 and client:Health() < 75 ) then
+                client:SetHealth(math.Clamp(client:Health() + 1, 0, 75))
+                clientTable.impulseNextHeal = curTime + impulse.Config.HungerHealTime
             else
-                plyTable.impulseNextHeal = curTime + 2
+                clientTable.impulseNextHeal = curTime + 2
             end
         end
     end
 
-    if ( !plyTable.impulseNextHear or plyTable.impulseNextHear < CurTime() ) then
-        canHearCheck(ply)
-        plyTable.impulseNextHear = curTime + 1
+    if ( !clientTable.impulseNextHear or clientTable.impulseNextHear < CurTime() ) then
+        canHearCheck(client)
+        clientTable.impulseNextHear = curTime + 1
     end
 
     if ( curTime > nextAFK ) then
         nextAFK = curTime + 2
 
-        if ( plyTable.impulseAFKTimer and plyTable.impulseAFKTimer < curTime and !impulse.Arrest.Dragged[ply] and !ply:IsAFK() ) then
-            ply:MakeAFK()
+        if ( clientTable.impulseAFKTimer and clientTable.impulseAFKTimer < curTime and !impulse.Arrest.Dragged[client] and !client:IsAFK() ) then
+            client:MakeAFK()
         end
-    
-        plyTable.impulseLastPos = ply:GetPos()
 
-        if ( plyTable.impulseBrokenLegs and plyTable.BrokenLegsTime < curTime and ply:Alive() and ply:HasBrokenLegs() ) then
-            ply:FixLegs()
-            ply:Notify("Your broken legs have healed naturally.")
+        clientTable.impulseLastPos = client:GetPos()
+
+        if ( clientTable.impulseBrokenLegs and clientTable.BrokenLegsTime < curTime and client:Alive() and client:HasBrokenLegs() ) then
+            client:FixLegs()
+            client:Notify("Your broken legs have healed naturally.")
         end
     end
 
-    local plyTable = ply:GetTable()
-    if ( ( plyTable.impulseNextAmbientSound or 0 ) < CurTime() ) then
-        local ambientSound = ply:GetAmbientSound()
+    local clientTable = client:GetTable()
+    if ( ( clientTable.impulseNextAmbientSound or 0 ) < CurTime() ) then
+        local ambientSound = client:GetAmbientSound()
         if ( ambientSound and ambientSound != "" ) then
-            ply:EmitSound(ambientSound, 60, nil, 0.3, CHAN_AUTO)
+            client:EmitSound(ambientSound, 60, nil, 0.3, CHAN_AUTO)
 
-            plyTable.impulseNextAmbientSound = CurTime() + math.random(30, 120)
+            clientTable.impulseNextAmbientSound = CurTime() + math.random(30, 120)
         end
     end
 end
 
-function GM:PlayerCanPickupWeapon(ply)
-    if ( ply:GetNetVar("arrested", false) ) then return false end
+function GM:PlayerCanPickupWeapon(client)
+    if ( client:GetRelay("arrested", false) ) then return false end
 
     return true
 end
@@ -1129,42 +1122,42 @@ local exploitRagBlock = {
     ["models/zombie/zmanims.mdl"] = true
 }
 
-function GM:PlayerSpawnRagdoll(ply, model)
+function GM:PlayerSpawnRagdoll(client, model)
     if ( exploitRagBlock[model] ) then return false end
 
-    return ply:IsLeadAdmin()
+    return client:IsLeadAdmin()
 end
 
-function GM:PlayerSpawnSENT(ply)
-    return ply:IsSuperAdmin()
+function GM:PlayerSpawnSENT(client)
+    return client:IsSuperAdmin()
 end
 
-function GM:PlayerSpawnSWEP(ply)
-    return ply:IsSuperAdmin()
+function GM:PlayerSpawnSWEP(client)
+    return client:IsSuperAdmin()
 end
 
-function GM:PlayerGiveSWEP(ply)
-    return ply:IsSuperAdmin()
+function GM:PlayerGiveSWEP(client)
+    return client:IsSuperAdmin()
 end
 
-function GM:PlayerSpawnEffect(ply)
-    return ply:IsAdmin()
+function GM:PlayerSpawnEffect(client)
+    return client:IsAdmin()
 end
 
-function GM:PlayerSpawnNPC(ply)
-    return ply:IsSuperAdmin() or ( ply:IsAdmin() and impulse.Ops.EventManager.GetEventMode() )
+function GM:PlayerSpawnNPC(client)
+    return client:IsSuperAdmin() or ( client:IsAdmin() and impulse.Ops.EventManager.GetEventMode() )
 end
 
-function GM:PlayerSpawnProp(ply, model)
-    local plyTable = ply:GetTable()
-    if ( !ply:Alive() or !plyTable.impulseBeenSetup or ply:GetNetVar("arrested", false) ) then return false end
+function GM:PlayerSpawnProp(client, model)
+    local clientTable = client:GetTable()
+    if ( !client:Alive() or !clientTable.impulseBeenSetup or client:GetRelay("arrested", false) ) then return false end
 
-    if ( ply:IsAdmin() ) then return true end
+    if ( client:IsAdmin() ) then return true end
 
     local limit
     local price
 
-    if ( ply:IsDonator() ) then
+    if ( client:IsDonator() ) then
         limit = impulse.Config.PropLimitDonator
         price = impulse.Config.PropPriceDonator
     else
@@ -1172,58 +1165,58 @@ function GM:PlayerSpawnProp(ply, model)
         price = impulse.Config.PropPrice
     end
 
-    if ( ply:GetPropCount(true) >= limit ) then
-        ply:Notify("You have reached your prop limit.")
+    if ( client:GetPropCount(true) >= limit ) then
+        client:Notify("You have reached your prop limit.")
         return false
     end
 
-    if ( ply:CanAfford(price) ) then
-        ply:TakeMoney(price)
-        ply:Notify("You have purchased a prop for " .. impulse.Config.CurrencyPrefix .. price .. ".")
+    if ( client:CanAfford(price) ) then
+        client:TakeMoney(price)
+        client:Notify("You have purchased a prop for " .. impulse.Config.CurrencyPrefix .. price .. ".")
     else
-        ply:Notify("You need " .. impulse.Config.CurrencyPrefix .. price .. " to spawn this prop.")
+        client:Notify("You need " .. impulse.Config.CurrencyPrefix .. price .. " to spawn this prop.")
         return false
     end
 
     return true
 end
 
-function GM:PlayerSpawnedProp(ply, model, ent)
-    ply:AddPropCount(ent)
+function GM:PlayerSpawnedProp(client, model, ent)
+    client:AddPropCount(ent)
 end
 
-function GM:PlayerSpawnVehicle(ply, model)
-    if ( ply:GetNetVar("arrested", false) ) then return false end
+function GM:PlayerSpawnVehicle(client, model)
+    if ( client:GetRelay("arrested", false) ) then return false end
 
-    if ( ply:IsDonator() and ( model:find("chair") or model:find("seat") or model:find("pod") ) ) then
-        local plyTable = ply:GetTable()
+    if ( client:IsDonator() and ( model:find("chair") or model:find("seat") or model:find("pod") ) ) then
+        local clientTable = client:GetTable()
         local count = 0
-        plyTable.SpawnedVehicles = plyTable.SpawnedVehicles or {}
+        clientTable.SpawnedVehicles = clientTable.SpawnedVehicles or {}
 
-        for v, k in pairs(plyTable.SpawnedVehicles) do
+        for v, k in pairs(clientTable.SpawnedVehicles) do
             if k and IsValid(k) then
                 count = count + 1
             else
-                plyTable.SpawnedVehicles[v] = nil
+                clientTable.SpawnedVehicles[v] = nil
             end
         end
 
         if count >= impulse.Config.ChairsLimit then
-            ply:Notify("You have spawned the maximum amount of chairs.")
+            client:Notify("You have spawned the maximum amount of chairs.")
             return false
         end
 
         return true
     else
-        return ply:IsSuperAdmin()
+        return client:IsSuperAdmin()
     end
 end
 
-function GM:PlayerSpawnedVehicle(ply, ent)
-    local plyTable = ply:GetTable()
-    plyTable.SpawnedVehicles = plyTable.SpawnedVehicles or {}
+function GM:PlayerSpawnedVehicle(client, ent)
+    local clientTable = client:GetTable()
+    clientTable.SpawnedVehicles = clientTable.SpawnedVehicles or {}
 
-    table.insert(plyTable.SpawnedVehicles, ent)
+    table.insert(clientTable.SpawnedVehicles, ent)
 end
 
 function GM:CanDrive()
@@ -1242,10 +1235,10 @@ local adminProp = {
     ["skin"] = true
 }
 
-function GM:CanProperty(ply, prop)
+function GM:CanProperty(client, prop)
     if ( whitelistProp[prop] ) then return true end
 
-    if ( ply:IsAdmin() and adminProp[prop] ) then return true end
+    if ( client:IsAdmin() and adminProp[prop] ) then return true end
 
     return false
 end
@@ -1301,13 +1294,13 @@ local adminWorldRemoveWhitelist = {
     ["prop_ragdoll"] = true
 }
 
-function GM:CanTool(ply, tr, tool)
-    if ( !ply:IsAdmin() and tool == "spawner" ) then return false end
+function GM:CanTool(client, tr, tool)
+    if ( !client:IsAdmin() and tool == "spawner" ) then return false end
 
     if ( bannedTools[tool] ) then return false end
 
-    if ( donatorTools[tool] and !ply:IsDonator() ) then
-        ply:Notify("This tool is restricted to donators only.")
+    if ( donatorTools[tool] and !client:IsDonator() ) then
+        client:Notify("This tool is restricted to donators only.")
         return false
     end
 
@@ -1315,7 +1308,7 @@ function GM:CanTool(ply, tr, tool)
     if ( IsValid(ent) ) then
         if ent.onlyremover then
             if tool == "remover" then
-                return ply:IsAdmin() or ply:IsSuperAdmin()
+                return client:IsAdmin() or client:IsSuperAdmin()
             else
                 return false
             end
@@ -1325,17 +1318,17 @@ function GM:CanTool(ply, tr, tool)
             return false
         end
 
-        if tool == "remover" and ply:IsAdmin() and !ply:IsSuperAdmin() then
+        if tool == "remover" and client:IsAdmin() and !client:IsSuperAdmin() then
             local owner = ent:CPPIGetOwner()
 
             if not owner and !adminWorldRemoveWhitelist[ent:GetClass()] then
-                ply:Notify("You can not remove this entity.")
+                client:Notify("You can not remove this entity.")
                 return false
             end
         end
 
         if string.sub(ent:GetClass(), 1, 8) == "impulse_" then
-            if tool != "remover" and !ply:IsSuperAdmin() then
+            if tool != "remover" and !client:IsSuperAdmin() then
                 return false
             end
         end
@@ -1381,14 +1374,14 @@ local whitelistDupeEnts = {
     ["prop_physics"] = true
 }
 
-function GM:ADVDupeIsAllowed(ply, class, entclass) -- adv dupe 2 can be easily exploited, this fixes it. you must have the impulse version of AD2 for this to work
+function GM:ADVDupeIsAllowed(client, class, entclass) -- adv dupe 2 can be easily exploited, this fixes it. you must have the impulse version of AD2 for this to work
     if ( bannedDupeEnts[class] ) then return false end
 
     if ( donatorDupeEnts[class] ) then
-        if ( ply:IsDonator() ) then
+        if ( client:IsDonator() ) then
             return true
         else
-            ply:Notify("This entity is restricted to donators only.")
+            client:Notify("This entity is restricted to donators only.")
             return false
         end
     end
@@ -1398,34 +1391,34 @@ function GM:ADVDupeIsAllowed(ply, class, entclass) -- adv dupe 2 can be easily e
     return false
 end
 
-function GM:SetupMove(ply, mvData)
-    local plyTable = ply:GetTable()
-    if ( IsValid(plyTable.impulseArrestedDragging) ) then
+function GM:SetupMove(client, mvData)
+    local clientTable = client:GetTable()
+    if ( IsValid(clientTable.impulseArrestedDragging) ) then
         mvData:SetMaxClientSpeed(impulse.Config.WalkSpeed - 30)
     end
 end
 
-function GM:CanPlayerEnterVehicle(ply, veh)
-    local plyTable = ply:GetTable()
-    if ( ply:GetNetVar("arrested", false) ) or plyTable.impulseArrestedDragging then return false end
+function GM:CanPlayerEnterVehicle(client, veh)
+    local clientTable = client:GetTable()
+    if ( client:GetRelay("arrested", false) ) or clientTable.impulseArrestedDragging then return false end
 
     return true
 end
 
-function GM:CanExitVehicle(veh, ply)
-    if ( ply:GetNetVar("arrested", false) ) then return false end
+function GM:CanExitVehicle(veh, client)
+    if ( client:GetRelay("arrested", false) ) then return false end
 
     return true
 end
 
-function GM:PlayerSetHandsModel(ply, hands)
-    local handModel = impulse.Teams.Stored[ply:Team()].handModel
+function GM:PlayerSetHandsModel(client, hands)
+    local handModel = impulse.Teams.Stored[client:Team()].handModel
     if ( handModel ) then
         hands:SetModel(handModel)
         return
     end
 
-    local simplemodel = player_manager.TranslateToPlayerModelName(ply:GetModel())
+    local simplemodel = player_manager.TranslateToPlayerModelName(client:GetModel())
     local info = player_manager.TranslatePlayerHands(simplemodel)
     if ( info ) then
         hands:SetModel(info.model)
@@ -1438,16 +1431,16 @@ function GM:PlayerSpray()
     return true
 end
 
-function GM:PlayerShouldTakeDamage(ply, attacker)
-    if ply:Team() == 0 then return false end
+function GM:PlayerShouldTakeDamage(client, attacker)
+    if client:Team() == 0 then return false end
 
-    local plyTable = ply:GetTable()
-    if plyTable.SpawnProtection and attacker:IsPlayer() then return false end
+    local clientTable = client:GetTable()
+    if clientTable.SpawnProtection and attacker:IsPlayer() then return false end
 
-    if ( attacker and IsValid(attacker) and attacker:IsPlayer() and attacker != Entity(0) and attacker != ply ) then
+    if ( attacker and IsValid(attacker) and attacker:IsPlayer() and attacker != Entity(0) and attacker != client ) then
         local curTime = CurTime()
-        if ( ( plyTable.impulseNextStorage or 0 ) < curTime ) then
-            plyTable.impulseNextStorage = curTime + 60
+        if ( ( clientTable.impulseNextStorage or 0 ) < curTime ) then
+            clientTable.impulseNextStorage = curTime + 60
         end
 
         attacker.impulseNextStorage = curTime + 180
@@ -1456,25 +1449,25 @@ function GM:PlayerShouldTakeDamage(ply, attacker)
     return true
 end
 
-function GM:LongswordCalculateMeleeDamage(ply, damage, ent)
-    local skill = ply:GetSkillLevel("strength")
+function GM:LongswordCalculateMeleeDamage(client, damage, ent)
+    local skill = client:GetSkillLevel("strength")
     local dmg = damage * (1 + (skill * .059))
-    local override = hook.Run("CalculateMeleeDamage", ply, dmg, ent)
+    local override = hook.Run("CalculateMeleeDamage", client, dmg, ent)
 
     return override or dmg
 end
 
-function GM:LongswordMeleeHit(ply)
-    local plyTable = ply:GetTable()
-    if ( plyTable.impulseStrengthUp and plyTable.impulseStrengthUp > 5 ) then
-        ply:AddSkillXP("strength", math.random(1, 6))
-        plyTable.impulseStrengthUp = 0
+function GM:LongswordMeleeHit(client)
+    local clientTable = client:GetTable()
+    if ( clientTable.impulseStrengthUp and clientTable.impulseStrengthUp > 5 ) then
+        client:AddSkillXP("strength", math.random(1, 6))
+        clientTable.impulseStrengthUp = 0
         return
     end
 
-    plyTable.impulseStrengthUp = ( plyTable.impulseStrengthUp or 0 ) + 1
+    clientTable.impulseStrengthUp = ( clientTable.impulseStrengthUp or 0 ) + 1
 end
 
-function GM:LongswordHitEntity(ply, ent)
+function GM:LongswordHitEntity(client, ent)
     -- if tree then vood ect.
 end

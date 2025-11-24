@@ -23,8 +23,8 @@ function ENT:Initialize()
     end)
 end
 
-function ENT:SpawnFunction(ply, trace, class)
-    local angles = (trace.HitPos - ply:GetPos()):Angle()
+function ENT:SpawnFunction(client, trace, class)
+    local angles = (trace.HitPos - client:GetPos()):Angle()
     angles.r = 0
     angles.p = 0
     angles.y = angles.y + 180
