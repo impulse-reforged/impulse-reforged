@@ -1,3 +1,3 @@
-function PLUGIN:PlayerShouldGetHungry(ply)
-    if ply:IsAdmin() and ply:GetMoveType() == MOVETYPE_NOCLIP then return false end
+function PLUGIN:PlayerShouldGetHungry(client)
+    if client:IsAdmin() and client:GetMoveType() == MOVETYPE_NOCLIP then return false end
 end

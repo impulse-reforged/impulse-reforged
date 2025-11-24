@@ -56,17 +56,17 @@ end
 
 local NEXT_CHECK = NEXT_CHECK or 0
 local CACHED_DATA = CACHED_DATA or {}
-function impulse.Ops.SM.Open(ply)
+function impulse.Ops.SM.Open(client)
     if NEXT_CHECK < CurTime() then
         CalculateData(function(data)
-            if IsValid(ply) then
+            if IsValid(client) then
                 local data = pon.encode(data)
                 CACHED_DATA = data
 
                 net.Start("impulseOpsSMOpen")
                 net.WriteUInt(#data, 32)
                 net.WriteData(data, #data)
-                net.Send(ply)
+                net.Send(client)
             end
         end)
 
@@ -80,5 +80,5 @@ function impulse.Ops.SM.Open(ply)
     net.Start("impulseOpsSMOpen")
     net.WriteUInt(#data, 32)
     net.WriteData(data, #data)
-    net.Send(ply)
+    net.Send(client)
 end

@@ -2,8 +2,8 @@ impulse.Ops = impulse.Ops or {}
 impulse.Ops.AutoMod = impulse.Ops.AutoMod or {}
 
 
-function impulse.Ops.AutoMod.Ban(ply, reason, risk, details)
-    local steamid = ply:SteamID64()
+function impulse.Ops.AutoMod.Ban(client, reason, risk, details)
+    local steamid = client:SteamID64()
 
     for v, k in player.Iterator() do
         if k:IsAdmin() then
@@ -14,22 +14,22 @@ function impulse.Ops.AutoMod.Ban(ply, reason, risk, details)
     local ban_reason = "AutoMod ban for suspected "..reason..". Appeal @ impulse-community.com for review."
 
     if GExtension then
-        GExtension:AddBan(ply:SteamID64(), 0, ban_reason, "0", GExtension:CurrentTime(), function()
+        GExtension:AddBan(client:SteamID64(), 0, ban_reason, "0", GExtension:CurrentTime(), function()
             GExtension:InitBans()
         end)
     elseif VyHub then
-        VyHub.Ban:create(ply:SteamID64(), nil, ban_reason)
+        VyHub.Ban:create(client:SteamID64(), nil, ban_reason)
     end
 
     local embeds = {
         title = "AutoMod ban issued",
         description = "User was identified as high risk by the automated moderator.\n<@&"..impulse.Config.DiscordLeadModRoleID.."> please investigate and review.",
-        url = "https://panel.impulse-community.com/index.php?t=admin_bans&id="..ply:SteamID64(),
+        url = "https://panel.impulse-community.com/index.php?t=admin_bans&id="..client:SteamID64(),
         color = 7774976,
         fields = {
             {
                 name = "User",
-                value = "**"..ply:SteamName().."** ("..ply:SteamID64()..") ("..ply:Nick()..")"
+                value = "**"..client:SteamName().."** ("..client:SteamID64()..") ("..client:Nick()..")"
             },
             {
                 name = "Risk Score",
@@ -46,8 +46,8 @@ function impulse.Ops.AutoMod.Ban(ply, reason, risk, details)
         }
     }
 
-    if IsValid(ply) then
-        ply:Kick("Automatic punishment issued")
+    if IsValid(client) then
+        client:Kick("Automatic punishment issued")
     end
 
                     if reqwest then

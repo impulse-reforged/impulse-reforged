@@ -10,14 +10,14 @@ local timeoutCommand = {
     description = "Gives the player an OOC ban for the time provided, in minutes. Reason is optional.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
+    onRun = function(client, arg, rawText)
         local name = arg[1]
         local time = arg[2]
         local reason = arg[3]
         local plyTarget = impulse.Util:FindPlayer(name)
 
         if not time or not tonumber(time) then
-            return ply:Notify("Please specific a valid time value in minutes.")
+            return client:Notify("Please specific a valid time value in minutes.")
         end
 
         time = tonumber(time)
@@ -41,7 +41,7 @@ local timeoutCommand = {
 
             local t = (time / 60)
 
-            ply:Notify("You have issued "..plyTarget:SteamName().." an OOC timeout for "..t.." minutes.")
+            client:Notify("You have issued "..plyTarget:SteamName().." an OOC timeout for "..t.." minutes.")
 
             for v, k in player.Iterator() do
                 k:AddChatText(infoCol, plyTarget:SteamName().." has been given an OOC timeout for "..t.." minutes by a game moderator.")
@@ -51,7 +51,7 @@ local timeoutCommand = {
             net.WriteUInt(os.time() + time, 16)
             net.Send(plyTarget)
         else
-            return ply:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find player: "..tostring(name))
         end
     end
 }
@@ -62,15 +62,15 @@ local unTimeoutCommand = {
     description = "Revokes an OOC communication timeout from the player specified.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
+    onRun = function(client, arg, rawText)
         local name = arg[1]
         local plyTarget = impulse.Util:FindPlayer(name)
 
         if plyTarget then
             impulse.OOCTimeouts[plyTarget:SteamID64()] = nil
-            ply:Notify("The OOC communication timeout has been removed from "..plyTarget:Name()..".")
+            client:Notify("The OOC communication timeout has been removed from "..plyTarget:Name()..".")
         else
-            return ply:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find player: "..tostring(name))
         end
     end
 }

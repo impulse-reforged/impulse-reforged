@@ -2,17 +2,17 @@ local cleanupCommand = {
     description = "Removes all the props of the specified player.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
+    onRun = function(client, arg, rawText)
         local name = arg[1]
         local plyTarget = impulse.Util:FindPlayer(name)
 
         if plyTarget then
             impulse.Ops.CleanupPlayer(plyTarget)
 
-            plyTarget:Notify("Your props have been removed by a game moderator ("..ply:SteamName()..").")
-            ply:Notify("You have cleaned up "..plyTarget:Name().."'s props.")
+            plyTarget:Notify("Your props have been removed by a game moderator ("..client:SteamName()..").")
+            client:Notify("You have cleaned up "..plyTarget:Name().."'s props.")
         else
-            return ply:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find player: "..tostring(name))
         end
     end
 }
@@ -22,11 +22,11 @@ impulse.RegisterChatCommand("/cleanup", cleanupCommand)
 local cleanupAllCommand = {
     description = "Cleans up ALL props on the server. (optional) countdown argument (in seconds)",
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
+    onRun = function(client, arg, rawText)
         local countdown = arg[1]
 
         if DOING_CLEANUP and countdown then
-            return ply:Notify("A cleanup is already queued.")
+            return client:Notify("A cleanup is already queued.")
         end
 
         if countdown and tonumber(countdown) and tonumber(countdown) > 0 then
@@ -58,7 +58,7 @@ local cleanupAllCommand = {
                 k:Notify("WARNING: All props will be cleaned up in "..countdown.." seconds.")
             end
 
-            ply:Notify("Cleanup countdown for "..countdown.." seconds has started.")
+            client:Notify("Cleanup countdown for "..countdown.." seconds has started.")
         else
             impulse.Ops.CleanupAll()
 
@@ -74,9 +74,9 @@ impulse.RegisterChatCommand("/cleanupall", cleanupAllCommand)
 local clearDecalsCommand = {
     description = "Clears all decals on the server.",
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
+    onRun = function(client, arg, rawText)
         impulse.Ops.ClearDecals()
-        ply:Notify("You have cleared all the decals on the map.")
+        client:Notify("You have cleared all the decals on the map.")
     end
 }
 

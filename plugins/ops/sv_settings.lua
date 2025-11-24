@@ -1,8 +1,8 @@
 util.AddNetworkString("impulseOpsObserverHide")
-net.Receive("impulseOpsObserverHide", function(len, ply)
-    if not ply:IsAdmin() then return end
+net.Receive("impulseOpsObserverHide", function(len, client)
+    if not client:IsAdmin() then return end
 
     local val = net.ReadBool()
 
-    ply:SetNetVar("observerHide", val)
+    client:SetRelay("observerHide", val)
 end)

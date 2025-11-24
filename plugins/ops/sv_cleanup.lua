@@ -1,10 +1,10 @@
 impulse.Ops = impulse.Ops or {}
 
-function impulse.Ops.CleanupPlayer(ply)
+function impulse.Ops.CleanupPlayer(client)
     for v, k in ents.Iterator() do
         local owner = k:CPPIGetOwner()
 
-        if owner == ply then
+        if owner == client then
             if not k.IsBuyable then
                 k:Remove()
             end

@@ -17,20 +17,20 @@ util.AddNetworkString("opsReportDaleRepliedDo")
 util.AddNetworkString("opsReportDaleReplied")
 util.AddNetworkString("opsReportDaleClose")
 
-function impulse.Ops.ReportNew(ply, arg, rawText)
-    if ply.nextReport and ply.nextReport > CurTime() then
+function impulse.Ops.ReportNew(client, arg, rawText)
+    if client.nextReport and client.nextReport > CurTime() then
         return 
     end
 
     if string.len(rawText) > 600 then
-        return ply:Notify("Your message is too big. (600 characters max.)")    
+        return client:Notify("Your message is too big. (600 characters max.)")    
     end
 
     local reportId
 
     local hasActiveReport = false
     for id, data in pairs(impulse.Ops.Reports) do
-        if data[1] == ply then
+        if data[1] == client then
             hasActiveReport = true
             reportId = id
             break
@@ -42,10 +42,10 @@ function impulse.Ops.ReportNew(ply, arg, rawText)
 
         for v, k in player.Iterator() do
             if k:IsAdmin() then
-                reportId = reportId or table.insert(impulse.Ops.Reports, {ply, rawText, nil, CurTime()})
+                reportId = reportId or table.insert(impulse.Ops.Reports, {client, rawText, nil, CurTime()})
 
                 net.Start("opsNewReport")
-                net.WriteEntity(ply)
+                net.WriteEntity(client)
                 net.WriteUInt(reportId, 16)
                 net.WriteString(rawText)
                 net.Send(k)
@@ -55,17 +55,17 @@ function impulse.Ops.ReportNew(ply, arg, rawText)
             net.Start("opsReportMessage")
             net.WriteUInt(reportId, 16)
             net.WriteUInt(1, 4)
-            net.Send(ply)
+            net.Send(client)
 
-            opsSlackLog(":warning: *[NEW REPORT]* [#"..reportId.."] ".. ply:SteamName().. " (".. ply:Name().. ") ("..ply:SteamID64().."): ```"..rawText.."```")
+            opsSlackLog(":warning: *[NEW REPORT]* [#"..reportId.."] ".. client:SteamName().. " (".. client:Name().. ") ("..client:SteamID64().."): ```"..rawText.."```")
             return
         else
-            ply:Notify("Unfortunately, no game moderators are currently available to review your report. Please goto impulse-community.com and submit a ban request.")
+            client:Notify("Unfortunately, no game moderators are currently available to review your report. Please goto impulse-community.com and submit a ban request.")
             opsSlackLog(":exclamation: *A user is requesting help but no moderators are online!* Report: ```".. rawText.."```")
         end
     else
         if string.len(impulse.Ops.Reports[reportId][2]) > 3000 then
-            return ply:Notify("Your report has too many characters. You may not send any more updates for this report.")    
+            return client:Notify("Your report has too many characters. You may not send any more updates for this report.")    
         end
 
         local reportClaimant = impulse.Ops.Reports[reportId][3]
@@ -73,7 +73,7 @@ function impulse.Ops.ReportNew(ply, arg, rawText)
         for v, k in player.Iterator() do
             if k:IsAdmin() then
                 net.Start("opsReportUpdate")
-                net.WriteEntity(ply)
+                net.WriteEntity(client)
                 net.WriteUInt(reportId, 16)
                 net.WriteString(rawText)
                 net.Send(k)
@@ -81,17 +81,17 @@ function impulse.Ops.ReportNew(ply, arg, rawText)
         end
 
         impulse.Ops.Reports[reportId][2] = impulse.Ops.Reports[reportId][2].." + "..rawText
-        opsSlackLog(":speech_balloon: *[REPORT UPDATE]* [#"..reportId.."] ".. ply:SteamName().. " (".. ply:Name().. ") ("..ply:SteamID64().."): ```".. rawText.."```")
+        opsSlackLog(":speech_balloon: *[REPORT UPDATE]* [#"..reportId.."] ".. client:SteamName().. " (".. client:Name().. ") ("..client:SteamID64().."): ```".. rawText.."```")
 
         net.Start("opsReportMessage")
         net.WriteUInt(reportId, 16)
         net.WriteUInt(2, 4)
-        net.Send(ply)
+        net.Send(client)
     end
-    ply.nextReport = CurTime() + 2
+    client.nextReport = CurTime() + 2
 end
 
-function impulse.Ops.ReportClaim(ply, arg, rawText)
+function impulse.Ops.ReportClaim(client, arg, rawText)
     local reportId = tonumber(arg[1])
     local targetReport = impulse.Ops.Reports[reportId]
 
@@ -102,56 +102,56 @@ function impulse.Ops.ReportClaim(ply, arg, rawText)
         local reportStartTime = targetReport[4]
 
         if targetReport[3] and IsValid(targetReport[3]) then
-            return ply:AddChatText(newReportCol, "Report #"..reportId.." has already been claimed by "..targetReport[3]:SteamName())
+            return client:AddChatText(newReportCol, "Report #"..reportId.." has already been claimed by "..targetReport[3]:SteamName())
         end
 
         if not IsValid(reporter) then
-            return ply:AddChatText(newReportCol, "The player who submitted this report has left the game. Please close.")
+            return client:AddChatText(newReportCol, "The player who submitted this report has left the game. Please close.")
         end
 
         local hasClaimedReport
 
         for id, data in pairs(impulse.Ops.Reports) do
-            if data[3] and data[3] == ply then
+            if data[3] and data[3] == client then
                 hasClaimedReport = id
                 break
             end
         end
 
         if hasClaimedReport then
-            return ply:AddChatText(newReportCol, "You already have a claimed report in progress. Current report #"..hasClaimedReport)
+            return client:AddChatText(newReportCol, "You already have a claimed report in progress. Current report #"..hasClaimedReport)
         end
 
-        impulse.Ops.Reports[reportId] = {reporter, reportMessage, ply, reportStartTime, CurTime()}
+        impulse.Ops.Reports[reportId] = {reporter, reportMessage, client, reportStartTime, CurTime()}
 
         for v, k in player.Iterator() do
             if k:IsAdmin() then
                 net.Start("opsReportClaimed")
-                net.WriteEntity(ply)
+                net.WriteEntity(client)
                 net.WriteUInt(reportId, 16)
                 net.Send(k)
             end
         end
-        opsSlackLog(":passport_control: *[REPORT CLAIMED]* [#"..reportId.."] claimed by "..ply:SteamName().." ("..ply:SteamID64()..")")
+        opsSlackLog(":passport_control: *[REPORT CLAIMED]* [#"..reportId.."] claimed by "..client:SteamName().." ("..client:SteamID64()..")")
 
         net.Start("opsReportMessage")
         net.WriteUInt(reportId, 16)
         net.WriteUInt(3, 4)
-        net.WriteEntity(ply)
+        net.WriteEntity(client)
         net.Send(reporter)
     else
-        ply:AddChatText(claimedReportCol, "Report #"..arg[1].." does not exist.")
+        client:AddChatText(claimedReportCol, "Report #"..arg[1].." does not exist.")
     end
 end
 
-function impulse.Ops.ReportClose(ply, arg, rawText)
+function impulse.Ops.ReportClose(client, arg, rawText)
    local reportId = arg[1]
 
     if reportId then
         reportId = tonumber(reportId)
     else
         for id, data in pairs(impulse.Ops.Reports) do
-            if data[3] and data[3] == ply then
+            if data[3] and data[3] == client then
                 reportId = id
                 break
             end
@@ -159,7 +159,7 @@ function impulse.Ops.ReportClose(ply, arg, rawText)
     end
 
     if not reportId then
-        return ply:AddChatText(newReportCol, "You must claim a report or specify a report ID before closing it.")
+        return client:AddChatText(newReportCol, "You must claim a report or specify a report ID before closing it.")
     end
 
     local targetReport = impulse.Ops.Reports[reportId]
@@ -190,7 +190,7 @@ function impulse.Ops.ReportClose(ply, arg, rawText)
         for v, k in player.Iterator() do
             if k:IsAdmin() then
                 net.Start("opsReportClosed")
-                net.WriteEntity(ply)
+                net.WriteEntity(client)
                 net.WriteUInt(reportId, 16)
                 net.Send(k)
             end
@@ -200,26 +200,26 @@ function impulse.Ops.ReportClose(ply, arg, rawText)
             net.Start("opsReportMessage")
             net.WriteUInt(reportId, 16)
             net.WriteUInt(4, 4)
-            net.WriteEntity(ply)
+            net.WriteEntity(client)
             net.Send(reporter)
         end
 
-        if not IsValid(ply) or not ply:IsPlayer() then return end
+        if not IsValid(client) or not client:IsPlayer() then return end
 
-        opsSlackLog(":no_entry: *[REPORT CLOSED]* [#"..reportId.."] closed by "..ply:SteamName().." ("..ply:SteamID64()..")")
+        opsSlackLog(":no_entry: *[REPORT CLOSED]* [#"..reportId.."] closed by "..client:SteamName().." ("..client:SteamID64()..")")
     else
-        ply:AddChatText(claimedReportCol, "Report #"..reportId.." does not exist.")
+        client:AddChatText(claimedReportCol, "Report #"..reportId.." does not exist.")
     end
 end
 
-function impulse.Ops.ReportGoto(ply, arg, rawText)
+function impulse.Ops.ReportGoto(client, arg, rawText)
     local reportId = arg[1]
 
     if reportId then
         reportId = tonumber(reportId)
     else
         for id, data in pairs(impulse.Ops.Reports) do
-            if data[3] and data[3] == ply then
+            if data[3] and data[3] == client then
                 reportId = id
                 break
             end
@@ -227,7 +227,7 @@ function impulse.Ops.ReportGoto(ply, arg, rawText)
     end
 
     if not reportId then
-        return ply:AddChatText(newReportCol, "You must claim a report to use this command.")
+        return client:AddChatText(newReportCol, "You must claim a report to use this command.")
     end
 
     local targetReport = impulse.Ops.Reports[reportId]
@@ -236,28 +236,28 @@ function impulse.Ops.ReportGoto(ply, arg, rawText)
         local reporter = targetReport[1]
 
         if not IsValid(reporter) then
-            return ply:AddChatText(newReportCol, "The player who submitted this report has left the game. Please close.")
+            return client:AddChatText(newReportCol, "The player who submitted this report has left the game. Please close.")
         end
         
-        opsGoto(ply, reporter:GetPos())
-        ply:Notify("You have teleported to "..reporter:Nick()..".")
+        opsGoto(client, reporter:GetPos())
+        client:Notify("You have teleported to "..reporter:Nick()..".")
     else
-        ply:AddChatText(claimedReportCol, "Report #"..reportId.." does not exist.")
+        client:AddChatText(claimedReportCol, "Report #"..reportId.." does not exist.")
     end
 end
 
-function impulse.Ops.ReportMsg(ply, arg, rawText)
+function impulse.Ops.ReportMsg(client, arg, rawText)
     local reportId
 
     for id, data in pairs(impulse.Ops.Reports) do
-        if data[3] and data[3] == ply then
+        if data[3] and data[3] == client then
             reportId = id
             break
         end
     end
 
     if not reportId then
-        return ply:AddChatText(newReportCol, "You must claim a report to use this command.")
+        return client:AddChatText(newReportCol, "You must claim a report to use this command.")
     end
 
     local targetReport = impulse.Ops.Reports[reportId]
@@ -265,20 +265,20 @@ function impulse.Ops.ReportMsg(ply, arg, rawText)
         local reporter = targetReport[1]
 
         if not IsValid(reporter) then
-            return ply:AddChatText(newReportCol, "The player who submitted this report has left the game. Please close.")
+            return client:AddChatText(newReportCol, "The player who submitted this report has left the game. Please close.")
         end
 
         net.Start("opsReportAdminMessage")
-        net.WriteEntity(ply)
+        net.WriteEntity(client)
         net.WriteString(rawText)
         net.Send(reporter)
 
-        ply:Notify("Reply sent to "..reporter:Nick()..".")
+        client:Notify("Reply sent to "..reporter:Nick()..".")
     end
 end
 
-hook.Add("PostSetupPlayer", "impulseOpsReportSync", function(ply)
-    if not ply:IsAdmin() then return end
+hook.Add("PostSetupPlayer", "impulseOpsReportSync", function(client)
+    if not client:IsAdmin() then return end
 
     if table.Count(impulse.Ops.Reports) < 1 then return end
 
@@ -293,16 +293,16 @@ hook.Add("PostSetupPlayer", "impulseOpsReportSync", function(ply)
 
     net.Start("opsReportSync")
     net.WriteTable(reports)
-    net.Send(ply)
+    net.Send(client)
 end)
 
-net.Receive("opsReportDaleRepliedDo", function(len, ply)
-    if (ply.nextDaleDoReply or 0) > CurTime() then return end
+net.Receive("opsReportDaleRepliedDo", function(len, client)
+    if (client.nextDaleDoReply or 0) > CurTime() then return end
 
-    ply.nextDaleDoReply = CurTime() + 10
+    client.nextDaleDoReply = CurTime() + 10
 
     for id, data in pairs(impulse.Ops.Reports) do
-        if data[1] == ply then
+        if data[1] == client then
             if data[6] then return end
 
             impulse.Ops.Reports[id][6] = true
@@ -319,13 +319,13 @@ net.Receive("opsReportDaleRepliedDo", function(len, ply)
     end
 end)
 
-net.Receive("opsReportDaleClose", function(len, ply)
-    if (ply.nextDaleClose or 0) > CurTime() then return end
+net.Receive("opsReportDaleClose", function(len, client)
+    if (client.nextDaleClose or 0) > CurTime() then return end
 
-    ply.nextDaleClose = CurTime() + 10
+    client.nextDaleClose = CurTime() + 10
 
     for id, data in pairs(impulse.Ops.Reports) do
-        if data[1] == ply then
+        if data[1] == client then
             if not data[6] then return end
 
             impulse.Ops.ReportClose(Entity(0), {id})

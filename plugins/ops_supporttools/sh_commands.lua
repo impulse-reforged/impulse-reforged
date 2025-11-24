@@ -1,11 +1,11 @@
 local managerCommand = {
     description = "Opens the support tool.",
     leadAdminOnly = true,
-    onRun = function(ply)
-        if ply:GetUserGroup() == "communitymanager" or ply:GetUserGroup() == "superadmin" then
-            impulse.Ops.ST.Open(ply)
+    onRun = function(client)
+        if client:GetUserGroup() == "communitymanager" or client:GetUserGroup() == "superadmin" then
+            impulse.Ops.ST.Open(client)
         else
-            ply:Notify("You can't use the support tool.")
+            client:Notify("You can't use the support tool.")
         end
     end
 }

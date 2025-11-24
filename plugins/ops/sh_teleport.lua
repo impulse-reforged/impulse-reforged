@@ -1,12 +1,12 @@
 if ( SERVER ) then
-    function opsGoto(ply, pos)
-        ply:ExitVehicle()
-        if not ply:Alive() then ply:Spawn() end
+    function opsGoto(client, pos)
+        client:ExitVehicle()
+        if not client:Alive() then client:Spawn() end
 
-        ply:SetPos(impulse.Util:FindEmptyPos(pos, {ply}, 600, 30, Vector(16, 16, 64)))
+        client:SetPos(impulse.Util:FindEmptyPos(pos, {client}, 600, 30, Vector(16, 16, 64)))
     end
 
-    function opsBring(ply, target)
+    function opsBring(client, target)
         local hasPhysgun = false
         local wep = target:GetActiveWeapon()
 
@@ -26,7 +26,7 @@ if ( SERVER ) then
         end
 
         target.lastPos = target:GetPos()
-        opsGoto(target, ply:GetPos())
+        opsGoto(target, client:GetPos())
     end
 end
 
@@ -34,18 +34,18 @@ local gotoCommand = {
     description = "Teleports yourself to the player specified.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
+    onRun = function(client, arg, rawText)
         local name = arg[1]
         local plyTarget = impulse.Util:FindPlayer(name)
 
-        if plyTarget and ply != plyTarget then
-            opsGoto(ply, plyTarget:GetPos())
-            ply:Notify("You have teleported to "..plyTarget:Name().."'s position.")
+        if plyTarget and client != plyTarget then
+            opsGoto(client, plyTarget:GetPos())
+            client:Notify("You have teleported to "..plyTarget:Name().."'s position.")
         elseif string.sub(name, 1, 1) == "#" then
             local id = string.sub(name, 2)
 
             if not tonumber(id) then
-                return ply:Notify("Invalid entity ID: "..id)
+                return client:Notify("Invalid entity ID: "..id)
             end
 
             id = tonumber(id)
@@ -53,13 +53,13 @@ local gotoCommand = {
             local ent = Entity(id)
 
             if not IsValid(ent) then
-                return ply:Notify("Entity "..id.." does not exist.")
+                return client:Notify("Entity "..id.." does not exist.")
             end
 
-            opsGoto(ply, ent:GetPos())
-            ply:Notify("You have teleported to Entity "..id.."'s position.")
+            opsGoto(client, ent:GetPos())
+            client:Notify("You have teleported to Entity "..id.."'s position.")
         else
-            return ply:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find player: "..tostring(name))
         end
     end
 }
@@ -70,7 +70,7 @@ local zoneGotoCommand = {
     description = "Teleports yourself to the zone specified.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
+    onRun = function(client, arg, rawText)
         local name = string.lower(arg[1])
         local zoneTarget
 
@@ -81,10 +81,10 @@ local zoneGotoCommand = {
         end
 
         if zoneTarget then
-            opsGoto(ply, LerpVector(0.5, zoneTarget.pos1, zoneTarget.pos2))
-            ply:Notify("You have teleported to "..zoneTarget.name..".")
+            opsGoto(client, LerpVector(0.5, zoneTarget.pos1, zoneTarget.pos2))
+            client:Notify("You have teleported to "..zoneTarget.name..".")
         else
-            return ply:Notify("Could not find zone: "..tostring(name))
+            return client:Notify("Could not find zone: "..tostring(name))
         end
     end
 }
@@ -95,21 +95,21 @@ local bringCommand = {
     description = "Teleports the player specified to your location.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
+    onRun = function(client, arg, rawText)
         local name = arg[1]
         local plyTarget = impulse.Util:FindPlayer(name)
 
-        if plyTarget and ply != plyTarget then
+        if plyTarget and client != plyTarget then
             if not plyTarget:Alive() then
                 plyTarget:Spawn()
                 plyTarget:Notify("You have been respawned by a game moderator.")
-                ply:Notify("Target was dead, automatically respawned.")
+                client:Notify("Target was dead, automatically respawned.")
             end
 
-            opsBring(ply, plyTarget)
-            ply:Notify(plyTarget:Name().." has been brought to your position.")
+            opsBring(client, plyTarget)
+            client:Notify(plyTarget:Name().." has been brought to your position.")
         else
-            return ply:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find player: "..tostring(name))
         end
     end
 }
@@ -120,24 +120,24 @@ local returnCommand = {
     description = "Returns the player specified to their last location.",
     requiresArg = true,
     adminOnly = true,
-    onRun = function(ply, arg, rawText)
+    onRun = function(client, arg, rawText)
         local name = arg[1]
         local plyTarget = impulse.Util:FindPlayer(name)
 
-        if plyTarget and ply != plyTarget then
+        if plyTarget and client != plyTarget then
             if plyTarget.lastPos then
                 if not plyTarget:Alive() then
-                    return ply:Notify("Player is dead.")
+                    return client:Notify("Player is dead.")
                 end
                 
                 opsGoto(plyTarget, plyTarget.lastPos)
                 plyTarget.lastPos = nil
-                ply:Notify(plyTarget:Name().." has been returned.")
+                client:Notify(plyTarget:Name().." has been returned.")
             else
-                return ply:Notify("No old position to return the player to.")
+                return client:Notify("No old position to return the player to.")
             end
         else
-            return ply:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find player: "..tostring(name))
         end
     end
 }

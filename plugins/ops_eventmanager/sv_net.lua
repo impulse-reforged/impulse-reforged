@@ -8,17 +8,17 @@ util.AddNetworkString("impulseOpsEMIntroCookie")
 util.AddNetworkString("impulseOpsEMPlayScene")
 util.AddNetworkString("impulseOpsEMEntAnim")
 
-net.Receive("impulseOpsEMPushSequence", function(len, ply)
-    if (ply.nextOpsEMPush or 0) > CurTime() then return end
-    ply.nextOpsEMPush = CurTime() + 1
+net.Receive("impulseOpsEMPushSequence", function(len, client)
+    if (client.nextOpsEMPush or 0) > CurTime() then return end
+    client.nextOpsEMPush = CurTime() + 1
 
-    if not ply:IsEventAdmin() then return end
+    if not client:IsEventAdmin() then return end
 
     local seqName = net.ReadString()
     local seqEventCount = net.ReadUInt(16)
     local events = {}
 
-    print("[ops-em] Starting pull of "..seqName.." (by "..ply:SteamName().."). Total events: "..seqEventCount.."")
+    print("[ops-em] Starting pull of "..seqName.." (by "..client:SteamName().."). Total events: "..seqEventCount.."")
 
     for i=1, seqEventCount do
         local dataSize = net.ReadUInt(16)
@@ -32,65 +32,65 @@ net.Receive("impulseOpsEMPushSequence", function(len, ply)
 
     print("[ops-em] Finished pull of "..seqName..". Ready to play sequence!")
 
-    if IsValid(ply) then
-        ply:Notify("Push completed.")
+    if IsValid(client) then
+        client:Notify("Push completed.")
     end
 end)
 
-net.Receive("impulseOpsEMPlaySequence", function(len, ply)
-    if (ply.nextOpsEMPlay or 0) > CurTime() then return end
-    ply.nextOpsEMPlay = CurTime() + 1
+net.Receive("impulseOpsEMPlaySequence", function(len, client)
+    if (client.nextOpsEMPlay or 0) > CurTime() then return end
+    client.nextOpsEMPlay = CurTime() + 1
 
-    if not ply:IsEventAdmin() then return end
+    if not client:IsEventAdmin() then return end
 
     local seqName = net.ReadString()
 
     if not impulse.Ops.EventManager.Sequences[seqName] then
-        return ply:Notify("Sequence does not exist on server (push first).")
+        return client:Notify("Sequence does not exist on server (push first).")
     end
 
     if impulse.Ops.EventManager.GetSequence() == seqName then
-        return ply:Notify("Sequence already playing.")
+        return client:Notify("Sequence already playing.")
     end
 
     impulse.Ops.EventManager.PlaySequence(seqName)
 
-    print("[ops-em] Playing sequence "..seqName.." (by "..ply:SteamName()..").")
-    ply:Notify("Playing sequence "..seqName..".")
+    print("[ops-em] Playing sequence "..seqName.." (by "..client:SteamName()..").")
+    client:Notify("Playing sequence "..seqName..".")
 end)
 
-net.Receive("impulseOpsEMStopSequence", function(len, ply)
-    if (ply.nextOpsEMStop or 0) > CurTime() then return end
-    ply.nextOpsEMStop = CurTime() + 1
+net.Receive("impulseOpsEMStopSequence", function(len, client)
+    if (client.nextOpsEMStop or 0) > CurTime() then return end
+    client.nextOpsEMStop = CurTime() + 1
 
-    if not ply:IsEventAdmin() then return end
+    if not client:IsEventAdmin() then return end
 
     local seqName = net.ReadString()
 
     if not impulse.Ops.EventManager.Sequences[seqName] then
-        return ply:Notify("Sequence does not exist on server (push first).")
+        return client:Notify("Sequence does not exist on server (push first).")
     end
 
     if impulse.Ops.EventManager.GetSequence() != seqName then
-        return ply:Notify("Sequence not playing.")
+        return client:Notify("Sequence not playing.")
     end
 
     impulse.Ops.EventManager.StopSequence(seqName)
 
-    print("[ops-em] Stopping sequence "..seqName.." (by "..ply:SteamName()..").")
-    ply:Notify("Stopped sequence "..seqName..".")
+    print("[ops-em] Stopping sequence "..seqName.." (by "..client:SteamName()..").")
+    client:Notify("Stopped sequence "..seqName..".")
 end)
 
-net.Receive("impulseOpsEMIntroCookie", function(len, ply)
-    if ply.usedIntroCookie or not impulse.Ops.EventManager.GetEventMode() then return end
+net.Receive("impulseOpsEMIntroCookie", function(len, client)
+    if client.usedIntroCookie or not impulse.Ops.EventManager.GetEventMode() then return end
     
-    ply.usedIntroCookie = true
+    client.usedIntroCookie = true
 
-    ply:AllowScenePVSControl(true)
+    client:AllowScenePVSControl(true)
 
     timer.Simple(900, function()
-        if IsValid(ply) then
-            ply:AllowScenePVSControl(false)
+        if IsValid(client) then
+            client:AllowScenePVSControl(false)
         end
     end)
 end)
