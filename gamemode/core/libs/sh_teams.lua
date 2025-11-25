@@ -293,7 +293,7 @@ function PLAYER:GetTeamClassName()
     local classData = impulse.Teams:FindTeam(self:Team()).ClassRef
     local plyClass = self:GetRelay("class", nil)
 
-    if ( classData and plyClass ) then
+    if ( classData and plyClass and classData[plyClass] ) then
         return classData[plyClass]
     end
 
@@ -308,7 +308,7 @@ function PLAYER:GetTeamRankName()
     local rankData = impulse.Teams:FindTeam(self:Team()).ranks
     local plyRank = self:GetRelay("rank", nil)
 
-    if ( rankData and plyRank ) then
+    if ( rankData and plyRank and rankData[plyRank] ) then
         return rankData[plyRank].name
     end
 
