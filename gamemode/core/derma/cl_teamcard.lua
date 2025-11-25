@@ -121,7 +121,7 @@ function PANEL:Paint(width, height)
         draw.SimpleText(self.name, "Impulse-Elements20-Shadow", self.modelIcon:GetWide() + ScreenScale(2), height / 2, nil, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
     end
 
-    draw.SimpleText(self.playerCount, "Impulse-Elements18-Shadow", width - 15, height / 2, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
+    draw.SimpleText(self.playerCount, "Impulse-Elements18-Shadow", width - ScreenScale(2), height / 2, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 end
 
 function PANEL:PaintOver(width, height)
