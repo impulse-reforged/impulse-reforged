@@ -188,7 +188,7 @@ function GM:PlayerSetup(client, data)
     local jsonData = util.JSONToTable(data.data or "") or {}
 
     clientTable.impulseData = jsonData
-    clientTable.impulseID = data.id
+    clientTable.impulseID = tonumber(data.id)
 
     if ( clientTable.impulseData and clientTable.impulseData.Achievements ) then
         local count = table.Count(clientTable.impulseData.Achievements)
@@ -267,12 +267,12 @@ function GM:PlayerSetup(client, data)
                 local netid = impulse.Inventory:ClassToNetID(v.uniqueid)
                 if ( !netid ) then continue end -- when items are removed from a live server we will remove them manually in the db, if an item is broken auto doing this would break peoples items
 
-                local storagetype = v.storagetype
+                local storagetype = tonumber(v.storagetype)
                 if ( !userInv[storagetype] ) then
                     userInv[storagetype] = {}
                 end
 
-                client:GiveItem(v.uniqueid, v.storagetype, false, true)
+                client:GiveItem(v.uniqueid, storagetype, false, true)
             end
         end
 
