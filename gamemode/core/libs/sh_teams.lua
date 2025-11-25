@@ -1,6 +1,6 @@
 impulse.Teams = impulse.Teams or {}
-impulse.Teams.Stored = impulse.Teams.Stored or {}
-impulse.Teams.List = impulse.Teams.List or {}
+impulse.Teams.Stored = {}
+impulse.Teams.List = {}
 
 --- Registers a new team in the schema.
 -- @realm shared
