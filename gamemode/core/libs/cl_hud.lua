@@ -327,6 +327,24 @@ function GM:HUDPaint()
 
     local shouldDraw = hook.Run("ShouldDrawHUD")
     if shouldDraw != false then
+        local teamName = team.GetName(plyTeam)
+        local className = client:GetTeamClassName()
+        local rankName = client:GetTeamRankName()
+        local displayTeamName = teamName
+        if className and className != "" then
+            displayTeamName = displayTeamName .. ", " .. className
+        end
+
+        if rankName and rankName != "" then
+            displayTeamName = displayTeamName .. " (" .. rankName .. ")"
+        end
+
+        surface.SetFont("Impulse-Elements23")
+        local textWidth, textHeight = surface.GetTextSize(displayTeamName)
+        if textWidth > hudWidth - 40 then
+            hudWidth = textWidth + 40
+        end
+
         y = scrH-hudHeight-8-10
         impulse.Util:DrawBlurAt(10, y, hudWidth, hudHeight)
         surface.SetDrawColor(darkCol)
@@ -334,7 +352,6 @@ function GM:HUDPaint()
         surface.SetMaterial(gradient)
         surface.DrawTexturedRect(10, y, hudWidth, hudHeight)
 
-        surface.SetFont("Impulse-Elements23")
         surface.SetTextColor(color_white)
         surface.SetDrawColor(color_white)
         surface.SetTextPos(30, y+10)
@@ -342,7 +359,7 @@ function GM:HUDPaint()
 
         surface.SetTextColor(team.GetColor(plyTeam))
         surface.SetTextPos(30, y+30)
-        surface.DrawText(team.GetName(plyTeam))
+        surface.DrawText(displayTeamName)
 
         local yAdd = 0
 
