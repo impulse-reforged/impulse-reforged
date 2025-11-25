@@ -517,7 +517,7 @@ function PLAYER:SpawnAtTeamSpawn()
     end
 
     -- Check Global Config
-    if ( impulse.Config.SpawnPoints and impulse.Config.SpawnPoints[self:Team()] ) then
+    if ( !spawnData and impulse.Config.SpawnPoints and impulse.Config.SpawnPoints[self:Team()] ) then
         local points = impulse.Config.SpawnPoints[self:Team()]
         if ( istable(points) and !points.pos ) then
             spawnData = table.Random(points)
