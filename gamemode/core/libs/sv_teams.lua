@@ -10,12 +10,12 @@ local function ParseModelData(modelData)
         local model = modelData[1]
         local skin = modelData[2]
         local bodygroups = modelData[3]
-        
+
         -- Handle random skin if it's a table
         if ( type(skin) == "table" ) then
             skin = skin[math.random(#skin)]
         end
-        
+
         -- Handle random bodygroup values if they're tables
         if ( bodygroups and type(bodygroups) == "table" ) then
             local parsedBodygroups = {}
@@ -28,7 +28,7 @@ local function ParseModelData(modelData)
             end
             bodygroups = parsedBodygroups
         end
-        
+
         return model, skin, bodygroups
     end
     return nil, nil, nil
@@ -116,7 +116,7 @@ function PLAYER:SetTeam(teamID)
     end
 
     if ( teamData.onBecome ) then
-        teamData.onBecome(self)
+        teamData:onBecome(self)
     end
 
     return true
@@ -125,7 +125,7 @@ end
 function PLAYER:SetTeamClass(classID, skipLoadout)
     local teamData = impulse.Teams:FindTeam(self:Team())
     local classData = teamData.classes[classID]
-    
+
     local modelData
     if ( classData.models ) then
         modelData = classData.models[math.random(#classData.models)]
@@ -224,7 +224,7 @@ function PLAYER:SetTeamClass(classID, skipLoadout)
     end
 
     if ( classData.onBecome ) then
-        classData.onBecome(self)
+        classData:onBecome(self)
     end
 
     self:SetRelay("class", classID)
@@ -239,14 +239,12 @@ function PLAYER:SetTeamRank(rankID)
     local classData = teamData.classes[self:GetTeamClass()]
     local rankData = teamData.ranks[rankID]
 
-    if ( !classData ) then self:Notify("Player does not have a valid class selected!") return false end
-
     local modelData
     if ( rankData.models ) then
         modelData = rankData.models[math.random(#rankData.models)]
     elseif ( rankData.model ) then
         modelData = rankData.model
-    else
+    elseif ( classData ) then
         if ( classData.models ) then
             modelData = classData.models[math.random(#classData.models)]
         elseif ( classData.model ) then
@@ -257,6 +255,12 @@ function PLAYER:SetTeamRank(rankID)
             elseif ( teamData.model ) then
                 modelData = teamData.model
             end
+        end
+    else
+        if ( teamData.models ) then
+            modelData = teamData.models[math.random(#teamData.models)]
+        elseif ( teamData.model ) then
+            modelData = teamData.model
         end
     end
 
@@ -336,7 +340,7 @@ function PLAYER:SetTeamRank(rankID)
             end
         end
 
-        if ( classData.itemsAdd ) then
+        if ( classData and classData.itemsAdd ) then
             for v,item in pairs(classData.itemsAdd) do
                 for i = 1, (item.amount or 1) do
                     self:GiveItem(item.class, 1, true)
@@ -356,7 +360,7 @@ function PLAYER:SetTeamRank(rankID)
     if ( rankData.doorGroup ) then
         self.DoorGroups = rankData.doorGroup
     else
-        if ( classData.doorGroup ) then
+        if ( classData and classData.doorGroup ) then
             self.DoorGroups = classData.doorGroup
         else
             self.DoorGroups = teamData.doorGroup or {}
@@ -364,7 +368,7 @@ function PLAYER:SetTeamRank(rankID)
     end
 
     if ( rankData.onBecome ) then
-        rankData.onBecome(self)
+        rankData:onBecome(self)
     end
 
     self:SetRelay("rank", rankID)
