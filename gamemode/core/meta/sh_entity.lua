@@ -50,7 +50,7 @@ end
 -- @treturn bool Is player prop door
 function ENTITY:IsPropDoor()
     if not IsValid(self) then return end
-    
+
     if not self.GetModel or not propDoors[self:GetModel()] then return false end
 
     if (self:CPPIGetOwner() and IsValid(self:CPPIGetOwner())) and self:CPPIGetOwner():IsPlayer() then return true end

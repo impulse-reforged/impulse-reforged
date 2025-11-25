@@ -15,7 +15,7 @@ local PLAYER = FindMetaTable("Entity")
 -- @usage client:AddChatText(Color(255, 0, 0), "Hello, ", Color(0, 255, 0), "world!")
 function PLAYER:AddChatText(...)
     local package = {...}
-    
+
     if ( SERVER ) then
         net.Start("impulseChatText")
             net.WriteTable(package)
