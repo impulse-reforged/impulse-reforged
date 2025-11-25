@@ -336,7 +336,7 @@ function GM:HUDPaint()
         end
 
         if rankName and rankName != "" then
-            displayTeamName = displayTeamName .. " (" .. rankName .. ")"
+            displayTeamName = displayTeamName .. ", " .. rankName
         end
 
         surface.SetFont("Impulse-Elements23")
@@ -356,6 +356,11 @@ function GM:HUDPaint()
         surface.SetDrawColor(color_white)
         surface.SetTextPos(30, y+10)
         surface.DrawText(LocalPlayer():Name())
+
+        local hookReplaceTeamName = hook.Run("GetHUDTeamName", plyTeam, displayTeamName)
+        if hookReplaceTeamName then
+            displayTeamName = hookReplaceTeamName
+        end
 
         surface.SetTextColor(team.GetColor(plyTeam))
         surface.SetTextPos(30, y+30)
