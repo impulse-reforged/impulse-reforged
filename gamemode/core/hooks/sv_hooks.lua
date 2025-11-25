@@ -116,6 +116,42 @@ function GM:PlayerInitialSpawn(client)
         end
     end)
 
+    local payTimerName = "impulsePayDay." .. client:UserID()
+    timer.Create(payTimerName, impulse.Config.PayDayTime or 600, 0, function()
+        if ( !IsValid(client) ) then
+            timer.Remove(payTimerName)
+            return
+        end
+
+        if ( !client:IsAFK() ) then
+            local teamData = impulse.Teams.Stored[client:Team()]
+            if ( !teamData ) then return end
+
+            local salary = teamData.salary or 0
+
+            local classID = client:GetTeamClass()
+            if ( classID ) then
+                local classData = teamData.classes[classID]
+                if ( classData and classData.salary ) then
+                    salary = salary + classData.salary
+                end
+            end
+
+            local rankID = client:GetTeamRank()
+            if ( rankID ) then
+                local rankData = teamData.ranks[rankID]
+                if ( rankData and rankData.salary ) then
+                    salary = salary + rankData.salary
+                end
+            end
+
+            if ( salary > 0 ) then
+                client:AddBankMoney(salary)
+                client:Notify("You have received a salary of " .. impulse.Config.CurrencyPrefix .. salary .. ".")
+            end
+        end
+    end)
+
     local oocTimerName = "impulseOOCLimit." .. client:UserID()
     timer.Create(oocTimerName, 1800, 0, function()
         if ( !IsValid(client) ) then
@@ -487,6 +523,11 @@ function GM:PlayerDisconnected(client)
     local loadTimerName = "impulseFullLoad." .. userID
     if ( timer.Exists(loadTimerName) ) then
         timer.Remove(loadTimerName)
+    end
+
+    local payTimerName = "impulsePayDay." .. userID
+    if ( timer.Exists(payTimerName) ) then
+        timer.Remove(payTimerName)
     end
 
     local jailCell = clientTable.InJail
