@@ -307,6 +307,19 @@ local function BuildDeleteQuery(queryObj)
         return
     end
 
+    if (mysql.module == "sqlite" and isnumber(queryObj.limit)) then
+        queryString[#queryString + 1] = " WHERE rowid IN (SELECT rowid FROM `" .. queryObj.tableName .. "`"
+
+        if (istable(queryObj.whereList) and #queryObj.whereList > 0) then
+            queryString[#queryString + 1] = " WHERE "
+            queryString[#queryString + 1] = table.concat(queryObj.whereList, " AND ")
+        end
+
+        queryString[#queryString + 1] = " LIMIT " .. queryObj.limit .. ")"
+
+        return table.concat(queryString)
+    end
+
     if (istable(queryObj.whereList) and #queryObj.whereList > 0) then
         queryString[#queryString + 1] = " WHERE "
         queryString[#queryString + 1] = table.concat(queryObj.whereList, " AND ")
