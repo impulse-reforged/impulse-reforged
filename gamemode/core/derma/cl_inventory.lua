@@ -110,8 +110,6 @@ function PANEL:SetupItems()
             local itemData = impulse.Inventory.Items[k.id]
             if not itemData then continue end
 
-            PrintTable(itemData)
-
             local otherItem = self.items[k.id]
             local itemX = itemData
 
