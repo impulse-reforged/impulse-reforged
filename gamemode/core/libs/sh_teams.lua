@@ -143,8 +143,12 @@ function PLAYER:CanBecomeTeam(teamID, notify)
     end
 
     if ( teamData.customCheck ) then
-        local customCheck = teamData.customCheck(self, teamID)
+        local customCheck, customCheckReason = teamData:customCheck(self, teamID)
         if ( customCheck != nil and customCheck == false ) then
+            if ( notify and customCheckReason ) then
+                self:Notify(customCheckReason)
+            end
+
             return false
         end
     end
@@ -201,8 +205,12 @@ function PLAYER:CanBecomeTeamClass(classID, forced)
     end
 
     if ( classData.customCheck ) then
-        local customCheck = classData.customCheck(self, classID)
+        local customCheck, customCheckReason = classData:customCheck(self, classID)
         if ( customCheck != nil and customCheck == false ) then
+            if ( notify and customCheckReason ) then
+                self:Notify(customCheckReason)
+            end
+
             return false, "Failed custom check!"
         end
     end
@@ -256,8 +264,12 @@ function PLAYER:CanBecomeTeamRank(rankID, forced)
     end
 
     if ( rankData.customCheck ) then
-        local customCheck = rankData.customCheck(self, rankID)
+        local customCheck, customCheckReason = rankData:customCheck(self, rankID)
         if ( customCheck != nil and customCheck == false ) then
+            if ( notify and customCheckReason ) then
+                self:Notify(customCheckReason)
+            end
+
             return false
         end
     end
