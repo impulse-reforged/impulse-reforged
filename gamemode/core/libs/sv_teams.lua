@@ -111,9 +111,7 @@ function PLAYER:SetTeam(teamID)
 
     self:OldSetTeam(teamID)
 
-    if ( teamData.spawns ) then
-        self:SetPos(teamData.spawns[math.random(#teamData.spawns)])
-    end
+    self:SpawnAtTeamSpawn()
 
     if ( teamData.onBecome ) then
         teamData:onBecome(self)
@@ -478,4 +476,66 @@ function PLAYER:SetupWhitelists()
             self.Whitelists[realTeam or k.team] = level
         end
     end)
+end
+
+function PLAYER:SpawnAtTeamSpawn()
+    local teamData = self:GetTeamData()
+    local spawnData
+
+    -- Check Global Config
+    if ( impulse.Config.SpawnPoints and impulse.Config.SpawnPoints[self:Team()] ) then
+        local points = impulse.Config.SpawnPoints[self:Team()]
+        if ( istable(points) and !points.pos ) then
+            spawnData = table.Random(points)
+        else
+            spawnData = points
+        end
+    end
+
+    -- Check Rank
+    if ( !spawnData ) then
+        local rankName = self:GetTeamRank()
+        if ( rankName and teamData.ranks ) then
+            for _, rank in ipairs(teamData.ranks) do
+                if ( rank.name == rankName and rank.spawnPoints ) then
+                    spawnData = table.Random(rank.spawnPoints)
+                    break
+                end
+            end
+        end
+    end
+
+    -- Check Class
+    if ( !spawnData ) then
+        local className = self:GetTeamClass()
+        if ( className and teamData.classes ) then
+            for _, class in ipairs(teamData.classes) do
+                if ( class.name == className and class.spawnPoints ) then
+                    spawnData = table.Random(class.spawnPoints)
+                    break
+                end
+            end
+        end
+    end
+
+    -- Check Team
+    if ( !spawnData and teamData.spawnPoints ) then
+        spawnData = table.Random(teamData.spawnPoints)
+    end
+
+    -- Fallback to old 'spawns' key
+    if ( !spawnData and teamData.spawns ) then
+        spawnData = table.Random(teamData.spawns)
+    end
+
+    if ( spawnData ) then
+        if ( isvector(spawnData) ) then
+            self:SetPos(spawnData)
+        elseif ( istable(spawnData) and spawnData.pos ) then
+            self:SetPos(spawnData.pos)
+            if ( spawnData.ang ) then
+                self:SetEyeAngles(spawnData.ang)
+            end
+        end
+    end
 end

@@ -383,11 +383,6 @@ end
 function GM:PlayerLoadout(client)
     if ( client:Team() == 0 ) then return end
 
-    local data = client:GetTeamData()
-    if ( data and data.spawns ) then
-        client:SetPos(data.spawns[math.random(#data.spawns)])
-    end
-
     client:SetRunSpeed(impulse.Config.JogSpeed)
     client:SetWalkSpeed(impulse.Config.WalkSpeed)
 
