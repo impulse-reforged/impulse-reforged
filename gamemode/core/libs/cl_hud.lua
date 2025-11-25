@@ -189,8 +189,8 @@ local deathEnding
 function GM:HUDPaint()
     local client = LocalPlayer()
     local health = client:Health()
-    local plyTeam = client:Team()
-    if ( plyTeam == 0 ) then return end
+    local clientTeam = client:Team()
+    if ( clientTeam == 0 ) then return end
 
     local scrW, scrH = ScrW(), ScrH()
     local hudWidth, hudHeight = 300, 178
@@ -327,7 +327,7 @@ function GM:HUDPaint()
 
     local shouldDraw = hook.Run("ShouldDrawHUD")
     if shouldDraw != false then
-        local teamName = team.GetName(plyTeam)
+        local teamName = team.GetName(clientTeam)
         local className = client:GetTeamClassName()
         local rankName = client:GetTeamRankName()
         local displayTeamName = teamName
@@ -357,12 +357,12 @@ function GM:HUDPaint()
         surface.SetTextPos(30, y+10)
         surface.DrawText(LocalPlayer():Name())
 
-        local hookReplaceTeamName = hook.Run("GetHUDTeamName", plyTeam, displayTeamName)
+        local hookReplaceTeamName = hook.Run("GetHUDTeamName", clientTeam, displayTeamName)
         if hookReplaceTeamName then
             displayTeamName = hookReplaceTeamName
         end
 
-        surface.SetTextColor(team.GetColor(plyTeam))
+        surface.SetTextColor(team.GetColor(clientTeam))
         surface.SetTextPos(30, y+30)
         surface.DrawText(displayTeamName)
 

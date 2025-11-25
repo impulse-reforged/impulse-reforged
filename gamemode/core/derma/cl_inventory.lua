@@ -34,12 +34,12 @@ function PANEL:Init()
         self.infoName:SetFont("Impulse-Elements19-Shadow")
     end
 
-    local plyTeam = LocalPlayer():Team()
+    local clientTeam = LocalPlayer():Team()
     self.infoTeam = vgui.Create("DLabel", self.modelPreview)
     self.infoTeam:Dock(TOP)
-    self.infoTeam:SetText(team.GetName(plyTeam))
+    self.infoTeam:SetText(team.GetName(clientTeam))
     self.infoTeam:SetFont("Impulse-Elements19-Shadow")
-    self.infoTeam:SetColor(team.GetColor(plyTeam))
+    self.infoTeam:SetColor(team.GetColor(clientTeam))
     self.infoTeam:SizeToContents()
 
     local className = LocalPlayer():GetTeamClassName()
@@ -50,7 +50,7 @@ function PANEL:Init()
         self.infoClassRank:Dock(TOP)
         self.infoClassRank:SetFont("Impulse-Elements19-Shadow")
         self.infoClassRank:SetText(className)
-        self.infoClassRank:SetColor(team.GetColor(plyTeam))
+        self.infoClassRank:SetColor(team.GetColor(clientTeam))
         self.infoClassRank:SizeToContents()
 
         if ( rankName and rankName != "" ) then
@@ -62,7 +62,7 @@ function PANEL:Init()
             self.infoClassRank:Dock(TOP)
             self.infoClassRank:SetFont("Impulse-Elements19-Shadow")
             self.infoClassRank:SetText(rankName)
-            self.infoClassRank:SetColor(team.GetColor(plyTeam))
+            self.infoClassRank:SetColor(team.GetColor(clientTeam))
             self.infoClassRank:SizeToContents()
         end
     end
