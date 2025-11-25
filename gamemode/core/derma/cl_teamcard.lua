@@ -10,12 +10,12 @@ local function ParseModelData(modelData)
         local model = modelData[1]
         local skin = modelData[2]
         local bodygroups = modelData[3]
-        
+
         -- Handle random skin if it's a table
         if ( type(skin) == "table" ) then
             skin = skin[math.random(#skin)]
         end
-        
+
         -- Handle random bodygroup values if they're tables
         if ( bodygroups and type(bodygroups) == "table" ) then
             local parsedBodygroups = {}
@@ -28,7 +28,7 @@ local function ParseModelData(modelData)
             end
             bodygroups = parsedBodygroups
         end
-        
+
         return model, skin, bodygroups
     end
     return nil, nil, nil
@@ -60,6 +60,8 @@ function PANEL:SetTeam(teamID)
         else
             self.playerCount = self.players .. "/" .. teamData.limit
         end
+    else
+        self.playerCount = self.players .. "/∞"
     end
 
     local modelData
@@ -105,7 +107,6 @@ local outlineCol = Color(190,190,190,240)
 local darkCol = Color(30,30,30,200)
 
 function PANEL:Paint(width, height)
-    -- Frame
     surface.SetMaterial(gradient)
     surface.SetDrawColor(self.colour)
     surface.DrawTexturedRect(0, 0, width, height)
@@ -113,23 +114,19 @@ function PANEL:Paint(width, height)
     surface.SetDrawColor(darkCol)
     surface.DrawTexturedRect(0, 0, width, height)
 
-    -- team name
-    surface.SetFont("Impulse-Elements18-Shadow")
-    surface.SetTextColor(color_white)
-    surface.SetTextPos(65, 10)
-    surface.DrawText(self.name)
+    if ( self.requirements != "" ) then
+        draw.SimpleText(self.name, "Impulse-Elements18-Shadow", self.modelIcon:GetWide() + ScreenScale(2), height / 2, nil, TEXT_ALIGN_LEFT, TEXT_ALIGN_BOTTOM)
+        draw.SimpleText(self.requirements, "Impulse-Elements18-Shadow", self.modelIcon:GetWide() + ScreenScale(2), height / 2, nil, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+    else
+        draw.SimpleText(self.name, "Impulse-Elements20-Shadow", self.modelIcon:GetWide() + ScreenScale(2), height / 2, nil, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER)
+    end
 
-    -- team requirements
-    surface.SetTextPos(65, 25)
-    surface.DrawText(self.requirements)
-
-    -- team size
-    draw.SimpleText(self.playerCount, "Impulse-Elements18-Shadow", width - 15, 10, nil, TEXT_ALIGN_RIGHT)
+    draw.SimpleText(self.playerCount, "Impulse-Elements18-Shadow", width - 15, height / 2, nil, TEXT_ALIGN_RIGHT, TEXT_ALIGN_CENTER)
 end
 
 function PANEL:PaintOver(width, height)
     surface.SetDrawColor(outlineCol)
-    surface.DrawOutlinedRect(0,0,width, height)
+    surface.DrawOutlinedRect(0, 0, width, height)
 end
 
 vgui.Register("impulseTeamCard", PANEL, "DPanel")
