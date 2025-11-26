@@ -20,7 +20,6 @@ impulse = impulse or {}
 
 include("core/cl_util.lua")
 include("core/sh_util.lua")
-include("core/sv_util.lua")
 include("shared.lua")
 
 timer.Remove("HintSystem_OpeningMenu")

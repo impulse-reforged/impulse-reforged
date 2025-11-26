@@ -10,7 +10,6 @@ AddCSLuaFile("core/sh_util.lua")
 AddCSLuaFile("core/sv_util.lua")
 AddCSLuaFile("shared.lua")
 
-include("core/cl_util.lua")
 include("core/sh_util.lua")
 include("core/sv_util.lua")
 include("shared.lua")

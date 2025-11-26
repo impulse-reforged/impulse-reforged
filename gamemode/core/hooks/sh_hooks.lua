@@ -72,11 +72,13 @@ function GM:PlayerIsInSpawn(client)
     local teamClassData = client:GetTeamClassData()
     local teamRankData = client:GetTeamRankData()
 
+    local pos = client:GetPos()
+
     local isNearSpawn = false
     if ( teamRankData and teamRankData.spawnPoints ) then
         for _, v in ipairs(teamRankData.spawnPoints) do
             local spawnPos = v.pos
-            if ( client:GetPos():DistToSqr(spawnPos) <= (128 ^ 2) ) then
+            if ( spawnPos and pos:DistToSqr(spawnPos) <= (128 ^ 2) ) then
                 isNearSpawn = true
                 break
             end
@@ -84,7 +86,7 @@ function GM:PlayerIsInSpawn(client)
     elseif ( teamClassData and teamClassData.spawnPoints ) then
         for _, v in ipairs(teamClassData.spawnPoints) do
             local spawnPos = v.pos
-            if ( client:GetPos():DistToSqr(spawnPos) <= (128 ^ 2) ) then
+            if ( spawnPos and pos:DistToSqr(spawnPos) <= (128 ^ 2) ) then
                 isNearSpawn = true
                 break
             end
@@ -92,7 +94,7 @@ function GM:PlayerIsInSpawn(client)
     elseif ( teamData.spawnPoints ) then
         for _, v in ipairs(teamData.spawnPoints) do
             local spawnPos = v.pos
-            if ( client:GetPos():DistToSqr(spawnPos) <= (128 ^ 2) ) then
+            if ( spawnPos and pos:DistToSqr(spawnPos) <= (128 ^ 2) ) then
                 isNearSpawn = true
                 break
             end
