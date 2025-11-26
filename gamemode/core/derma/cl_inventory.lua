@@ -1,7 +1,11 @@
 local PANEL = {}
 
 function PANEL:Init()
-    self:SetSize(ScrW() / 1.25, ScrH() / 1.25)
+    impulse.InventoryMenu = self
+
+    local width, height = ScrW() / 1.25, ScrH() / 1.25
+
+    self:SetSize(width, height)
     self:Center()
     self:CenterHorizontal()
     self:SetTitle("")
@@ -67,27 +71,23 @@ function PANEL:Init()
         end
     end
 
-    self:SetupItems(width, height)
-end
-
-function PANEL:SetupItems()
-    local width, height = self:GetSize()
-
-    if self.tabs and IsValid(self.tabs) then
-        self.tabs:Remove()
-    end
-
-    local s = 270
-
     self.tabs = vgui.Create("DPropertySheet", self)
     self.tabs:Dock(FILL)
     self.tabs:DockMargin(ScreenScale(4), ScreenScaleH(4), ScreenScale(4), ScreenScaleH(4))
     self.tabs.tabScroller:DockMargin(-1, 0, -1, 0)
     self.tabs.tabScroller:SetOverlap(0)
+    self.tabs.Paint = nil
 
-    function self.tabs:Paint()
-        return true
-    end
+    self.tabs:InvalidateParent(true)
+
+    self:SetupItems(width, height)
+    self:SetupSkills(width, height)
+
+    hook.Run("ImpulseInventoryOpened", self)
+end
+
+function PANEL:SetupItems(width, height)
+    local s = 270
 
     if self.invScroll and IsValid(self.invScroll) then
         self.invScroll:Remove()
@@ -131,16 +131,15 @@ function PANEL:SetupItems()
     else
         self.empty = self.invScroll:Add("DLabel", self)
         self.empty:SetContentAlignment(5)
-        self.empty:Dock(TOP)
+        self.empty:Dock(FILL)
         self.empty:SetText("Empty")
         self.empty:SetFont("Impulse-Elements19-Shadow")
+        self.empty:SizeToContents()
     end
 
     self.invWeight = weight
 
     self.tabs:AddSheet("Inventory", self.invScroll)
-
-    self:SetupSkills(width, height)
 end
 
 local bodyCol = Color(50, 50, 50, 210)
@@ -212,3 +211,8 @@ function PANEL:PaintOver(width, height)
 end
 
 vgui.Register("impulseInventory", PANEL, "DFrame")
+
+if ( IsValid(impulse.InventoryMenu) ) then
+    impulse.InventoryMenu:Remove()
+    impulse.InventoryMenu = nil
+end
