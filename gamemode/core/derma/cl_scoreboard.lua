@@ -31,5 +31,4 @@ function PANEL:Init()
     end
 end
 
-
 vgui.Register("impulseScoreboard", PANEL, "DFrame")
