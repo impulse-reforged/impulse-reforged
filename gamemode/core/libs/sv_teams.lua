@@ -3,7 +3,7 @@ local PLAYER = FindMetaTable("Player")
 --- Parses model data and returns model path, skin, and bodygroups
 -- @param modelData string or table - Can be "model.mdl", {"model.mdl", skin}, or {"model.mdl", skin, {bodygroups}}
 -- @return string model, number skin, table bodygroups
-local function ParseModelData(modelData)
+function PLAYER:ParseModelData(modelData)
     if ( type(modelData) == "string" ) then
         return modelData, nil, nil
     elseif ( type(modelData) == "table" ) then
@@ -58,7 +58,7 @@ function PLAYER:SetTeam(teamID)
         modelData = selfTable.impulseDefaultModel
     end
 
-    local model, skin, bodygroups = ParseModelData(modelData)
+    local model, skin, bodygroups = self:ParseModelData(modelData)
     self:SetModel(model)
     self:SetSkin(skin or selfTable.impulseDefaultSkin)
 
@@ -123,23 +123,26 @@ end
 function PLAYER:SetTeamClass(classID, skipLoadout)
     local teamData = impulse.Teams:FindTeam(self:Team())
     local classData = teamData.classes[classID]
+    if ( !classData ) then
+        return false, "Invalid class ID! (" .. tostring(classID) .. ")"
+    end
 
     local modelData
-    if ( classData.models ) then
+    if ( classData and classData.models ) then
         modelData = classData.models[math.random(#classData.models)]
-    elseif ( classData.model ) then
+    elseif ( classData and classData.model ) then
         modelData = classData.model
     else
-        if ( teamData.models ) then
+        if ( teamData and teamData.models ) then
             modelData = teamData.models[math.random(#teamData.models)]
-        elseif ( teamData.model ) then
+        elseif ( teamData and teamData.model ) then
             modelData = teamData.model
         else
             modelData = self.impulseDefaultModel
         end
     end
 
-    local model, skin, bodygroups = ParseModelData(modelData)
+    local model, skin, bodygroups = self:ParseModelData(modelData)
     self:SetModel(model)
     self:SetSkin(skin or self.impulseDefaultSkin)
 
@@ -207,7 +210,7 @@ function PLAYER:SetTeamClass(classID, skipLoadout)
         end
     end
 
-    if ( classData.armour ) then
+    if ( classData and classData.armour ) then
         self:SetArmor(classData.armour)
         self.MaxArmour = classData.armour
     else
@@ -215,7 +218,7 @@ function PLAYER:SetTeamClass(classID, skipLoadout)
         self.MaxArmour = nil
     end
 
-    if ( classData.doorGroup ) then
+    if ( classData and classData.doorGroup ) then
         self.DoorGroups = classData.doorGroup
     else
         self.DoorGroups = teamData.doorGroup or {}
@@ -263,7 +266,7 @@ function PLAYER:SetTeamRank(rankID)
     end
 
     if ( modelData ) then
-        local model, skin, bodygroups = ParseModelData(modelData)
+        local model, skin, bodygroups = self:ParseModelData(modelData)
         self:SetModel(model)
         self:SetSkin(skin or self.impulseDefaultSkin)
 
