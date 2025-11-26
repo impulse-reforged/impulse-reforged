@@ -63,3 +63,43 @@ function GM:IsContainer(ent)
         return true
     end
 end
+
+function GM:PlayerIsInSpawn(client)
+    local teamData = client:GetTeamData()
+    if ( !teamData ) then return false end
+
+    -- check their spawnPoints for being nearby
+    local teamClassData = client:GetTeamClassData()
+    local teamRankData = client:GetTeamRankData()
+
+    local isNearSpawn = false
+    if ( teamRankData and teamRankData.spawnPoints ) then
+        for _, v in ipairs(teamRankData.spawnPoints) do
+            local spawnPos = v.pos
+            if ( client:GetPos():DistToSqr(spawnPos) <= (128 ^ 2) ) then
+                isNearSpawn = true
+                break
+            end
+        end
+    elseif ( teamClassData and teamClassData.spawnPoints ) then
+        for _, v in ipairs(teamClassData.spawnPoints) do
+            local spawnPos = v.pos
+            if ( client:GetPos():DistToSqr(spawnPos) <= (128 ^ 2) ) then
+                isNearSpawn = true
+                break
+            end
+        end
+    elseif ( teamData.spawnPoints ) then
+        for _, v in ipairs(teamData.spawnPoints) do
+            local spawnPos = v.pos
+            if ( client:GetPos():DistToSqr(spawnPos) <= (128 ^ 2) ) then
+                isNearSpawn = true
+                break
+            end
+        end
+    end
+
+    if ( isNearSpawn ) then
+        return true
+    end
+end
