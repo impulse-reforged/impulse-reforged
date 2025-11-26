@@ -342,12 +342,10 @@ net.Receive("impulseClassChange",function(len, client)
     local classID = net.ReadUInt(8)
     local classes = impulse.Teams.Stored[client:Team()].classes
 
-    if classID and isnumber(classID) and classID > 0 and classes and classes[classID] and !classes[classID].noMenu then
-        if client:CanBecomeTeamClass(classID, true) then
-            client:SetTeamClass(classID)
-            client.lastClassChange = CurTime()
-            client:Notify("You have changed your class to "..classes[classID].name..".")
-        end
+    if classID and isnumber(classID) and classID > 0 and classes and classes[classID] and !classes[classID].noMenu and client:CanBecomeTeamClass(classID, true) then
+        client:SetTeamClass(classID)
+        client.lastClassChange = CurTime()
+        client:Notify("You have changed your class to "..classes[classID].name..".")
     end
 end)
 
