@@ -150,7 +150,7 @@ function PANEL:QuickActions()
     if classes and LocalPlayer():InSpawn() then
         for v,classData in pairs(classes) do
             if !classData.noMenu and LocalPlayer():GetTeamClass() != v then
-                btn = self.list:Add("DButton")
+                local btn = self.list:Add("DButton")
                 btn:Dock(TOP)
                 btn.classID = v
 
@@ -160,9 +160,9 @@ function PANEL:QuickActions()
                 end
                 btn:SetText("Become " .. classData.name .. " (" .. classData.xp .. "XP)")
 
-                btn.DoClick = function()
+                btn.DoClick = function(this)
                     net.Start("impulseClassChange")
-                        net.WriteUInt(btn.classID, 8)
+                        net.WriteUInt(this.classID, 8)
                     net.SendToServer()
                 end
             end
