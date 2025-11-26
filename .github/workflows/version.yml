@@ -20,40 +20,14 @@ jobs:
 
       - name: Generate version JSON
         run: |
-          # Detect if this repository is a fork and, if so, fetch the parent (original) repository
-          # so we can include its commits when generating the version count.
-          VALID_COUNT=0
-          # Hardcode the original repository to always include its commits in the count
-          # This is the upstream/original repository to include: https://github.com/aLoneWitness/impulse
-          PARENT_FULL_NAME="aLoneWitness/impulse"
-          # If that repo uses a different default branch, change this value (commonly 'main' or 'master')
-          PARENT_DEFAULT_BRANCH="main"
+          VALID_COUNT=964 # Old commits from https://github.com/aLoneWitness/impulse
+          for COMMIT in $(git rev-list --reverse --since="2025-07-18" HEAD); do
+              AUTHOR=$(git show -s --format='%ae' $COMMIT)
+              PARENTS=$(git rev-list --parents -n 1 $COMMIT | wc -w)
 
-          # If a parent (original) repository exists and is different, add it as an 'upstream' remote
-          if [ -n "$PARENT_FULL_NAME" ] && [ "$PARENT_FULL_NAME" != "$GITHUB_REPOSITORY" ]; then
-            echo "Detected parent repository: $PARENT_FULL_NAME (default branch: $PARENT_DEFAULT_BRANCH)"
-            git remote add upstream "https://github.com/$PARENT_FULL_NAME.git" || true
-            # Fetch the parent repository refs so we can reference its branch
-            git fetch upstream --no-tags --prune
-          fi
-
-          # Build a list of refs to count commits from. Always include HEAD (this repo),
-          # and include the parent repo default branch if present.
-          REVLIST_REFS="HEAD"
-          if [ -n "$PARENT_FULL_NAME" ] && [ -n "$PARENT_DEFAULT_BRANCH" ]; then
-            REVLIST_REFS="$REVLIST_REFS upstream/$PARENT_DEFAULT_BRANCH"
-          fi
-
-          # Count valid commits across the specified refs since the given date. Using multiple
-          # refs with git rev-list will list unique commits reachable from any of them.
-          for COMMIT in $(git rev-list --reverse --since="2025-07-18" $REVLIST_REFS); do
-            AUTHOR=$(git show -s --format='%ae' $COMMIT)
-            PARENTS=$(git rev-list --parents -n 1 $COMMIT | wc -w)
-
-            # Exclude GitHub Actions auto-commits and merge commits with 3+ parents (octopus)
-            if [[ "$AUTHOR" != "github-actions@github.com" && "$PARENTS" -lt 3 ]]; then
-              VALID_COUNT=$((VALID_COUNT + 1))
-            fi
+              if [[ "$AUTHOR" != "github-actions@github.com" && "$PARENTS" -lt 3 ]]; then
+                  VALID_COUNT=$((VALID_COUNT + 1))
+              fi
           done
 
           # Versioning format:
