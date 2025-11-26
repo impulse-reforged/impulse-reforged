@@ -6,7 +6,7 @@ AccessorFunc(PANEL, "highlightColor", "HighlightColor", FORCE_STRINGFORCE_COLOR)
 function PANEL:Init()
     self.defaultColor = color_white
     self.highlightColor = impulse.Config.MainColour
-    
+
     self:SetFont("Impulse-Elements32")
     self:SetContentAlignment(4)
     self:SetColor(color_white)
@@ -124,7 +124,7 @@ function PANEL:Init()
         CRASHSCREEN_ALLOW = true
     end
 
-    local button = self.left:Add("impulseMainMenuButton")
+    button = self.left:Add("impulseMainMenuButton")
     button:Dock(TOP)
     button:DockMargin(30, 0, 0, 0)
     button:SetFont("Impulse-Elements32")
@@ -135,7 +135,7 @@ function PANEL:Init()
         vgui.Create("impulseSettings", self)
     end
 
-    local button = self.left:Add("impulseMainMenuButton")
+    button = self.left:Add("impulseMainMenuButton")
     button:Dock(TOP)
     button:DockMargin(30, 0, 0, 0)
     button:SetFont("Impulse-Elements32")
@@ -146,7 +146,7 @@ function PANEL:Init()
         vgui.Create("impulseAchievements", self)
     end
 
-    local button = self.left:Add("impulseMainMenuButton")
+    button = self.left:Add("impulseMainMenuButton")
     button:Dock(TOP)
     button:DockMargin(30, 0, 0, 0)
     button:SetFont("Impulse-Elements32")
@@ -157,7 +157,7 @@ function PANEL:Init()
         gui.OpenURL(impulse.Config.CommunityURL or "www.google.com")
     end
 
-    local button = self.left:Add("impulseMainMenuButton")
+    button = self.left:Add("impulseMainMenuButton")
     button:Dock(TOP)
     button:DockMargin(30, 0, 0, 0)
     button:SetFont("Impulse-Elements32")
@@ -169,7 +169,7 @@ function PANEL:Init()
         gui.OpenURL(impulse.Config.DonateURL or "www.google.com")
     end
 
-    local button = self.left:Add("impulseMainMenuButton")
+    button = self.left:Add("impulseMainMenuButton")
     button:Dock(BOTTOM)
     button:DockMargin(30, 0, 0, 200)
     button:SetFont("Impulse-Elements32")
@@ -192,7 +192,7 @@ function PANEL:Init()
             "No")
     end
 
-    local button = self.left:Add("impulseMainMenuButton")
+    button = self.left:Add("impulseMainMenuButton")
     button:Dock(BOTTOM)
     button:DockMargin(30, 0, 0, 0)
     button:SetFont("Impulse-Elements32")
@@ -219,7 +219,7 @@ function PANEL:Init()
         end
     end)
 
-    local button = self.core:Add("DImageButton")
+    button = self.core:Add("DImageButton")
     button:SetPos(self:GetWide() - 30 - 53, 10)
     button:SetImage("impulse-reforged/icons/social/discord.png")
     button:SetSize(62, 55)
@@ -255,7 +255,7 @@ function PANEL:Init()
     local year = os.date("%Y", os.time())
     local copyrightLabel = vgui.Create("DLabel", self.core)
     copyrightLabel:SetFont("Impulse-Elements14")
-    copyrightLabel:SetText("Powered by impulse\nCopyright Minerva Servers " .. year .. "\nimpulse version: " .. impulse.Version)
+    copyrightLabel:SetText("Powered by impulse\nCopyright Minerva Servers " .. year .. "\nimpulse version: " .. impulse.Version.version)
     copyrightLabel:SizeToContents()
     copyrightLabel:SetPos(ScrW() - copyrightLabel:GetWide(), ScrH() - copyrightLabel:GetTall() - 5)
 
@@ -294,7 +294,7 @@ function PANEL:Init()
                 end,
                 "No thanks")
         end
-        
+
         if ( impulse.Settings:Get("perf_mcore") == false ) then
             Derma_Query("Would you like to enable Multi-core rendering?\nThis will often greatly improve your FPS, however if your computer has a low core count and/or\na small amount of RAM, it can cause crashes and performance problems.",
                 "impulse",
@@ -316,7 +316,7 @@ function PANEL:OnKeyCodePressed(key)
     if ( key == konamiCode[keyPos] ) then
         if ( key == KEY_A ) then
             vgui.Create("impulseMinigame", self)
-            keyPos = 1    
+            keyPos = 1
         end
 
         keyPos = keyPos + 1

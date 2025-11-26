@@ -570,7 +570,7 @@ function GM:HUDPaint()
         surface.SetTextPos(390, y + 30)
         surface.SetTextColor(watermarkCol)
         surface.SetFont("Impulse-Elements18-Shadow")
-        surface.DrawText("PREVIEW BUILD - VERSION: " .. impulse.Version .. " - " .. client:SteamID64() ..  " - " ..  os.date("%H:%M:%S - %d/%m/%Y", os.time()))
+        surface.DrawText("PREVIEW BUILD - VERSION: " .. impulse.Version.version .. " - " .. client:SteamID64() ..  " - " ..  os.date("%H:%M:%S - %d/%m/%Y", os.time()))
         surface.SetTextPos(390, y + 50)
         surface.DrawText("SCHEMA: " .. SCHEMA_NAME .. " - VERSION: " .. impulse.Config.SchemaVersion or "?")
     end
