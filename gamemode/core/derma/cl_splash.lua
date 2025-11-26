@@ -84,9 +84,9 @@ function PANEL:OnKeyCodeReleased(keyCode)
 
             if ( impulse_isNewPlayer or cookie.GetString("impulse_intro", "") == "true" ) then
                 if ( cookie.GetString("impulse_intro", "") == "true" ) then
-                    cookie.Delete("impulse_intro")    
+                    cookie.Delete("impulse_intro")
                 end
-                
+
                 if ( impulse.Config.IntroScenes ) then
                     impulse.Scenes.PlaySet(impulse.Config.IntroScenes, impulse.Config.IntroMusic, function()
                         local mainMenu = vgui.Create("impulseMainMenu")
@@ -135,6 +135,11 @@ concommand.Add("impulse_gui_splash", function()
     end
 
     vgui.Create("impulseSplash")
+end)
+
+concommand.Add("impulse_intro_reset", function()
+    cookie.Set("impulse_intro", "true")
+    print("Intro reset. It will play next time you join.")
 end)
 
 if ( IsValid(impulse.SplashScreen) ) then

@@ -23,7 +23,7 @@ local function hideEnts(hide, hidePlayers)
                 k.sceneHide = nil
                 continue
             end
-            
+
             if hidePlayers and !k:GetNoDraw() then
                 k:SetNoDraw(hidePlayers)
                 k.sceneHide = true
@@ -37,9 +37,16 @@ function impulse.Scenes.Play(stage, sceneData, onDone, skipPVS, preLoad)
     impulse.Scenes.ang = nil
     sceneData.speed = sceneData.speed or 1
 
-    if not skipPVS then
+    if !skipPVS then
+        local pos1 = sceneData.pos
+        local pos2 = sceneData.endpos
+        local outcomepos = pos1
+        if (pos1 and pos2) then
+            outcomepos = (pos1 + pos2) / 2
+        end
+
         net.Start("impulseScenePVS")
-        net.WriteVector(sceneData.pvsPos or sceneData.pos)
+        net.WriteVector(sceneData.pvsPos or outcomepos)
         net.SendToServer()
     end
 
@@ -56,7 +63,7 @@ function impulse.Scenes.Play(stage, sceneData, onDone, skipPVS, preLoad)
 
         if sceneData.endpos and !sceneData.static then
             if sceneData.posNoLerp then
-                lastPosAdd = lastPosAdd + FrameTime() * sceneData.posSpeed
+                lastPosAdd = lastPosAdd + FrameTime() * sceneData.speed
                 impulse.Scenes.pos = LerpVector(lastPosAdd, sceneData.pos, sceneData.endpos)
             else
                 impulse.Scenes.pos = LerpVector(FrameTime() * sceneData.speed, impulse.Scenes.pos, sceneData.endpos)
@@ -97,7 +104,17 @@ function impulse.Scenes.Play(stage, sceneData, onDone, skipPVS, preLoad)
             hook.Add("HUDPaint", "impulseScene", function()
                 if CurTime() > nextTime and textPos != string.len(sceneData.text) then
                     textPos = textPos + 1
-                    nextTime = CurTime() + 0.08
+
+                    local char = string.sub(sceneData.text, textPos, textPos)
+                    local delay = 0.08
+
+                    if char == "," then
+                        delay = 0.5
+                    elseif char == "." then
+                        delay = 1.0
+                    end
+
+                    nextTime = CurTime() + delay
 
                     surface.PlaySound("impulse-reforged/typewriter".. math.random(1, 4) .. ".wav")
                 end
