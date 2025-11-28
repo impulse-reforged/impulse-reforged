@@ -105,7 +105,7 @@ end
 -- @realm shared
 -- @treturn bool Is in spawn
 function PLAYER:InSpawn()
-    if ( hook.Run("PlayerIsInSpawn", self) ) then return true end
+    if ( hook.Run("PlayerIsInSpawn", self) == true ) then return true end
 
     if ( !impulse.Config.SpawnPos1 or !impulse.Config.SpawnPos2 ) then return false end
 

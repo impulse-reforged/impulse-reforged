@@ -145,7 +145,7 @@ function PLAYER:GetPropCount(skip)
 
     end
 
-    if not skip then
+    if !skip then
         self:SetRelay("propCount", c)
     end
 
@@ -167,7 +167,7 @@ function PLAYER:AddPropCount(ent)
 end
 
 function PLAYER:ResetSubMaterials()
-    if not self.SetSubMats then return end
+    if !self.SetSubMats then return end
 
     for v, k in pairs(self.SetSubMats) do
         self:SetSubMaterial(v - 1, nil)
