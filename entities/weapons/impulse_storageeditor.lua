@@ -16,16 +16,16 @@ SWEP.ViewModel = "models/weapons/v_pistol.mdl"
 SWEP.WorldModel = "models/weapons/w_pistol.mdl"
 
 SWEP.Primary.Delay            = 1
-SWEP.Primary.Recoil            = 0    
+SWEP.Primary.Recoil            = 0
 SWEP.Primary.Damage            = 0
 SWEP.Primary.NumShots        = 0
-SWEP.Primary.Cone            = 0     
-SWEP.Primary.ClipSize        = -1    
-SWEP.Primary.DefaultClip    = -1    
-SWEP.Primary.Automatic       = false    
+SWEP.Primary.Cone            = 0
+SWEP.Primary.ClipSize        = -1
+SWEP.Primary.DefaultClip    = -1
+SWEP.Primary.Automatic       = false
 SWEP.Primary.Ammo             = "none"
 SWEP.IsAlwaysRaised = true
- 
+
 SWEP.Secondary.Delay        = 0.9
 SWEP.Secondary.Recoil        = 0
 SWEP.Secondary.Damage        = 0
@@ -44,16 +44,17 @@ if ( SERVER ) then
         end
     end
 else
+    local watermarkCol = Color(255, 255, 255, 120)
     function SWEP:DrawHUD()
-        draw.SimpleText("LEFT: Register entity, RIGHT: Reset, RELOAD: Link", "BudgetLabel", 100, 100)
-        draw.SimpleText("STATE: "..(self.State or "Select a storage container..."), "BudgetLabel", 100, 120)
+        draw.SimpleText("LEFT: Register entity, RIGHT: Reset, RELOAD: Link", "Impulse-Elements18-Shadow", 100, 100, watermarkCol)
+        draw.SimpleText("STATE: "..(self.State or "Select a storage container..."), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
 
         local count = 0
         for k, v in pairs(ents.FindByClass("impulse_storage")) do
             count = count + 1
             if v:GetPos():DistToSqr(LocalPlayer():GetPos()) < (1000 ^ 2) then
                 local sPos = v:GetPos():ToScreen()
-                draw.SimpleText("Cont#"..v:EntIndex(), "ChatFont", sPos.x, sPos.y, Color(255, 0, 0), TEXT_ALIGN_CENTER)
+                draw.SimpleText("Cont#"..v:EntIndex(), "ChatFont", sPos.x, sPos.y, Color(255, 0, 0, 120), TEXT_ALIGN_CENTER)
             end
         end
     end
@@ -99,7 +100,7 @@ function SWEP:SecondaryAttack()
     if ( CLIENT ) then
         surface.PlaySound("buttons/button10.wav")
     end
-    
+
     self.NextGo = CurTime() + .3
 end
 

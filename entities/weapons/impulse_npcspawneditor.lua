@@ -16,16 +16,16 @@ SWEP.ViewModel = "models/weapons/v_pistol.mdl"
 SWEP.WorldModel = "models/weapons/w_pistol.mdl"
 
 SWEP.Primary.Delay            = 1
-SWEP.Primary.Recoil            = 0    
+SWEP.Primary.Recoil            = 0
 SWEP.Primary.Damage            = 0
 SWEP.Primary.NumShots        = 0
-SWEP.Primary.Cone            = 0     
-SWEP.Primary.ClipSize        = -1    
-SWEP.Primary.DefaultClip    = -1    
-SWEP.Primary.Automatic       = false    
+SWEP.Primary.Cone            = 0
+SWEP.Primary.ClipSize        = -1
+SWEP.Primary.DefaultClip    = -1
+SWEP.Primary.Automatic       = false
 SWEP.Primary.Ammo             = "none"
 SWEP.IsAlwaysRaised = true
- 
+
 SWEP.Secondary.Delay        = 0.9
 SWEP.Secondary.Recoil        = 0
 SWEP.Secondary.Damage        = 0
@@ -48,13 +48,13 @@ if ( SERVER ) then
 
     function SWEP:Reload()
     end
-    
+
     function SWEP:SecondaryAttack()
     end
 else
     function SWEP:PrimaryAttack()
         if self.NextGo > CurTime() then return end
-        
+
         if not self.Pos1 then
             self.Pos1 = self.Owner:GetPos()
             self.Pos2 = self.Owner:GetAngles()
@@ -77,7 +77,7 @@ else
         self.Exporting = nil
 
         surface.PlaySound("buttons/button10.wav")
-        
+
         self.NextGo = CurTime() + .3
     end
 
@@ -88,7 +88,7 @@ else
                 local pos1 = "Vector("..self.Pos1.x..", "..self.Pos1.y..", "..self.Pos1.z..")"
                 local pos2 = "Angle("..self.Pos2.y..", "..self.Pos2.p..", "..self.Pos2.r..")"
                 local output = '{type = "'..name..'", dist = 1000, pos = '..pos1..', ang = '..pos2..'}'
-                
+
                 chat.AddText("-----------------OUTPUT-----------------")
                 chat.AddText(output)
                 chat.AddText("Output copied to clipboard.")
@@ -102,16 +102,16 @@ else
         end
     end
 
+    local watermarkCol = Color(255, 255, 255, 120)
     function SWEP:DrawHUD()
-        draw.SimpleText("LEFT: Register spawn, RIGHT: Reset, RELOAD: Export", "BudgetLabel", 100, 100)
-        draw.SimpleText("STATE: "..(self.State or "Nothing selected"), "BudgetLabel", 100, 120)
-        draw.SimpleText("Warning, when you click your current position\nwill be registered, not your weapon aim position!", "BudgetLabel", 100, 140)
-
+        draw.SimpleText("LEFT: Register spawn, RIGHT: Reset, RELOAD: Export", "Impulse-Elements18-Shadow", 100, 100, watermarkCol)
+        draw.SimpleText("STATE: "..(self.State or "Nothing selected"), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
+        draw.SimpleText("Warning, when you click your current position\nwill be registered, not your weapon aim position!", "Impulse-Elements18-Shadow", 100, 140, watermarkCol)
         if not impulse.Config.NPCSpawns then return end
 
         for k, v in pairs(impulse.Config.NPCSpawns) do
             local cent = v.pos:ToScreen()
-            draw.SimpleText(v.type, "BudgetLabel", cent.x, cent.y)
+            draw.SimpleText(v.type, "Impulse-Elements18-Shadow", cent.x, cent.y, watermarkCol)
         end
     end
 

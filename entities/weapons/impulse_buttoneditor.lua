@@ -16,16 +16,16 @@ SWEP.ViewModel = "models/weapons/v_pistol.mdl"
 SWEP.WorldModel = "models/weapons/w_pistol.mdl"
 
 SWEP.Primary.Delay            = 1
-SWEP.Primary.Recoil            = 0    
+SWEP.Primary.Recoil            = 0
 SWEP.Primary.Damage            = 0
 SWEP.Primary.NumShots        = 0
-SWEP.Primary.Cone            = 0     
-SWEP.Primary.ClipSize        = -1    
-SWEP.Primary.DefaultClip    = -1    
-SWEP.Primary.Automatic       = false    
+SWEP.Primary.Cone            = 0
+SWEP.Primary.ClipSize        = -1
+SWEP.Primary.DefaultClip    = -1
+SWEP.Primary.Automatic       = false
 SWEP.Primary.Ammo             = "none"
 SWEP.IsAlwaysRaised = true
- 
+
 SWEP.Secondary.Delay        = 0.9
 SWEP.Secondary.Recoil        = 0
 SWEP.Secondary.Damage        = 0
@@ -48,7 +48,7 @@ if ( SERVER ) then
 
     function SWEP:Reload()
     end
-    
+
     function SWEP:SecondaryAttack()
     end
 else
@@ -83,7 +83,7 @@ else
         self.State = nil
 
         surface.PlaySound("buttons/button10.wav")
-        
+
         self.NextGo = CurTime() + .3
     end
 
@@ -97,7 +97,7 @@ else
             -- im sorry i had to do this indent god, pls forgiv
             local output = ""
 
-            Derma_Query("Please select template", "impulse", 
+            Derma_Query("Please select template", "impulse",
                 "generic", function()
                     output = [[{
     desc = "Desc or remove line for no desc",
@@ -111,7 +111,7 @@ else
             self.Selected = nil
             self.Button = nil
             self.State = nil
-                end, 
+                end,
                 "doorgroup", function()
                     output = [[{
     desc = "Desc or remove line for no desc",
@@ -127,7 +127,7 @@ else
             self.Selected = nil
             self.Button = nil
             self.State = nil
-                end, 
+                end,
                 "staffonly", function()
                     output = [[{
     desc = "Desc or remove line for no desc",
@@ -166,16 +166,24 @@ else
         end
     end
 
+    local watermarkCol = Color(255, 255, 255, 120)
     function SWEP:DrawHUD()
-        draw.SimpleText("LEFT: Register button, RIGHT: Reset, RELOAD: Export", "BudgetLabel", 100, 100)
-        draw.SimpleText("STATE: "..(self.State or "Nothing selected"), "BudgetLabel", 100, 120)
+        draw.SimpleText("LEFT: Register button, RIGHT: Reset, RELOAD: Export", "Impulse-Elements18-Shadow", 100, 100, watermarkCol)
+        draw.SimpleText("STATE: " .. (self.State or "Nothing selected"), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
 
         local lpPos = LocalPlayer():GetPos()
 
         for k, v in pairs(impulse.Config.Buttons) do
-            if lpPos:DistToSqr(v.pos) < 900 ^ 2 then
+            if lpPos:DistToSqr(v.pos) < 1024 ^ 2 then
                 local cent = v.pos:ToScreen()
-                draw.SimpleText(v.desc or "ScriptedButton", "ChatFont", cent.x, cent.y)
+                draw.SimpleText(v.desc or "ScriptedButton", "Impulse-Elements18-Shadow", cent.x, cent.y, Color(255, 0, 0, 120))
+            end
+        end
+
+        for k, v in ipairs(ents.FindByClass("func_button")) do
+            if lpPos:DistToSqr(v:GetPos()) < 1024 ^ 2 then
+                local cent = v:GetPos():ToScreen()
+                draw.SimpleText("func_button", "Impulse-Elements18-Shadow", cent.x, cent.y, watermarkCol)
             end
         end
     end

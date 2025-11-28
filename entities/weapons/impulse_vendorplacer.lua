@@ -19,15 +19,15 @@ SWEP.WorldModel = "models/weapons/w_toolgun.mdl"
 SWEP.UseHands = true
 
 SWEP.Primary.Delay            = 1
-SWEP.Primary.Recoil            = 0    
+SWEP.Primary.Recoil            = 0
 SWEP.Primary.Damage            = 0
 SWEP.Primary.NumShots        = 0
-SWEP.Primary.Cone            = 0     
-SWEP.Primary.ClipSize        = -1    
-SWEP.Primary.DefaultClip    = -1    
-SWEP.Primary.Automatic       = false    
+SWEP.Primary.Cone            = 0
+SWEP.Primary.ClipSize        = -1
+SWEP.Primary.DefaultClip    = -1
+SWEP.Primary.Automatic       = false
 SWEP.Primary.Ammo             = "none"
- 
+
 SWEP.Secondary.Delay        = 1
 SWEP.Secondary.Recoil        = 0
 SWEP.Secondary.Damage        = 0
@@ -45,8 +45,9 @@ if ( SERVER ) then
         end
     end
 else
+    local watermarkCol = Color(255, 255, 255, 120)
     function SWEP:DrawHUD()
-        draw.SimpleText("LEFT: Place Vendor", "BudgetLabel", 100, 100)
+        draw.SimpleText("LEFT: Place Vendor", "Impulse-Elements18-Shadow", 100, 100, watermarkCol)
     end
 end
 
@@ -113,11 +114,11 @@ if ( SERVER ) then
 
     net.Receive("impulseVendorPlace", function(len, client)
         if not client:IsSuperAdmin() then return end
-        
+
         local uniqueID = net.ReadString()
-        
+
         if not impulse.Vendor.Data[uniqueID] then return end
-        
+
         local trace = client:GetEyeTrace()
         local ang = client:EyeAngles()
         ang:RotateAroundAxis(ang:Right(), 180)

@@ -16,16 +16,16 @@ SWEP.ViewModel = "models/weapons/v_pistol.mdl"
 SWEP.WorldModel = "models/weapons/w_pistol.mdl"
 
 SWEP.Primary.Delay            = 1
-SWEP.Primary.Recoil            = 0    
+SWEP.Primary.Recoil            = 0
 SWEP.Primary.Damage            = 0
 SWEP.Primary.NumShots        = 0
-SWEP.Primary.Cone            = 0     
-SWEP.Primary.ClipSize        = -1    
-SWEP.Primary.DefaultClip    = -1    
-SWEP.Primary.Automatic       = false    
+SWEP.Primary.Cone            = 0
+SWEP.Primary.ClipSize        = -1
+SWEP.Primary.DefaultClip    = -1
+SWEP.Primary.Automatic       = false
 SWEP.Primary.Ammo             = "none"
 SWEP.IsAlwaysRaised = true
- 
+
 SWEP.Secondary.Delay        = 0.9
 SWEP.Secondary.Recoil        = 0
 SWEP.Secondary.Damage        = 0
@@ -48,13 +48,13 @@ if ( SERVER ) then
 
     function SWEP:Reload()
     end
-    
+
     function SWEP:SecondaryAttack()
     end
 else
     function SWEP:PrimaryAttack()
         if self.NextGo > CurTime() then return end
-        
+
         if self.Pos1 then
             self.Pos2 = self.Owner:EyePos()
             self.Ang2 = self.Owner:EyeAngles()
@@ -85,7 +85,7 @@ else
         self.Exporting = nil
 
         surface.PlaySound("buttons/button10.wav")
-        
+
         self.NextGo = CurTime() + .3
     end
 
@@ -112,8 +112,9 @@ else
         end
     end
 
+    local watermarkCol = Color(255, 255, 255, 120)
     function SWEP:DrawHUD()
-        draw.SimpleText("LEFT: Register shot, RIGHT: Reset, RELOAD: Export", "BudgetLabel", 100, 100)
-        draw.SimpleText("STATE: "..(self.State or "Ready for shot 1."), "BudgetLabel", 100, 120)
+        draw.SimpleText("LEFT: Register shot, RIGHT: Reset, RELOAD: Export", "Impulse-Elements18-Shadow", 100, 100, watermarkCol)
+        draw.SimpleText("STATE: "..(self.State or "Ready for shot 1."), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
     end
 end

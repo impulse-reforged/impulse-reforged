@@ -105,16 +105,17 @@ else
         end
     end
 
+    local watermarkCol = Color(255, 255, 255, 120)
     function SWEP:DrawHUD()
-        draw.SimpleText("LEFT: Register point, RIGHT: Reset, RELOAD: Export", "BudgetLabel", 100, 100)
-        draw.SimpleText("STATE: "..(self.State or "Nothing selected"), "BudgetLabel", 100, 120)
-        draw.SimpleText("Warning, when you click your current position\nwill be registered, not your weapon aim position!", "BudgetLabel", 100, 140)
+        draw.SimpleText("LEFT: Register point, RIGHT: Reset, RELOAD: Export", "Impulse-Elements18-Shadow", 100, 100, watermarkCol)
+        draw.SimpleText("STATE: "..(self.State or "Nothing selected"), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
+        draw.SimpleText("Warning, when you click your current position\nwill be registered, not your weapon aim position!", "Impulse-Elements18-Shadow", 100, 140, watermarkCol)
 
         for _, data in ipairs(impulse.Config.Zones or {}) do
             if ( !data.pos1 or !data.pos2 ) then continue end
 
             local cent = (LerpVector(.5, data.pos1, data.pos2)):ToScreen()
-            draw.SimpleText(data.name, "BudgetLabel", cent.x, cent.y, impulse.Util:GetUniqueColour(data.name))
+            draw.SimpleText(data.name, "Impulse-Elements18-Shadow", cent.x, cent.y, impulse.Util:GetUniqueColour(data.name))
         end
     end
 

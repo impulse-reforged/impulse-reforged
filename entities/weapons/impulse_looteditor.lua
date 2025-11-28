@@ -19,15 +19,15 @@ SWEP.WorldModel = "models/weapons/w_toolgun.mdl"
 SWEP.UseHands = true
 
 SWEP.Primary.Delay            = 1
-SWEP.Primary.Recoil            = 0    
+SWEP.Primary.Recoil            = 0
 SWEP.Primary.Damage            = 0
 SWEP.Primary.NumShots        = 0
-SWEP.Primary.Cone            = 0     
-SWEP.Primary.ClipSize        = -1    
-SWEP.Primary.DefaultClip    = -1    
-SWEP.Primary.Automatic       = false    
+SWEP.Primary.Cone            = 0
+SWEP.Primary.ClipSize        = -1
+SWEP.Primary.DefaultClip    = -1
+SWEP.Primary.Automatic       = false
 SWEP.Primary.Ammo             = "none"
- 
+
 SWEP.Secondary.Delay        = 1
 SWEP.Secondary.Recoil        = 0
 SWEP.Secondary.Damage        = 0
@@ -45,9 +45,10 @@ if ( SERVER ) then
         end
     end
 else
+    local watermarkCol = Color(255, 255, 255, 120)
     function SWEP:DrawHUD()
-        draw.SimpleText("LEFT: Register entity, RIGHT: Reset, RELOAD: Set as loot", "BudgetLabel", 100, 100)
-        draw.SimpleText("STATE: "..(self.State or "Spawn a prop and select it..."), "BudgetLabel", 100, 120)
+        draw.SimpleText("LEFT: Register entity, RIGHT: Reset, RELOAD: Set as loot", "Impulse-Elements18-Shadow", 100, 100, watermarkCol)
+        draw.SimpleText("STATE: "..(self.State or "Spawn a prop and select it..."), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
 
         local count = 0
         for k, v in pairs(ents.FindByClass("impulse_container")) do
@@ -55,11 +56,11 @@ else
                 count = count + 1
 
                 local sPos = v:GetPos():ToScreen()
-                draw.SimpleText("Loot#"..v:EntIndex(), "ChatFont", sPos.x, sPos.y, Color(255, 0, 0), TEXT_ALIGN_CENTER)
+                draw.SimpleText("Loot#"..v:EntIndex(), "Impulse-Elements18-Shadow", sPos.x, sPos.y, Color(255, 0, 0, 120), TEXT_ALIGN_CENTER)
             end
         end
 
-        draw.SimpleText("INFO: LOOT CONTAINER COUNT: "..count, "BudgetLabel", 100, 140)
+        draw.SimpleText("INFO: LOOT CONTAINER COUNT: "..count, "Impulse-Elements18-Shadow", 100, 140, watermarkCol)
     end
 end
 
@@ -136,7 +137,7 @@ end
 function SWEP:SecondaryAttack()
     if ( !self.nextSecondaryAttack ) then self.nextSecondaryAttack = 0 end
     if ( CurTime() < self.nextSecondaryAttack ) then return end
-    
+
     if ( SERVER ) then return end
 
     self.SelectedStorage = nil
@@ -158,12 +159,12 @@ if ( SERVER ) then
 
     net.Receive("impulseLootEditorSet", function(len, client)
         if not client:IsSuperAdmin() then return end
-        
+
         local pool = net.ReadString()
         local ent = net.ReadEntity()
 
         if not IsValid(ent) or ent:GetClass() != "prop_physics" then return end
-        
+
         if not impulse.Config.LootPools[pool] then return end
 
         local entModel = ent:GetModel()
