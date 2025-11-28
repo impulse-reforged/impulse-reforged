@@ -752,11 +752,28 @@ function PLAYER:CanMakeMix(class)
 
     local missing = false
     local missingItems = {}
+    local inv = self:GetInventory()
+
     for k, v in pairs(class.Input) do
-        local item = self:HasInventoryItem(k, v.take)
-        if ( !item or self:IsInventoryItemRestricted(item) ) then
+        local available = 0
+
+        for _, itemData in pairs(inv) do
+            if ( itemData.class == k and !itemData.restricted ) then
+                available = available + 1
+            end
+        end
+
+        if ( available < v.take ) then
             missing = true
-            table.insert(missingItems, (impulse.Inventory.Items[impulse.Inventory:ClassToNetID(k)].Name or k).." x"..v.take)
+
+            local netid = impulse.Inventory:ClassToNetID(k)
+            local name = k
+
+            if ( netid and impulse.Inventory.Items[netid] and impulse.Inventory.Items[netid].Name ) then
+                name = impulse.Inventory.Items[netid].Name
+            end
+
+            table.insert(missingItems, name .. " x" .. v.take)
         end
     end
 
