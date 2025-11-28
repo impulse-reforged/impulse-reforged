@@ -19,7 +19,7 @@ impulse.Relay.Data = impulse.Relay.Data or {}
 
 if ( SERVER ) then
     function impulse.Relay:Sync(recipients)
-        net.Start("impulse.Relay.sync")
+        net.Start("impulse.Relay.Sync")
             net.WriteTable(impulse.Relay.Data)
         if ( recipients ) then
             net.Send(recipients)
@@ -55,7 +55,7 @@ function ENTITY:SetRelay(name, value, bNoNetworking, recipients)
     impulse.Relay.Data[index][name] = value
 
     if ( !bNoNetworking and SERVER ) then
-        net.Start("impulse.Relay.update")
+        net.Start("impulse.Relay.Update")
             net.WriteString(index)
             net.WriteString(name)
             net.WriteType(value)
@@ -85,7 +85,27 @@ function ENTITY:GetRelay(name, fallback)
 
     impulse.Relay.Data[index] = impulse.Relay.Data[index] or {}
 
-    return impulse.Relay.Data[index][name] != nil and impulse.Relay.Data[index][name] or fallback
+    local value = impulse.Relay.Data[index][name]
+    if ( value != nil ) then
+        return value
+    end
+
+    return fallback
+end
+
+--- Returns a table of all relay data for this entity.
+-- @realm shared
+-- @return table A table containing all relay variables for this entity
+-- @usage local data = entity:GetAllRelayData()
+function ENTITY:GetAllRelayData()
+    local index = tostring(self:EntIndex())
+    if ( self:IsPlayer() ) then
+        index = self:SteamID64()
+    end
+
+    impulse.Relay.Data[index] = impulse.Relay.Data[index] or {}
+
+    return impulse.Relay.Data[index]
 end
 
 --- Set a global relay variable with optional networking.
@@ -107,7 +127,7 @@ function SetRelay(name, value, bNoNetworking, recipients)
     impulse.Relay.Data["global"][name] = value
 
     if ( !bNoNetworking and SERVER ) then
-        net.Start("impulse.Relay.update")
+        net.Start("impulse.Relay.Update")
             net.WriteString("global")
             net.WriteString(name)
             net.WriteType(value)
@@ -131,7 +151,13 @@ function GetRelay(name, fallback)
     if ( !isstring(name) ) then return fallback end
 
     impulse.Relay.Data["global"] = impulse.Relay.Data["global"] or {}
-    return impulse.Relay.Data["global"][name] != nil and impulse.Relay.Data["global"][name] or fallback
+
+    local value = impulse.Relay.Data["global"][name]
+    if ( value != nil ) then
+        return value
+    end
+
+    return fallback
 end
 
 -- Clean up existing hook to prevent duplicates on reload
@@ -161,10 +187,10 @@ hook.Add("PlayerInitialSpawn", "impulse.Relay.SyncData", function(client)
 end)
 
 if ( SERVER ) then
-    util.AddNetworkString("impulse.Relay.update")
-    util.AddNetworkString("impulse.Relay.sync")
+    util.AddNetworkString("impulse.Relay.Update")
+    util.AddNetworkString("impulse.Relay.Sync")
 else
-    net.Receive("impulse.Relay.update", function()
+    net.Receive("impulse.Relay.Update", function()
         local index = net.ReadString()
         local name = net.ReadString()
         local value = net.ReadType()
@@ -173,7 +199,7 @@ else
         impulse.Relay.Data[index][name] = value
     end)
 
-    net.Receive("impulse.Relay.sync", function()
+    net.Receive("impulse.Relay.Sync", function()
         local data = net.ReadTable()
         if ( !istable(data) ) then return end
 
