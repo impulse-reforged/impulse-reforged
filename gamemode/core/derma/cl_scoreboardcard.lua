@@ -130,7 +130,21 @@ function PANEL:RefreshText()
     if not IsValid(self.Player) then return end
     self.nameLabel:SetText(self:GetDisplayName())
     self.pingLabel:SetText(self.Player:Ping())
-    self.teamLabel:SetText(team.GetName(self.Player:Team()))
+
+    -- Build team text with class and rank
+    local teamText = team.GetName(self.Player:Team())
+    local className = self.Player:GetTeamClassName()
+    local rankName = self.Player:GetTeamRankName()
+
+    if className and className != "" then
+        teamText = teamText .. ", " .. className
+    end
+
+    if rankName and rankName != "" then
+        teamText = teamText .. ", " .. rankName
+    end
+
+    self.teamLabel:SetText(teamText)
     self.Colour = team.GetColor(self.Player:Team())
 end
 
@@ -163,7 +177,20 @@ function PANEL:Think()
     end
 
     if ct > self.nextTeamUpdate then
-        self.teamLabel:SetText(team.GetName(self.Player:Team()))
+        -- Build team text with class and rank
+        local teamText = team.GetName(self.Player:Team())
+        local className = self.Player:GetTeamClassName()
+        local rankName = self.Player:GetTeamRankName()
+
+        if className and className != "" then
+            teamText = teamText .. ", " .. className
+        end
+
+        if rankName and rankName != "" then
+            teamText = teamText .. ", " .. rankName
+        end
+
+        self.teamLabel:SetText(teamText)
         self.Colour = team.GetColor(self.Player:Team())
         self.nextTeamUpdate = ct + 2
     end
