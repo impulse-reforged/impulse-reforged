@@ -78,8 +78,8 @@ function impulse.Util:IncludeDir(directory, bFromLua)
     local baseDir = "impulse-reforged"
 
     -- If we're in a schema, include relative to the schema.
-    if ( SCHEMA_NAME ) then
-        baseDir = SCHEMA_NAME .. "/schema/"
+    if ( SCHEMA and SCHEMA.Folder ) then
+        baseDir = SCHEMA.Folder .. "/schema/"
     else
         baseDir = baseDir .. "/gamemode/"
     end

@@ -42,6 +42,8 @@ function impulse.Schema:Load()
         end
     end
 
+    SCHEMA.Folder = engine.ActiveGamemode()
+
     -- Prepare the schema hook system
     impulse.Hooks:Register("SCHEMA")
 
@@ -80,7 +82,7 @@ function impulse.Schema:Load()
     -- Load schema plugins
     impulse.Plugins:Load(name .. "/plugins")
 
-    GAMEMODE.Name = "impulse: " .. SCHEMA.Name
+    GAMEMODE.Name = "impulse: " .. (SCHEMA.Name or impulse.Config.SchemaName or "Unknown")
 
     hook.Run("OnSchemaLoaded")
 
