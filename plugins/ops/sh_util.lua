@@ -17,18 +17,19 @@ local setHealthCommand = {
             amount = math.Clamp(amount, 1, 100)
         end
 
- 
+
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") health to "..amount)
             target:SetHealth(amount)
-            client:Notify("You have set " .. target:Nick() .. "'s health to " .. amount .. ".")
+            client:Notify("You have successfully set " .. target:Nick() .. "'s health to " .. amount .. ".")
 
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") health to " .. amount .. ".")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") health to " .. amount .. " | Old: " .. target:Health() .. " | Pos: " .. tostring(target:GetPos()))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -51,16 +52,17 @@ local setArmorCommand = {
         end
 
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") armor to "..amount)
             target:SetArmor(amount)
-            client:Notify("You have set " .. target:Nick() .. "'s armor to " .. amount .. ".")
+            client:Notify("You have successfully set " .. target:Nick() .. "'s armor to " .. amount .. ".")
 
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") armor to " .. amount .. ".")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") armor to " .. amount .. " | Old: " .. target:Armor() .. " | Pos: " .. tostring(target:GetPos()))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -82,16 +84,17 @@ local setHungerCommand = {
         end
 
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") hunger to "..amount)
             target:SetHunger(amount)
-            client:Notify("You have set " .. target:Nick() .. "'s hunger to " .. amount .. ".")
+            client:Notify("You have successfully set " .. target:Nick() .. "'s hunger to " .. amount .. ".")
 
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") hunger to " .. amount .. ".")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") hunger to " .. amount .. " | Old: " .. target:GetHunger() .. " | Pos: " .. tostring(target:GetPos()))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -109,16 +112,17 @@ local setMoneyCommand = {
         if ( !amount or !tonumber(amount) ) then return end
 
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") money to $"..amount)
             target:SetMoney(amount)
-            client:Notify("You have set " .. target:Nick() .. "'s money to " .. amount .. ".")
+            client:Notify("You have successfully set " .. target:Nick() .. "'s money to $" .. amount .. ".")
 
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") money to " .. amount .. ".")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") money to $" .. amount .. " | Old: $" .. target:GetMoney() .. " | Pos: " .. tostring(target:GetPos()))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -136,16 +140,18 @@ local addMoneyCommand = {
         if ( !amount or !tonumber(amount) ) then return end
 
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") added $"..amount.." to "..target:Name().."'s ("..target:SteamID64()..") money")
             target:AddMoney(amount)
-            client:Notify("You have added " .. amount .. " to " .. target:Nick() .. "'s money.")
+            client:Notify("You have successfully added $" .. amount .. " to " .. target:Nick() .. "'s money.")
 
+            local oldMoney = target:GetMoney()
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has added " .. amount .. " to " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") money.")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has added $" .. amount .. " to " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") money | Old: $" .. oldMoney .. " | New: $" .. (oldMoney + amount) .. " | Pos: " .. tostring(target:GetPos()))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -163,16 +169,18 @@ local takeMoneyCommand = {
         if ( !amount or !tonumber(amount) ) then return end
 
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") took $"..amount.." from "..target:Name().."'s ("..target:SteamID64()..") money")
             target:TakeMoney(amount)
-            client:Notify("You have taken " .. amount .. " from " .. target:Nick() .. "'s money.")
+            client:Notify("You have successfully taken $" .. amount .. " from " .. target:Nick() .. "'s money.")
 
+            local oldMoney = target:GetMoney()
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has taken " .. amount .. " from " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") money.")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has taken $" .. amount .. " from " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") money | Old: $" .. oldMoney .. " | New: $" .. (oldMoney - amount) .. " | Pos: " .. tostring(target:GetPos()))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -190,16 +198,17 @@ local setBankMoneyCommand = {
         if ( !amount or !tonumber(amount) ) then return end
 
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") bank money to $"..amount)
             target:SetBankMoney(amount)
-            client:Notify("You have set " .. target:Nick() .. "'s bank money to " .. amount .. ".")
+            client:Notify("You have successfully set " .. target:Nick() .. "'s bank money to $" .. amount .. ".")
 
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") bank money to " .. amount .. ".")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") bank money to $" .. amount .. " | Old: $" .. target:GetBankMoney() .. " | Pos: " .. tostring(target:GetPos()))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -217,16 +226,18 @@ local addBankMoneyCommand = {
         if ( !amount or !tonumber(amount) ) then return end
 
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") added $"..amount.." to "..target:Name().."'s ("..target:SteamID64()..") bank money")
             target:AddBankMoney(amount)
-            client:Notify("You have added " .. amount .. " to " .. target:Nick() .. "'s bank money.")
+            client:Notify("You have successfully added $" .. amount .. " to " .. target:Nick() .. "'s bank money.")
 
+            local oldBankMoney = target:GetBankMoney()
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has added " .. amount .. " to " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") bank money.")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has added $" .. amount .. " to " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") bank money | Old: $" .. oldBankMoney .. " | New: $" .. (oldBankMoney + amount) .. " | Pos: " .. tostring(target:GetPos()))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -244,16 +255,18 @@ local takeBankMoneyCommand = {
         if ( !amount or !tonumber(amount) ) then return end
 
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") took $"..amount.." from "..target:Name().."'s ("..target:SteamID64()..") bank money")
             target:TakeBankMoney(amount)
-            client:Notify("You have taken " .. amount .. " from " .. target:Nick() .. "'s bank money.")
+            client:Notify("You have successfully taken $" .. amount .. " from " .. target:Nick() .. "'s bank money.")
 
+            local oldBankMoney = target:GetBankMoney()
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has taken " .. amount .. " from " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") bank money.")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has taken $" .. amount .. " from " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") bank money | Old: $" .. oldBankMoney .. " | New: $" .. (oldBankMoney - amount) .. " | Pos: " .. tostring(target:GetPos()))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -269,19 +282,20 @@ local fixLegsCommand = {
 
         if ( IsValid(target) ) then
             if ( target:HasBrokenLegs() ) then
+                print("[ops] "..client:Name().." ("..client:SteamID64()..") fixed "..target:Name().."'s ("..target:SteamID64()..") broken legs")
                 target:FixLegs()
-                client:Notify("You have fixed " .. target:Nick() .. "'s legs.")
+                client:Notify("You have successfully fixed " .. target:Nick() .. "'s legs.")
 
                 for k, v in player.Iterator() do
                     if ( v:IsLeadAdmin() ) then
-                        v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has fixed " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") legs.")
+                        v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has fixed " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") broken legs | Pos: " .. tostring(target:GetPos()))
                     end
                 end
             else
-                client:Notify(target:Nick() .. " does not have broken legs.")
+                client:Notify(target:Nick() .. " does not have any broken legs.")
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -295,26 +309,28 @@ local setClassCommand = {
     onRun = function(client, args, rawText)
         local target = impulse.Util:FindPlayer(args[1])
         if ( !args[2] ) then
-            return client:Notify("No class specified.")
+            return client:Notify("No class was specified.")
         end
 
         local id, class = impulse.Teams:FindClass(args[2])
 
         if not class then
-            return client:Notify("Invalid class.")
+            return client:Notify("The specified class is invalid.")
         end
 
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") class to "..class.name.." (ID: "..id..")")
             target:SetTeamClass(id)
-            client:Notify("You have set " .. target:Nick() .. "'s class to " .. class.name .. ".")
+            client:Notify("You have successfully set " .. target:Nick() .. "'s class to " .. class.name .. ".")
 
+            local oldClassName = target:GetTeamClassName() or "None"
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") class to " .. class.name .. ".")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") class to " .. class.name .. " | Old: " .. oldClassName .. " | Team: " .. team.GetName(target:Team()) .. " | Pos: " .. tostring(target:GetPos()))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -328,26 +344,28 @@ local setRankCommand = {
     onRun = function(client, args, rawText)
         local target = impulse.Util:FindPlayer(args[1])
         if ( !args[2] ) then
-            return client:Notify("No rank specified.")
+            return client:Notify("No rank was specified.")
         end
 
         local id, rank = impulse.Teams:FindRank(args[2])
         if ( !rank ) then
-            return client:Notify("Invalid rank.")
+            return client:Notify("The specified rank is invalid.")
         end
 
         if ( IsValid(target) ) then
             if ( target:SetTeamRank(id) ) then
-                client:Notify("You have set " .. target:Nick() .. "'s rank to " .. rank.name .. ".")
+                print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") rank to "..rank.name.." (ID: "..id..")")
+                client:Notify("You have successfully set " .. target:Nick() .. "'s rank to " .. rank.name .. ".")
 
+                local oldRankName = target:GetTeamRankName() or "None"
                 for k, v in player.Iterator() do
                     if ( v:IsLeadAdmin() ) then
-                        v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") rank to " .. rank.name .. ".")
+                        v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") rank to " .. rank.name .. " | Old: " .. oldRankName .. " | Team: " .. team.GetName(target:Team()) .. " | Pos: " .. tostring(target:GetPos()))
                     end
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -362,31 +380,32 @@ local setSavedModelCommand = {
         local target = impulse.Util:FindPlayer(args[1])
         local newModel = args[2]
         if not newModel then
-            return client:Notify("No model specified.")
+            return client:Notify("No model was specified.")
         end
 
         if not Model(newModel) then
-            return client:Notify("Invalid model.")
+            return client:Notify("The specified model is invalid.")
         end
 
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") saved model to "..newModel)
             local query = mysql:Update("impulse_players")
             query:Update("model", newModel)
             query:Where("steamid", target:SteamID64())
             query:Execute()
-    
+
             target.impulseDefaultModel = newModel
             target:SetModel(newModel)
 
-            client:Notify("You have set " .. target:Nick() .. "'s saved model to " .. newModel .. ".")
+            client:Notify("You have successfully set " .. target:Nick() .. "'s saved model to " .. newModel .. ".")
 
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") saved model to " .. newModel .. ".")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") saved model to " .. newModel .. " | Old: " .. (target.impulseDefaultModel or "None") .. " | Pos: " .. tostring(target:GetPos()))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -401,25 +420,27 @@ local setModelCommand = {
         local target = impulse.Util:FindPlayer(args[1])
         local newModel = args[2]
         if not newModel then
-            return client:Notify("No model specified.")
+            return client:Notify("No model was specified.")
         end
 
         if not Model(newModel) then
-            return client:Notify("Invalid model.")
+            return client:Notify("The specified model is invalid.")
         end
 
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") model to "..newModel)
             target:SetModel(newModel)
 
-            client:Notify("You have set " .. target:Nick() .. "'s model to " .. newModel .. ".")
+            client:Notify("You have successfully set " .. target:Nick() .. "'s model to " .. newModel .. ".")
 
+            local oldModel = target:GetModel()
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") model to " .. newModel .. ".")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") model to " .. newModel .. " | Old: " .. oldModel .. " | Pos: " .. tostring(target:GetPos()))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -434,31 +455,32 @@ local setSavedSkinCommand = {
         local target = impulse.Util:FindPlayer(args[1])
         local newSkin = args[2]
         if not newSkin then
-            return client:Notify("No skin specified.")
+            return client:Notify("No skin was specified.")
         end
 
         if not tonumber(newSkin) then
-            return client:Notify("Invalid skin.")
+            return client:Notify("The specified skin is invalid.")
         end
 
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") saved skin to "..newSkin)
             local query = mysql:Update("impulse_players")
             query:Update("skin", newSkin)
             query:Where("steamid", target:SteamID64())
             query:Execute()
-    
+
             target.impulseDefaultSkin = newSkin
             target:SetSkin(newSkin)
 
-            client:Notify("You have set " .. target:Nick() .. "'s saved skin to " .. newSkin .. ".")
+            client:Notify("You have successfully set " .. target:Nick() .. "'s saved skin to " .. newSkin .. ".")
 
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") saved skin to " .. newSkin .. ".")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") saved skin to " .. newSkin .. " | Old: " .. (target.impulseDefaultSkin or "0") .. " | Pos: " .. tostring(target:GetPos()))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -473,25 +495,27 @@ local setSkinCommand = {
         local target = impulse.Util:FindPlayer(args[1])
         local newSkin = args[2]
         if not newSkin then
-            return client:Notify("No skin specified.")
+            return client:Notify("No skin was specified.")
         end
 
         if not tonumber(newSkin) then
-            return client:Notify("Invalid skin.")
+            return client:Notify("The specified skin is invalid.")
         end
 
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") skin to "..newSkin)
             target:SetSkin(newSkin)
 
-            client:Notify("You have set " .. target:Nick() .. "'s skin to " .. newSkin .. ".")
+            client:Notify("You have successfully set " .. target:Nick() .. "'s skin to " .. newSkin .. ".")
 
+            local oldSkin = target:GetSkin()
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") skin to " .. newSkin .. ".")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") skin to " .. newSkin .. " | Old: " .. oldSkin .. " | Pos: " .. tostring(target:GetPos()))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -506,23 +530,25 @@ local setSavedNameCommand = {
         local target = impulse.Util:FindPlayer(args[1])
         local newName = args[2]
         if not newName then
-            return client:Notify("No name specified.")
+            return client:Notify("No name was specified.")
         end
 
         newName = table.concat(args, " ", 2)
 
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") saved name to "..newName)
             target:SetRPName(newName, true)
 
-            client:Notify("You have set " .. target:Nick() .. "'s saved name to " .. newName .. ".")
+            client:Notify("You have successfully set " .. target:Nick() .. "'s saved name to " .. newName .. ".")
 
+            local oldName = target:Name()
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") saved name to " .. newName .. ".")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") saved name to \"" .. newName .. "\" | Old: \"" .. oldName .. "\" | Pos: " .. tostring(target:GetPos()))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -537,23 +563,25 @@ local setNameCommand = {
         local target = impulse.Util:FindPlayer(args[1])
         local newName = args[2]
         if not newName then
-            return client:Notify("No name specified.")
+            return client:Notify("No name was specified.")
         end
 
         newName = table.concat(args, " ", 2)
 
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") name to "..newName)
             target:SetRPName(newName)
 
-            client:Notify("You have set " .. target:Nick() .. "'s name to " .. newName .. ".")
+            client:Notify("You have successfully set " .. target:Nick() .. "'s name to " .. newName .. ".")
 
+            local oldName = target:Name()
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") name to " .. newName .. ".")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") name to \"" .. newName .. "\" | Old: \"" .. oldName .. "\" | Pos: " .. tostring(target:GetPos()))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -568,16 +596,19 @@ local respawnCommand = {
         local target = impulse.Util:FindPlayer(args[1])
 
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") respawned "..target:Name().." ("..target:SteamID64()..")")
             target:Spawn()
-            client:Notify("You have respawned " .. target:Nick() .. ".")
+            client:Notify("You have successfully respawned " .. target:Nick() .. ".")
 
+            local wasAlive = target:Alive()
+            local oldPos = target:GetPos()
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has respawned " .. target:Nick() .. " (" .. target:SteamID64() .. ").")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has respawned " .. target:Nick() .. " (" .. target:SteamID64() .. ") | Was Alive: " .. tostring(wasAlive) .. " | Team: " .. team.GetName(target:Team()) .. " | Old Pos: " .. tostring(oldPos))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -595,16 +626,18 @@ local addXPCommand = {
         if not xp or not tonumber(xp) then return end
 
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") added "..xp.." XP to "..target:Name().." ("..target:SteamID64()..")")
             target:AddXP(xp)
-            client:Notify("You have added " .. xp .. " XP to " .. target:Nick() .. ".")
+            client:Notify("You have successfully added " .. xp .. " XP to " .. target:Nick() .. ".")
 
+            local oldXP = target:GetXP()
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has added " .. xp .. " XP to " .. target:Nick() .. " (" .. target:SteamID64() .. ").")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has added " .. xp .. " XP to " .. target:Nick() .. " (" .. target:SteamID64() .. ") | Old: " .. oldXP .. " | New: " .. (oldXP + xp) .. " | Pos: " .. tostring(target:GetPos()))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -622,16 +655,17 @@ local setXPCommand = {
         if not xp or not tonumber(xp) then return end
 
         if ( IsValid(target) ) then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") XP to "..xp)
             target:SetXP(xp)
-            client:Notify("You have set " .. target:Nick() .. "'s XP to " .. xp .. ".")
+            client:Notify("You have successfully set " .. target:Nick() .. "'s XP to " .. xp .. ".")
 
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
-                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") XP to " .. xp .. ".")
+                    v:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " (" .. client:SteamID64() .. ") has set " .. target:Nick() .. "'s (" .. target:SteamID64() .. ") XP to " .. xp .. " | Old: " .. target:GetXP() .. " | Pos: " .. tostring(target:GetPos()))
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -650,7 +684,7 @@ local takeXPCommand = {
 
         if ( IsValid(target) ) then
             target:TakeXP(xp)
-            client:Notify("You have taken " .. xp .. " XP from " .. target:Nick() .. ".")
+            client:Notify("You have successfully taken " .. xp .. " XP from " .. target:Nick() .. ".")
 
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
@@ -658,7 +692,7 @@ local takeXPCommand = {
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -678,7 +712,7 @@ local addSkillXPCommand = {
 
         if ( IsValid(target) ) then
             target:AddSkillXP(skill, xp)
-            client:Notify("You have added " .. xp .. " XP to " .. target:Nick() .. "'s " .. skill .. " skill.")
+            client:Notify("You have successfully added " .. xp .. " XP to " .. target:Nick() .. "'s " .. skill .. " skill.")
 
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
@@ -686,7 +720,7 @@ local addSkillXPCommand = {
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -706,7 +740,7 @@ local setSkillXPCommand = {
 
         if ( IsValid(target) ) then
             target:SetSkillXP(skill, xp)
-            client:Notify("You have set " .. target:Nick() .. "'s " .. skill .. " skill XP to " .. xp .. ".")
+            client:Notify("You have successfully set " .. target:Nick() .. "'s " .. skill .. " skill XP to " .. xp .. ".")
 
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
@@ -714,7 +748,7 @@ local setSkillXPCommand = {
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -734,7 +768,7 @@ local takeSkillXPCommand = {
 
         if ( IsValid(target) ) then
             target:TakeSkillXP(skill, xp)
-            client:Notify("You have taken " .. xp .. " XP from " .. target:Nick() .. "'s " .. skill .. " skill.")
+            client:Notify("You have successfully taken " .. xp .. " XP from " .. target:Nick() .. "'s " .. skill .. " skill.")
 
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
@@ -742,7 +776,7 @@ local takeSkillXPCommand = {
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -758,15 +792,15 @@ local quizBypassCommand = {
         local data = impulse.Teams:FindTeam(args[2])
 
         if not data then
-            return client:Notify("You entered and incorrect team name or index.")
+            return client:Notify("You have entered an incorrect team name or index.")
         end
 
         if ( IsValid(target) ) then
             if not data.quiz then
-                return client:Notify("This team does not have a quiz!")
+                return client:Notify("This team does not have a quiz.")
             end
 
-            client:Notify("You have bypassed " .. target:Nick() .. "'s " .. data.name .. " quiz.")
+            client:Notify("You have successfully bypassed " .. target:Nick() .. "'s " .. data.name .. " quiz.")
 
             for k, v in player.Iterator() do
                 if ( v:IsLeadAdmin() ) then
@@ -780,7 +814,7 @@ local quizBypassCommand = {
             client:SetData("quiz", quizData)
             client:SaveData()
         else
-            return client:Notify("Could not find player: " .. tostring(args[1]))
+            return client:Notify("Could not find the player: " .. tostring(args[1]) .. ".")
         end
     end
 }
@@ -808,7 +842,7 @@ local kickCommand = {
         if reason == "" then reason = nil end
 
         if plyTarget and client != plyTarget then
-            client:Notify("You have kicked " .. plyTarget:Name() .. " from the server.")
+            client:Notify("You have successfully kicked " .. plyTarget:Name() .. " from the server.")
             plyTarget:Kick(reason or "Kicked by a game moderator.")
 
             for k, v in player.Iterator() do
@@ -817,7 +851,7 @@ local kickCommand = {
                 end
             end
         else
-            return client:Notify("Could not find player: " .. tostring(name))
+            return client:Notify("Could not find the player: " .. tostring(name) .. ".")
         end
     end
 }
@@ -836,7 +870,7 @@ if GExtension then
             local time = args[2]
 
             if not time or not tonumber(time) then
-                return client:Notify("No time value supplied.")
+                return client:Notify("No time value was supplied.")
             end
 
             time = tonumber(time)
@@ -858,11 +892,11 @@ if GExtension then
             if plyTarget and client != plyTarget then
                 if client:GE_CanBan(plyTarget:SteamID64(), time) then
                     if plyTarget:IsSuperAdmin() then
-                        return client:Notify("You can not ban this user.")
+                        return client:Notify("You cannot ban this user.")
                     end
-                    
+
                     plyTarget:GE_Ban(time, reason, client:SteamID64())
-                    client:Notify("You have banned " .. plyTarget:SteamName() .. " for " .. time .. " minutes.")
+                    client:Notify("You have successfully banned " .. plyTarget:SteamName() .. " for " .. time .. " minutes.")
 
                     local steamid = plyTarget:SteamID64()
                     local embeds = {
@@ -889,7 +923,7 @@ if GExtension then
                             }
                         }
                     }
-                    
+
                     if reqwest then
                         if embeds then
                             embeds.timestamp = os.date("%Y-%m-%dT%H:%M:%S.000Z", os.time())
@@ -916,10 +950,10 @@ if GExtension then
                         opsDiscordLog(nil, embeds)
                     end
                 else
-                    client:Notify("This user can not be banned.")
+                    client:Notify("This user cannot be banned.")
                 end
             else
-                return client:Notify("Could not find player: " .. tostring(name))
+                return client:Notify("Could not find the player: " .. tostring(name) .. ".")
             end
         end
     }
@@ -944,16 +978,16 @@ if GExtension then
             reason = string.Trim(reason)
 
             if reason == "" then
-                return client:Notify("No reason provided.")
+                return client:Notify("No reason was provided.")
             end
 
             if plyTarget and client != plyTarget then
-                if not client:GE_HasPermission("warnings_add") then 
-                    return client:Notify("You don't have permission do this.")
+                if not client:GE_HasPermission("warnings_add") then
+                    return client:Notify("You don't have permission to do this.")
                 end
-                
+
                 GExtension:Warn(plyTarget:SteamID64(), reason, client:SteamID64())
-                client:Notify("You have warned " .. plyTarget:SteamName() .. " for " .. reason .. ".")
+                client:Notify("You have successfully warned " .. plyTarget:SteamName() .. " for: " .. reason .. ".")
 
                 net.Start("opsGiveWarn")
                 net.WriteString(reason)
@@ -980,7 +1014,7 @@ if GExtension then
                         }
                     }
                 }
-                
+
                     if reqwest then
 
                         if embeds then
@@ -1009,7 +1043,7 @@ if GExtension then
                         opsDiscordLog(nil, embeds)
                     end
             else
-                return client:Notify("Could not find player: " .. tostring(name))
+                return client:Notify("Could not find the player: " .. tostring(name) .. ".")
             end
         end
     }
