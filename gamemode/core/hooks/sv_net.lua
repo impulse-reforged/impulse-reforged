@@ -436,6 +436,7 @@ net.Receive("impulseDoorBuy", function(len, client)
     trace.start = client:EyePos()
     trace.endpos = trace.start + client:GetAimVector() * 85
     trace.filter = client
+    trace.mask = MASK_ALL
 
     local traceEnt = util.TraceLine(trace).Entity
 
@@ -462,6 +463,7 @@ net.Receive("impulseDoorSell", function(len, client)
     trace.start = client:EyePos()
     trace.endpos = trace.start + client:GetAimVector() * 85
     trace.filter = client
+    trace.mask = MASK_ALL
 
     local traceEnt = util.TraceLine(trace).Entity
 
@@ -484,6 +486,7 @@ net.Receive("impulseDoorLock", function(len, client)
     trace.start = client:EyePos()
     trace.endpos = trace.start + client:GetAimVector() * 85
     trace.filter = client
+    trace.mask = MASK_ALL
 
     local traceEnt = util.TraceLine(trace).Entity
 
@@ -505,11 +508,11 @@ net.Receive("impulseDoorUnlock", function(len, client)
 
     local trace = {}
     trace.start = client:EyePos()
-    trace.endpos = trace.start + client:GetAimVector() * 85
+    trace.endpos = trace.start + client:GetAimVector() * 96
     trace.filter = client
+    trace.mask = MASK_ALL
 
     local traceEnt = util.TraceLine(trace).Entity
-
     if IsValid(traceEnt) and traceEnt:IsDoor() then
         local doorOwners, doorGroup = traceEnt:GetRelay("doorOwners", nil), traceEnt:GetRelay("doorGroup", nil)
 
@@ -542,6 +545,7 @@ net.Receive("impulseDoorAdd", function(len, client)
     trace.start = client:EyePos()
     trace.endpos = trace.start + client:GetAimVector() * 85
     trace.filter = client
+    trace.mask = MASK_ALL
 
     local traceEnt = util.TraceLine(trace).Entity
     local owners = traceEnt:GetRelay("doorOwners", nil)
@@ -578,6 +582,7 @@ net.Receive("impulseDoorRemove", function(len, client)
     trace.start = client:EyePos()
     trace.endpos = trace.start + client:GetAimVector() * 85
     trace.filter = client
+    trace.mask = MASK_ALL
 
     local traceEnt = util.TraceLine(trace).Entity
 

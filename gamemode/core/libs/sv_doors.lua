@@ -22,7 +22,7 @@ function impulse.Doors:Save()
             end
         end
     end
-    
+
     logs:Debug("Saving doors to impulse-reforged/doors/"..game.GetMap()..".json | Doors saved: "..#doors)
     file.Write(fileName..".json", util.TableToJSON(doors))
 end
@@ -37,7 +37,7 @@ function impulse.Doors:Load()
 
         -- use position hashes so we dont take several seconds
         for doorID, doorData in pairs(mapDoorData) do
-            if not doorData.pos then continue end
+            if ( !doorData.pos ) then continue end
 
             posBuffer[doorData.pos.x.."|"..doorData.pos.y.."|"..doorData.pos.z] = doorID
         end
@@ -52,7 +52,7 @@ function impulse.Doors:Load()
                 local doorData = mapDoorData[found]
                 local doorIndex = doorEnt:EntIndex()
                 posFinds[doorIndex] = true
-                
+
                 if doorData.name then doorEnt:SetRelay("doorName", doorData.name) end
                 if doorData.group then doorEnt:SetRelay("doorGroup", doorData.group) end
                 if doorData.buyable != nil then doorEnt:SetRelay("doorBuyable", false) end
@@ -69,7 +69,7 @@ function impulse.Doors:Load()
                 if posFinds[doorIndex] then
                     continue
                 end
-                
+
                 if doorData.name then doorEnt:SetRelay("doorName", doorData.name) end
                 if doorData.group then doorEnt:SetRelay("doorGroup", doorData.group) end
                 if doorData.buyable != nil then doorEnt:SetRelay("doorBuyable", false) end
@@ -103,6 +103,12 @@ end
 local PLAYER = FindMetaTable("Player")
 
 function PLAYER:SetDoorMaster(door)
+    -- Prevent owning doors that are marked hidden/non-buyable
+    if ( door:GetRelay("doorBuyable", true) == false ) then
+        if IsValid(self) then self:Notify("This door is hidden and cannot be owned.") end
+        return false, "Door is hidden"
+    end
+
     local owners = {self:EntIndex()}
 
     door:SetRelay("doorOwners", owners)
@@ -125,15 +131,21 @@ function PLAYER:RemoveDoorMaster(door, noUnlock)
         end
     end
 
-    if not noUnlock then
+    if ( !noUnlock ) then
         door:DoorUnlock()
     end
 end
 
 function PLAYER:SetDoorUser(door)
+    -- Prevent adding users to hidden/non-buyable doors
+    if ( door:GetRelay("doorBuyable", true) == false ) then
+        if IsValid(self) then self:Notify("This door is hidden and cannot be owned.") end
+        return false, "Door is hidden"
+    end
+
     local doorOwners = door:GetRelay("doorOwners")
 
-    if not doorOwners then return end
+    if ( !doorOwners ) then return end
 
     table.insert(doorOwners, self:EntIndex())
     door:SetRelay("doorOwners", doorOwners)
@@ -145,7 +157,7 @@ end
 function PLAYER:RemoveDoorUser(door)
     local doorOwners = door:GetRelay("doorOwners")
 
-    if not doorOwners then return end
+    if ( !doorOwners ) then return end
 
     table.RemoveByValue(doorOwners, self:EntIndex())
     door:SetRelay("doorOwners", doorOwners)
@@ -164,7 +176,7 @@ concommand.Add("impulse_door_sethidden", function(client, cmd, args)
 
     local traceEnt = util.TraceLine(trace).Entity
 
-    if IsValid(traceEnt) and traceEnt:IsDoor() then
+    if IsValid(traceEnt) and (traceEnt:IsDoor() or traceEnt:IsPropDoor()) then
         if args[1] == "1" then
             traceEnt:SetRelay("doorBuyable", false)
         else
@@ -174,10 +186,93 @@ concommand.Add("impulse_door_sethidden", function(client, cmd, args)
         traceEnt:SetRelay("doorName", nil)
         traceEnt:SetRelay("doorOwners", nil)
 
-        client:Notify("Door "..traceEnt:EntIndex().." show = "..args[1])
+        client:Notify(string.format("Door %d show = %s", traceEnt:EntIndex(), tostring(args[1])))
 
         impulse.Doors:Save()
     end
+end)
+
+-- Sets ALL map-created doors on the current map to hidden (not buyable) or visible
+-- Usage: impulse_doors_setallhidden 1 (hide) | 0 (show)
+concommand.Add("impulse_doors_setallhidden", function(client, cmd, args)
+    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+
+    local hide = tostring(args[1] or "1") == "1"
+    local affected = 0
+
+    for v, k in ents.Iterator() do
+        if IsValid(k) and (k:IsDoor() or k:IsPropDoor()) then
+            if hide then
+                k:SetRelay("doorBuyable", false)
+                k:SetRelay("doorGroup", nil)
+                k:SetRelay("doorName", nil)
+                k:SetRelay("doorOwners", nil)
+            else
+                k:SetRelay("doorBuyable", nil)
+                -- Do not restore group/name/owners when showing; keep them cleared unless set individually
+            end
+
+            affected = affected + 1
+        end
+    end
+
+    if IsValid(client) then
+        client:Notify(string.format("Set all map doors hidden = %s (%d affected)", hide and "1" or "0", affected))
+    end
+
+    impulse.Doors:Save()
+end)
+
+-- Assigns ALL map-created doors to a specific door group and makes them non-buyable
+-- Usage: impulse_doors_setallgroup <groupId>
+concommand.Add("impulse_doors_setallgroup", function(client, cmd, args)
+    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+
+    local groupId = tonumber(args[1])
+    if ( !groupId ) then
+        if IsValid(client) then client:Notify("Usage: impulse_doors_setallgroup <groupId>") end
+        return
+    end
+
+    local affected = 0
+    for v, k in ents.Iterator() do
+        if IsValid(k) and (k:IsDoor() or k:IsPropDoor()) then
+            k:SetRelay("doorBuyable", false)
+            k:SetRelay("doorGroup", groupId)
+            k:SetRelay("doorName", nil)
+            k:SetRelay("doorOwners", nil)
+            affected = affected + 1
+        end
+    end
+
+    if IsValid(client) then
+        client:Notify(string.format("Set all map doors to group = %d (%d affected)", groupId, affected))
+    end
+
+    impulse.Doors:Save()
+end)
+
+-- Removes door group from ALL map-created doors and resets buyable flag
+-- Usage: impulse_doors_removeallgroup
+concommand.Add("impulse_doors_removeallgroup", function(client, cmd, args)
+    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+
+    local affected = 0
+    for v, k in ents.Iterator() do
+        if IsValid(k) and (k:IsDoor() or k:IsPropDoor()) then
+            k:SetRelay("doorBuyable", nil)
+            k:SetRelay("doorGroup", nil)
+            k:SetRelay("doorName", nil)
+            k:SetRelay("doorOwners", nil)
+            affected = affected + 1
+        end
+    end
+
+    if IsValid(client) then
+        client:Notify(string.format("Removed group from all map doors (%d affected)", affected))
+    end
+
+    impulse.Doors:Save()
 end)
 
 concommand.Add("impulse_door_setgroup", function(client, cmd, args)
@@ -190,13 +285,13 @@ concommand.Add("impulse_door_setgroup", function(client, cmd, args)
 
     local traceEnt = util.TraceLine(trace).Entity
 
-    if IsValid(traceEnt) and traceEnt:IsDoor() then
+    if IsValid(traceEnt) and (traceEnt:IsDoor() or traceEnt:IsPropDoor()) then
         traceEnt:SetRelay("doorBuyable", false)
         traceEnt:SetRelay("doorGroup", tonumber(args[1]))
         traceEnt:SetRelay("doorName", nil)
         traceEnt:SetRelay("doorOwners", nil)
 
-        client:Notify("Door "..traceEnt:EntIndex().." group = "..args[1])
+        client:Notify(string.format("Door %d group = %s", traceEnt:EntIndex(), tostring(args[1])))
 
         impulse.Doors:Save()
     end
@@ -211,13 +306,13 @@ concommand.Add("impulse_door_removegroup", function(client, cmd, args)
     trace.filter = client
 
     local traceEnt = util.TraceLine(trace).Entity
-    if ( IsValid(traceEnt) and traceEnt:IsDoor() ) then
+    if ( IsValid(traceEnt) and (traceEnt:IsDoor() or traceEnt:IsPropDoor()) ) then
         traceEnt:SetRelay("doorBuyable", nil)
         traceEnt:SetRelay("doorGroup", nil)
         traceEnt:SetRelay("doorName", nil)
         traceEnt:SetRelay("doorOwners", nil)
 
-        client:Notify("Door "..traceEnt:EntIndex().." group = nil")
+        client:Notify(string.format("Door %d group = nil", traceEnt:EntIndex()))
 
         impulse.Doors:Save()
     end

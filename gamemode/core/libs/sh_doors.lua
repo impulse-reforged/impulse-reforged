@@ -4,31 +4,41 @@ impulse.Doors.Data = impulse.Doors.Data or {}
 local PLAYER = FindMetaTable("Player")
 
 function PLAYER:CanLockUnlockDoor(doorOwners, doorGroup)
-    if not doorOwners and !doorGroup then return end
+    if not doorOwners and not doorGroup then return false end
 
-    hook.Run("PlayerCanUnlockLock", self, doorOwners, doorGroup)
+    local hookResult = hook.Run("PlayerCanUnlockLock", self, doorOwners, doorGroup)
+    if hookResult != nil then return hookResult end
 
-    local teamDoorGroups = self.DoorGroups or {}
+    -- Check if player owns the door
+    if doorOwners and table.HasValue(doorOwners, self:EntIndex()) then
+        return true
+    end
 
-    if ( CLIENT ) then
-        local t = impulse.Teams.Stored[LocalPlayer():Team()]
-        teamDoorGroups = t.doorGroup
+    -- Check door group access
+    if not doorGroup then return false end
 
-        local class = LocalPlayer():GetTeamClass()
-        local rank = LocalPlayer():GetTeamRank()
+    local teamDoorGroups = self.DoorGroups
+    local t = impulse.Teams.Stored[self:Team()]
 
-        if class != 0 and t.classes and t.classes[class].doorGroup then
-            teamDoorGroups = t.classes[class].doorGroup
-        end
+    if not t then return false end
 
-        if rank != 0 and t.ranks and t.ranks[rank].doorGroup then
+    -- Priority: rank > class > team
+    local rank = self:GetTeamRank()
+    local class = self:GetTeamClass()
+
+    if not teamDoorGroups then
+        if rank != 0 and t.ranks and t.ranks[rank] and t.ranks[rank].doorGroup then
             teamDoorGroups = t.ranks[rank].doorGroup
+        elseif class != 0 and t.classes and t.classes[class] and t.classes[class].doorGroup then
+            teamDoorGroups = t.classes[class].doorGroup
+        elseif t.doorGroup or t.doorGroups then
+            teamDoorGroups = t.doorGroup or t.doorGroups
         end
     end
 
-    if doorOwners and table.HasValue(doorOwners, self:EntIndex()) then
-        return true
-    elseif doorGroup and teamDoorGroups and table.HasValue(teamDoorGroups, doorGroup) then return true end
+    if not teamDoorGroups then return false end
+
+    return table.HasValue(teamDoorGroups, doorGroup)
 end
 
 function PLAYER:IsDoorOwner(doorOwners)
