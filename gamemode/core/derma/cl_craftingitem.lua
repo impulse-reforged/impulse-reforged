@@ -18,7 +18,6 @@ function PANEL:Init()
 end
 
 function PANEL:SetMix(mix)
-    local wide = self:GetWide()
     local class = mix.Output
     local id = impulse.Inventory:ClassToNetID(class)
     local item = impulse.Inventory.Items[id]
@@ -95,7 +94,7 @@ function PANEL:SetMix(mix)
     self.level:SetTextColor(mix.Level > LocalPlayer():GetSkillLevel("craft") and noCol or secCol)
     self.level:SetText("Level: " .. mix.Level)
     self.level:SetContentAlignment(4)
-    
+
     self.required = self:Add("DLabel")
     self.required:Dock(TOP)
     self.required:SetFont("Impulse-Elements16")
@@ -114,12 +113,11 @@ function PANEL:RefreshCanCraft()
     self.required:Clear()
 
     local index = 0
-    local row = 0
     for k, v in pairs(mix.Input) do
         local id = impulse.Inventory:ClassToNetID(k)
         if ( id ) then
             local name = impulse.Inventory.Items[id].Name
-            local has, amount = LocalPlayer():HasInventoryItem(id)
+            local _, amount = LocalPlayer():HasInventoryItem(id)
             local need = v.take or 1
             amount = amount or 0
 

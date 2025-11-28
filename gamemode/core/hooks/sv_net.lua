@@ -1020,24 +1020,30 @@ net.Receive("impulseDoConfiscate", function(len, client)
 end)
 
 net.Receive("impulseMixTry", function(len, client)
+    print("Received mix try from "..client:Nick())
     if (client.nextMixTry or 0) > CurTime() then return end
     client.nextMixTry = CurTime() + 0.1
+    print("Passed time check")
 
     if client.IsCrafting then
+        client:Notify("You are already crafting an item!")
         return -- already crafting
     end
 
     if not client:Alive() or client:GetRelay("arrested", false) then
+        client:Notify("You cannot craft while dead or arrested!")
         return -- ded or arrested
     end
 
     if client:IsCP() then
+        client:Notify("You cannot craft items as a Police Officer!")
         return -- is cp
     end
 
     local bench = client.currentBench
 
-    if not bench or not IsValid(bench) or bench:GetPos():DistToSqr(client:GetPos()) > (120 ^ 2) then
+    if not bench or not IsValid(bench) or bench:GetPos():DistToSqr(client:GetPos()) > (128 ^ 2) then
+        client:Notify("You are too far away from the workbench!")
         return -- bench not real or too far from
     end
 
@@ -1050,9 +1056,12 @@ net.Receive("impulseMixTry", function(len, client)
     local mix = net.ReadUInt(8)
     local mixClass = impulse.Inventory.MixturesStored[mix]
 
-    if not mixClass then return end
+    if not mixClass then
+        client:Notify("Invalid mixture selected, please contact a developer.")
+        return
+    end
 
-    local bench = mixClass[1]
+    bench = mixClass[1]
     mix = mixClass[2]
 
     mixClass = impulse.Inventory.Mixtures[bench][mix]
@@ -1060,7 +1069,11 @@ net.Receive("impulseMixTry", function(len, client)
     local output = mixClass.Output
     local takeWeight = 0
 
-    if not client:CanMakeMix(mixClass) then -- checks input items + craft level
+    local can, reason = client:CanMakeMix(mixClass)
+    if not can then -- checks input items + craft level
+        if reason then
+            client:Notify(reason)
+        end
         return
     end
 
@@ -1077,7 +1090,8 @@ net.Receive("impulseMixTry", function(len, client)
     end
 
     if (client.InventoryWeight - takeWeight) + oWeight >= impulse.Config.InventoryMaxWeight then
-        return client:Notify("You do not have the inventory space to craft this item.")
+        client:Notify("You do not have enough inventory space to craft this item!")
+        return
     end
 
     benchEnt.InUse = true
@@ -1114,8 +1128,15 @@ net.Receive("impulseMixTry", function(len, client)
             benchEnt.InUse = false
         end
 
-        if IsValid(client) and client:Alive() and IsValid(benchEnt) and client:CanMakeMix(mixClass) then
-            if benchEnt:GetPos():DistToSqr(client:GetPos()) > (120 ^ 2) then return end
+        local can, reason = client:CanMakeMix(mixClass)
+        if IsValid(client) and client:Alive() and IsValid(benchEnt) then
+            if not can then
+                client.CraftFail = true
+                if reason then
+                    client:Notify(reason)
+                end
+            end
+            if benchEnt:GetPos():DistToSqr(client:GetPos()) > (128 ^ 2) then return end
 
             if client.CraftFail then return end
 

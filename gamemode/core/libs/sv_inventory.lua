@@ -747,14 +747,21 @@ end
 function PLAYER:CanMakeMix(class)
     local skill = self:GetSkillLevel("craft")
     if ( class.Level > skill ) then
-        return false
+        return false, "Your crafting skill is too low to make this item!"
     end
 
+    local missing = false
+    local missingItems = {}
     for k, v in pairs(class.Input) do
         local item = self:HasInventoryItem(k, v.take)
         if ( !item or self:IsInventoryItemRestricted(item) ) then
-            return false
+            missing = true
+            table.insert(missingItems, (impulse.Inventory.Items[impulse.Inventory:ClassToNetID(k)].Name or k).." x"..v.take)
         end
+    end
+
+    if ( missing ) then
+        return false, "You are missing the following items: " .. table.concat(missingItems, ", ")
     end
 
     return true
