@@ -325,8 +325,14 @@ function PANEL:Business()
         local item = (parent or utilList):Add("impulseSpawnIcon")
 
         if k.item then
-            local x = impulse.Inventory.Items[impulse.Inventory:ClassToNetID(k.item)]
-            item:SetModel(x.Model)
+            local netid = impulse.Inventory:ClassToNetID(k.item)
+            local x = impulse.Inventory.Items[netid]
+
+            if ( x ) then
+                item:SetModel(x.Model)
+            else
+                item:SetModel("models/error.mdl")
+            end
         else
             item:SetModel(k.model)
         end
