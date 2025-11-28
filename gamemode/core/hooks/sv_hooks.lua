@@ -850,8 +850,8 @@ end
 function GM:OnPlayerChangedTeam(client)
     local clientTable = client:GetTable()
     if ( clientTable.BuyableTeamRemove ) then
-        for v, k in pairs(clientTable.BuyableTeamRemove) do
-            if ( IsValid(v) and v.BuyableOwner == client ) then
+        for k, v in pairs(clientTable.BuyableTeamRemove) do
+            if ( isentity(v) and IsValid(v) and v.BuyableOwner == client ) then
                 SafeRemoveEntity(v)
             end
         end
