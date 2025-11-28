@@ -157,7 +157,16 @@ local PLAYER = FindMetaTable("Player")
 -- @int[opt=1] storageType Storage type (1 is player inventory, 2 is storage)
 -- @treturn table Inventory
 function PLAYER:GetInventory(storageType)
-    return impulse.Inventory.Data[self.impulseID][storageType or 1]
+    storageType = storageType or INVENTORY_PLAYER
+
+    local id = self.impulseID
+    if ( !id ) then return {} end
+
+    local data = impulse.Inventory.Data[id]
+    if ( !data ) then return {} end
+
+    data[storageType] = data[storageType] or {}
+    return data[storageType]
 end
 
 --- Returns if a player can hold an item in their local inventory
