@@ -109,13 +109,13 @@ function PANEL:Init()
 
             impulse.HUDEnabled = true
         else
-            LocalPlayer():ScreenFade(SCREENFADE.OUT, color_black, 1, 0.6)
-            self:AlphaTo(0, 0.5, 0, function()
+            LocalPlayer():ScreenFade(SCREENFADE.OUT, color_black, 1, 0.5)
+            self:AlphaTo(0, 1, 0, function()
                 self:Remove()
             end)
 
-            timer.Simple(1.5, function()
-                LocalPlayer():ScreenFade(SCREENFADE.IN, color_black, 4, 0)
+            timer.Simple(1, function()
+                LocalPlayer():ScreenFade(SCREENFADE.IN, color_black, 4, 0.5)
                 impulse.HUDEnabled = true
                 FORCE_FADESPAWN = true
             end)
@@ -285,12 +285,37 @@ function PANEL:Init()
             Derma_Message(REFUND_MSG, "impulse", "Claim Refund")
         end
 
-        if ( !steamworks.IsSubscribed("3354257069") ) then
-            Derma_Query("You are not subscribed to the impulse framework content!\nIf you do not subscribe you will experience missing textures and errors.\nAfter subscribing, rejoin the server.",
+        local missing = {}
+        local addons = impulse.Addons or {}
+        if ( #addons != 0 ) then
+            for _, addon in ipairs(addons) do
+                if ( !steamworks.IsSubscribed(addon.id) ) then
+                    table.insert(missing, addon)
+                    -- Derma_Query("You are not subscribed to the addon \"" .. addon.title .. "\"!\nIf you do not subscribe you will experience missing textures and errors.\nAfter subscribing, rejoin the server.-- ",
+                    --     "impulse",
+                    --     "Subscribe",
+                    --     function()
+                    --         gui.OpenURL("https://steamcommunity.com/sharedfiles/filedetails/?id=" .. addon.id)
+                    --     end,
+                    --     "No thanks")
+                end
+            end
+        end
+
+        if ( #missing != 0 ) then
+            local msg = "You are missing the following addons:\n\n"
+            for _, addon in ipairs(missing) do
+                msg = msg .. "- " .. addon.title .. "\n"
+            end
+            msg = msg .. "\nPlease subscribe to these addons to avoid missing textures and errors."
+
+            Derma_Query(msg,
                 "impulse",
                 "Subscribe",
                 function()
-                    gui.OpenURL("https://steamcommunity.com/sharedfiles/filedetails/?id=3354257069")
+                    for _, addon in ipairs(missing) do
+                        gui.OpenURL("https://steamcommunity.com/sharedfiles/filedetails/?id=" .. addon.id)
+                    end
                 end,
                 "No thanks")
         end
