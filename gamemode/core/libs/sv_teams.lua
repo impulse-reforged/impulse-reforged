@@ -102,19 +102,22 @@ function PLAYER:SetTeam(teamID)
 
     selfTable.DoorGroups = teamData.doorGroup or {}
 
-    if ( self:Team() != teamID ) then
-        hook.Run("OnPlayerChangedTeam", self, self:Team(), teamID)
-    end
-
     self:SetRelay("class", nil)
     self:SetRelay("rank", nil)
 
+    local oldTeam = self:Team()
     self:OldSetTeam(teamID)
 
     self:SpawnAtTeamSpawn()
 
     if ( teamData.onBecome ) then
         teamData:onBecome(self)
+    end
+
+    if ( oldTeam != teamID ) then
+        hook.Run("OnPlayerChangedTeam", self, oldTeam, teamID)
+    else
+        print(string.format("[impulse] Warning: OnPlayerChangedTeam not called for %s as team did not change (%s)", self:Nick(), teamData.name))
     end
 
     return true
@@ -237,13 +240,17 @@ end
 
 function PLAYER:SetTeamRank(rankID)
     local teamData = impulse.Teams:FindTeam(self:Team())
-    local classData = teamData.classes[self:GetTeamClass()]
-    local rankData = teamData.ranks[rankID]
+    local classData = teamData.classes and teamData.classes[self:GetTeamClass()] or nil
+    local rankData = teamData.ranks and teamData.ranks[rankID] or nil
+
+    if ( !rankData ) then
+        return false, "Invalid rank ID! (" .. tostring(rankID) .. ")"
+    end
 
     local modelData
-    if ( rankData.models ) then
+    if ( rankData and rankData.models ) then
         modelData = rankData.models[math.random(#rankData.models)]
-    elseif ( rankData.model ) then
+    elseif ( rankData and rankData.model ) then
         modelData = rankData.model
     elseif ( classData ) then
         if ( classData.models ) then
@@ -285,14 +292,14 @@ function PLAYER:SetTeamRank(rankID)
         end
     end
 
-    if ( rankData.subMaterial and !classData.noSubMats ) then
+    if ( rankData and rankData.subMaterial and !classData.noSubMats ) then
         for v, k in pairs(rankData.subMaterial) do
             self:SetSubMaterial(v - 1, k)
 
             self.SetSubMats = self.SetSubMats or {}
             self.SetSubMats[v] = true
         end
-    elseif self.SetSubMats then
+    elseif ( self.SetSubMats ) then
         self:ResetSubMaterials()
     end
 
@@ -302,23 +309,23 @@ function PLAYER:SetTeamRank(rankID)
 
     self:StripWeapons()
 
-    if ( rankData.loadout ) then
-        for v,weapon in pairs(rankData.loadout) do
+    if ( rankData and rankData.loadout ) then
+        for _,weapon in pairs(rankData.loadout) do
             self:Give(weapon)
         end
     else
-        for v,weapon in pairs(teamData.loadout) do
+        for _, weapon in pairs(teamData.loadout) do
             self:Give(weapon)
         end
 
         if ( classData and classData.loadoutAdd ) then
-            for v,weapon in pairs(classData.loadoutAdd) do
+            for _, weapon in pairs(classData.loadoutAdd) do
                 self:Give(weapon)
             end
         end
 
-        if ( rankData.loadoutAdd ) then
-            for v,weapon in pairs(rankData.loadoutAdd) do
+        if ( rankData and rankData.loadoutAdd ) then
+            for _, weapon in pairs(rankData.loadoutAdd) do
                 self:Give(weapon)
             end
         end
@@ -326,15 +333,15 @@ function PLAYER:SetTeamRank(rankID)
 
     self:ClearRestrictedInventory()
 
-    if ( rankData.items ) then
-        for v,item in pairs(rankData.items) do
+    if ( rankData and rankData.items ) then
+        for _, item in pairs(rankData.items) do
             for i = 1, (item.amount or 1) do
                 self:GiveItem(item.class, 1, true)
             end
         end
     else
-        if ( teamData.items ) then
-            for v,item in pairs(teamData.items) do
+        if ( teamData and teamData.items ) then
+            for _, item in pairs(teamData.items) do
                 for i = 1, (item.amount or 1) do
                     self:GiveItem(item.class, 1, true)
                 end
@@ -342,15 +349,15 @@ function PLAYER:SetTeamRank(rankID)
         end
 
         if ( classData and classData.itemsAdd ) then
-            for v,item in pairs(classData.itemsAdd) do
+            for _, item in pairs(classData.itemsAdd) do
                 for i = 1, (item.amount or 1) do
                     self:GiveItem(item.class, 1, true)
                 end
             end
         end
 
-        if ( rankData.itemsAdd ) then
-            for v,item in pairs(rankData.itemsAdd) do
+        if ( rankData and rankData.itemsAdd ) then
+            for _, item in pairs(rankData.itemsAdd) do
                 for i = 1, (item.amount or 1) do
                     self:GiveItem(item.class, 1, true)
                 end
@@ -358,7 +365,7 @@ function PLAYER:SetTeamRank(rankID)
         end
     end
 
-    if ( rankData.doorGroup ) then
+    if ( rankData and rankData.doorGroup ) then
         self.DoorGroups = rankData.doorGroup
     else
         if ( classData and classData.doorGroup ) then
@@ -368,13 +375,13 @@ function PLAYER:SetTeamRank(rankID)
         end
     end
 
-    if ( rankData.onBecome ) then
+    if ( rankData and rankData.onBecome ) then
         rankData:onBecome(self)
     end
 
     self:SetRelay("rank", rankID)
 
-    hook.Run("PlayerChangeRank", self, rankID, rankData.name)
+    hook.Run("PlayerChangeRank", self, rankID, rankData and rankData.name or nil)
 
     return true
 end

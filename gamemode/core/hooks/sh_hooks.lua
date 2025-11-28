@@ -64,41 +64,39 @@ function GM:IsContainer(ent)
     end
 end
 
+local function CheckSpawnPoints(client, spawnPoints)
+    local pos = client:GetPos()
+
+    for _, v in ipairs(spawnPoints) do
+        if ( istable(v) and v.pos ) then
+            local spawnPos = v.pos
+            if ( spawnPos and pos:DistToSqr(spawnPos) <= 128 ^ 2 ) then
+                return true
+            end
+        elseif ( isvector(v) ) then
+            if ( pos:DistToSqr(v) <= 128 ^ 2 ) then
+                return true
+            end
+        end
+    end
+end
+
 function GM:PlayerIsInSpawn(client)
     local teamData = client:GetTeamData()
-    if ( !teamData ) then return false end
+    if ( !teamData ) then return end
 
-    -- check their spawnPoints for being nearby
-    local teamClassData = client:GetTeamClassData()
     local teamRankData = client:GetTeamRankData()
-
-    local pos = client:GetPos()
+    local teamClassData = client:GetTeamClassData()
 
     local isNearSpawn = false
     if ( teamRankData and teamRankData.spawnPoints ) then
-        for _, v in ipairs(teamRankData.spawnPoints) do
-            local spawnPos = v.pos
-            if ( spawnPos and pos:DistToSqr(spawnPos) <= (128 ^ 2) ) then
-                isNearSpawn = true
-                break
-            end
-        end
+        isNearSpawn = CheckSpawnPoints(client, teamRankData.spawnPoints)
     elseif ( teamClassData and teamClassData.spawnPoints ) then
-        for _, v in ipairs(teamClassData.spawnPoints) do
-            local spawnPos = v.pos
-            if ( spawnPos and pos:DistToSqr(spawnPos) <= (128 ^ 2) ) then
-                isNearSpawn = true
-                break
-            end
-        end
+        isNearSpawn = CheckSpawnPoints(client, teamClassData.spawnPoints)
     elseif ( teamData.spawnPoints ) then
-        for _, v in ipairs(teamData.spawnPoints) do
-            local spawnPos = v.pos
-            if ( spawnPos and pos:DistToSqr(spawnPos) <= (128 ^ 2) ) then
-                isNearSpawn = true
-                break
-            end
-        end
+        isNearSpawn = CheckSpawnPoints(client, teamData.spawnPoints)
+    elseif ( impulse.Config.SpawnPoints ) then
+        isNearSpawn = CheckSpawnPoints(client, impulse.Config.SpawnPoints)
     end
 
     if ( isNearSpawn ) then
