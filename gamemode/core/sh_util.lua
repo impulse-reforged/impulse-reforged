@@ -75,19 +75,12 @@ end
 -- @usage impulse.Util:IncludeDir("libs/thirdparty")
 function impulse.Util:IncludeDir(directory, bFromLua)
     -- By default, we include relatively to impulse.
-    local baseDir = "impulse-reforged"
-
-    -- If we're in a schema, include relative to the schema.
-    if ( SCHEMA and SCHEMA.Folder ) then
-        baseDir = SCHEMA.Folder .. "/schema/"
-    else
-        baseDir = baseDir .. "/gamemode/"
-    end
+    local baseDir = "impulse-reforged/gamemode/"
 
     -- Find all of the files within the directory.
-    for _, v in ipairs(file.Find((bFromLua and "" or baseDir)..directory.."/*.lua", "LUA")) do
+    for _, v in ipairs(file.Find((bFromLua and "" or baseDir) .. directory .. "/*.lua", "LUA")) do
         -- Include the file from the prefix.
-        impulse.Util:Include(directory.."/"..v)
+        impulse.Util:Include(directory .. "/" .. v)
     end
 end
 
