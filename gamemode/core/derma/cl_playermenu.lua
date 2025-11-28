@@ -374,6 +374,10 @@ function PANEL:Info()
         self.infoSheet:AddSheet("Help & Tutorials", webTutorial)
     end
 
+    local classesRanks = vgui.Create("DScrollPanel", self.infoSheet)
+    classesRanks:Dock(FILL)
+    self:PopulateClassesRanks(classesRanks)
+
     local commands = vgui.Create("DScrollPanel", self.infoSheet)
     commands:Dock(FILL)
 
@@ -406,7 +410,169 @@ function PANEL:Info()
         end
     end
 
+    self.infoSheet:AddSheet("Classes & Ranks", classesRanks)
     self.infoSheet:AddSheet("Commands", commands)
+end
+
+function PANEL:PopulateClassesRanks(parent)
+    -- Iterate through all teams
+    for teamID, teamData in SortedPairsByMemberValue(impulse.Teams.Stored, "name") do
+        local teamCategory = vgui.Create("DCollapsibleCategory", parent)
+        teamCategory:SetLabel(teamData.name)
+        teamCategory:Dock(TOP)
+        teamCategory:DockMargin(5, 5, 5, 0)
+
+        local teamColor = teamData.color or Color(255, 255, 255)
+        teamCategory.Paint = function(this, width, height)
+            surface.SetDrawColor(teamColor.r, teamColor.g, teamColor.b, 100)
+            surface.DrawRect(0, 0, width, 20)
+        end
+
+        local teamContent = vgui.Create("DPanel", teamCategory)
+        teamContent:Dock(FILL)
+        teamContent.Paint = function(_, width, height)
+            surface.SetDrawColor(40, 40, 40, 200)
+            surface.DrawRect(0, 0, width, height)
+        end
+
+        teamCategory:SetContents(teamContent)
+
+        -- Team Requirements
+        local reqLabel = vgui.Create("DLabel", teamContent)
+        reqLabel:Dock(TOP)
+        reqLabel:DockMargin(5, 5, 5, 5)
+        reqLabel:SetFont("Impulse-Elements18")
+        reqLabel:SetText("Team Requirements:")
+        reqLabel:SizeToContents()
+
+        local reqText = "XP: " .. (teamData.xp or 0)
+        if teamData.donatorOnly then
+            reqText = reqText .. " | Donator Only"
+        end
+
+        local reqValue = vgui.Create("DLabel", teamContent)
+        reqValue:Dock(TOP)
+        reqValue:DockMargin(10, 0, 5, 5)
+        reqValue:SetFont("Impulse-Elements14")
+        reqValue:SetText(reqText)
+        reqValue:SizeToContents()
+
+        -- Classes Section
+        if teamData.classes and table.Count(teamData.classes) > 0 then
+            local classHeader = vgui.Create("DLabel", teamContent)
+            classHeader:Dock(TOP)
+            classHeader:DockMargin(5, 10, 5, 5)
+            classHeader:SetFont("Impulse-Elements18")
+            classHeader:SetText("Classes:")
+            classHeader:SetColor(Color(100, 200, 255))
+            classHeader:SizeToContents()
+
+            for classID, classData in ipairs(teamData.classes) do
+                if classData.noMenu then continue end
+
+                local classPanel = vgui.Create("DPanel", teamContent)
+                classPanel:Dock(TOP)
+                classPanel:DockMargin(10, 2, 5, 2)
+                classPanel:SetTall(50)
+                classPanel.Paint = function(_, width, height)
+                    surface.SetDrawColor(50, 50, 50, 180)
+                    surface.DrawRect(0, 0, width, height)
+
+                    draw.SimpleText(classData.name, "Impulse-Elements18-Shadow", 5, 5, color_white)
+
+                    if classData.description then
+                        draw.SimpleText(classData.description, "Impulse-Elements14-Shadow", 5, 25, Color(200, 200, 200))
+                    end
+                end
+
+                local classReq = vgui.Create("DLabel", classPanel)
+                classReq:Dock(RIGHT)
+                classReq:SetFont("Impulse-Elements14")
+                classReq:SetContentAlignment(6)
+
+                local reqStr = ""
+                if classData.xp and classData.xp > 0 then
+                    reqStr = reqStr .. classData.xp .. " XP"
+                end
+                if classData.whitelistLevel then
+                    if reqStr != "" then reqStr = reqStr .. " | " end
+                    reqStr = reqStr .. "WL Lvl " .. classData.whitelistLevel
+                end
+                if reqStr == "" then
+                    reqStr = "No Requirements"
+                end
+
+                classReq:SetText(reqStr)
+                classReq:SizeToContents()
+                classReq:SetWide(classReq:GetWide() + 10)
+            end
+        end
+
+        -- Ranks Section
+        if teamData.ranks and table.Count(teamData.ranks) > 0 then
+            local rankHeader = vgui.Create("DLabel", teamContent)
+            rankHeader:Dock(TOP)
+            rankHeader:DockMargin(5, 10, 5, 5)
+            rankHeader:SetFont("Impulse-Elements18")
+            rankHeader:SetText("Ranks:")
+            rankHeader:SetColor(Color(255, 200, 100))
+            rankHeader:SizeToContents()
+
+            for rankID, rankData in ipairs(teamData.ranks) do
+                local rankPanel = vgui.Create("DPanel", teamContent)
+                rankPanel:Dock(TOP)
+                rankPanel:DockMargin(10, 2, 5, 2)
+                rankPanel:SetTall(50)
+                rankPanel.Paint = function(_, width, height)
+                    surface.SetDrawColor(50, 50, 50, 180)
+                    surface.DrawRect(0, 0, width, height)
+
+                    draw.SimpleText(rankData.name, "Impulse-Elements18-Shadow", 5, 5, color_white)
+
+                    if rankData.description then
+                        draw.SimpleText(rankData.description, "Impulse-Elements14-Shadow", 5, 25, Color(200, 200, 200))
+                    end
+                end
+
+                local rankReq = vgui.Create("DLabel", rankPanel)
+                rankReq:Dock(RIGHT)
+                rankReq:DockMargin(0, 0, 5, 0)
+                rankReq:SetFont("Impulse-Elements14")
+                rankReq:SetContentAlignment(6)
+
+                local reqStr = ""
+                if rankData.xp and rankData.xp > 0 then
+                    reqStr = reqStr .. rankData.xp .. " XP"
+                end
+                if rankData.whitelistLevel then
+                    if reqStr != "" then reqStr = reqStr .. " | " end
+                    reqStr = reqStr .. "WL Lvl " .. rankData.whitelistLevel
+                end
+                if rankData.salary and rankData.salary > 0 then
+                    if reqStr != "" then reqStr = reqStr .. " | " end
+                    reqStr = reqStr .. "Salary: " .. impulse.Config.CurrencyPrefix .. rankData.salary
+                end
+                if reqStr == "" then
+                    reqStr = "No Requirements"
+                end
+
+                rankReq:SetText(reqStr)
+                rankReq:SizeToContents()
+                rankReq:SetWide(rankReq:GetWide() + 10)
+            end
+        end
+
+        -- If no classes or ranks
+        if (!teamData.classes or table.Count(teamData.classes) == 0) and (!teamData.ranks or table.Count(teamData.ranks) == 0) then
+            local noData = vgui.Create("DLabel", teamContent)
+            noData:Dock(TOP)
+            noData:DockMargin(10, 10, 5, 10)
+            noData:SetFont("Impulse-Elements14")
+            noData:SetText("This team has no classes or ranks.")
+            noData:SetColor(Color(150, 150, 150))
+            noData:SizeToContents()
+        end
+    end
 end
 
 function PANEL:AddSheet(name, icon, pnl, loadFunc)
