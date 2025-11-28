@@ -559,8 +559,14 @@ function GM:HUDPaint()
     end
 
     local isPreview = GetConVar("impulse_preview"):GetBool()
-
     if isPreview then
+        local schemaName = ""
+        if schemaName != "" and SCHEMA.Name then
+            schemaName = SCHEMA.Name
+        elseif schemaName != "" and impulse.Config.SchemaName then
+            schemaName = impulse.Config.SchemaName
+        end
+
         y = ScrH() / 2
         -- watermark
         surface.SetDrawColor(watermarkCol)
@@ -572,7 +578,7 @@ function GM:HUDPaint()
         surface.SetFont("Impulse-Elements18-Shadow")
         surface.DrawText("PREVIEW BUILD - VERSION: " .. impulse.Version.version .. " - " .. client:SteamID64() ..  " - " ..  os.date("%H:%M:%S - %d/%m/%Y", os.time()))
         surface.SetTextPos(390, y + 50)
-        surface.DrawText("SCHEMA: " .. SCHEMA_NAME .. " - VERSION: " .. impulse.Config.SchemaVersion or "?")
+        surface.DrawText("SCHEMA: " .. schemaName .. " - VERSION: " .. impulse.Config.SchemaVersion or "?")
     end
 
     -- dev hud
