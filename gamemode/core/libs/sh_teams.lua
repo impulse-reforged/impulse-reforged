@@ -1,6 +1,7 @@
 impulse.Teams = impulse.Teams or {}
 impulse.Teams.Stored = {}
 impulse.Teams.List = {}
+impulse.Teams.NameRef = {} -- Maps codeName to team ID for whitelist lookups
 
 --- Registers a new team in the schema.
 -- @realm shared
@@ -43,6 +44,7 @@ function impulse.Teams:Register(teamData)
 
     self.List[niceName] = id
     self.Stored[id] = teamData
+    self.NameRef[niceName] = id
 
     return id
 end
