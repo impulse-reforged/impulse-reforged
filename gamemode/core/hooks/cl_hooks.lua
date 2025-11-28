@@ -149,7 +149,7 @@ end
 
 function GM:ScoreboardHide()
     if LocalPlayer():Team() == 0 then return end -- players who have not been loaded yet
-    
+
     impulse_scoreboard:Remove()
 end
 
@@ -262,7 +262,7 @@ function GM:CalcView(client, origin, angles, fov)
             return
         end
     end
-    
+
     local ragdoll = client.Ragdoll
     if ( IsValid(ragdoll) ) then
         local eyes = ragdoll:GetAttachment(ragdoll:LookupAttachment("eyes"))
@@ -346,7 +346,7 @@ function GM:CalcView(client, origin, angles, fov)
             if ( ent == LocalPlayer() ) then
                 return false
             end
-            
+
             if ( ent.GetNoDraw(ent) ) then
                 return false
             end
@@ -375,7 +375,7 @@ function GM:CalcView(client, origin, angles, fov)
         else
             thirdperson_smooth_origin = pos + delta
         end
-        
+
         if ( impulse.Settings:Get("view_thirdperson_smooth_angles") ) then
             thirdperson_smooth_angles = LerpAngle(FrameTime() * 10, thirdperson_smooth_angles, angles)
         else
@@ -487,7 +487,7 @@ function GM:OnContextMenuOpen()
 end
 
 function GM:OnContextMenuClose()
-    if IsValid(g_ContextMenu) then 
+    if IsValid(g_ContextMenu) then
         g_ContextMenu:Close()
         hook.Call("ContextMenuClosed", self)
     end
