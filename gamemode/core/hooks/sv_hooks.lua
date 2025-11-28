@@ -1133,7 +1133,7 @@ function GM:PlayerThink(client)
 
         clientTable.impulseLastPos = client:GetPos()
 
-        if ( clientTable.impulseBrokenLegs and clientTable.BrokenLegsTime < curTime and client:Alive() and client:HasBrokenLegs() ) then
+        if ( clientTable.impulseBrokenLegs and clientTable.impulseBrokenLegsTime < curTime and client:Alive() and client:HasBrokenLegs() ) then
             client:FixLegs()
             client:Notify("Your broken legs have healed naturally.")
         end
