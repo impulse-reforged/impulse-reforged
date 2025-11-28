@@ -112,7 +112,7 @@ function PLAYER:CanBecomeTeam(teamID, notify)
 
     if ( teamData.xp and teamData.xp > self:GetXP() ) then
         if ( notify ) then
-            self:Notify("You don't have the XP required to play as this team.")
+            self:Notify("You do not have the required XP to play as this team.")
         end
 
         return false
@@ -121,7 +121,7 @@ function PLAYER:CanBecomeTeam(teamID, notify)
     if ( SERVER and teamData.cp ) then
         if ( self:HasIllegalInventoryItem() ) then
             if ( notify ) then
-                self:Notify("You cannot become this team with illegal items in your inventory.")
+                self:Notify("You cannot join this team while carrying illegal items in your inventory.")
             end
 
             return false
@@ -133,12 +133,12 @@ function PLAYER:CanBecomeTeam(teamID, notify)
             local percentTeam = teamPlayers / player.GetCount()
 
             if ( !self:IsDonator() and percentTeam > teamData.limit ) then
-                if notify then self:Notify(teamData.name .. " is full.") end
+                if notify then self:Notify("The " .. teamData.name .. " team is currently full.") end
                 return false
             end
         else
             if ( !self:IsDonator() and teamPlayers >= teamData.limit ) then
-                if notify then self:Notify(teamData.name .. " is full.") end
+                if notify then self:Notify("The " .. teamData.name .. " team is currently full.") end
                 return false
             end
         end

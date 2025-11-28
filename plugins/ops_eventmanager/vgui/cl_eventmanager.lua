@@ -71,13 +71,13 @@ function PANEL:Init()
             impulse.Ops.EventManager.SequenceSave(v)
         end
 
-        LocalPlayer():Notify("All sequences saved.")
+        LocalPlayer():Notify("All sequences have been successfully saved.")
     end)
     menuFile:AddOption("Close all", function()
         impulse.Ops.EventManager.Sequences = {}
         panel:ReloadSequences()
 
-        LocalPlayer():Notify("All sequences closed.")
+        LocalPlayer():Notify("All sequences have been closed.")
     end)
 
     self:ReloadSequences()

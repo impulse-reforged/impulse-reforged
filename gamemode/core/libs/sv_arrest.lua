@@ -163,7 +163,7 @@ function PLAYER:UnJail()
     
     self:UnArrest()
 
-    self:Notify("You have been released from prison as your sentence has ended.")
+    self:Notify("You have been released from prison. Your sentence has ended.")
 
     hook.Run("PlayerUnJailed", self)
 end

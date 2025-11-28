@@ -5,7 +5,7 @@ local managerCommand = {
         if client:GetUserGroup() == "communitymanager" or client:GetUserGroup() == "superadmin" then
             impulse.Ops.ST.Open(client)
         else
-            client:Notify("You can't use the support tool.")
+            client:Notify("You do not have permission to use the support tool.")
         end
     end
 }

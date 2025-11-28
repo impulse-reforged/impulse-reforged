@@ -76,7 +76,7 @@ function PANEL:SetupPlayer(panel, stats, sid)
         btn:SetWide(200)
 
         function btn:DoClick()
-            LocalPlayer():Notify("Copied SteamID64.")
+            LocalPlayer():Notify("SteamID64 has been copied to your clipboard.")
             return SetClipboardText(sid)
         end
 

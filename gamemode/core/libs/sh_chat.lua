@@ -46,19 +46,19 @@ local oocCommand = {
     requiresArg = true,
     onRun = function(client, arg, rawText)
         if impulse.OOCClosed then
-            return client:Notify("OOC chat has been suspsended and will return shortly.")    
+            return client:Notify("OOC chat has been suspended and will return shortly.")
         end
 
         local timeout = impulse.OOCTimeouts[client:SteamID64()]
         if timeout then
-            return client:Notify("You have an active OOC timeout that will remain for "..string.NiceTime(timeout - CurTime())..".")
+            return client:Notify("You have an active OOC timeout that will expire in "..string.NiceTime(timeout - CurTime())..".")
         end
 
         client.OOCLimit = client.OOCLimit or ((client:IsDonator() and impulse.Config.OOCLimitVIP) or impulse.Config.OOCLimit)
         local timeLeft = timer.TimeLeft(client:UserID() .. "impulseOOCLimit") or 0
 
         if client.OOCLimit < 1 and !client:IsAdmin() then
-            return client:Notify("You have ran out of OOC messages. Wait "..string.NiceTime(timeLeft).." for more.")
+            return client:Notify("You have run out of OOC messages. Please wait "..string.NiceTime(timeLeft).." for more.")
         end
 
         for v, k in player.Iterator() do
@@ -84,11 +84,11 @@ local loocCommand = {
     requiresArg = true,
     onRun = function(client, arg, rawText)
         if client.hasOOCTimeout then
-            return client:Notify("You have an active OOC timeout that will remain for "..string.NiceTime(client.hasOOCTimeout - CurTime())..".")
+            return client:Notify("You have an active OOC timeout that will expire in "..string.NiceTime(client.hasOOCTimeout - CurTime())..".")
         end
 
         for v, k in player.Iterator() do
-            if (client:GetPos() - k:GetPos()):LengthSqr() <= (impulse.Config.TalkDistance ^ 2) then 
+            if (client:GetPos() - k:GetPos()):LengthSqr() <= (impulse.Config.TalkDistance ^ 2) then
                 k:SendChatClassMessage(3, rawText, client)
             end
         end
@@ -120,7 +120,7 @@ local pmCommand = {
 
             client:SendChatClassMessage(5, message, client)
         else
-            return client:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find the player: "..tostring(name))
         end
     end
 }
@@ -162,7 +162,7 @@ local yellCommand = {
         rawText = hook.Run("ChatClassMessageSend", 6, rawText, client) or rawText
 
         for v, k in player.Iterator() do
-            if (client:GetPos() - k:GetPos()):LengthSqr() <= (impulse.Config.YellDistance ^ 2) then 
+            if (client:GetPos() - k:GetPos()):LengthSqr() <= (impulse.Config.YellDistance ^ 2) then
                 k:SendChatClassMessage(6, rawText, client)
             end
         end
@@ -179,7 +179,7 @@ local whisperCommand = {
         rawText = hook.Run("ChatClassMessageSend", 7, rawText, client) or rawText
 
         for v, k in player.Iterator() do
-            if (client:GetPos() - k:GetPos()):LengthSqr() <= (impulse.Config.WhisperDistance ^ 2) then 
+            if (client:GetPos() - k:GetPos()):LengthSqr() <= (impulse.Config.WhisperDistance ^ 2) then
                 k:SendChatClassMessage(7, rawText, client)
             end
         end
@@ -197,7 +197,7 @@ local radioCommand = {
 
         if client:IsCP() then
             for v, k in player.Iterator() do
-                if k:IsCP() then 
+                if k:IsCP() then
                     k:SendChatClassMessage(8, rawText, client)
                 end
             end
@@ -216,7 +216,7 @@ local meCommand = {
     requiresAlive = true,
     onRun = function(client, arg, rawText)
         for v, k in player.Iterator() do
-            if (client:GetPos() - k:GetPos()):LengthSqr() <= (impulse.Config.TalkDistance ^ 2) then 
+            if (client:GetPos() - k:GetPos()):LengthSqr() <= (impulse.Config.TalkDistance ^ 2) then
                 k:SendChatClassMessage(9, rawText, client)
             end
         end
@@ -231,7 +231,7 @@ local itCommand = {
     requiresAlive = true,
     onRun = function(client, arg, rawText)
         for v, k in player.Iterator() do
-            if (client:GetPos() - k:GetPos()):LengthSqr() <= (impulse.Config.TalkDistance ^ 2) then 
+            if (client:GetPos() - k:GetPos()):LengthSqr() <= (impulse.Config.TalkDistance ^ 2) then
                 k:SendChatClassMessage(10, rawText, client)
             end
         end
@@ -246,11 +246,9 @@ local advertCommand = {
     requiresAlive = true,
     onRun = function(client, arg, rawText)
         if not impulse.Teams.Stored[client:Team()].canAdvert or impulse.Teams.Stored[client:Team()].canAdvert == false then 
-            return client:Notify("Your team cannot make an advert.") 
-        end
-
-        if client:GetRelay("arrested", false) then
-            return client:Notify("You cannot make an advert while arrested.")
+            return client:Notify("Your team is not allowed to make adverts.") 
+        end        if client:GetRelay("arrested", false) then
+            return client:Notify("You cannot make an advert while you are arrested.")
         end
 
 
@@ -262,7 +260,7 @@ local advertCommand = {
             end
         end)
 
-        client:Notify("Your advert has been sent and will be broadcast shortly.")
+        client:Notify("Your advert has been successfully queued and will be broadcast shortly.")
     end
 }
 
@@ -275,7 +273,7 @@ local rollCommand = {
         local rollResult = (tostring(math.random(1,100)))
 
         for v, k in player.Iterator() do
-            if (client:GetPos() - k:GetPos()):LengthSqr() <= (impulse.Config.TalkDistance ^ 2) then 
+            if (client:GetPos() - k:GetPos()):LengthSqr() <= (impulse.Config.TalkDistance ^ 2) then
                 k:SendChatClassMessage(11, rollResult, client)
             end
         end
@@ -319,9 +317,9 @@ local dropMoneyCommand = {
                 end
 
                 hook.Run("PlayerDropMoney", client, note)
-                client:Notify("You have dropped "..impulse.Config.CurrencyPrefix..value..".")
+                client:Notify("You have successfully dropped "..impulse.Config.CurrencyPrefix..value.."..")
             else
-                return client:Notify("You cannot afford to drop that amount of money.")
+                return client:Notify("You do not have enough money to drop that amount.")
             end
         else
             return client:Notify("Invalid argument.")
@@ -337,12 +335,12 @@ local writeCommand = {
     requiresAlive = true,
     onRun = function(client, args, text)
         if client.letterCount and client.letterCount > impulse.Config.MaxLetters then
-            client:Notify("You have reached the max amount of letters.")
+            client:Notify("You have reached the maximum amount of letters allowed.")
             return
         end
 
         if string.len(text) > 900 then
-            client:Notify("Letter max character limit reached. (900)")
+            client:Notify("The letter has exceeded the maximum character limit of 900 characters.")
             return
         end
 
@@ -390,16 +388,16 @@ local searchCommand = {
             if not targ.impulseBeenInventorySetup then return end
 
             if not client:CanArrest(targ) then
-                return client:Notify("You cannot search this player.")
+                return client:Notify("You do not have permission to search this player.")
             end
 
             if not targ:GetRelay("arrested", false) then
-                return client:Notify("You must detain a player before searching them.")
+                return client:Notify("You must detain the player before you can search them.")
             end
 
             targ:Freeze(true)
-            targ:Notify("You are currently being searched.")
-            client:Notify("You have started searching "..targ:Nick()..".")
+            targ:Notify("You are now being searched.")
+            client:Notify("You have begun searching "..targ:Nick().."..")
             client.impulseInventorySearching = targ
             hook.Run("DoInventorySearch", client, targ)
 
@@ -413,7 +411,7 @@ local searchCommand = {
             end
             net.Send(client)
         else
-            client:Notify("No player in search range.")
+            client:Notify("There is no player within search range.")
         end
     end
 }
@@ -426,7 +424,7 @@ local eventCommand = {
     requiresArg = true,
     onRun = function(client, arg, rawText)
         if client:GetUserGroup() == "leadadmin" then return end
-        
+
         for v, k in player.Iterator() do
             k:SendChatClassMessage(14, rawText, client)
         end
@@ -442,15 +440,15 @@ local groupChatCommand = {
         local group = client:GetRelay("groupName", nil)
 
         if not group then
-            return client:Notify("You must be in a group to use this command.")
+            return client:Notify("You must be a member of a group to use this command.")
         end
 
         if client:IsCP() then
-            return client:Notify("You can not use this command as this team.")
+            return client:Notify("You cannot use this command while on this team.")
         end
 
         if not client:GroupHasPermission(2) then
-            return client:Notify("Your group rank does not have permission to do this.")
+            return client:Notify("Your group rank does not have permission to use this command.")
         end
 
         for v, k in player.Iterator() do
@@ -525,7 +523,7 @@ if ( CLIENT ) then
         if impulse.Settings:Get("chat_pmpings") then
             surface.PlaySound("buttons/blip1.wav")
         end
-        
+
         chat.AddText(pmCol, "[PM] ", speaker:SteamName(), (team.GetColor(speaker:Team())), " (", speaker:Name(), ")", pmCol, ": ", message)
     end)
 
@@ -543,13 +541,13 @@ if ( CLIENT ) then
 
     impulse.RegisterChatClass(7, function(message, speaker)
         message = hook.Run("ProcessICChatMessage", speaker, message) or message
-        
+
         impulse.customChatFont = "Impulse-ChatSmall"
         chat.AddText(speaker, whisperCol, " whispers: ", message)
     end)
 
     impulse.RegisterChatClass(8, function(message, speaker)
-        impulse.customChatFont = "Impulse-ChatRadio" 
+        impulse.customChatFont = "Impulse-ChatRadio"
         chat.AddText(radioCol, "[RADIO] ", speaker:Name(), ": ", message)
     end)
 
@@ -586,7 +584,7 @@ if ( CLIENT ) then
         local myGroup = impulse.Group.Groups[1]
 
         if not myGroup then return end
-        
+
         if myGroup.Color then
             chat.AddText(myGroup.Color, "["..groupName.."] ("..groupRank..") ", speaker:Nick(), ": ", message)
         else

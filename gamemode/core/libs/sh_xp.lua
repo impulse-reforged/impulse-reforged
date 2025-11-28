@@ -63,6 +63,6 @@ if ( SERVER ) then
         end
 
         self:AddXP(amount)
-        self:Notify("You have received " .. amount .. " XP for playing.")
+        self:Notify("You have successfully received " .. amount .. " XP for playing.")
     end
 end

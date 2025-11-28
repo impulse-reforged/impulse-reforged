@@ -2,11 +2,11 @@
 
 function opsSlackLog(message)
     if not impulse.YML.apis.slack_webhook then return end
-    
+
     local isPreview = GetConVar("impulse_preview"):GetBool()
 
     if isPreview then
-        return    
+        return
     end
 
     local post = {
@@ -26,11 +26,11 @@ end
 
 function opsDiscordLog(message, embeds, webhookOverride)
     if not impulse.YML.apis.discord_ops_webhook or not impulse.Config.DiscordRelayURL then return end
-    
+
     local isPreview = GetConVar("impulse_preview"):GetBool()
 
     if isPreview then
-        return    
+        return
     end
 
     if embeds then

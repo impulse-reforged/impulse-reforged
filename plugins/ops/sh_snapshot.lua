@@ -9,13 +9,13 @@ local snapshotCommand = {
         local id = arg[1]
 
         if not tonumber(id) then
-            return client:Notify("ID must be a number.")
+            return client:Notify("The ID must be a number.")
         end
 
         id = tonumber(id)
 
         if not impulse.Ops.Snapshots[id] then
-            return client:Notify("Snapshot could not be found with that ID.")
+            return client:Notify("A snapshot could not be found with that ID.")
         end
 
         client:Notify("Downloading snapshot #"..id.."...")

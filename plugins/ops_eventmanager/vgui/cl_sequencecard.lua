@@ -68,11 +68,11 @@ function PANEL:SetSequence(key, data)
             Derma_StringRequest("impulse", "Enter sequence file name:", nil, function(name)
                 impulse.Ops.EventManager.Sequences[key].FileName = name
                 impulse.Ops.EventManager.SequenceSave(key)
-                LocalPlayer():Notify("Saved sequence: "..key..".")
+                LocalPlayer():Notify("Successfully saved sequence: "..key.."..")
             end)
         else
             impulse.Ops.EventManager.SequenceSave(key)
-            LocalPlayer():Notify("Saved sequence: "..key..".")
+            LocalPlayer():Notify("Successfully saved sequence: "..key.."..")
         end
     end
 
@@ -95,7 +95,7 @@ function PANEL:SetSequence(key, data)
             net.SendToServer()
         end)
 
-        LocalPlayer():Notify("Quick pushed sequence, playing...")
+        LocalPlayer():Notify("Sequence has been quick-pushed and is now playing...")
     end
 
     function self.main:Toggle() -- allowing them to accordion causes bugs

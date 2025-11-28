@@ -72,7 +72,7 @@ function PANEL:Init()
         function btn:DoClick()
             Derma_StringRequest("impulse", "Amount of "..k.Name.." to refund", "1", function(val)
                 if not tonumber(val) then
-                    return LocalPlayer():Notify("Not a number.")
+                    return LocalPlayer():Notify("The value entered is not a number.")
                 end
 
                 local val = math.Clamp(math.floor(val), 0, 30)
@@ -86,7 +86,7 @@ function PANEL:Init()
                         end
                     end
 
-                    return LocalPlayer():Notify("Removed "..self.ItemClass)
+                    return LocalPlayer():Notify("Successfully removed "..self.ItemClass.."..")
                 end
 
                 for v, k in pairs(refund2) do
@@ -141,11 +141,11 @@ function PANEL:Init()
         local id = string.Trim(steamid64:GetValue(), " ")
 
         if id == "" or not tonumber(id) then
-            return LocalPlayer():Notify("Invalid Steam64ID.")
+            return LocalPlayer():Notify("The SteamID64 entered is invalid.")
         end
 
         if not refund2 or table.Count(refund2) < 1 then
-            return LocalPlayer():Notify("No refund items selected.")
+            return LocalPlayer():Notify("No refund items have been selected.")
         end
 
         local data = pon.encode(refund)

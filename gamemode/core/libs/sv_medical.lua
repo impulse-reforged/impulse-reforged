@@ -14,7 +14,7 @@ function PLAYER:BreakLegs()
     self.impulseBrokenLegs = true
 
     self:EmitSound("impulse-reforged/bone" .. math.random(1, 3) .. ".wav")
-    self:Notify("You have broken your legs!", NOTIFY_ERROR)
+    self:Notify("You have broken your legs and can barely move!", NOTIFY_ERROR)
 
     hook.Run("PlayerLegsBroken", self)
 end

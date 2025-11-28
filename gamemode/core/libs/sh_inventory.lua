@@ -17,8 +17,14 @@ impulse.Inventory.MixturesStored = impulse.Inventory.MixturesStored or {}
 impulse.Inventory.CraftInfo = impulse.Inventory.CraftInfo or {}
 
 if ( CLIENT ) then
-    impulse.Inventory.Data[0][INVENTORY_PLAYER] = impulse.Inventory.Data[0][INVENTORY_PLAYER] or {}
-    impulse.Inventory.Data[0][INVENTORY_STORAGE] = impulse.Inventory.Data[0][INVENTORY_STORAGE] or {}
+    -- Ensure inventory tables always exist (important for Lua refresh)
+    if !impulse.Inventory.Data[0][INVENTORY_PLAYER] then
+        impulse.Inventory.Data[0][INVENTORY_PLAYER] = {}
+    end
+
+    if !impulse.Inventory.Data[0][INVENTORY_STORAGE] then
+        impulse.Inventory.Data[0][INVENTORY_STORAGE] = {}
+    end
 end
 
 local count = 1

@@ -1,16 +1,13 @@
 local KEY_BLACKLIST = IN_ATTACK + IN_ATTACK2
-local isValid = IsValid
-local mathAbs = math.abs
-
 function GM:StartCommand(client, cmd)
-    if not client:IsWeaponRaised() then
+    if !client:IsWeaponRaised() then
         cmd:RemoveKey(KEY_BLACKLIST)
     end
 
     if ( SERVER ) then
         local dragger = client.impulseArrestedDragger
 
-        if isValid(dragger) and client == dragger.impulseArrestedDragging and client:Alive() and dragger:Alive() then
+        if IsValid(dragger) and client == dragger.impulseArrestedDragging and client:Alive() and dragger:Alive() then
             cmd:ClearMovement()
             cmd:ClearButtons()
 

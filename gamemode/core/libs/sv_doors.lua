@@ -139,7 +139,7 @@ end
 function PLAYER:SetDoorUser(door)
     -- Prevent adding users to hidden/non-buyable doors
     if ( door:GetRelay("doorBuyable", true) == false ) then
-        if IsValid(self) then self:Notify("This door is hidden and cannot be owned.") end
+        if IsValid(self) then self:Notify("This door is hidden and cannot be purchased.") end
         return false, "Door is hidden"
     end
 

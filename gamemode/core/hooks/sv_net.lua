@@ -66,6 +66,7 @@ util.AddNetworkString("impulseInvGive")
 util.AddNetworkString("impulseInvGiveSilent")
 util.AddNetworkString("impulseInvMove")
 util.AddNetworkString("impulseInvRemove")
+util.AddNetworkString("impulseInvRequestSync")
 util.AddNetworkString("impulseInvStorageOpen")
 util.AddNetworkString("impulseInvUpdateData")
 util.AddNetworkString("impulseInvUpdateEquip")
@@ -251,9 +252,9 @@ net.Receive("impulseATMWithdraw", function(len, client)
     if client:CanAffordBank(amount) then
         client:TakeBankMoney(amount)
         client:AddMoney(amount)
-        client:Notify("You have withdrawn "..impulse.Config.CurrencyPrefix..amount.." from your bank account.")
+        client:Notify("You have successfully withdrawn "..impulse.Config.CurrencyPrefix..amount.." from your bank account.")
     else
-        client:Notify("You cannot afford to withdraw this amount of money.")
+        client:Notify("You do not have enough money in your bank to withdraw this amount.")
     end
     client.nextATM = CurTime() + 0.1
 end)
@@ -270,9 +271,9 @@ net.Receive("impulseATMDeposit", function(len, client)
     if client:CanAfford(amount) then
         client:TakeMoney(amount)
         client:AddBankMoney(amount)
-        client:Notify("You have deposited "..impulse.Config.CurrencyPrefix..amount.." to your bank account.")
+        client:Notify("You have successfully deposited "..impulse.Config.CurrencyPrefix..amount.." to your bank account.")
     else
-        client:Notify("You cannot afford to deposit this amount of money.")
+        client:Notify("You do not have enough money to deposit this amount.")
     end
     client.nextATM = CurTime() + 0.1
 end)
@@ -2037,4 +2038,29 @@ net.Receive("impulseGroupDoSetInfo", function(len, client)
     impulse.Group:NetworkMetaDataToOnline(name)
 
     client:Notify("You have updated the info for your group.")
+end)
+
+net.Receive("impulseInvRequestSync", function(len, client)
+    if not client.impulseBeenInventorySetup then return end
+    if (client.nextInvSync or 0) > CurTime() then return end
+    client.nextInvSync = CurTime() + 5 -- Prevent spam
+
+    -- Resend entire inventory to client
+    local impulseID = client.impulseID
+
+    for storageType = INVENTORY_PLAYER, INVENTORY_STORAGE do
+        local inv = impulse.Inventory.Data[impulseID][storageType]
+        if inv then
+            for itemID, itemData in pairs(inv) do
+                local itemNet = impulse.Inventory:ClassToNetID(itemData.class)
+
+                net.Start("impulseInvGive")
+                    net.WriteUInt(itemNet, 16)
+                    net.WriteUInt(itemID, 16)
+                    net.WriteUInt(storageType, 4)
+                    net.WriteBool(itemData.restricted or false)
+                net.Send(client)
+            end
+        end
+    end
 end)

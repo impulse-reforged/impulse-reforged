@@ -42,7 +42,7 @@ local addWhitelistCommand = {
 
         local level = tonumber(args[3])
         if not level or level < 1 then
-            return client:Notify("Invalid whitelist level. Must be a number >= 1.")
+            return client:Notify("Invalid whitelist level specified. The level must be a number greater than or equal to 1.")
         end
 
         local steamID = target:SteamID64()
@@ -52,13 +52,14 @@ local addWhitelistCommand = {
         target.Whitelists = target.Whitelists or {}
         target.Whitelists[teamID] = level
 
-        client:Notify("Added whitelist level " .. level .. " for " .. target:Nick() .. " on team " .. teamData.name)
-        target:Notify("You have been whitelisted for " .. teamData.name .. " (Level " .. level .. ")")
+        print("[ops] "..client:Name().." ("..client:SteamID64()..") added whitelist level "..level.." for "..target:Name().." ("..steamID..") on team "..teamData.name)
+        client:Notify("Successfully added whitelist level " .. level .. " for " .. target:Nick() .. " on team " .. teamData.name .. ".")
+        target:Notify("You have been whitelisted for " .. teamData.name .. " at level " .. level .. ".")
 
         -- Log to admins
         for k, v in player.Iterator() do
             if v:IsLeadAdmin() then
-                v:AddChatText(Color(135, 206, 235), "[ops] " .. client:SteamName() .. " added whitelist level " .. level .. " for " .. target:Nick() .. " (" .. target:SteamID64() .. ") on team " .. teamData.name)
+                v:AddChatText(Color(135, 206, 235), "[ops] " .. client:SteamName() .. " (" .. client:SteamID64() .. ") added whitelist level " .. level .. " for " .. target:Nick() .. " (" .. target:SteamID64() .. ") on team " .. teamData.name .. " (ID: " .. teamID .. ") | Current Team: " .. team.GetName(target:Team()) .. " | Pos: " .. tostring(target:GetPos()))
             end
         end
     end
@@ -100,13 +101,15 @@ local removeWhitelistCommand = {
             target.Whitelists[teamID] = nil
         end
 
-        client:Notify("Removed whitelist for " .. target:Nick() .. " on team " .. teamData.name)
-        target:Notify("Your whitelist for " .. teamData.name .. " has been removed")
+        print("[ops] "..client:Name().." ("..client:SteamID64()..") removed whitelist for "..target:Name().." ("..steamID..") on team "..teamData.name)
+        client:Notify("Successfully removed the whitelist for " .. target:Nick() .. " on team " .. teamData.name .. ".")
+        target:Notify("Your whitelist for " .. teamData.name .. " has been removed.")
 
         -- Log to admins
+        local oldLevel = target.Whitelists and target.Whitelists[teamID] or "None"
         for k, v in player.Iterator() do
             if v:IsLeadAdmin() then
-                v:AddChatText(Color(135, 206, 235), "[ops] " .. client:SteamName() .. " removed whitelist for " .. target:Nick() .. " (" .. target:SteamID64() .. ") on team " .. teamData.name)
+                v:AddChatText(Color(135, 206, 235), "[ops] " .. client:SteamName() .. " (" .. client:SteamID64() .. ") removed whitelist for " .. target:Nick() .. " (" .. target:SteamID64() .. ") on team " .. teamData.name .. " (ID: " .. teamID .. ") | Old Level: " .. tostring(oldLevel) .. " | Current Team: " .. team.GetName(target:Team()) .. " | Pos: " .. tostring(target:GetPos()))
             end
         end
     end
@@ -135,19 +138,19 @@ local checkWhitelistCommand = {
             -- Check specific team
             local teamID, teamData = findTeam(args[2])
             if not teamID then
-                return client:Notify("Invalid team. Use team name or ID.")
+                return client:Notify("Invalid team specified. Please use a valid team name or ID.")
             end
 
             if target:HasTeamWhitelist(teamID) then
                 local level = target.Whitelists[teamID]
-                client:Notify(target:Nick() .. " has whitelist level " .. level .. " for " .. teamData.name)
+                client:Notify(target:Nick() .. " has whitelist level " .. level .. " for " .. teamData.name .. ".")
             else
-                client:Notify(target:Nick() .. " does NOT have whitelist for " .. teamData.name)
+                client:Notify(target:Nick() .. " does not have a whitelist for " .. teamData.name .. ".")
             end
         else
             -- Check all teams
             if not target.Whitelists or table.Count(target.Whitelists) == 0 then
-                return client:Notify(target:Nick() .. " has no whitelists")
+                return client:Notify(target:Nick() .. " does not have any whitelists.")
             end
 
             client:Notify("Whitelists for " .. target:Nick() .. ":")
@@ -177,14 +180,14 @@ local listWhitelistsCommand = {
 
         local teamID, teamData = findTeam(args[1])
         if not teamID then
-            return client:Notify("Invalid team. Use team name or ID.")
+            return client:Notify("Invalid team specified. Please use a valid team name or ID.")
         end
 
         impulse.Teams.GetAllWhitelists(teamID, function(result)
             if not IsValid(client) then return end
 
             if not result or #result == 0 then
-                return client:Notify("No whitelists found for " .. teamData.name)
+                return client:Notify("No whitelists were found for " .. teamData.name .. ".")
             end
 
             client:Notify("Whitelists for " .. teamData.name .. " (" .. #result .. " total):")
@@ -214,7 +217,7 @@ local teamInfoCommand = {
 
         local teamID, teamData = findTeam(args[1])
         if not teamID then
-            return client:Notify("Invalid team. Use team name or ID.")
+            return client:Notify("Invalid team specified. Please use a valid team name or ID.")
         end
 
         client:Notify("========================================")
@@ -288,7 +291,7 @@ if SERVER then
 
         local teamID, teamData = findTeam(args[2])
         if not teamID then
-            local msg = "Invalid team. Use team name or ID."
+            local msg = "Invalid team specified. Please use a valid team name or ID."
             if IsValid(client) then
                 client:Notify(msg)
             else
@@ -299,7 +302,7 @@ if SERVER then
 
         local level = tonumber(args[3])
         if not level or level < 1 then
-            local msg = "Invalid whitelist level. Must be a number >= 1."
+            local msg = "Invalid whitelist level specified. The level must be a number greater than or equal to 1."
             if IsValid(client) then
                 client:Notify(msg)
             else
@@ -315,10 +318,12 @@ if SERVER then
         if IsValid(target) then
             target.Whitelists = target.Whitelists or {}
             target.Whitelists[teamID] = level
-            target:Notify("You have been whitelisted for " .. teamData.name .. " (Level " .. level .. ")")
+            target:Notify("You have been whitelisted for " .. teamData.name .. " at level " .. level .. ".")
         end
 
-        local msg = "Added whitelist level " .. level .. " for SteamID64: " .. steamID .. " on team " .. teamData.name
+        local adminName = IsValid(client) and client:Name().." ("..client:SteamID64()..")" or "Console"
+        print("[ops] "..adminName.." added whitelist level "..level.." for SteamID64 "..steamID.." on team "..teamData.name)
+        local msg = "Successfully added whitelist level " .. level .. " for SteamID64: " .. steamID .. " on team " .. teamData.name .. "."
         if IsValid(client) then
             client:Notify(msg)
         else
@@ -376,10 +381,12 @@ if SERVER then
             if target.Whitelists then
                 target.Whitelists[teamID] = nil
             end
-            target:Notify("Your whitelist for " .. teamData.name .. " has been removed")
+            target:Notify("Your whitelist for " .. teamData.name .. " has been removed.")
         end
 
-        local msg = "Removed whitelist for SteamID64: " .. steamID .. " on team " .. teamData.name
+        local adminName = IsValid(client) and client:Name().." ("..client:SteamID64()..")" or "Console"
+        print("[ops] "..adminName.." removed whitelist for SteamID64 "..steamID.." on team "..teamData.name)
+        local msg = "Successfully removed the whitelist for SteamID64: " .. steamID .. " on team " .. teamData.name .. "."
         if IsValid(client) then
             client:Notify(msg)
         else
@@ -405,7 +412,7 @@ if SERVER then
 
         local teamID, teamData = findTeam(args[1])
         if not teamID then
-            local msg = "Invalid team. Use team name or ID."
+            local msg = "Invalid team specified. Please use a valid team name or ID."
             if IsValid(client) then
                 client:Notify(msg)
             else
@@ -418,7 +425,7 @@ if SERVER then
             if IsValid(client) and not IsValid(client) then return end
 
             if not result or #result == 0 then
-                local msg = "No whitelists found for " .. teamData.name
+                local msg = "No whitelists were found for " .. teamData.name .. "."
                 if IsValid(client) then
                     client:Notify(msg)
                 else

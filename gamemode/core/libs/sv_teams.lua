@@ -221,12 +221,6 @@ function PLAYER:SetTeamClass(classID, skipLoadout)
         self.MaxArmour = nil
     end
 
-    if ( classData and classData.doorGroup ) then
-        self.DoorGroups = classData.doorGroup
-    else
-        self.DoorGroups = teamData.doorGroup or {}
-    end
-
     if ( classData.onBecome ) then
         classData:onBecome(self)
     end
@@ -362,16 +356,6 @@ function PLAYER:SetTeamRank(rankID)
                     self:GiveItem(item.class, 1, true)
                 end
             end
-        end
-    end
-
-    if ( rankData and rankData.doorGroup ) then
-        self.DoorGroups = rankData.doorGroup
-    else
-        if ( classData and classData.doorGroup ) then
-            self.DoorGroups = classData.doorGroup
-        else
-            self.DoorGroups = teamData.doorGroup or {}
         end
     end
 

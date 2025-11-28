@@ -26,7 +26,7 @@ net.Receive("impulseOpsSTDoOOCEnabled", function(len, client)
 
     impulse.OOCClosed = !enabled
 
-    client:Notify("OOC enabled set to "..(enabled and "true" or "false")..".")
+    client:Notify("OOC has been "..(enabled and "enabled" or "disabled").."..")
 end)
 
 net.Receive("impulseOpsSTDoGroupRemove", function(len, client)
@@ -37,7 +37,7 @@ net.Receive("impulseOpsSTDoGroupRemove", function(len, client)
 
     if not groupData or not groupData.ID then
         impulse.Group:RemoveByName(name)
-        client:Notify("No loaded group found, however, we have attempted to remove it from the database.")
+        client:Notify("No loaded group was found, however, we have attempted to remove it from the database.")
         return
     end
     
@@ -47,7 +47,7 @@ net.Receive("impulseOpsSTDoGroupRemove", function(len, client)
         if IsValid(targEnt) then
             targEnt:SetRelay("groupName", nil)
             targEnt:SetRelay("groupRank", nil)
-            targEnt:Notify("You were removed from the "..name.." group as it has been removed by the staff team for violations of the RP group rules.")
+            targEnt:Notify("You have been removed from the "..name.." group as it has been removed by the staff team for violations of the RP group rules.")
         end
     end
 
@@ -55,7 +55,7 @@ net.Receive("impulseOpsSTDoGroupRemove", function(len, client)
     impulse.Group:RemovePlayerMass(groupData.ID)
     impulse.Group.Groups[name] = nil
 
-    client:Notify("The "..name.." group has been removed.")
+    client:Notify("The "..name.." group has been successfully removed.")
 end)
 
 net.Receive("impulseOpsSTDoTeamLocked", function(len, client)
@@ -65,12 +65,12 @@ net.Receive("impulseOpsSTDoTeamLocked", function(len, client)
     local locked = net.ReadBool()
 
     if teamid == impulse.Config.DefaultTeam then
-        return client:Notify("You can't lock the default team.")
+        return client:Notify("You cannot lock the default team.")
     end
 
     lockedTeams[teamid] = locked
 
-    client:Notify("Team "..teamid.." has been "..(locked and "locked" or "unlocked")..".")
+    client:Notify("Team "..teamid.." has been successfully "..(locked and "locked" or "unlocked").."..")
 end)
 
 net.Receive("impulseOpsSTDoRefund", function(len, client)
@@ -88,7 +88,7 @@ net.Receive("impulseOpsSTDoRefund", function(len, client)
         if ( !IsValid(client) ) then return end
 
         if ( type(result) != "table" or #result == 0 ) then
-            return client:Notify("This Steam account has not joined the server yet or the SteamID64 is invalid.")
+            return client:Notify("This Steam account has not joined the server yet, or the SteamID64 is invalid.")
         end
 
         local impulseID = result[1].id
@@ -103,7 +103,7 @@ net.Receive("impulseOpsSTDoRefund", function(len, client)
         file.CreateDir("impulse-reforged/support-refunds")
         file.Write("impulse-reforged/support-refunds/"..steamid64..".txt", util.TableToJSON(refundData))
 
-        client:Notify("Issued support refund for user "..steamid64..".")
+        client:Notify("Successfully issued a support refund for user "..steamid64.."..")
     end)
 
     query:Execute()
@@ -141,7 +141,7 @@ end
 function PLUGIN:CanPlayerChangeTeam(client, newTeam)
     if ( lockedTeams[newTeam] ) then
         if ( SERVER ) then
-            client:Notify("Sorry, this team is temporarily locked! Please try again later.")
+            client:Notify("Sorry, this team is temporarily locked. Please try again later.")
         end
 
         return false

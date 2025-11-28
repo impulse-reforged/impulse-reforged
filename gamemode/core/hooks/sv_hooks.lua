@@ -650,24 +650,24 @@ function GM:PlayerSay(client, text, teamChat, newChat)
     return ""
 end
 
-local function canHearCheck(listener) -- based on darkrps voice chat optomization this is called every 0.5 seconds in the think hook
+local voiceDistance = impulse.Config.VoiceDistance ^ 2
+local function CalcPlayerCanHearPlayersVoice(listener)
     if ( !IsValid(listener) ) then return end
 
-    listener.CanHear = listener.CanHear or {}
-    local listPos = listener:GetShootPos()
-    local voiceDistance = impulse.Config.VoiceDistance ^ 2
+    listener.impulseVoiceHear = listener.impulseVoiceHear or {}
 
-    for _,speaker in player.Iterator() do
-        listener.CanHear[speaker] = (listPos:DistToSqr(speaker:GetShootPos()) < voiceDistance)
-        hook.Run("PlayerCanHearCheck", listener, speaker)
+    local eyePos = listener:EyePos()
+    for _, speaker in player.Iterator() do
+        local speakerEyePos = speaker:EyePos()
+        listener.impulseVoiceHear[speaker] = eyePos:DistToSqr(speakerEyePos) < voiceDistance
     end
 end
 
 function GM:PlayerCanHearPlayersVoice(listener, speaker)
     if ( !speaker:Alive() ) then return false end
 
-    local canHear = listener.CanHear and listener.CanHear[speaker]
-    return canHear, true
+    local bCanHear = listener.impulseVoiceHear and listener.impulseVoiceHear[speaker]
+    return bCanHear, true
 end
 
 function GM:DoPlayerDeath(client, attacker, dmginfo)
@@ -883,7 +883,7 @@ function GM:KeyPress(client, key)
                 client:ToggleWeaponRaised()
             end
         end)
-    elseif key == IN_USE and !client:InVehicle() then
+    elseif ( key == IN_USE and !client:InVehicle() ) then
         local trace = {}
         trace.start = client:GetShootPos()
         trace.endpos = trace.start + client:GetAimVector() * 96
@@ -1050,13 +1050,13 @@ end
 
 local nextThink = 0
 function GM:Think()
+    local curTime = CurTime()
+    if ( curTime < nextThink ) then return end
+    nextThink = curTime + 0.1
+
     for k, v in player.Iterator() do
         hook.Run("PlayerThink", v)
     end
-
-    local curTime = CurTime()
-    if ( curTime < nextThink ) then return end
-    nextThink = curTime + 0.2
 
     for k, v in pairs(impulse.Arrest.Dragged) do
         if ( !IsValid(k) ) then
@@ -1076,11 +1076,8 @@ function GM:Think()
 end
 
 local nextAFK = 0
-local nextPlayerThink = 0
 function GM:PlayerThink(client)
     local curTime = CurTime()
-    if ( curTime < nextPlayerThink ) then return end
-    nextPlayerThink = curTime + 0.1
 
     if ( !IsValid(client) or client:Team() == 0 ) then return end
 
@@ -1123,12 +1120,12 @@ function GM:PlayerThink(client)
     end
 
     if ( !clientTable.impulseNextHear or clientTable.impulseNextHear < CurTime() ) then
-        canHearCheck(client)
-        clientTable.impulseNextHear = curTime + 1
+        CalcPlayerCanHearPlayersVoice(client)
+        clientTable.impulseNextHear = curTime + 0.33
     end
 
     if ( curTime > nextAFK ) then
-        nextAFK = curTime + 2
+        nextAFK = curTime + 1
 
         if ( clientTable.impulseAFKTimer and clientTable.impulseAFKTimer < curTime and !impulse.Arrest.Dragged[client] and !client:IsAFK() ) then
             client:MakeAFK()

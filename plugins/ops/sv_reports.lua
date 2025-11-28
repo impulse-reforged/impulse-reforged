@@ -19,11 +19,11 @@ util.AddNetworkString("opsReportDaleClose")
 
 function impulse.Ops.ReportNew(client, arg, rawText)
     if client.nextReport and client.nextReport > CurTime() then
-        return 
+        return
     end
 
     if string.len(rawText) > 600 then
-        return client:Notify("Your message is too big. (600 characters max.)")    
+        return client:Notify("Your message is too large. The maximum length is 600 characters.")
     end
 
     local reportId
@@ -57,15 +57,16 @@ function impulse.Ops.ReportNew(client, arg, rawText)
             net.WriteUInt(1, 4)
             net.Send(client)
 
+            print("[ops] NEW REPORT #"..reportId.." from "..client:Name().." ("..client:SteamID64().."): "..rawText)
             opsSlackLog(":warning: *[NEW REPORT]* [#"..reportId.."] ".. client:SteamName().. " (".. client:Name().. ") ("..client:SteamID64().."): ```"..rawText.."```")
             return
         else
-            client:Notify("Unfortunately, no game moderators are currently available to review your report. Please goto impulse-community.com and submit a ban request.")
+            client:Notify("Unfortunately, no game moderators are currently available to review your report. Please visit impulse-community.com and submit a ban request.")
             opsSlackLog(":exclamation: *A user is requesting help but no moderators are online!* Report: ```".. rawText.."```")
         end
     else
         if string.len(impulse.Ops.Reports[reportId][2]) > 3000 then
-            return client:Notify("Your report has too many characters. You may not send any more updates for this report.")    
+            return client:Notify("Your report has exceeded the character limit. You cannot send any more updates for this report.")
         end
 
         local reportClaimant = impulse.Ops.Reports[reportId][3]
@@ -81,6 +82,7 @@ function impulse.Ops.ReportNew(client, arg, rawText)
         end
 
         impulse.Ops.Reports[reportId][2] = impulse.Ops.Reports[reportId][2].." + "..rawText
+        print("[ops] REPORT UPDATE #"..reportId.." from "..client:Name().." ("..client:SteamID64().."): "..rawText)
         opsSlackLog(":speech_balloon: *[REPORT UPDATE]* [#"..reportId.."] ".. client:SteamName().. " (".. client:Name().. ") ("..client:SteamID64().."): ```".. rawText.."```")
 
         net.Start("opsReportMessage")
@@ -124,6 +126,7 @@ function impulse.Ops.ReportClaim(client, arg, rawText)
 
         impulse.Ops.Reports[reportId] = {reporter, reportMessage, client, reportStartTime, CurTime()}
 
+        print("[ops] REPORT CLAIMED #"..reportId.." by "..client:Name().." ("..client:SteamID64()..")")
         for v, k in player.Iterator() do
             if k:IsAdmin() then
                 net.Start("opsReportClaimed")
@@ -206,6 +209,7 @@ function impulse.Ops.ReportClose(client, arg, rawText)
 
         if not IsValid(client) or not client:IsPlayer() then return end
 
+        print("[ops] REPORT CLOSED #"..reportId.." by "..client:Name().." ("..client:SteamID64()..")")
         opsSlackLog(":no_entry: *[REPORT CLOSED]* [#"..reportId.."] closed by "..client:SteamName().." ("..client:SteamID64()..")")
     else
         client:AddChatText(claimedReportCol, "Report #"..reportId.." does not exist.")
@@ -238,9 +242,10 @@ function impulse.Ops.ReportGoto(client, arg, rawText)
         if not IsValid(reporter) then
             return client:AddChatText(newReportCol, "The player who submitted this report has left the game. Please close.")
         end
-        
+
+        print("[ops] "..client:Name().." ("..client:SteamID64()..") used /reportgoto to teleport to "..reporter:Name().." for report #"..reportId)
         opsGoto(client, reporter:GetPos())
-        client:Notify("You have teleported to "..reporter:Nick()..".")
+        client:Notify("You have successfully teleported to "..reporter:Nick().."..")
     else
         client:AddChatText(claimedReportCol, "Report #"..reportId.." does not exist.")
     end
@@ -268,12 +273,13 @@ function impulse.Ops.ReportMsg(client, arg, rawText)
             return client:AddChatText(newReportCol, "The player who submitted this report has left the game. Please close.")
         end
 
+        print("[ops] "..client:Name().." ("..client:SteamID64()..") sent report message to "..reporter:Name()..":  "..rawText)
         net.Start("opsReportAdminMessage")
         net.WriteEntity(client)
         net.WriteString(rawText)
         net.Send(reporter)
 
-        client:Notify("Reply sent to "..reporter:Nick()..".")
+        client:Notify("Your reply has been sent to "..reporter:Nick()..".")
     end
 end
 
@@ -313,7 +319,7 @@ net.Receive("opsReportDaleRepliedDo", function(len, client)
                     net.Send(k)
                 end
             end
-            
+
             break
         end
     end
@@ -329,7 +335,7 @@ net.Receive("opsReportDaleClose", function(len, client)
             if not data[6] then return end
 
             impulse.Ops.ReportClose(Entity(0), {id})
-            
+
             break
         end
     end

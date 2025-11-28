@@ -39,13 +39,14 @@ local gotoCommand = {
         local plyTarget = impulse.Util:FindPlayer(name)
 
         if plyTarget and client != plyTarget then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") used /goto to teleport to "..plyTarget:Name().." ("..plyTarget:SteamID64()..")")
             opsGoto(client, plyTarget:GetPos())
-            client:Notify("You have teleported to "..plyTarget:Name().."'s position.")
+            client:Notify("You have successfully teleported to "..plyTarget:Name().."'s position.")
         elseif string.sub(name, 1, 1) == "#" then
             local id = string.sub(name, 2)
 
             if not tonumber(id) then
-                return client:Notify("Invalid entity ID: "..id)
+                return client:Notify("Invalid entity ID: "..id.."..")
             end
 
             id = tonumber(id)
@@ -56,10 +57,11 @@ local gotoCommand = {
                 return client:Notify("Entity "..id.." does not exist.")
             end
 
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") used /goto to teleport to Entity #"..id.." ("..ent:GetClass()..")")
             opsGoto(client, ent:GetPos())
-            client:Notify("You have teleported to Entity "..id.."'s position.")
+            client:Notify("You have successfully teleported to Entity "..id.."'s position.")
         else
-            return client:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find the player: "..tostring(name).."..")
         end
     end
 }
@@ -81,10 +83,11 @@ local zoneGotoCommand = {
         end
 
         if zoneTarget then
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") used /zgoto to teleport to zone "..zoneTarget.name)
             opsGoto(client, LerpVector(0.5, zoneTarget.pos1, zoneTarget.pos2))
-            client:Notify("You have teleported to "..zoneTarget.name..".")
+            client:Notify("You have successfully teleported to "..zoneTarget.name.."..")
         else
-            return client:Notify("Could not find zone: "..tostring(name))
+            return client:Notify("Could not find the zone: "..tostring(name).."..")
         end
     end
 }
@@ -103,13 +106,14 @@ local bringCommand = {
             if not plyTarget:Alive() then
                 plyTarget:Spawn()
                 plyTarget:Notify("You have been respawned by a game moderator.")
-                client:Notify("Target was dead, automatically respawned.")
+                client:Notify("The target was dead and has been automatically respawned.")
             end
 
+            print("[ops] "..client:Name().." ("..client:SteamID64()..") used /bring on "..plyTarget:Name().." ("..plyTarget:SteamID64()..")")
             opsBring(client, plyTarget)
-            client:Notify(plyTarget:Name().." has been brought to your position.")
+            client:Notify(plyTarget:Name().." has been successfully brought to your position.")
         else
-            return client:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find the player: "..tostring(name).."..")
         end
     end
 }
@@ -127,17 +131,18 @@ local returnCommand = {
         if plyTarget and client != plyTarget then
             if plyTarget.lastPos then
                 if not plyTarget:Alive() then
-                    return client:Notify("Player is dead.")
+                    return client:Notify("The player is dead.")
                 end
                 
+                print("[ops] "..client:Name().." ("..client:SteamID64()..") used /return on "..plyTarget:Name().." ("..plyTarget:SteamID64()..")")
                 opsGoto(plyTarget, plyTarget.lastPos)
                 plyTarget.lastPos = nil
-                client:Notify(plyTarget:Name().." has been returned.")
+                client:Notify(plyTarget:Name().." has been successfully returned.")
             else
-                return client:Notify("No old position to return the player to.")
+                return client:Notify("There is no previous position to return the player to.")
             end
         else
-            return client:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find the player: "..tostring(name).."..")
         end
     end
 }

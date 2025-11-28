@@ -33,7 +33,7 @@ net.Receive("impulseOpsEMPushSequence", function(len, client)
     print("[ops-em] Finished pull of "..seqName..". Ready to play sequence!")
 
     if IsValid(client) then
-        client:Notify("Push completed.")
+        client:Notify("Sequence push has been completed successfully.")
     end
 end)
 
@@ -46,17 +46,17 @@ net.Receive("impulseOpsEMPlaySequence", function(len, client)
     local seqName = net.ReadString()
 
     if not impulse.Ops.EventManager.Sequences[seqName] then
-        return client:Notify("Sequence does not exist on server (push first).")
+        return client:Notify("The sequence does not exist on the server. Please push it first.")
     end
 
     if impulse.Ops.EventManager.GetSequence() == seqName then
-        return client:Notify("Sequence already playing.")
+        return client:Notify("This sequence is already playing.")
     end
 
     impulse.Ops.EventManager.PlaySequence(seqName)
 
-    print("[ops-em] Playing sequence "..seqName.." (by "..client:SteamName()..").")
-    client:Notify("Playing sequence "..seqName..".")
+    print("[ops-em] Playing sequence "..seqName.." (by "..client:SteamName()..")..")
+    client:Notify("Now playing sequence "..seqName.."..")
 end)
 
 net.Receive("impulseOpsEMStopSequence", function(len, client)
@@ -68,17 +68,17 @@ net.Receive("impulseOpsEMStopSequence", function(len, client)
     local seqName = net.ReadString()
 
     if not impulse.Ops.EventManager.Sequences[seqName] then
-        return client:Notify("Sequence does not exist on server (push first).")
+        return client:Notify("The sequence does not exist on the server. Please push it first.")
     end
 
     if impulse.Ops.EventManager.GetSequence() != seqName then
-        return client:Notify("Sequence not playing.")
+        return client:Notify("This sequence is not currently playing.")
     end
 
     impulse.Ops.EventManager.StopSequence(seqName)
 
-    print("[ops-em] Stopping sequence "..seqName.." (by "..client:SteamName()..").")
-    client:Notify("Stopped sequence "..seqName..".")
+    print("[ops-em] Stopping sequence "..seqName.." (by "..client:SteamName()..")..")
+    client:Notify("Successfully stopped sequence "..seqName.."..")
 end)
 
 net.Receive("impulseOpsEMIntroCookie", function(len, client)

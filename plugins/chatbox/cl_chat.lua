@@ -95,7 +95,7 @@ function impulse.chatBox.buildBox()
                         text = text[1] or ""
 
                         if text == "//" or text == "/ooc" then
-                            LocalPlayer():Notify("You have disabled OOC. You can re-enable it by pressing F1 > Settings > Chatbox.")
+                            LocalPlayer():Notify("You have disabled OOC chat. You can re-enable it by pressing F1 > Settings > Chatbox.")
                         else
                             net.Start("impulseChatMessage")
                             net.WriteString(self:GetText())
