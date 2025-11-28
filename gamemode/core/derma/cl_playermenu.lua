@@ -312,22 +312,17 @@ function PANEL:Business()
                 local cat = self.itemsScroll:Add("DCollapsibleCategory")
                 cat:SetLabel(k.category)
                 cat:Dock(TOP)
-                local colInv = Color(0, 0, 0, 0)
-                function cat:Paint()
-                    self:SetBGColor(colInv)
-                end
+                cat.Paint = nil
 
                 self.cat[k.category] = vgui.Create("DIconLayout", cat)
                 self.cat[k.category]:Dock(FILL)
-                self.cat[k.category]:SetSpaceY(5)
-                self.cat[k.category]:SetSpaceX(5)
                 cat:SetContents(self.cat[k.category])
 
                 parent = self.cat[k.category]
             end
         end
 
-        local item = (parent or utilList):Add("SpawnIcon")
+        local item = (parent or utilList):Add("impulseSpawnIcon")
 
         if k.item then
             local x = impulse.Inventory.Items[impulse.Inventory:ClassToNetID(k.item)]
@@ -336,7 +331,7 @@ function PANEL:Business()
             item:SetModel(k.model)
         end
 
-        item:SetSize(58,58)
+        item:SetSize(ScreenScale(24), ScreenScale(24))
         item:SetTooltip(name .. " \n" .. impulse.Config.CurrencyPrefix .. k.price)
         item.id = table.KeyFromValue(impulse.Business.Stored, name)
 
@@ -347,7 +342,8 @@ function PANEL:Business()
         end
 
         local costLbl = vgui.Create("DLabel", item)
-        costLbl:SetPos(5,35)
+        costLbl:Dock(BOTTOM)
+        costLbl:SetContentAlignment(5)
         costLbl:SetFont("Impulse-Elements18-Shadow")
         costLbl:SetText(impulse.Config.CurrencyPrefix .. k.price)
         costLbl:SizeToContents()
@@ -358,15 +354,19 @@ function PANEL:Info()
     self.infoSheet = vgui.Create("DPropertySheet", self.info)
     self.infoSheet:Dock(FILL)
 
-    local webRules = vgui.Create("DHTML", self.infoSheet)
-    webRules:OpenURL(impulse.Config.RulesURL)
+    if ( impulse.Config.RulesURL and impulse.Config.RulesURL != "" ) then
+        local webRules = vgui.Create("DHTML", self.infoSheet)
+        webRules:OpenURL(impulse.Config.RulesURL)
 
-    self.infoSheet:AddSheet("Rules", webRules)
+        self.infoSheet:AddSheet("Rules", webRules)
+    end
 
-    local webTutorial = vgui.Create("DHTML", self.infoSheet)
-    webTutorial:OpenURL(impulse.Config.TutorialURL)
+    if ( impulse.Config.TutorialURL and impulse.Config.TutorialURL != "" ) then
+        local webTutorial = vgui.Create("DHTML", self.infoSheet)
+        webTutorial:OpenURL(impulse.Config.TutorialURL)
 
-    self.infoSheet:AddSheet("Help & Tutorials", webTutorial)
+        self.infoSheet:AddSheet("Help & Tutorials", webTutorial)
+    end
 
     local commands = vgui.Create("DScrollPanel", self.infoSheet)
     commands:Dock(FILL)
