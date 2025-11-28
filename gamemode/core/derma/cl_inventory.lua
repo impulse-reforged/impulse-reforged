@@ -87,6 +87,10 @@ function PANEL:Init()
 end
 
 function PANEL:SetupItems(width, height)
+    -- Use panel dimensions if width/height not provided
+    width = width or self:GetWide()
+    height = height or self:GetTall()
+
     local s = 270
 
     if self.invScroll and IsValid(self.invScroll) then
@@ -144,6 +148,10 @@ end
 
 local bodyCol = Color(50, 50, 50, 210)
 function PANEL:SetupSkills(width, height)
+    -- Use panel dimensions if width/height not provided
+    width = width or self:GetWide()
+    height = height or self:GetTall()
+
     self.skillScroll = vgui.Create("DScrollPanel", self.tabs)
     self.skillScroll:Dock(FILL)
     self.skillScroll:DockPadding(ScreenScale(4), ScreenScaleH(4), ScreenScale(4), ScreenScaleH(4))
