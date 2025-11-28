@@ -245,8 +245,8 @@ local advertCommand = {
     requiresArg = true,
     requiresAlive = true,
     onRun = function(client, arg, rawText)
-        if not impulse.Teams.Stored[client:Team()].canAdvert or impulse.Teams.Stored[client:Team()].canAdvert == false then 
-            return client:Notify("Your team is not allowed to make adverts.") 
+        if not impulse.Teams.Stored[client:Team()].canAdvert or impulse.Teams.Stored[client:Team()].canAdvert == false then
+            return client:Notify("Your team is not allowed to make adverts.")
         end        if client:GetRelay("arrested", false) then
             return client:Notify("You cannot make an advert while you are arrested.")
         end
