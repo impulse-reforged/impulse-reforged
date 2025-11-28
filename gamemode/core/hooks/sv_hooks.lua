@@ -273,8 +273,9 @@ function GM:PlayerSetup(client, data)
     clientTable.impulseDefaultName = data.rpname
 
     client:UpdateDefaultModelSkin()
-    client:SetTeam(impulse.Config.DefaultTeam)
 
+    -- Initialize inventory containers and bookkeeping BEFORE SetTeam is called,
+    -- as SetTeam may trigger inventory operations (e.g., UnEquipInventory).
     local id = clientTable.impulseID
     impulse.Inventory.Data[id] = {}
     impulse.Inventory.Data[id][INVENTORY_PLAYER] = {}
@@ -285,6 +286,8 @@ function GM:PlayerSetup(client, data)
     clientTable.InventoryRegister = {}
     clientTable.InventoryStorageRegister = {}
     clientTable.InventoryEquipGroups = {}
+
+    client:SetTeam(impulse.Config.DefaultTeam)
 
     hook.Run("PreEarlyInventorySetup", client)
 
@@ -1015,7 +1018,11 @@ function GM:InitPostEntity()
 end
 
 function GM:PostCleanupMap()
-    hook.Run("InitPostEntity")
+    -- After a cleanup, some map entities (doors/buttons) may not be fully re-created
+    -- in the same tick. Defer reinitialisation to the next frame to ensure reliability.
+    timer.Simple(0, function()
+        hook.Run("InitPostEntity")
+    end)
 end
 
 function GM:GetFallDamage(client, speed)
@@ -1073,7 +1080,7 @@ local nextPlayerThink = 0
 function GM:PlayerThink(client)
     local curTime = CurTime()
     if ( curTime < nextPlayerThink ) then return end
-    nextPlayerThink = curTime + 0.2
+    nextPlayerThink = curTime + 0.1
 
     if ( !IsValid(client) or client:Team() == 0 ) then return end
 
@@ -1135,11 +1142,10 @@ function GM:PlayerThink(client)
         end
     end
 
-    local clientTable = client:GetTable()
     if ( ( clientTable.impulseNextAmbientSound or 0 ) < CurTime() ) then
         local ambientSound = client:GetAmbientSound()
         if ( ambientSound and ambientSound != "" ) then
-            client:EmitSound(ambientSound, 60, nil, 0.3, CHAN_AUTO)
+            client:EmitSound(ambientSound, 60, nil, 0.25, CHAN_AUTO)
 
             clientTable.impulseNextAmbientSound = CurTime() + math.random(30, 120)
         end
@@ -1206,12 +1212,14 @@ function GM:PlayerSpawnProp(client, model)
         return false
     end
 
-    if ( client:CanAfford(price) ) then
-        client:TakeMoney(price)
-        client:Notify("You have purchased a prop for " .. impulse.Config.CurrencyPrefix .. price .. ".")
-    else
-        client:Notify("You need " .. impulse.Config.CurrencyPrefix .. price .. " to spawn this prop.")
-        return false
+    if ( price > 0 ) then
+        if ( client:CanAfford(price) ) then
+            client:TakeMoney(price)
+            client:Notify("You have purchased a prop for " .. impulse.Config.CurrencyPrefix .. price .. ".")
+        else
+            client:Notify("You need " .. impulse.Config.CurrencyPrefix .. price .. " to spawn this prop.")
+            return false
+        end
     end
 
     return true
@@ -1357,7 +1365,7 @@ function GM:CanTool(client, tr, tool)
         if tool == "remover" and client:IsAdmin() and !client:IsSuperAdmin() then
             local owner = ent:CPPIGetOwner()
 
-            if not owner and !adminWorldRemoveWhitelist[ent:GetClass()] then
+            if !owner and !adminWorldRemoveWhitelist[ent:GetClass()] then
                 client:Notify("You can not remove this entity.")
                 return false
             end

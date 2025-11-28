@@ -148,7 +148,7 @@ hook.Add("PlayerDeath", "impulse.Relationships.PlayerDeath", function(client)
     end
 end)
 
-hook.Add("InitPostEntity", "impulse.Relationships.InitPostEntity", function()
+hook.Add("PostInitPostEntity", "impulse.Relationships.PostInitPostEntity", function()
     for _, npc in ents.Iterator() do
         if ( !IsValid(npc) or !npc:IsNPC() ) then continue end
 
