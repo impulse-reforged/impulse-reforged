@@ -150,20 +150,64 @@ function PANEL:QuickActions()
     if classes and LocalPlayer():InSpawn() then
         for v,classData in pairs(classes) do
             if !classData.noMenu and LocalPlayer():GetTeamClass() != v then
-                local btn = self.list:Add("DButton")
-                btn:Dock(TOP)
-                btn.classID = v
+                local classBtn = self.list:Add("DPanel")
+                classBtn:Dock(TOP)
+                classBtn:DockMargin(5, 2, 5, 2)
+                classBtn:SetTall(60)
+                classBtn:SetCursor("hand")
+                classBtn.classID = v
+                classBtn.hovered = false
 
                 local btnText = "Become " .. classData.name
-                if classData.xp then
-                    btnText = btnText .. " (" .. classData.xp .. "XP)"
+                local reqText = ""
+                if classData.xp and classData.xp > 0 then
+                    reqText = "Requires " .. classData.xp .. " XP"
                 end
-                btn:SetText("Become " .. classData.name .. " (" .. classData.xp .. "XP)")
+                if classData.whitelistLevel then
+                    if reqText != "" then reqText = reqText .. " | " end
+                    reqText = reqText .. "Whitelist Level " .. classData.whitelistLevel
+                end
 
-                btn.DoClick = function(this)
+                classBtn.Paint = function(this, width, height)
+                    local bgColor = Color(50, 50, 50, 200)
+                    local borderColor = impulse.Config.MainColour
+
+                    if this.hovered then
+                        bgColor = Color(70, 70, 70, 220)
+                        borderColor = ColorAlpha(impulse.Config.MainColour, 255)
+                    end
+
+                    surface.SetDrawColor(bgColor)
+                    surface.DrawRect(0, 0, width, height)
+
+                    surface.SetDrawColor(borderColor)
+                    surface.DrawOutlinedRect(0, 0, width, height, 2)
+
+                    draw.SimpleText(btnText, "Impulse-Elements20-Shadow", 10, 10, color_white)
+
+                    if classData.description then
+                        draw.SimpleText(classData.description, "Impulse-Elements14-Shadow", 10, 30, Color(200, 200, 200))
+                    end
+
+                    if reqText != "" then
+                        draw.SimpleText(reqText, "Impulse-Elements14-Shadow", width - 10, height - 10, Color(100, 200, 255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+                    end
+                end
+
+                classBtn.OnCursorEntered = function(this)
+                    this.hovered = true
+                end
+
+                classBtn.OnCursorExited = function(this)
+                    this.hovered = false
+                end
+
+                classBtn.OnMousePressed = function(this)
                     net.Start("impulseClassChange")
                         net.WriteUInt(this.classID, 8)
                     net.SendToServer()
+
+                    self:Remove()
                 end
             end
         end
