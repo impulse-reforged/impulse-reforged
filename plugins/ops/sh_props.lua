@@ -81,3 +81,14 @@ local clearDecalsCommand = {
 }
 
 impulse.RegisterChatCommand("/cleardecals", clearDecalsCommand)
+
+local clearCorpsesCommand = {
+    description = "Clears all corpses (ragdolls) on the server.",
+    adminOnly = true,
+    onRun = function(client, arg, rawText)
+        impulse.Ops.ClearCorpses()
+        client:Notify("You have cleared all the corpses on the map.")
+    end
+}
+
+impulse.RegisterChatCommand("/clearcorpses", clearCorpsesCommand)

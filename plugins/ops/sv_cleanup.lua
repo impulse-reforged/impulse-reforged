@@ -36,3 +36,14 @@ function impulse.Ops.ClearDecals()
     end
     print("[ops] Cleared decals for "..count.." players")
 end
+
+function impulse.Ops.ClearCorpses()
+    local count = 0
+    for v, k in ents.Iterator() do
+        if k:GetClass() == "prop_ragdoll" and k.DeadPlayer then
+            SafeRemoveEntity(k)
+            count = count + 1
+        end
+    end
+    print("[ops] Cleared "..count.." corpses from the map")
+end
