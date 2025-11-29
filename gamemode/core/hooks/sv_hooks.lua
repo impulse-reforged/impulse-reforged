@@ -482,10 +482,12 @@ function GM:PlayerSpawn(client)
     end
 
     if ( clientTable.impulseBeenSetup ) then
-        client:SetTeam(impulse.Config.DefaultTeam)
+        if ( impulse.Config.ResetTeamOnDeath ) then
+            client:SetTeam(impulse.Config.DefaultTeam)
+        end
 
         if ( clientTable.HasDied ) then
-            client:SetHunger(70)
+            client:SetHunger(math.random(50, 70))
         else
             client:SetHunger(100)
         end
