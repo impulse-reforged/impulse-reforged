@@ -30,6 +30,18 @@ end
 function impulse.Doors:Load()
     impulse.Doors.Data = {}
 
+    -- First, reset all doors to default buyable state only.
+    -- Do NOT clear name/group/owners here, as those may be managed by other systems
+    -- and we only persist hidden (non-buyable) doors in our save file.
+    local resetCount = 0
+    for v, k in ents.Iterator() do
+        if k:IsDoor() and k:CreatedByMap() then
+            k:SetRelay("doorBuyable", nil)
+            resetCount = resetCount + 1
+        end
+    end
+    logs:Debug("[Doors] Reset buyable state on "..resetCount.." map doors before load")
+
     if file.Exists(fileName..".json", "DATA") then
         local mapDoorData = util.JSONToTable(file.Read(fileName..".json", "DATA"))
         local posBuffer = {}
@@ -55,7 +67,7 @@ function impulse.Doors:Load()
 
                 if doorData.name then doorEnt:SetRelay("doorName", doorData.name) end
                 if doorData.group then doorEnt:SetRelay("doorGroup", doorData.group) end
-                if doorData.buyable != nil then doorEnt:SetRelay("doorBuyable", false) end
+                if doorData.buyable != nil then doorEnt:SetRelay("doorBuyable", doorData.buyable) end
             end
         end
 
@@ -72,11 +84,15 @@ function impulse.Doors:Load()
 
                 if doorData.name then doorEnt:SetRelay("doorName", doorData.name) end
                 if doorData.group then doorEnt:SetRelay("doorGroup", doorData.group) end
-                if doorData.buyable != nil then doorEnt:SetRelay("doorBuyable", false) end
+                if doorData.buyable != nil then doorEnt:SetRelay("doorBuyable", doorData.buyable) end
 
                 logs:Warning("Added door by HammerID value because it could not be found via pos. Door index: "..doorIndex..". Please investigate.")
             end
         end
+
+        local appliedCount = 0
+        for idx, _ in pairs(posFinds) do appliedCount = appliedCount + 1 end
+        logs:Debug("[Doors] Applied hidden state to "..appliedCount.." doors via position matching")
 
         posBuffer = nil
         posFinds = nil
@@ -218,6 +234,37 @@ concommand.Add("impulse_doors_setallhidden", function(client, cmd, args)
 
     if IsValid(client) then
         client:Notify(string.format("Set all map doors hidden = %s (%d affected)", hide and "1" or "0", affected))
+    end
+
+    impulse.Doors:Save()
+end)
+
+concommand.Add("impulse_doors_setallownablehidden", function(client, cmd, args)
+    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+
+    local hide = tostring(args[1] or "1") == "1"
+    local affected = 0
+
+    for v, k in ents.Iterator() do
+        if IsValid(k) and (k:IsDoor() or k:IsPropDoor()) then
+            if k:GetRelay("doorBuyable", true) == true then
+                if hide then
+                    k:SetRelay("doorBuyable", false)
+                    k:SetRelay("doorGroup", nil)
+                    k:SetRelay("doorName", nil)
+                    k:SetRelay("doorOwners", nil)
+                else
+                    k:SetRelay("doorBuyable", nil)
+                    -- Do not restore group/name/owners when showing; keep them cleared unless set individually
+                end
+
+                affected = affected + 1
+            end
+        end
+    end
+
+    if IsValid(client) then
+        client:Notify(string.format("Set all map ownable doors hidden = %s (%d affected)", hide and "1" or "0", affected))
     end
 
     impulse.Doors:Save()
