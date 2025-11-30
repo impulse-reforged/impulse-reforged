@@ -269,7 +269,7 @@ net.Receive("impulseUpdateOOCLimit", function()
     end
 
     LocalPlayer().OOCLimit = (LocalPlayer().OOCLimit and LocalPlayer().OOCLimit - 1) or ((LocalPlayer():IsDonator() and impulse.Config.OOCLimitVIP) or impulse.Config.OOCLimit)
-    LocalPlayer():Notify("You have "..LocalPlayer().OOCLimit.." OOC messages left for "..string.NiceTime(time)..".")
+    LocalPlayer():Notify("You have " .. LocalPlayer().OOCLimit .. " OOC messages left for " .. string.NiceTime(time) .. ".")
 end)
 
 net.Receive("impulseCharacterEditorOpen", function()
@@ -288,7 +288,8 @@ net.Receive("impulseConfiscateCheck", function()
     local item = net.ReadEntity()
 
     if IsValid(item) then
-        local request = Derma_Query("Would you like to confiscate this "..item.HUDName.."?",
+        local name = item and item.HUDName or "unknown item"
+        local request = Derma_Query("Would you like to confiscate this " .. name .. "?",
             "impulse",
             "Confiscate",
             function()
@@ -320,7 +321,7 @@ net.Receive("impulseSkillUpdate", function()
     local newLevel = LocalPlayer():GetSkillLevel(name)
 
     if oldLevel != newLevel then
-        LocalPlayer():Notify("You have reached skill level "..newLevel.." for the "..impulse.Skills.GetNiceName(name).." skill.")
+        LocalPlayer():Notify("You have reached skill level " .. newLevel .. " for the " .. impulse.Skills.GetNiceName(name) .. " skill.")
     end
 end)
 
@@ -363,21 +364,21 @@ net.Receive("impulseViewWhitelists", function()
     if not targ or not IsValid(targ) then return end
 
     local count = net.ReadUInt(4)
-    local top = targ:SteamName().."'s whitelist(s):\n\n"
+    local top = targ:SteamName() .. "'s whitelist(s):\n\n"
     local mid = ""
 
     for i=1, count do
         local teamid = net.ReadUInt(8)
         local level = net.ReadUInt(8)
         local teamname = team.GetName(teamid)
-        mid = mid..teamname.."   Level: "..level.."\n"
+        mid = mid..teamname .. "   Level: " .. level .. "\n"
     end
 
     if mid == "" then
         mid = "None"
     end
 
-    Derma_Message(top..mid, targ:SteamName().."'s whitelist(s)", "Close")
+    Derma_Message(top..mid, targ:SteamName() .. "'s whitelist(s)", "Close")
 end)
 
 net.Receive("impulseInvContainerCodeTry", function()
@@ -495,10 +496,10 @@ net.Receive("impulseGetRefund", function()
         local name = net.ReadString()
         local amount = net.ReadUInt(8)
 
-        details = details.."\n"..amount.."x".." "..name
+        details = details .. "\n" .. amount .. "x" .. " " .. name
     end
 
-    details = details.."\nTOTAL REFUND: "..impulse.Config.CurrencyPrefix..amount
+    details = details .. "\nTOTAL REFUND: " .. impulse.Config.CurrencyPrefix..amount
 
     REFUND_MSG = messageTop..details
 end)
