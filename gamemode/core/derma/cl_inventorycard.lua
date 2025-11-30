@@ -8,23 +8,17 @@ local outlineCol = Color(10, 10, 10, 255)
 local darkCol = Color(30, 30, 30, 190)
 local fullCol = Color(139, 0, 0, 15)
 
-function PANEL:Paint(w,h)
-    --surface.SetMaterial(gradient)
+function PANEL:Paint(width, height)
     surface.SetDrawColor(darkCol)
-    surface.DrawRect(0, 0, w, h)
-    --surface.DrawTexturedRect(1, 1, w - 1, h - 1)
+    surface.DrawRect(0, 0, width, height)
 
-    if self.Unusable then
+    if ( self.Unusable ) then
         surface.SetDrawColor(fullCol)
-        surface.DrawRect(0, 0, w, h)
+        surface.DrawRect(0, 0, width, height)
     end
 
     surface.SetDrawColor(outlineCol)
-    surface.DrawOutlinedRect(0, 0, w, h)
-end
-
-function PANEL:OnMousePressed()
-
+    surface.DrawOutlinedRect(0, 0, width, height)
 end
 
 vgui.Register("impulseInventoryCard", PANEL, "DPanel")

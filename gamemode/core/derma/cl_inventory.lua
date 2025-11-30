@@ -80,8 +80,19 @@ function PANEL:Init()
 
     self.tabs:InvalidateParent(true)
 
+    self.invScroll = vgui.Create("DScrollPanel", self.tabs)
+    self.invScroll:Dock(FILL)
+    self.invScroll:DockPadding(ScreenScale(4), ScreenScaleH(4), ScreenScale(4), ScreenScaleH(4))
+
+    self.skillScroll = vgui.Create("DScrollPanel", self.tabs)
+    self.skillScroll:Dock(FILL)
+    self.skillScroll:DockPadding(ScreenScale(4), ScreenScaleH(4), ScreenScale(4), ScreenScaleH(4))
+
     self:SetupItems(width, height)
     self:SetupSkills(width, height)
+
+    self.tabs:AddSheet("Inventory", self.invScroll)
+    self.tabs:AddSheet("Skills", self.skillScroll)
 
     hook.Run("ImpulseInventoryOpened", self)
 end
@@ -91,24 +102,15 @@ function PANEL:SetupItems(width, height)
     width = width or self:GetWide()
     height = height or self:GetTall()
 
-    local s = 270
-
-    if self.invScroll and IsValid(self.invScroll) then
-        self.invScroll:Remove()
+    if ( IsValid(self.invScroll) ) then
+        self.invScroll:Clear()
     end
-
-    self.invScroll = vgui.Create("DScrollPanel", self.tabs)
-    self.invScroll:SetPos(0, 0)
-    self.invScroll:SetSize(width - math.Clamp(s, 100, 270), height - 42)
 
     self.items = {}
     self.itemsPanels = {}
 
     local weight = 0
     local localInv = table.Copy(impulse.Inventory.Data[0][INVENTORY_PLAYER]) or {}
-    local reccurTemp = {}
-    local equipTemp = {}
-
     if localInv and table.Count(localInv) > 0 then
         for v, k in pairs(localInv) do
             local itemData = impulse.Inventory.Items[k.id]
@@ -142,8 +144,6 @@ function PANEL:SetupItems(width, height)
     end
 
     self.invWeight = weight
-
-    self.tabs:AddSheet("Inventory", self.invScroll)
 end
 
 local bodyCol = Color(50, 50, 50, 210)
@@ -152,9 +152,9 @@ function PANEL:SetupSkills(width, height)
     width = width or self:GetWide()
     height = height or self:GetTall()
 
-    self.skillScroll = vgui.Create("DScrollPanel", self.tabs)
-    self.skillScroll:Dock(FILL)
-    self.skillScroll:DockPadding(ScreenScale(4), ScreenScaleH(4), ScreenScale(4), ScreenScaleH(4))
+    if ( IsValid(self.skillScroll) ) then
+        self.skillScroll:Clear()
+    end
 
     for v, k in pairs(impulse.Skills.Skills) do
         local skillBg = self.skillScroll:Add("DPanel")
@@ -205,8 +205,6 @@ function PANEL:SetupSkills(width, height)
             draw.DrawText(nextXp .. "XP", "Impulse-Elements16-Shadow", width - 10, 10, color_white, TEXT_ALIGN_RIGHT)
         end
     end
-
-    self.tabs:AddSheet("Skills", self.skillScroll)
 end
 
 function PANEL:FindItemPanelByID(id)
