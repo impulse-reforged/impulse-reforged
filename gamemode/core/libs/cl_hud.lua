@@ -100,12 +100,12 @@ local function DrawDoorInfo(target, alpha)
     local doorOwners = target:GetRelay("doorOwners", nil)
     local doorName = target:GetRelay("doorName", nil)
     local doorGroup =  target:GetRelay("doorGroup", nil)
-    local doorBuyable = target:GetRelay("doorBuyable", nil)
+    local doorBuyable = target:GetRelay("doorBuyable", true)
     local col = ColorAlpha(impulse.Config.MainColour, alpha)
 
     if doorName then
         draw.DrawText(doorName, "Impulse-Elements18-Shadow", pos.x, pos.y, col, 1)
-    elseif doorGroup then
+    elseif doorGroup and doorGroup != 0 then
         draw.DrawText(impulse.Config.DoorGroups[doorGroup], "Impulse-Elements18-Shadow", pos.x, pos.y, col, 1)
     elseif doorOwners then
         local ownedBy
