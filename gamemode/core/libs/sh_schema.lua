@@ -18,7 +18,7 @@ local default = {
 -- @internal
 -- @usage impulse.Schema:Load() -- Called by impulse:Boot()
 function impulse.Schema:Load()
-    logs:Info("Starting schema load ...")
+    logs:Info("Starting schema load...")
 
     local name = engine.ActiveGamemode()
     if ( name == "impulse-reforged" ) then
