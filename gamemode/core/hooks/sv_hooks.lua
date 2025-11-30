@@ -484,6 +484,19 @@ function GM:PlayerSpawn(client)
     if ( clientTable.impulseBeenSetup ) then
         if ( impulse.Config.ResetTeamOnDeath ) then
             client:SetTeam(impulse.Config.DefaultTeam)
+        else
+            -- yeah i know, not the best fix
+            local oldTeam, oldClass, oldRank = client:Team(), client:GetTeamClass(), client:GetTeamRank()
+            client:SetTeam(oldTeam)
+
+            -- Only restore class if the team supports classes
+            if ( oldClass and oldClass != 0 ) then
+                client:SetTeamClass(oldClass)
+            end
+
+            if ( oldRank and oldRank != 0 ) then
+                client:SetTeamRank(oldRank)
+            end
         end
 
         if ( clientTable.HasDied ) then
@@ -652,9 +665,13 @@ function GM:PlayerSay(client, text, teamChat, newChat)
     return ""
 end
 
-local voiceDistance = impulse.Config.VoiceDistance ^ 2
+local voiceDistance
 local function CalcPlayerCanHearPlayersVoice(listener)
     if ( !IsValid(listener) ) then return end
+
+    if ( !voiceDistance ) then
+        voiceDistance = impulse.Config.VoiceDistance ^ 2
+    end
 
     listener.impulseVoiceHear = listener.impulseVoiceHear or {}
 
@@ -1050,12 +1067,7 @@ function GM:GetFallDamage(client, speed)
     return dmg
 end
 
-local nextThink = 0
 function GM:Think()
-    local curTime = CurTime()
-    if ( curTime < nextThink ) then return end
-    nextThink = curTime + 0.1
-
     for k, v in player.Iterator() do
         hook.Run("PlayerThink", v)
     end
@@ -1080,7 +1092,6 @@ end
 local nextAFK = 0
 function GM:PlayerThink(client)
     local curTime = CurTime()
-
     if ( !IsValid(client) or client:Team() == 0 ) then return end
 
     local clientTable = client:GetTable()
@@ -1135,7 +1146,7 @@ function GM:PlayerThink(client)
 
         clientTable.impulseLastPos = client:GetPos()
 
-        if ( clientTable.impulseBrokenLegs and clientTable.impulseBrokenLegsTime < curTime and client:Alive() and client:HasBrokenLegs() ) then
+        if ( client:HasBrokenLegs() and client:GetBrokenLegsStartTime() + impulse.Config.BrokenLegsHealTime < curTime ) then
             client:FixLegs()
             client:Notify("Your broken legs have healed naturally.")
         end
