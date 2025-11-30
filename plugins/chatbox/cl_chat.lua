@@ -85,10 +85,10 @@ function impulse.chatBox.buildBox()
             if string.Trim(self:GetText()) != "" then
                 if impulse.chatBox.ChatType == types[2] then
                     net.Start("impulseChatMessage")
-                    net.WriteString("/r "..self:GetText())
+                    net.WriteString("/r " .. self:GetText())
                     net.SendToServer()
 
-                    self.LastMessage = "/r "..self:GetText()
+                    self.LastMessage = "/r " .. self:GetText()
                 else
                     if not impulse.Settings:Get("chat_oocenabled", true) then
                         local text = string.Explode(" ", impulse.chatBox.entry:GetValue())
@@ -150,7 +150,7 @@ function impulse.chatBox.buildBox()
 
 
 
-                    draw.DrawText("(you have "..LocalPlayer().OOCLimit.." OOC messages left)", "Impulse-Elements18-Shadow", 5, h - 24)
+                    draw.DrawText("(you have " .. LocalPlayer().OOCLimit .. " OOC messages left)", "Impulse-Elements18-Shadow", 5, h - 24)
                     self:GetParent().TypingInOOC = true
                 else
                     self:GetParent().TypingInOOC = false
@@ -191,7 +191,7 @@ function impulse.chatBox.buildBox()
                             end
                         end
 
-                        draw.DrawText(k.." - "..v.description, "Impulse-ChatMedium", 10, 10 + i, c, TEXT_ALIGN_LEFT)
+                        draw.DrawText(k .. " - " .. v.description, "Impulse-ChatMedium", 10, 10 + i, c, TEXT_ALIGN_LEFT)
                         i = i + 15
                         showing = showing + 1
 

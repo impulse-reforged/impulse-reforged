@@ -19,7 +19,7 @@ hook.Add("PlayerLeaveVehicle", "GS_PodFix", function(_, pVehicle)
         hook.Add("Think", sName, function()
             if (pVehicle:IsValid()) then
                 local tSave = pVehicle:GetSaveTable()
-                
+
                 -- If set manually
                 if (tSave.m_bEnterAnimOn) then
                     hook.Remove("Think", sName)

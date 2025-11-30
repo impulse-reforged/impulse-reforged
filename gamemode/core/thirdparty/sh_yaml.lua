@@ -73,7 +73,7 @@ end
 
 local string_trim = function(s, what)
   what = what or " "
-  return s:gsub("^[" .. what .. "]*(.-)["..what.."]*$", "%1")
+  return s:gsub("^[" .. what .. "]*(.-)[" .. what .. "]*$", "%1")
 end
 
 local push = function(stack, item)
@@ -106,7 +106,7 @@ end
 
 local exports = {version = "1.2"}
 
-local word = function(w) return "^("..w..")([%s$%c])" end
+local word = function(w) return "^(" .. w .. ")([%s$%c])" end
 
 local tokens = {
   {"comment",   "^#[^\n]*"},
@@ -355,8 +355,8 @@ Parser.parse = function (self)
   pop(self.parse_stack)
   while c.indent > 0 do
     c.indent = c.indent - 1
-    local term = "term "..c.token[1]..": '"..c.token[2][1].."'"
-    self:expectDedent("last ".. term .." is not properly dedented")
+    local term = "term " .. c.token[1] .. ": '" .. c.token[2][1] .. "'"
+    self:expectDedent("last " ..  term .. " is not properly dedented")
   end
 
   if ref then

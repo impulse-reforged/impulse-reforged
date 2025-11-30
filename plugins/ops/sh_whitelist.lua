@@ -46,13 +46,14 @@ local addWhitelistCommand = {
         end
 
         local steamID = target:SteamID64()
-        impulse.Teams.SetWhitelist(steamID, teamID, level)
+        local teamCodeName = teamData.codeName
+        impulse.Teams.SetWhitelist(steamID, teamCodeName, level)
 
         -- Update the player's cached whitelists
         target.Whitelists = target.Whitelists or {}
         target.Whitelists[teamID] = level
 
-        print("[ops] "..client:Name().." ("..client:SteamID64()..") added whitelist level "..level.." for "..target:Name().." ("..steamID..") on team "..teamData.name)
+        print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") added whitelist level " .. level .. " for " .. target:Name() .. " (" .. steamID .. ") on team " .. teamData.name)
         client:Notify("Successfully added whitelist level " .. level .. " for " .. target:Nick() .. " on team " .. teamData.name .. ".")
         target:Notify("You have been whitelisted for " .. teamData.name .. " at level " .. level .. ".")
 
@@ -89,11 +90,12 @@ local removeWhitelistCommand = {
         end
 
         local steamID = target:SteamID64()
+        local teamCodeName = teamData.codeName
 
         -- Remove from database
         local query = mysql:Delete("impulse_whitelists")
         query:Where("steamid", steamID)
-        query:Where("team", teamID)
+        query:Where("team", teamCodeName)
         query:Execute()
 
         -- Update the player's cached whitelists
@@ -101,7 +103,7 @@ local removeWhitelistCommand = {
             target.Whitelists[teamID] = nil
         end
 
-        print("[ops] "..client:Name().." ("..client:SteamID64()..") removed whitelist for "..target:Name().." ("..steamID..") on team "..teamData.name)
+        print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") removed whitelist for " .. target:Name() .. " (" .. steamID .. ") on team " .. teamData.name)
         client:Notify("Successfully removed the whitelist for " .. target:Nick() .. " on team " .. teamData.name .. ".")
         target:Notify("Your whitelist for " .. teamData.name .. " has been removed.")
 
@@ -183,7 +185,8 @@ local listWhitelistsCommand = {
             return client:Notify("Invalid team specified. Please use a valid team name or ID.")
         end
 
-        impulse.Teams.GetAllWhitelists(teamID, function(result)
+        local teamCodeName = teamData.codeName
+        impulse.Teams.GetAllWhitelists(teamCodeName, function(result)
             if not IsValid(client) then return end
 
             if not result or #result == 0 then
@@ -279,7 +282,7 @@ if SERVER then
         end
 
         local steamID = args[1]
-        if not string.match(steamID, "^%d+$") or #steamID ~= 17 then
+        if not string.match(steamID, "^%d+$") or #steamID != 17 then
             local msg = "Invalid SteamID64 format"
             if IsValid(client) then
                 client:Notify(msg)
@@ -311,7 +314,8 @@ if SERVER then
             return
         end
 
-        impulse.Teams.SetWhitelist(steamID, teamID, level)
+        local teamCodeName = teamData.codeName
+        impulse.Teams.SetWhitelist(steamID, teamCodeName, level)
 
         -- Update cached whitelists if player is online
         local target = player.GetBySteamID64(steamID)
@@ -321,8 +325,8 @@ if SERVER then
             target:Notify("You have been whitelisted for " .. teamData.name .. " at level " .. level .. ".")
         end
 
-        local adminName = IsValid(client) and client:Name().." ("..client:SteamID64()..")" or "Console"
-        print("[ops] "..adminName.." added whitelist level "..level.." for SteamID64 "..steamID.." on team "..teamData.name)
+        local adminName = IsValid(client) and client:Name() .. " (" .. client:SteamID64() .. ")" or "Console"
+        print("[ops] " .. adminName .. " added whitelist level " .. level .. " for SteamID64 " .. steamID .. " on team " .. teamData.name)
         local msg = "Successfully added whitelist level " .. level .. " for SteamID64: " .. steamID .. " on team " .. teamData.name .. "."
         if IsValid(client) then
             client:Notify(msg)
@@ -348,7 +352,7 @@ if SERVER then
         end
 
         local steamID = args[1]
-        if not string.match(steamID, "^%d+$") or #steamID ~= 17 then
+        if not string.match(steamID, "^%d+$") or #steamID != 17 then
             local msg = "Invalid SteamID64 format"
             if IsValid(client) then
                 client:Notify(msg)
@@ -370,9 +374,10 @@ if SERVER then
         end
 
         -- Remove from database
+        local teamCodeName = teamData.codeName
         local query = mysql:Delete("impulse_whitelists")
         query:Where("steamid", steamID)
-        query:Where("team", teamID)
+        query:Where("team", teamCodeName)
         query:Execute()
 
         -- Update cached whitelists if player is online
@@ -384,8 +389,8 @@ if SERVER then
             target:Notify("Your whitelist for " .. teamData.name .. " has been removed.")
         end
 
-        local adminName = IsValid(client) and client:Name().." ("..client:SteamID64()..")" or "Console"
-        print("[ops] "..adminName.." removed whitelist for SteamID64 "..steamID.." on team "..teamData.name)
+        local adminName = IsValid(client) and client:Name() .. " (" .. client:SteamID64() .. ")" or "Console"
+        print("[ops] " .. adminName .. " removed whitelist for SteamID64 " .. steamID .. " on team " .. teamData.name)
         local msg = "Successfully removed the whitelist for SteamID64: " .. steamID .. " on team " .. teamData.name .. "."
         if IsValid(client) then
             client:Notify(msg)
@@ -421,7 +426,8 @@ if SERVER then
             return
         end
 
-        impulse.Teams.GetAllWhitelists(teamID, function(result)
+        local teamCodeName = teamData.codeName
+        impulse.Teams.GetAllWhitelists(teamCodeName, function(result)
             if IsValid(client) and not IsValid(client) then return end
 
             if not result or #result == 0 then

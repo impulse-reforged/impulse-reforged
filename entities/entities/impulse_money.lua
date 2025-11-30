@@ -33,7 +33,7 @@ if ( SERVER ) then
         if activator:IsPlayer() then
             self:Remove()
             activator:AddMoney(self.money)
-            activator:Notify("You have picked up "..impulse.Config.CurrencyPrefix..self.money..".")
+            activator:Notify("You have picked up " .. impulse.Config.CurrencyPrefix..self.money .. ".")
         end
     end
 
@@ -69,5 +69,3 @@ else
         cam.End3D2D()
     end
 end
-
-    

@@ -47,7 +47,7 @@ function PLAYER:DragPlayer(client)
         self.impulseArrestedDragging = client
         impulse.Arrest.Dragged[client] = true
 
-        self:Say("/me starts dragging "..client:Name()..".")
+        self:Say("/me starts dragging " .. client:Name() .. ".")
     end
 end
 
@@ -65,7 +65,7 @@ end
 function PLAYER:SendJailInfo(time, jailData)
     net.Start("impulseSendJailInfo")
     net.WriteUInt(time, 16)
-    
+
     if ( jailData ) then
         net.WriteBool(true)
         net.WriteTable(jailData)
@@ -107,7 +107,7 @@ function PLAYER:Jail(time, jailData)
                 jailData = jailData,
                 duration = time,
                 start = CurTime()
-            } 
+            }
 
             break
         else
@@ -160,7 +160,7 @@ function PLAYER:UnJail()
     if ( self:Alive() ) then
         self:Spawn()
     end
-    
+
     self:UnArrest()
 
     self:Notify("You have been released from prison. Your sentence has ended.")

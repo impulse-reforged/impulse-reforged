@@ -43,6 +43,6 @@ function ENT:Use(activator, caller)
         net.Start("impulseCharacterEditorOpen")
         net.Send(activator)
     else
-        activator:Notify("You must be in the "..team.GetName(impulse.Config.DefaultTeam).." team to change your appearance.")
+        activator:Notify("You must be in the " .. team.GetName(impulse.Config.DefaultTeam) .. " team to change your appearance.")
     end
 end

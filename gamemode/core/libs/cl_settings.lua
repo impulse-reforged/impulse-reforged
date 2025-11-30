@@ -28,7 +28,7 @@ impulse.Settings.Stored = {}
 --     type = "tickbox",
 --     default = 1,
 --     onChanged = function(newVal)
---         print("Tickbox setting changed to: "..newVal)
+--         print("Tickbox setting changed to: " .. newVal)
 --     end
 -- })
 -- @usage impulse.Settings:Define("slider_setting", {
@@ -40,7 +40,7 @@ impulse.Settings.Stored = {}
 --     maxValue = 100,
 --     decimals = 2,
 --     onChanged = function(newVal)
---         print("Slider setting changed to: "..newVal)
+--         print("Slider setting changed to: " .. newVal)
 --     end
 -- })
 -- @usage impulse.Settings:Define("dropdown_setting", {
@@ -50,7 +50,7 @@ impulse.Settings.Stored = {}
 --     default = "Option 1",
 --     options = {"Option 1", "Option 2", "Option 3"},
 --     onChanged = function(newVal)
---         print("Dropdown setting changed to: "..newVal)
+--         print("Dropdown setting changed to: " .. newVal)
 --     end
 -- })
 -- @usage impulse.Settings:Define("textbox_setting", {
@@ -59,30 +59,30 @@ impulse.Settings.Stored = {}
 --     type = "textbox",
 --     default = "Default text",
 --     onChanged = function(newVal)
---         print("Textbox setting changed to: "..newVal)
+--         print("Textbox setting changed to: " .. newVal)
 --     end
 -- })
 
 local logs = impulse.Logs
 function impulse.Settings:Define(name, settingData)
     if not settingData then
-        logs:Error("Could not Define Setting. Data is nil, attempted name: "..name)
+        logs:Error("Could not Define Setting. Data is nil, attempted name: " .. name)
     end
 
     if not type(settingData) == "table" then
-        logs:Error("Could not Define Setting. Data is not a table, attempted name: "..name)
+        logs:Error("Could not Define Setting. Data is not a table, attempted name: " .. name)
     end
 
     if not settingData.name then
-        logs:Error("Could not Define Setting. Name is nil, attempted name: "..name)
+        logs:Error("Could not Define Setting. Name is nil, attempted name: " .. name)
     end
 
     if not settingData.type then
-        logs:Error("Could not Define Setting. Type is nil, attempted name: "..name)
+        logs:Error("Could not Define Setting. Type is nil, attempted name: " .. name)
     end
 
     if settingData.default == nil then
-        logs:Error("Could not Define Setting. Default is nil, attempted name: "..name)
+        logs:Error("Could not Define Setting. Default is nil, attempted name: " .. name)
     end
 
     if settingData.type == "slider" then
@@ -99,7 +99,7 @@ function impulse.Settings:Define(name, settingData)
         end
     elseif settingData.type == "dropdown" then
         if not settingData.options then
-            logs:Error("Could not Define Setting. Options is nil, attempted name: "..name)
+            logs:Error("Could not Define Setting. Options is nil, attempted name: " .. name)
         end
     end
 
@@ -123,7 +123,7 @@ local optX = {["tickbox"] = true} -- hash comparisons faster than string
 function impulse.Settings:Get(name)
     local settingData = self.Stored[name]
     if not settingData then
-        return --MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not GetSetting. Please contact a developer, attempted name: "..name.."\n")
+        return --MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not GetSetting. Please contact a developer, attempted name: " .. name .. "\n")
     end
 
     if optX[settingData.type] then
@@ -143,19 +143,19 @@ end
 function impulse.Settings:Load()
     for v, k in pairs(self.Stored) do
         if not k then
-            logs:Error("Could not load setting. Please contact a developer. Attempted name: "..v)
+            logs:Error("Could not load setting. Please contact a developer. Attempted name: " .. v)
             continue
         end
 
         if k.type == "tickbox" or k.type == "slider" or k.type == "plainint" then
             local def = k.default
-            if k.type == "tickbox" then 
-                def = tonumber(k.default) 
+            if k.type == "tickbox" then
+                def = tonumber(k.default)
             end
 
-            k.value = cookie.GetNumber("impulse-setting-"..v, def) -- Cache the data into a variable instead of sql so its fast
+            k.value = cookie.GetNumber("impulse-setting-" .. v, def) -- Cache the data into a variable instead of sql so its fast
         elseif k.type == "dropdown" or k.type == "textbox" then
-            k.value = cookie.GetString("impulse-setting-"..v, k.default)
+            k.value = cookie.GetString("impulse-setting-" .. v, k.default)
         end
 
         if k.onChanged then
@@ -175,7 +175,7 @@ function impulse.Settings:Set(name, value)
             value = value and 1 or 0
         end
 
-        cookie.Set("impulse-setting-"..name, value)
+        cookie.Set("impulse-setting-" .. name, value)
         settingData.value = value
 
         if settingData.onChanged then
@@ -185,7 +185,7 @@ function impulse.Settings:Set(name, value)
         return
     end
 
-    return logs:Error("Could not SetSetting. Please contact a developer, attempted name: "..name)
+    return logs:Error("Could not SetSetting. Please contact a developer, attempted name: " .. name)
 end
 
 concommand.Add("impulse_settings_reset", function()

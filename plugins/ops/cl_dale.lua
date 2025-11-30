@@ -5,7 +5,7 @@ local strFind = string.find
 local closeMsg = "If I've managed to solve your issue please say 'solved' to close the report."
 
 local function doSay(message)
-    impulse.Ops.NewLog({"(#"..impulse.Ops.CurReport..") ", "Automated reply", Color(172, 103, 0), " (Dale)", color_white, ": ", Color(208, 201, 198), message}, false)
+    impulse.Ops.NewLog({"(#" .. impulse.Ops.CurReport .. ") ", "Automated reply", Color(172, 103, 0), " (Dale)", color_white, ": ", Color(208, 201, 198), message}, false)
 
     if impulse_userReportMenu and IsValid(impulse_userReportMenu) then
         impulse_userReportMenu:SetupUI()

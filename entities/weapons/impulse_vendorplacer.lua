@@ -95,7 +95,7 @@ function SWEP:PrimaryAttack()
         button:SetText(v.Name)
         button:Dock(TOP)
         button.DoClick = function(this)
-            frame.place:SetText("Spawn "..v.Name)
+            frame.place:SetText("Spawn " .. v.Name)
             frame.place.DoClick = function(this)
                 sendVendorReq(v.UniqueID)
             end
@@ -133,7 +133,7 @@ if ( SERVER ) then
         vendor:SetAngles(ang)
         vendor:Spawn()
 
-        client:Notify("Vendor with Unique ID "..uniqueID.." created. Please mark and save the spawned vendor.")
+        client:Notify("Vendor with Unique ID " .. uniqueID .. " created. Please mark and save the spawned vendor.")
     end)
 end
 

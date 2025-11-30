@@ -20,10 +20,10 @@ function PLUGIN:PlayerDeath(victim, inflictor, attacker)
 
     if (attacker:Team() == victim:Team()) or (victim:IsCP() and attacker:IsCP()) then
         attacker.AutoModRisk = (attacker.AutoModRisk or 0) + 4.5
-        attacker:AutoModLogAdd("User killed teammate "..victim:Nick())
+        attacker:AutoModLogAdd("User killed teammate " .. victim:Nick())
     else
         attacker.AutoModRisk = (attacker.AutoModRisk or 0) + 0.6
-        attacker:AutoModLogAdd("User killed "..victim:Nick())
+        attacker:AutoModLogAdd("User killed " .. victim:Nick())
     end
 
     local risk = attacker.AutoModRisk or 0

@@ -66,25 +66,25 @@ function PANEL:ScrollToChild(panel)
 end
 
 function PANEL:AddText(...)
-    local text = "<font=".."Impulse-Chat"..impulse.Settings:Get("chat_fontsize")..">"
+    local text = "<font=" .. "Impulse-Chat" .. impulse.Settings:Get("chat_fontsize") .. ">"
     local plainText = ""
     local luaMsg = {}
 
     if impulse.customChatFont then
-        text = "<font="..impulse.customChatFont..">"
+        text = "<font=" .. impulse.customChatFont .. ">"
         impulse.customChatFont = nil
     end
 
     for k, v in ipairs({...}) do
         if (type(v) == "table" and v.r and v.g and v.b) then
-            text = text.."<color="..v.r..","..v.g..","..v.b..">"
+            text = text .. "<color=" .. v.r .. "," .. v.g .. "," .. v.b .. ">"
 
             table.insert(luaMsg, Color(v.r, v.g, v.b, 255))
         elseif (type(v) == "Player") then
             local color = team.GetColor(v:Team())
             local str = v:KnownName():gsub("<", "&lt;"):gsub(">", "&gt;")
 
-            text = text.."<color="..color.r..","..color.g..","..color.b..">"..str
+            text = text .. "<color=" .. color.r .. "," .. color.g .. "," .. color.b .. ">" .. str
             painText = plainText..v:Name()
 
             table.insert(luaMsg, color)
@@ -98,7 +98,7 @@ function PANEL:AddText(...)
         end
     end
 
-    text = text.."</font>"
+    text = text .. "</font>"
 
     local textElement = self:Add("DPanel")
     textElement:SetWide(self:GetWide() - 15)
@@ -161,7 +161,7 @@ function PANEL:AddText(...)
                     end
 
 
-                    LocalPlayer():ConCommand("say /ooctimeout "..textElement.player:SteamID64().." "..x)
+                    LocalPlayer():ConCommand("say /ooctimeout " .. textElement.player:SteamID64() .. " " .. x)
                 end, nil, "Issue timeout")
             end)
             banPly:SetIcon("icon16/sound_add.png")

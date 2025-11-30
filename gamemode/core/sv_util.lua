@@ -7,12 +7,12 @@ function impulse.Util:IsEmpty(vector, ignore) -- findpos and isempty are from da
     ignore = ignore or {}
 
     local point = util.PointContents(vector)
-    local a = point ~= CONTENTS_SOLID
-        and point ~= CONTENTS_MOVEABLE
-        and point ~= CONTENTS_LADDER
-        and point ~= CONTENTS_PLAYERCLIP
-        and point ~= CONTENTS_MONSTERCLIP
-    if not a then return false end
+    local a = point != CONTENTS_SOLID
+        and point != CONTENTS_MOVEABLE
+        and point != CONTENTS_LADDER
+        and point != CONTENTS_PLAYERCLIP
+        and point != CONTENTS_MONSTERCLIP
+    if !a then return false end
 
     local b = true
 
@@ -56,7 +56,7 @@ function impulse.Util:FindEmptyPos(pos, ignore, distance, step, area)
 end
 
 function impulse.Util:PlayGesture(client, gesture, slot)
-    local slot = slot or GESTURE_SLOT_CUSTOM
+    slot = slot or GESTURE_SLOT_CUSTOM
 
     net.Start("impulsePlayGesture")
         net.WritePlayer(client)

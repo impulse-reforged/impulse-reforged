@@ -64,10 +64,10 @@ local function utf8charbytes (s, i)
 
         -- argument checking
         if not isstring(s) then
-                error("bad argument #1 to 'utf8charbytes' (string expected, got ".. type(s).. ")")
+                error("bad argument #1 to 'utf8charbytes' (string expected, got " ..  type(s) .. ")")
         end
         if not isnumber(i) then
-                error("bad argument #2 to 'utf8charbytes' (number expected, got ".. type(i).. ")")
+                error("bad argument #2 to 'utf8charbytes' (number expected, got " ..  type(i) .. ")")
         end
 
         local c = s:byte(i)
@@ -159,7 +159,7 @@ end
 local function utf8len (s)
         -- argument checking
         if not isstring(s) then
-                error("bad argument #1 to 'utf8len' (string expected, got ".. type(s).. ")")
+                error("bad argument #1 to 'utf8len' (string expected, got " ..  type(s) .. ")")
         end
 
         local pos = 1
@@ -193,13 +193,13 @@ local function utf8sub (s, i, j)
 
         -- argument checking
         if not isstring(s) then
-                error("bad argument #1 to 'utf8sub' (string expected, got ".. type(s).. ")")
+                error("bad argument #1 to 'utf8sub' (string expected, got " ..  type(s) .. ")")
         end
         if not isnumber(i) then
-                error("bad argument #2 to 'utf8sub' (number expected, got ".. type(i).. ")")
+                error("bad argument #2 to 'utf8sub' (number expected, got " ..  type(i) .. ")")
         end
         if not isnumber(j) then
-                error("bad argument #3 to 'utf8sub' (number expected, got ".. type(j).. ")")
+                error("bad argument #3 to 'utf8sub' (number expected, got " ..  type(j) .. ")")
         end
 
         local pos = 1
@@ -247,10 +247,10 @@ end
 local function utf8replace (s, mapping)
         -- argument checking
         if not isstring(s) then
-                error("bad argument #1 to 'utf8replace' (string expected, got ".. type(s).. ")")
+                error("bad argument #1 to 'utf8replace' (string expected, got " ..  type(s) .. ")")
         end
         if not istable(mapping) then
-                error("bad argument #2 to 'utf8replace' (table expected, got ".. type(mapping).. ")")
+                error("bad argument #2 to 'utf8replace' (table expected, got " ..  type(mapping) .. ")")
         end
 
         local pos = 1
@@ -297,7 +297,7 @@ end
 local function utf8reverse (s)
         -- argument checking
         if not isstring(s) then
-                error("bad argument #1 to 'utf8reverse' (string expected, got ".. type(s).. ")")
+                error("bad argument #1 to 'utf8reverse' (string expected, got " ..  type(s) .. ")")
         end
 
         local bytes = s:len()

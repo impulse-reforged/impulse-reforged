@@ -3,7 +3,7 @@ local PANEL = {}
 function PANEL:Init()
     self:SetSize(640, 500)
     self:Center()
-    self:SetTitle("Achievements (you have "..LocalPlayer():GetRelay("achievementPoints", 0).." achievement points)")
+    self:SetTitle("Achievements (you have " .. LocalPlayer():GetRelay("achievementPoints", 0) .. " achievement points)")
     self:MakePopup()
 
     local panel = self
@@ -36,7 +36,7 @@ function PANEL:Init()
             t = self.unlockedLayout
             unlocked = true
 
-            sub = "Unlocked on "..os.date("%d/%m/%Y", impulse.Achievements[v])
+            sub = "Unlocked on " .. os.date("%d/%m/%Y", impulse.Achievements[v])
         end
 
         local ach = t:Add("DPanel")

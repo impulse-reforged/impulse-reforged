@@ -10,7 +10,7 @@ function impulse.Loot.GenerateFromPool(pool)
     local loot = {}
 
     for v, k in RandomPairs(lootPool.Items) do
-        for i=1, (k.Rep or 1) do
+        for i = 1, (k.Rep or 1) do
             local rGen = math.random(1, 1000)
 
             if rGen >= k.Rarity then
@@ -34,8 +34,8 @@ function impulse.Loot.GenerateFromPool(pool)
         ANTICRASH_ATTEMPTS = ANTICRASH_ATTEMPTS + 1
 
         if ANTICRASH_ATTEMPTS > 32 then
-            logs:Warning("HIGH LOOT GENERATION ATTEMPTS WARNING! ("..pool..") ("..ANTICRASH_ATTEMPTS..")")
-            print("Please make sure this lootpool is NOT impossible to compute!")    
+            logs:Warning("HIGH LOOT GENERATION ATTEMPTS WARNING! (" .. pool .. ") (" .. ANTICRASH_ATTEMPTS .. ")")
+            print("Please make sure this lootpool is NOT impossible to compute!")
         end
 
         return impulse.Loot.GenerateFromPool(pool)

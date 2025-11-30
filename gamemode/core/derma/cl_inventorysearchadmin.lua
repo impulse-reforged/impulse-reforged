@@ -42,7 +42,7 @@ function PANEL:SetInv(invdata)
             surface.DrawRect(0, 0, w, h)
 
             draw.SimpleText(self.ItemName, "Impulse-Elements18-Shadow", 10, 5, color_white)
-            draw.SimpleText(self.ItemClass.."  #"..self.ItemID, "Impulse-Elements16-Shadow", 10, 20, color_white)
+            draw.SimpleText(self.ItemClass .. "  #" .. self.ItemID, "Impulse-Elements16-Shadow", 10, 20, color_white)
 
             if self.ItemEquipped then
                 draw.SimpleText("equipped", "Impulse-Elements16-Shadow", 180, 7, green)
@@ -51,7 +51,7 @@ function PANEL:SetInv(invdata)
             if self.ItemRestrict then
                 draw.SimpleText("restricted", "Impulse-Elements16-Shadow", 180, 22, restrictedCol)
             elseif self.ItemIllegal then
-                draw.SimpleText("illegal", "Impulse-Elements16-Shadow", 180, 22, red)    
+                draw.SimpleText("illegal", "Impulse-Elements16-Shadow", 180, 22, red)
             end
 
             return true
@@ -70,7 +70,7 @@ function PANEL:SetInv(invdata)
                 table.RemoveByValue(panel.taking, bg.ItemID)
             end
         end
-            
+
         local takeLbl = vgui.Create("DLabel", bg)
         takeLbl:SetPos(258, 10)
         takeLbl:SetText("Remove")
@@ -86,7 +86,7 @@ function PANEL:SetInv(invdata)
         local count = table.Count(panel.taking)
 
         if count > 0 then
-            self:SetText("Close (removing "..count.." items)")
+            self:SetText("Close (removing " .. count .. " items)")
         else
             self:SetText("Close")
         end
@@ -114,7 +114,7 @@ function PANEL:SetInv(invdata)
 end
 
 function PANEL:SetPlayer(ent)
-    self:SetTitle(ent:Nick().."'s Inventory")
+    self:SetTitle(ent:Nick() .. "'s Inventory")
     self.client = ent
 end
 

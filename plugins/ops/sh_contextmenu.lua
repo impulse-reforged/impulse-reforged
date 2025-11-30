@@ -16,7 +16,7 @@ properties.Add( "ops_copysteamid", {
     end,
     Action = function( self, ent ) -- The action to perform upon using the property ( Clientside )
         SetClipboardText(ent:SteamID64())
-        LocalPlayer():Notify("Copied "..ent:Nick().."'s SteamID64 to clipboard.")
+        LocalPlayer():Notify("Copied " .. ent:Nick() .. "'s SteamID64 to clipboard.")
     end
 } )
 
@@ -42,7 +42,7 @@ properties.Add( "ops_openplayercard", {
         for v, k in pairs(impulse.Badges) do
             if k[3](ent) then
                 badges[v] = k
-            end     
+            end
         end
 
         impulse_infoCard = vgui.Create("impulsePlayerInfoCard")
@@ -74,7 +74,7 @@ properties.Add( "ops_openplayercardprop", {
         for v, k in pairs(impulse.Badges) do
             if k[3](ent) then
                 badges[v] = k
-            end     
+            end
         end
 
         impulse_infoCard = vgui.Create("impulsePlayerInfoCard")

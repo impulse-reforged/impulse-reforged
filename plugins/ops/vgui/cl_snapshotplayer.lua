@@ -22,7 +22,7 @@ function PANEL:Init()
         draw.RoundedBox(0, 0, 20, w, 2, grey)
         draw.RoundedBox(0, 0, 20, self:GetSlideX() * self:GetWide(), 2, impulse.Config.MainColour)
 
-        draw.SimpleText("0:00".."/"..panel.Length..":00", nil, 0, 25)
+        draw.SimpleText("0:00" .. "/" .. panel.Length .. ":00", nil, 0, 25)
     end
 
     self.playPause = vgui.Create("DButton", self)
@@ -54,9 +54,9 @@ function PANEL:PaintOver(w, h)
         return
     end
 
-    draw.SimpleText("Ticks: "..self.CurTick.."/"..self.TotalTick, nil, 420, 30)
-    draw.SimpleText("Start time: "..self.StartTime, nil, 420, 42)
-    draw.SimpleText("Size: ".."766.4".."kb", nil, 420, 54)
+    draw.SimpleText("Ticks: " .. self.CurTick .. "/" .. self.TotalTick, nil, 420, 30)
+    draw.SimpleText("Start time: " .. self.StartTime, nil, 420, 42)
+    draw.SimpleText("Size: " .. "766.4" .. "kb", nil, 420, 54)
 end
 
 vgui.Register("impulseSnapshotPlayer", PANEL, "DFrame")

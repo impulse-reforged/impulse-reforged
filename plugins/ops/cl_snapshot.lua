@@ -64,5 +64,5 @@ net.Receive("opsSnapshot", function()
     impulse.Ops.ClearSnapshot()
     impulse.Ops.StartSnapshot(id)
 
-    LocalPlayer():Notify("Loaded snapshot #"..id..".")
+    LocalPlayer():Notify("Loaded snapshot #" .. id .. ".")
 end)

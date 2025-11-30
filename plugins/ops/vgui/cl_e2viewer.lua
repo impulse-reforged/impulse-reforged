@@ -29,7 +29,7 @@ function PANEL:SetupE2S(e2s)
             cpuTime = 0
         end
 
-        local x = self.list:AddLine(owner:Nick().." ("..owner:SteamName()..")", k.name, cpuTime)
+        local x = self.list:AddLine(owner:Nick() .. " (" .. owner:SteamName() .. ")", k.name, cpuTime)
         x.Owner = owner:SteamID64()
         x.Ent = k.ent
 

@@ -34,11 +34,11 @@ end
 -- @string uid Unique name
 function impulse.MenuMessage:Remove(uid)
     local msg = self.Stored[uid]
-    if not msg then return end
+    if !msg then return end
 
     self.Stored[uid] = nil
 
-    local fname = "impulse-reforged/menumsgs/"..uid..".json"
+    local fname = "impulse-reforged/menumsgs/" .. uid .. ".json"
 
     if file.Exists(fname, "DATA") then
         file.Delete(fname)
@@ -50,11 +50,11 @@ end
 -- @string uid Unique name
 function impulse.MenuMessage:Save(uid)
     local msg = self.Stored[uid]
-    if not msg then return end
+    if !msg then return end
 
     local compiled = util.TableToJSON(msg)
 
-    file.Write("impulse-reforged/menumsgs/"..uid..".json", compiled)
+    file.Write("impulse-reforged/menumsgs/" .. uid .. ".json", compiled)
 end
 
 --- Returns if a MenuMessage can be seen
@@ -63,8 +63,8 @@ end
 -- @internal
 function impulse.MenuMessage:CanSee(uid)
     local msg = self.Stored[uid]
-    if not msg then return end
-    if not msg.scheduled then return true end
+    if !msg then return end
+    if !msg.scheduled then return true end
 
     if msg.scheduledTime and msg.scheduledTime != 0 then
         if os.time() > msg.scheduledTime then

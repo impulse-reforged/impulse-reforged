@@ -26,10 +26,10 @@ local timeoutCommand = {
         if plyTarget then
             local sid = plyTarget:SteamID64()
             impulse.OOCTimeouts[sid] = CurTime() + time
-            plyTarget:Notify("Reason: "..(reason or "Behaviour that violates the community guidelines")..".")
-            plyTarget:Notify("You have been issued an OOC communication timeout by a game moderator that will last "..(time / 60).." minutes.")
+            plyTarget:Notify("Reason: " .. (reason or "Behaviour that violates the community guidelines") .. ".")
+            plyTarget:Notify("You have been issued an OOC communication timeout by a game moderator that will last " .. (time / 60) .. " minutes.")
 
-            timer.Create("impulseOOCTimeout"..sid, time, 1, function()
+            timer.Create("impulseOOCTimeout" .. sid, time, 1, function()
                 if not impulse.OOCTimeouts[sid] then return end
 
                 impulse.OOCTimeouts[sid] = nil
@@ -41,17 +41,17 @@ local timeoutCommand = {
 
             local t = (time / 60)
 
-            client:Notify("You have issued "..plyTarget:SteamName().." an OOC timeout for "..t.." minutes.")
+            client:Notify("You have issued " .. plyTarget:SteamName() .. " an OOC timeout for " .. t .. " minutes.")
 
             for v, k in player.Iterator() do
-                k:AddChatText(infoCol, plyTarget:SteamName().." has been given an OOC timeout for "..t.." minutes by a game moderator.")
+                k:AddChatText(infoCol, plyTarget:SteamName() .. " has been given an OOC timeout for " .. t .. " minutes by a game moderator.")
             end
 
             net.Start("opsGiveOOCBan")
             net.WriteUInt(os.time() + time, 16)
             net.Send(plyTarget)
         else
-            return client:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find player: " .. tostring(name))
         end
     end
 }
@@ -68,9 +68,9 @@ local unTimeoutCommand = {
 
         if plyTarget then
             impulse.OOCTimeouts[plyTarget:SteamID64()] = nil
-            client:Notify("The OOC communication timeout has been removed from "..plyTarget:Name()..".")
+            client:Notify("The OOC communication timeout has been removed from " .. plyTarget:Name() .. ".")
         else
-            return client:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find player: " .. tostring(name))
         end
     end
 }

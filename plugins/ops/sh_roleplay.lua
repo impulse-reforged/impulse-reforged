@@ -7,10 +7,10 @@ local unArrestCommand = {
         local plyTarget = impulse.Util:FindPlayer(name)
 
         if plyTarget then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") un-arrested "..plyTarget:Name().." ("..plyTarget:SteamID64()..")")
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") un-arrested " .. plyTarget:Name() .. " (" .. plyTarget:SteamID64() .. ")")
             plyTarget:UnArrest()
             plyTarget:Notify("You have been un-arrested by a game moderator.")
-            client:Notify(plyTarget:Name().." has been successfully un-arrested.")
+            client:Notify(plyTarget:Name() .. " has been successfully un-arrested.")
 
             if plyTarget.InJail then
                 impulse.Arrest.Prison[plyTarget.InJail][plyTarget:EntIndex()] = nil
@@ -20,7 +20,7 @@ local unArrestCommand = {
                 plyTarget:Spawn()
             end
         else
-            return client:Notify("Could not find the player: "..tostring(name).."..")
+            return client:Notify("Could not find the player: " .. tostring(name) .. " .. ")
         end
     end
 }
@@ -45,15 +45,15 @@ local setTeamCommand = {
         if plyTarget then
             if teamID and impulse.Teams.Stored[teamID] then
                 local teamName = team.GetName(teamID)
-                print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..plyTarget:Name().." ("..plyTarget:SteamID64()..") to team "..teamName.." (ID: "..teamID..")")
+                print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") set " .. plyTarget:Name() .. " (" .. plyTarget:SteamID64() .. ") to team " .. teamName .. " (ID: " .. teamID .. ")")
                 plyTarget:SetTeam(teamID)
-                plyTarget:Notify("Your team has been set to "..teamName.." by a game moderator.")
-                client:Notify(plyTarget:Name().." has been successfully set to "..teamName.."..")
+                plyTarget:Notify("Your team has been set to " .. teamName .. " by a game moderator.")
+                client:Notify(plyTarget:Name() .. " has been successfully set to " .. teamName .. " .. ")
             else
                 client:Notify("The team ID is invalid. Please check the F4 menu for the correct order.")
             end
         else
-            return client:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find player: " .. tostring(name))
         end
     end
 }
@@ -70,7 +70,7 @@ local forceUnlockCommand = {
             return client:Notify("You are not looking at a door.")
         end
 
-        print("[ops] "..client:Name().." ("..client:SteamID64()..") used /forceunlock on door "..door:EntIndex().." at "..tostring(door:GetPos()))
+        print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") used /forceunlock on door " .. door:EntIndex() .. " at " .. tostring(door:GetPos()))
         door:DoorUnlock()
         client:Notify("Door unlocked.")
     end
@@ -88,7 +88,7 @@ local forceLockCommand = {
             return client:Notify("You are not looking at a door.")
         end
 
-        print("[ops] "..client:Name().." ("..client:SteamID64()..") used /forcelock on door "..door:EntIndex().." at "..tostring(door:GetPos()))
+        print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") used /forcelock on door " .. door:EntIndex() .. " at " .. tostring(door:GetPos()))
         door:DoorLock()
         client:Notify("Door locked.")
     end
@@ -110,7 +110,7 @@ local removeDoorCommand = {
             return client:Notify("This is a map door, you can not remove it.")
         end
 
-        print("[ops] "..client:Name().." ("..client:SteamID64()..") removed bugged door "..door:EntIndex().." ("..door:GetClass()..") at "..tostring(door:GetPos()))
+        print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") removed bugged door " .. door:EntIndex() .. " (" .. door:GetClass() .. ") at " .. tostring(door:GetPos()))
         door:Remove()
         client:Notify("Door removed.")
     end
@@ -134,7 +134,7 @@ local sellDoorCommand = {
             return client:Notify("No door owners to remove.")
         end
 
-        print("[ops] "..client:Name().." ("..client:SteamID64()..") force-sold door "..door:EntIndex().." at "..tostring(door:GetPos()))
+        print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") force-sold door " .. door:EntIndex() .. " at " .. tostring(door:GetPos()))
         client:RemoveDoorMaster(door)
         client:Notify("Door sold.")
     end

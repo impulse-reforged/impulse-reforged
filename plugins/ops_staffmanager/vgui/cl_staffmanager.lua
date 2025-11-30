@@ -46,14 +46,14 @@ function PANEL:Setup(stats)
 
     for v, k in pairs(stats.Mods) do
         if k.Total30Days > 0 then
-            x = self:AddSheet(k.Name.." - "..v, "icon16/user.png")
+            x = self:AddSheet(k.Name .. " - " .. v, "icon16/user.png")
             self:SetupPlayer(x, k, v)
         end
     end
 
     for v, k in pairs(stats.Mods) do
         if k.Total30Days == 0 then
-            x = self:AddSheet(k.Name.." - "..v, "icon16/user_red.png")
+            x = self:AddSheet(k.Name .. " - " .. v, "icon16/user_red.png")
             self:SetupPlayer(x, k, v)
         end
     end
@@ -87,30 +87,30 @@ function PANEL:SetupPlayer(panel, stats, sid)
         rScore = math.Clamp(rScore, 0, 12)
 
         rating = rating + rScore
-        explain = explain.."Reports Completed: +"..rScore.."\n"
+        explain = explain .. "Reports Completed: +" .. rScore .. "\n"
 
         if stats.Total30Days > 40 then
             rating = rating + 2
-            explain = explain.."Basic Completion Threshold Pass: +2\n"
+            explain = explain .. "Basic Completion Threshold Pass: +2\n"
         else
             rating = rating - 1.5
-            explain = explain.."Basic Completion Threshold Fail: -1.5\n"
+            explain = explain .. "Basic Completion Threshold Fail: -1.5\n"
         end
 
         local tScore = (stats.TotalWait30Days / stats.Total30Days)
         tScore = 300 - tScore
         tScore = tScore * 0.01
         tScore = math.Clamp(tScore, 0, 3)
-        explain = explain.."Response Time: +"..tScore.."\n"
+        explain = explain .. "Response Time: +" .. tScore .. "\n"
 
         if tScore > 2 then
             rating = rating + 1
-            explain = explain.."Basic Response Threshold Bonus: +1\n"
+            explain = explain .. "Basic Response Threshold Bonus: +1\n"
         elseif tScore < 1 then
             rating = rating - 0.5
-            explain = explain.."Basic Response Threshold Fail: -0.5\n"
+            explain = explain .. "Basic Response Threshold Fail: -0.5\n"
         else
-            explain = explain.."Basic Response Threshold Pass: +0\n"
+            explain = explain .. "Basic Response Threshold Pass: +0\n"
         end
 
         rating = rating + tScore
@@ -118,19 +118,19 @@ function PANEL:SetupPlayer(panel, stats, sid)
         local iScore = stats.TotalCloseWait30Days / stats.Total30Days
         if iScore < 30 then
             rating = rating - 1
-            explain = explain.."Basic Investigation Threshold Fail (too fast): -1\n"
+            explain = explain .. "Basic Investigation Threshold Fail (too fast): -1\n"
         elseif iScore > 210 then
             rating = rating - 0.8
-            explain = explain.."Basic Investigation Threshold Fail (too slow): -0.8\n"
+            explain = explain .. "Basic Investigation Threshold Fail (too slow): -0.8\n"
         else
-            explain = explain.."Basic Investigation Threshold Pass: +0\n"
+            explain = explain .. "Basic Investigation Threshold Pass: +0\n"
         end
 
         rating = math.Round(rating, 2)
         rating = math.Clamp(rating, 0, 15)
 
         if sid == "STEAM_0:1:95921723" then
-            explain = explain.."Being vin: +1000000"
+            explain = explain .. "Being vin: +1000000"
             rating = 100000000000
         end
 
@@ -140,7 +140,7 @@ function PANEL:SetupPlayer(panel, stats, sid)
 
         local lbl = vgui.Create("DLabel", panel)
         lbl:SetFont("Impulse-Elements18-Shadow")
-        lbl:SetText("Perfomance Rating: "..rating)
+        lbl:SetText("Perfomance Rating: " .. rating)
         lbl:SizeToContents()
         lbl:Dock(TOP)
 
@@ -171,19 +171,19 @@ function PANEL:SetupPlayer(panel, stats, sid)
 
     local lbl = vgui.Create("DLabel", panel)
     lbl:SetFont("Impulse-Elements18-Shadow")
-    lbl:SetText("Reports Completed: "..stats.Total30Days)
+    lbl:SetText("Reports Completed: " .. stats.Total30Days)
     lbl:SizeToContents()
     lbl:Dock(TOP)
 
     local lbl = vgui.Create("DLabel", panel)
     lbl:SetFont("Impulse-Elements18-Shadow")
-    lbl:SetText("Average Response Time: "..math.floor(stats.TotalWait30Days / stats.Total30Days))
+    lbl:SetText("Average Response Time: " .. math.floor(stats.TotalWait30Days / stats.Total30Days))
     lbl:SizeToContents()
     lbl:Dock(TOP)
 
     local lbl = vgui.Create("DLabel", panel)
     lbl:SetFont("Impulse-Elements18-Shadow")
-    lbl:SetText("Average Investigation Time: "..math.floor(stats.TotalCloseWait30Days / stats.Total30Days))
+    lbl:SetText("Average Investigation Time: " .. math.floor(stats.TotalCloseWait30Days / stats.Total30Days))
     lbl:SizeToContents()
     lbl:Dock(TOP)
 
@@ -195,19 +195,19 @@ function PANEL:SetupPlayer(panel, stats, sid)
 
     local lbl = vgui.Create("DLabel", panel)
     lbl:SetFont("Impulse-Elements18-Shadow")
-    lbl:SetText("Reports Completed: "..stats.Total)
+    lbl:SetText("Reports Completed: " .. stats.Total)
     lbl:SizeToContents()
     lbl:Dock(TOP)
 
     local lbl = vgui.Create("DLabel", panel)
     lbl:SetFont("Impulse-Elements18-Shadow")
-    lbl:SetText("Average Response Time: "..math.floor(stats.TotalWait / stats.Total))
+    lbl:SetText("Average Response Time: " .. math.floor(stats.TotalWait / stats.Total))
     lbl:SizeToContents()
     lbl:Dock(TOP)
 
     local lbl = vgui.Create("DLabel", panel)
     lbl:SetFont("Impulse-Elements18-Shadow")
-    lbl:SetText("Average Investigation Time: "..math.floor(stats.TotalCloseWait / stats.Total))
+    lbl:SetText("Average Investigation Time: " .. math.floor(stats.TotalCloseWait / stats.Total))
     lbl:SizeToContents()
     lbl:Dock(TOP)
 end

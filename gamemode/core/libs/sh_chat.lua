@@ -51,14 +51,14 @@ local oocCommand = {
 
         local timeout = impulse.OOCTimeouts[client:SteamID64()]
         if timeout then
-            return client:Notify("You have an active OOC timeout that will expire in "..string.NiceTime(timeout - CurTime())..".")
+            return client:Notify("You have an active OOC timeout that will expire in " .. string.NiceTime(timeout - CurTime()) .. ".")
         end
 
         client.OOCLimit = client.OOCLimit or ((client:IsDonator() and impulse.Config.OOCLimitVIP) or impulse.Config.OOCLimit)
         local timeLeft = timer.TimeLeft(client:UserID() .. "impulseOOCLimit") or 0
 
         if client.OOCLimit < 1 and !client:IsAdmin() then
-            return client:Notify("You have run out of OOC messages. Please wait "..string.NiceTime(timeLeft).." for more.")
+            return client:Notify("You have run out of OOC messages. Please wait " .. string.NiceTime(timeLeft) .. " for more.")
         end
 
         for v, k in player.Iterator() do
@@ -84,7 +84,7 @@ local loocCommand = {
     requiresArg = true,
     onRun = function(client, arg, rawText)
         if client.hasOOCTimeout then
-            return client:Notify("You have an active OOC timeout that will expire in "..string.NiceTime(client.hasOOCTimeout - CurTime())..".")
+            return client:Notify("You have an active OOC timeout that will expire in " .. string.NiceTime(client.hasOOCTimeout - CurTime()) .. ".")
         end
 
         for v, k in player.Iterator() do
@@ -120,7 +120,7 @@ local pmCommand = {
 
             client:SendChatClassMessage(5, message, client)
         else
-            return client:Notify("Could not find the player: "..tostring(name))
+            return client:Notify("Could not find the player: " .. tostring(name))
         end
     end
 }
@@ -317,7 +317,7 @@ local dropMoneyCommand = {
                 end
 
                 hook.Run("PlayerDropMoney", client, note)
-                client:Notify("You have successfully dropped "..impulse.Config.CurrencyPrefix..value.."..")
+                client:Notify("You have successfully dropped " .. impulse.Config.CurrencyPrefix..value .. " .. ")
             else
                 return client:Notify("You do not have enough money to drop that amount.")
             end
@@ -397,7 +397,7 @@ local searchCommand = {
 
             targ:Freeze(true)
             targ:Notify("You are now being searched.")
-            client:Notify("You have begun searching "..targ:Nick().."..")
+            client:Notify("You have begun searching " .. targ:Nick() .. " .. ")
             client.impulseInventorySearching = targ
             hook.Run("DoInventorySearch", client, targ)
 
@@ -489,13 +489,13 @@ if ( CLIENT ) then
     local strFind = string.find
     impulse.RegisterChatClass(2, function(message, speaker)
         if not impulse.Settings:Get("chat_oocenabled", true) then
-            return print("(OOC DISABLED) [OOC] "..speaker:SteamName()..": "..message)
+            return print("(OOC DISABLED) [OOC] " .. speaker:SteamName() .. ": " .. message)
         end
 
         impulse.customChatPlayer = speaker
 
         if LocalPlayer and IsValid(LocalPlayer()) then
-            local tag = "@"..LocalPlayer():SteamName()
+            local tag = "@" .. LocalPlayer():SteamName()
             local findStart, findEnd = strFind(string.lower(message), string.lower(tag), 1, true)
 
             if findStart then
@@ -586,9 +586,9 @@ if ( CLIENT ) then
         if not myGroup then return end
 
         if myGroup.Color then
-            chat.AddText(myGroup.Color, "["..groupName.."] ("..groupRank..") ", speaker:Nick(), ": ", message)
+            chat.AddText(myGroup.Color, "[" .. groupName .. "] (" .. groupRank .. ") ", speaker:Nick(), ": ", message)
         else
-            chat.AddText(groupCol, "["..groupName.."] ("..groupRank..") ", speaker:Nick(), ": ", message)
+            chat.AddText(groupCol, "[" .. groupName .. "] (" .. groupRank .. ") ", speaker:Nick(), ": ", message)
         end
     end)
 end

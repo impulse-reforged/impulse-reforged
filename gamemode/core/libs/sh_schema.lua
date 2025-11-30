@@ -27,7 +27,7 @@ function impulse.Schema:Load()
         return
     end
 
-    logs:Info("Loading Schema \"" .. name .. "\"...")
+    logs:Info("Loading Schema \"" .. name .. "\" .. .")
 
     if ( SERVER and !file.IsDir(name, "LUA") ) then
         SetGlobalString("impulse_fatalerror", "Failed to load Schema \"" .. name .. "\", does not exist.")

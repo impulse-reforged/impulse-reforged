@@ -56,12 +56,12 @@ else
         if self.NextGo > CurTime() then return end
 
         if not self.Pos1 then
-            self.Pos1 = self.Owner:GetPos()
-            self.Pos2 = self.Owner:GetAngles()
+            self.Pos1 = self:GetOwner():GetPos()
+            self.Pos2 = self:GetOwner():GetAngles()
             self.State = "Ready for export."
 
             surface.PlaySound("buttons/blip1.wav")
-            self.Owner:Notify("Ready for export!")
+            self:GetOwner():Notify("Ready for export!")
         end
 
         self.NextGo = CurTime() + .3
@@ -85,8 +85,8 @@ else
         if self.Pos1 and self.Pos2 and !self.Exporting then
             self.Exporting = true
             Derma_StringRequest("impulse", "Enter type:", nil, function(name)
-                local pos1 = "Vector("..self.Pos1.x..", "..self.Pos1.y..", "..self.Pos1.z..")"
-                local pos2 = "Angle("..self.Pos2.y..", "..self.Pos2.p..", "..self.Pos2.r..")"
+                local pos1 = "Vector(" .. self.Pos1.x .. ", " .. self.Pos1.y .. ", " .. self.Pos1.z .. ")"
+                local pos2 = "Angle(" .. self.Pos2.y .. ", " .. self.Pos2.p .. ", " .. self.Pos2.r .. ")"
                 local output = '{type = "'..name..'", dist = 1000, pos = '..pos1..', ang = '..pos2..'}'
 
                 chat.AddText("-----------------OUTPUT-----------------")
@@ -105,7 +105,7 @@ else
     local watermarkCol = Color(255, 255, 255, 120)
     function SWEP:DrawHUD()
         draw.SimpleText("LEFT: Register spawn, RIGHT: Reset, RELOAD: Export", "Impulse-Elements18-Shadow", 100, 100, watermarkCol)
-        draw.SimpleText("STATE: "..(self.State or "Nothing selected"), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
+        draw.SimpleText("STATE: " .. (self.State or "Nothing selected"), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
         draw.SimpleText("Warning, when you click your current position\nwill be registered, not your weapon aim position!", "Impulse-Elements18-Shadow", 100, 140, watermarkCol)
         if not impulse.Config.NPCSpawns then return end
 

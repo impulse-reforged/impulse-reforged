@@ -34,13 +34,13 @@ hook.Add("HUDPaint", "impulseOpsHUD", function()
             end
         end
 
-        draw.SimpleText(staffOn.." STAFF ONLINE", "Impulse-Elements18-Shadow", ScrW() / 2, 10, col, TEXT_ALIGN_CENTER)
+        draw.SimpleText(staffOn .. " STAFF ONLINE", "Impulse-Elements18-Shadow", ScrW() / 2, 10, col, TEXT_ALIGN_CENTER)
 
         if OPS_LIGHT then
             draw.SimpleText("LIGHT ON", "Impulse-Elements18-Shadow", ScrW() / 2, 30, col, TEXT_ALIGN_CENTER)
         end
 
-        draw.SimpleText("TOTAL REPORTS: " ..#impulse.Ops.Reports, "Impulse-Elements16-Shadow", 20, 30, col)
+        draw.SimpleText("TOTAL REPORTS: " .. #impulse.Ops.Reports, "Impulse-Elements16-Shadow", 20, 30, col)
 
         local totalClaimed = 0
         for v, k in pairs(impulse.Ops.Reports) do
@@ -49,7 +49,7 @@ hook.Add("HUDPaint", "impulseOpsHUD", function()
 
                 if k[3] == LocalPlayer() then
                     if IsValid(k[1]) then
-                        draw.SimpleText("REPORTEE: "..k[1]:SteamName().." ("..k[1]:Name()..")", "Impulse-Elements16-Shadow", 20, 80, green)
+                        draw.SimpleText("REPORTEE: " .. k[1]:SteamName() .. " (" .. k[1]:Name() .. ")", "Impulse-Elements16-Shadow", 20, 80, green)
                     else
                         draw.SimpleText("REPORTEE IS INVALID! CLOSE THIS REPORT.", "Impulse-Elements16-Shadow", 20, 80, green)
                     end
@@ -57,21 +57,21 @@ hook.Add("HUDPaint", "impulseOpsHUD", function()
             end
         end
 
-        draw.SimpleText("CLAIMED REPORTS: " ..totalClaimed, "Impulse-Elements16-Shadow", 20, 50, col)
+        draw.SimpleText("CLAIMED REPORTS: " .. totalClaimed, "Impulse-Elements16-Shadow", 20, 50, col)
 
         if LocalPlayer():IsAdmin() and impulse.Settings:Get("admin_esp") then
-            draw.SimpleText("ENTCOUNT: "..ents.GetCount(), "Impulse-Elements16-Shadow", 20, 100, col)
-            draw.SimpleText("PLAYERCOUNT: "..player.GetCount(), "Impulse-Elements16-Shadow", 20, 120, col)
+            draw.SimpleText("ENTCOUNT: " .. ents.GetCount(), "Impulse-Elements16-Shadow", 20, 100, col)
+            draw.SimpleText("PLAYERCOUNT: " .. player.GetCount(), "Impulse-Elements16-Shadow", 20, 120, col)
 
             if impulse.Dispatch then
                 local ccode = impulse.Dispatch.CityCodes[impulse.Dispatch.GetCityCode()]
-                draw.SimpleText("CITYCODE: "..ccode[1], "Impulse-Elements16-Shadow", 20, 140, ccode[2])
+                draw.SimpleText("CITYCODE: " .. ccode[1], "Impulse-Elements16-Shadow", 20, 140, ccode[2])
             end
 
             local y = 160
 
             for v, k in pairs(impulse.Teams.Stored) do
-                draw.SimpleText(team.GetName(v)..": "..#team.GetPlayers(v), "Impulse-Elements16-Shadow", 20, y, col)
+                draw.SimpleText(team.GetName(v) .. ": " .. #team.GetPlayers(v), "Impulse-Elements16-Shadow", 20, y, col)
                 y = y + 20
             end
 
@@ -94,12 +94,12 @@ hook.Add("HUDPaint", "impulseOpsHUD", function()
 
         if CUR_SNAPSHOT then
             local snapData = impulse.Ops.Snapshots[CUR_SNAPSHOT]
-            impulse.Ops.Snapshots[CUR_SNAPSHOT].VictimNeatName = impulse.Ops.Snapshots[CUR_SNAPSHOT].VictimNeatName or ((IsValid(snapData.Victim) and snapData.Victim:IsPlayer()) and (snapData.VictimNick.." ("..snapData.Victim:SteamName()..")") or snapData.VictimID)
-            impulse.Ops.Snapshots[CUR_SNAPSHOT].InflictorNeatName = impulse.Ops.Snapshots[CUR_SNAPSHOT].InflictorNeatName or ((IsValid(snapData.Inflictor) and snapData.Inflictor:IsPlayer()) and (snapData.InflictorNick.." ("..snapData.Inflictor:SteamName()..")") or snapData.InflictorID)
+            impulse.Ops.Snapshots[CUR_SNAPSHOT].VictimNeatName = impulse.Ops.Snapshots[CUR_SNAPSHOT].VictimNeatName or ((IsValid(snapData.Victim) and snapData.Victim:IsPlayer()) and (snapData.VictimNick .. " (" .. snapData.Victim:SteamName() .. ")") or snapData.VictimID)
+            impulse.Ops.Snapshots[CUR_SNAPSHOT].InflictorNeatName = impulse.Ops.Snapshots[CUR_SNAPSHOT].InflictorNeatName or ((IsValid(snapData.Inflictor) and snapData.Inflictor:IsPlayer()) and (snapData.InflictorNick .. " (" .. snapData.Inflictor:SteamName() .. ")") or snapData.InflictorID)
 
-            draw.SimpleText("VIEWING SNAPSHOT #"..CUR_SNAPSHOT.." (CLOSE WITH F2)", "Impulse-Elements16-Shadow", 250, 100, col)
-            draw.SimpleText("VICTIM: "..snapData.VictimNeatName.." ["..snapData.VictimID.."]", "Impulse-Elements16-Shadow", 250, 120, Color(255, 0, 0))
-            draw.SimpleText("ATTACKER: "..snapData.InflictorNeatName.." ["..snapData.InflictorID.."]", "Impulse-Elements16-Shadow", 250, 140, Color(0, 255, 0))
+            draw.SimpleText("VIEWING SNAPSHOT #" .. CUR_SNAPSHOT .. " (CLOSE WITH F2)", "Impulse-Elements16-Shadow", 250, 100, col)
+            draw.SimpleText("VICTIM: " .. snapData.VictimNeatName .. " [" .. snapData.VictimID .. "]", "Impulse-Elements16-Shadow", 250, 120, Color(255, 0, 0))
+            draw.SimpleText("ATTACKER: " .. snapData.InflictorNeatName .. " [" .. snapData.InflictorID .. "]", "Impulse-Elements16-Shadow", 250, 140, Color(0, 255, 0))
 
             for v, k in pairs(impulse.Ops.SnapshotEnts) do
                 local pos = (k:GetPos() + k:OBBCenter()):ToScreen()
@@ -108,10 +108,10 @@ hook.Add("HUDPaint", "impulseOpsHUD", function()
                 draw.SimpleText(k.IsVictim and snapData.VictimNeatName or snapData.InflictorNeatName, "Impulse-Elements18-Shadow", pos.x, pos.y, col, TEXT_ALIGN_CENTER)
 
                 if not k.IsVictim then
-                    draw.SimpleText("WEP: "..snapData.AttackerClass, "Impulse-Elements18-Shadow", pos.x, pos.y + 20, col, TEXT_ALIGN_CENTER)
-                    draw.SimpleText("HP: "..snapData.InflictorHealth, "Impulse-Elements18-Shadow", pos.x, pos.y + 40, col, TEXT_ALIGN_CENTER)
+                    draw.SimpleText("WEP: " .. snapData.AttackerClass, "Impulse-Elements18-Shadow", pos.x, pos.y + 20, col, TEXT_ALIGN_CENTER)
+                    draw.SimpleText("HP: " .. snapData.InflictorHealth, "Impulse-Elements18-Shadow", pos.x, pos.y + 40, col, TEXT_ALIGN_CENTER)
                 else
-                    draw.SimpleText("HITGROUP: "..hitgroups[snapData.VictimHitGroup], "Impulse-Elements18-Shadow", pos.x, pos.y + 20, col, TEXT_ALIGN_CENTER)
+                    draw.SimpleText("HITGROUP: " .. hitgroups[snapData.VictimHitGroup], "Impulse-Elements18-Shadow", pos.x, pos.y + 20, col, TEXT_ALIGN_CENTER)
                 end
             end
         end
@@ -127,7 +127,7 @@ hook.Add("HUDPaint", "impulseOpsHUD", function()
                 end
             end
 
-            draw.SimpleText(symb.." LIVE (CURRENT SEQUENCE: "..impulse.Ops.EventManager.GetSequence()..")", "Impulse-Elements18-Shadow", ScrW() - 20, 20, red, TEXT_ALIGN_RIGHT)
+            draw.SimpleText(symb .. " LIVE (CURRENT SEQUENCE: " .. impulse.Ops.EventManager.GetSequence() .. ")", "Impulse-Elements18-Shadow", ScrW() - 20, 20, red, TEXT_ALIGN_RIGHT)
         end
     end
 end)

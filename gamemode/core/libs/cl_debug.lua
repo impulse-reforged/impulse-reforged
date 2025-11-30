@@ -78,7 +78,7 @@ concommand.Add("impulse_debug_ent_model", function(client)
 
     local model = entity:GetModel()
     chat.AddText("Entity Model: " .. model)
-    
+
     SetClipboardText(model)
 end)
 
@@ -90,7 +90,7 @@ concommand.Add("impulse_debug_ent_bones", function(client)
     end
 
     chat.AddText("Bones of entity " .. tostring(entity) .. ":")
-    
+
     for i = 0, entity:GetBoneCount() - 1 do
         local bonePos, boneAng = entity:GetBonePosition(i)
         local output = string.format("Bone %d: Position (%.2f, %.2f, %.2f) - Angle (%.2f, %.2f, %.2f)", i, bonePos.x, bonePos.y, bonePos.z, boneAng.p, boneAng.y, boneAng.r)
@@ -111,7 +111,7 @@ concommand.Add("impulse_debug_player_stats", function(client)
     local ammo = entity:GetActiveWeapon():Clip1()
 
     local output = string.format("Player: %s | Health: %d | Armor: %d | Ammo: %d", name, health, armor, ammo)
-    
+
     chat.AddText(output)
     SetClipboardText(output)
 end)
@@ -139,12 +139,12 @@ concommand.Add("impulse_debug_wtl", function(client)
 
         chat.AddText("Base entity selected. World-To-Local output below and in console:")
 
-        local output = "Vector("..pos.x..", "..pos.y..", "..pos.z..")"
+        local output = "Vector(" .. pos.x .. ", " .. pos.y .. ", " .. pos.z .. ")"
         chat.AddText(output)
 
-        local output = "Angle("..ang.p..", "..ang.y..", "..ang.r..")"
+        local output = "Angle(" .. ang.p .. ", " .. ang.y .. ", " .. ang.r .. ")"
         chat.AddText(output)
-        
+
         impulse_DebugTargAng = nil
         impulse_DebugTargPos = nil
         return
@@ -152,7 +152,7 @@ concommand.Add("impulse_debug_wtl", function(client)
 
     impulse_DebugTargPos = entity:GetPos()
     impulse_DebugTargAng = entity:GetAngles()
-    chat.AddText("Target entity selected as "..tostring(entity)..". Please run the command looking at the child entity for output.")
+    chat.AddText("Target entity selected as " .. tostring(entity) .. ". Please run the command looking at the child entity for output.")
 end)
 
 concommand.Add("impulse_debug_dump", function(client, cmd, arg)
@@ -162,12 +162,12 @@ concommand.Add("impulse_debug_dump", function(client, cmd, arg)
         for v, k in pairs(impulse) do
             if v and istable(k) and isstring(v) then
                 print(v)
-            end    
+            end
         end
 
         return
     end
-    
+
     if string.Trim(arg[1] or "", " ") == "" then
         return print("Please provide a memory target. (type 'impulse_debug_dump help' for a list of targets)")
     end
@@ -185,9 +185,9 @@ concommand.Add("impulse_debug_dump", function(client, cmd, arg)
 
     local output = c
 
-    print("Start dump for table "..arg[1])
+    print("Start dump for table " .. arg[1])
     PrintTable(output)
-    print("End dump for table "..arg[1])
+    print("End dump for table " .. arg[1])
 end)
 
 local format = [[

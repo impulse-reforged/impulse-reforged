@@ -17,7 +17,7 @@ end
 
 function impulse.Ops.EventManager.SequenceSave(name)
     local sequence = impulse.Ops.EventManager.Sequences[name]
-    file.Write("impulse-reforged/ops/eventmanager/"..sequence.FileName..".json", util.TableToJSON(sequence, true))
+    file.Write("impulse-reforged/ops/eventmanager/" .. sequence.FileName .. ".json", util.TableToJSON(sequence, true))
 end
 
 function impulse.Ops.EventManager.SequencePush(name)
@@ -25,7 +25,7 @@ function impulse.Ops.EventManager.SequencePush(name)
     local events = sequence.Events
     local eventCount = table.Count(events)
 
-    print("[ops-em] Starting push of "..name..". (This might take a while)")
+    print("[ops-em] Starting push of " .. name .. ". (This might take a while)")
 
     net.Start("impulseOpsEMPushSequence")
     net.WriteString(name)
@@ -36,7 +36,7 @@ function impulse.Ops.EventManager.SequencePush(name)
         net.WriteUInt(#edata, 16)
         net.WriteData(edata, #edata)
 
-        print("[ops-em] Packaged event "..v.."/"..eventCount.." ("..k.Type..")")
+        print("[ops-em] Packaged event " .. v .. "/" .. eventCount .. " (" .. k.Type .. ")")
     end
 
     net.SendToServer()

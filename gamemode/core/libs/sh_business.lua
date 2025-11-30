@@ -74,11 +74,11 @@ function impulse.Business:SpawnBuyable(pos, ang, buyable, owner)
     if spawnedBuyable.CPPISetOwner then
         spawnedBuyable:CPPISetOwner(owner)
     end
-    
+
     spawnedBuyable.IsBuyable = true
 
     if buyable.refund then
-        local class = "buy_"..buyable.key
+        local class = "buy_" .. buyable.key
         local sid = owner:SteamID64()
         impulse.Refunds.Add(sid, class)
 

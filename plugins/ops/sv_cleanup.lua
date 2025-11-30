@@ -12,7 +12,7 @@ function impulse.Ops.CleanupPlayer(client)
             end
         end
     end
-    print("[ops] Cleaned up "..count.." entities for "..client:Name().." ("..client:SteamID64()..")")
+    print("[ops] Cleaned up " .. count .. " entities for " .. client:Name() .. " (" .. client:SteamID64() .. ")")
 end
 
 function impulse.Ops.CleanupAll()
@@ -25,7 +25,7 @@ function impulse.Ops.CleanupAll()
             k:Remove()
         end
     end
-    print("[ops] Cleaned up "..count.." total entities from the map")
+    print("[ops] Cleaned up " .. count .. " total entities from the map")
 end
 
 function impulse.Ops.ClearDecals()
@@ -34,7 +34,7 @@ function impulse.Ops.ClearDecals()
         k:ConCommand("r_cleardecals")
         count = count + 1
     end
-    print("[ops] Cleared decals for "..count.." players")
+    print("[ops] Cleared decals for " .. count .. " players")
 end
 
 function impulse.Ops.ClearCorpses()
@@ -45,5 +45,5 @@ function impulse.Ops.ClearCorpses()
             count = count + 1
         end
     end
-    print("[ops] Cleared "..count.." corpses from the map")
+    print("[ops] Cleared " .. count .. " corpses from the map")
 end

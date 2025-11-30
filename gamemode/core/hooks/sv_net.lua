@@ -119,7 +119,7 @@ net.Receive("impulseCharacterCreate", function(len, client)
         return client:Kick(AUTH_FAILURE)
     end
 
-    if not table.HasValue(impulse.Config.DefaultMaleModels, charModel) and !table.HasValue(impulse.Config.DefaultFemaleModels, charModel) then
+    if !table.HasValue(impulse.Config.DefaultMaleModels, charModel) and !table.HasValue(impulse.Config.DefaultFemaleModels, charModel) then
         return client:Kick(AUTH_FAILURE)
     end
 
@@ -135,7 +135,7 @@ net.Receive("impulseCharacterCreate", function(len, client)
     query:Callback(function(result)
         -- If we already have a rp name, we can't create a new character
         if istable(result) and #result > 0 and result[1].rpname and result[1].rpname != "" then
-            logs:Info(client:SteamName().." attempted to create a new character when they already have one.")
+            logs:Info(client:SteamName() .. " attempted to create a new character when they already have one.")
             client:Kick("You already have a character, stop trying to exploit.")
             return
         end
@@ -182,7 +182,7 @@ net.Receive("impulseCharacterCreate", function(len, client)
                     playtime = 0
                 }
 
-                logs:Debug(client:SteamName().." has created their character with the name \""..charName.."\".")
+                logs:Debug(client:SteamName() .. " has created their character with the name \"" .. charName .. "\".")
 
                 client:Freeze(false)
                 client:AllowScenePVSControl(false) -- stop cutscene
@@ -213,7 +213,7 @@ net.Receive("impulseScenePVS", function(len, client)
         end
 
         timer.Simple(1.33, function()
-            if not IsValid(client) then return end
+            if !IsValid(client) then return end
 
             if last == 1 then
                 client.extraPVS2 = nil
@@ -241,18 +241,18 @@ net.Receive("impulseChatMessage", function(len, client) -- should implement a ch
 end)
 
 net.Receive("impulseATMWithdraw", function(len, client)
-    if (client.nextATM or 0) > CurTime() or not client.currentATM then return end
-    if not IsValid(client.currentATM) or (client:GetPos() - client.currentATM:GetPos()):LengthSqr() > (120 ^ 2) then return end
+    if (client.nextATM or 0) > CurTime() or !client.currentATM then return end
+    if !IsValid(client.currentATM) or (client:GetPos() - client.currentATM:GetPos()):LengthSqr() > (120 ^ 2) then return end
 
     local amount = net.ReadUInt(32)
-    if not isnumber(amount) or amount < 1 or amount >= 1 / 0 or amount > 1000000000 then return end
+    if !isnumber(amount) or amount < 1 or amount >= 1 / 0 or amount > 1000000000 then return end
 
     amount = math.floor(amount)
 
     if client:CanAffordBank(amount) then
         client:TakeBankMoney(amount)
         client:AddMoney(amount)
-        client:Notify("You have successfully withdrawn "..impulse.Config.CurrencyPrefix..amount.." from your bank account.")
+        client:Notify("You have successfully withdrawn " .. impulse.Config.CurrencyPrefix .. amount .. " from your bank account.")
     else
         client:Notify("You do not have enough money in your bank to withdraw this amount.")
     end
@@ -260,18 +260,18 @@ net.Receive("impulseATMWithdraw", function(len, client)
 end)
 
 net.Receive("impulseATMDeposit", function(len, client)
-    if (client.nextATM or 0) > CurTime() or not client.currentATM then return end
-    if not IsValid(client.currentATM) or (client:GetPos() - client.currentATM:GetPos()):LengthSqr() > (120 ^ 2) then return end
+    if (client.nextATM or 0) > CurTime() or !client.currentATM then return end
+    if !IsValid(client.currentATM) or (client:GetPos() - client.currentATM:GetPos()):LengthSqr() > (120 ^ 2) then return end
 
     local amount = net.ReadUInt(32)
-    if not isnumber(amount) or amount < 1 or amount >= 1 / 0 or amount > 10000000000 then return end
+    if !isnumber(amount) or amount < 1 or amount >= 1 / 0 or amount > 10000000000 then return end
 
     amount = math.floor(amount)
 
     if client:CanAfford(amount) then
         client:TakeMoney(amount)
         client:AddBankMoney(amount)
-        client:Notify("You have successfully deposited "..impulse.Config.CurrencyPrefix..amount.." to your bank account.")
+        client:Notify("You have successfully deposited " .. impulse.Config.CurrencyPrefix .. amount .. " to your bank account.")
     else
         client:Notify("You do not have enough money to deposit this amount.")
     end
@@ -289,7 +289,7 @@ net.Receive("impulseTeamChange", function(len, client)
     end
 
     if client.lastTeamChange and client.lastTeamChange + teamChangeTime > CurTime() then
-        client:Notify("Wait "..math.ceil((client.lastTeamChange + teamChangeTime) - CurTime()).." seconds before switching team again.")
+        client:Notify("Wait " .. math.ceil((client.lastTeamChange + teamChangeTime) - CurTime()) .. " seconds before switching team again.")
         return
     end
 
@@ -303,7 +303,7 @@ net.Receive("impulseTeamChange", function(len, client)
 
                 if not data or not data[teamData.codeName] then
                     if client.nextQuiz and client.nextQuiz > CurTime() then
-                        client:Notify("Wait"..string.NiceTime(math.ceil(CurTime() - client.nextQuiz)).." before attempting to retry the quiz.")
+                        client:Notify("Wait" .. string.NiceTime(math.ceil(CurTime() - client.nextQuiz)) .. " before attempting to retry the quiz.")
                         return
                     end
 
@@ -317,7 +317,7 @@ net.Receive("impulseTeamChange", function(len, client)
 
             client:SetTeam(teamID)
             client.lastTeamChange = CurTime()
-            client:Notify("You have changed your team to "..team.GetName(teamID)..".")
+            client:Notify("You have changed your team to " .. team.GetName(teamID) .. ".")
             client:EmitSound("items/ammo_pickup.wav")
         end
     end
@@ -336,7 +336,7 @@ net.Receive("impulseClassChange",function(len, client)
     end
 
     if client.lastClassChange and client.lastClassChange + classChangeTime > CurTime() then
-        client:Notify("Wait "..math.ceil((client.lastClassChange + classChangeTime) - CurTime()).." seconds before switching class again.")
+        client:Notify("Wait " .. math.ceil((client.lastClassChange + classChangeTime) - CurTime()) .. " seconds before switching class again.")
         return
     end
 
@@ -345,8 +345,9 @@ net.Receive("impulseClassChange",function(len, client)
 
     if classID and isnumber(classID) and classID > 0 and classes and classes[classID] and !classes[classID].noMenu and client:CanBecomeTeamClass(classID, true) then
         client:SetTeamClass(classID)
+        client:SetTeamRank(client:GetTeamRank()) -- reapply rank to update weapons/skills
         client.lastClassChange = CurTime()
-        client:Notify("You have changed your class to "..classes[classID].name..".")
+        client:Notify("You have changed your class to " .. classes[classID].name .. ".")
     end
 end)
 
@@ -354,7 +355,7 @@ net.Receive("impulseBuyItem", function(len, client)
     if (client.nextBuy or 0) > CurTime() then return end
     client.nextBuy = CurTime() + 0.1
 
-    if client:GetRelay("arrested", false) or not client:Alive() then return end
+    if client:GetRelay("arrested", false) or !client:Alive() then return end
 
     local buyableID = net.ReadUInt(8)
 
@@ -369,7 +370,7 @@ net.Receive("impulseBuyItem", function(len, client)
             return
         end
 
-        if not item then
+        if !item then
             local count = 0
 
             client.BusinessSpawnCount = client.BusinessSpawnCount or {}
@@ -407,7 +408,7 @@ net.Receive("impulseBuyItem", function(len, client)
             table.insert(client.BusinessSpawnCount, ent)
         end
 
-        client:Notify("You have purchased "..buyableName.." for "..impulse.Config.CurrencyPrefix..buyable.price..".")
+        client:Notify("You have purchased " .. buyableName .. " for " .. impulse.Config.CurrencyPrefix..buyable.price .. ".")
 
         hook.Run("PlayerBuyablePurchase", client, buyableName)
     else
@@ -431,7 +432,7 @@ end)
 
 net.Receive("impulseDoorBuy", function(len, client)
     if (client.nextDoorBuy or 0) > CurTime() then return end
-    if not client:Alive() or client:GetRelay("arrested", false) then return end
+    if !client:Alive() or client:GetRelay("arrested", false) then return end
 
     local trace = {}
     trace.start = client:EyePos()
@@ -446,7 +447,7 @@ net.Receive("impulseDoorBuy", function(len, client)
             client:TakeMoney(impulse.Config.DoorPrice)
             client:SetDoorMaster(traceEnt)
 
-            client:Notify("You have bought a door for "..impulse.Config.CurrencyPrefix..impulse.Config.DoorPrice..".")
+            client:Notify("You have bought a door for " .. impulse.Config.CurrencyPrefix..impulse.Config.DoorPrice .. ".")
 
             hook.Run("PlayerPurchaseDoor", client, traceEnt)
         else
@@ -458,7 +459,7 @@ end)
 
 net.Receive("impulseDoorSell", function(len, client)
     if (client.nextDoorSell or 0) > CurTime() then return end
-    if not client:Alive() or client:GetRelay("arrested", false) then return end
+    if !client:Alive() or client:GetRelay("arrested", false) then return end
 
     local trace = {}
     trace.start = client:EyePos()
@@ -472,7 +473,7 @@ net.Receive("impulseDoorSell", function(len, client)
         client:RemoveDoorMaster(traceEnt)
         client:AddMoney(impulse.Config.DoorPrice - 2)
 
-        client:Notify("You have sold a door for "..impulse.Config.CurrencyPrefix..(impulse.Config.DoorPrice - 2)..".")
+        client:Notify("You have sold a door for " .. impulse.Config.CurrencyPrefix..(impulse.Config.DoorPrice - 2) .. ".")
 
         hook.Run("PlayerSellDoor", client, traceEnt)
     end
@@ -481,7 +482,7 @@ end)
 
 net.Receive("impulseDoorLock", function(len, client)
     if (client.nextDoorLock or 0) > CurTime() then return end
-    if not client:Alive() or client:GetRelay("arrested", false) then return end
+    if !client:Alive() or client:GetRelay("arrested", false) then return end
 
     local trace = {}
     trace.start = client:EyePos()
@@ -505,7 +506,7 @@ end)
 
 net.Receive("impulseDoorUnlock", function(len, client)
     if (client.nextDoorUnlock or 0) > CurTime() then return end
-    if not client:Alive() or client:GetRelay("arrested", false) then return end
+    if !client:Alive() or client:GetRelay("arrested", false) then return end
 
     local trace = {}
     trace.start = client:EyePos()
@@ -530,15 +531,15 @@ net.Receive("impulseDoorAdd", function(len, client)
     if (client.nextDoorChange or 0) > CurTime() then return end
     client.nextDoorChange = CurTime() + 0.1
 
-    if not client:Alive() or client:GetRelay("arrested", false) then return end
+    if !client:Alive() or client:GetRelay("arrested", false) then return end
 
     local target = net.ReadEntity()
 
-    if not IsValid(target) or not target:IsPlayer() or not client.impulseBeenSetup then return end
+    if !IsValid(target) or !target:IsPlayer() or !client.impulseBeenSetup then return end
 
     local cost = math.ceil(impulse.Config.DoorPrice / 2)
 
-    if not client:CanAfford(cost) then
+    if !client:CanAfford(cost) then
         return client:Notify("You cannot afford to add a player to this door.")
     end
 
@@ -563,7 +564,7 @@ net.Receive("impulseDoorAdd", function(len, client)
         client:TakeMoney(cost)
         target:SetDoorUser(traceEnt)
 
-        client:Notify("You have added "..target:Nick().." to this door for "..impulse.Config.CurrencyPrefix..cost..".")
+        client:Notify("You have added " .. target:Nick() .. " to this door for " .. impulse.Config.CurrencyPrefix..cost .. ".")
 
         hook.Run("PlayerAddUserToDoor", client, owners)
     end
@@ -573,11 +574,11 @@ net.Receive("impulseDoorRemove", function(len, client)
     if (client.nextDoorChange or 0) > CurTime() then return end
     client.nextDoorChange = CurTime() + 0.1
 
-    if not client:Alive() or client:GetRelay("arrested", false) then return end
+    if !client:Alive() or client:GetRelay("arrested", false) then return end
 
     local target = net.ReadEntity()
 
-    if not IsValid(target) or not target:IsPlayer() or not client.impulseBeenSetup then return end
+    if !IsValid(target) or !target:IsPlayer() or !client.impulseBeenSetup then return end
 
     local trace = {}
     trace.start = client:EyePos()
@@ -590,7 +591,7 @@ net.Receive("impulseDoorRemove", function(len, client)
     if IsValid(traceEnt) and client:IsDoorOwner(traceEnt:GetRelay("doorOwners", nil)) and traceEnt:GetDoorMaster() == client then
         if target == client then return end
 
-        if not target.impulseOwnedDoors or not target.impulseOwnedDoors[traceEnt] then return end
+        if !target.impulseOwnedDoors or !target.impulseOwnedDoors[traceEnt] then return end
 
         if traceEnt:GetDoorMaster() == target then
             return client:Notify("The door's master cannot be removed.")
@@ -598,22 +599,22 @@ net.Receive("impulseDoorRemove", function(len, client)
 
         target:RemoveDoorUser(traceEnt)
 
-        client:Notify("You have removed "..target:Nick().." from this door.")
+        client:Notify("You have removed " .. target:Nick() .. " from this door.")
     end
 end)
 
 net.Receive("impulseQuizSubmit", function(len, client)
-    if not client.quizzing then return end
+    if !client.quizzing then return end
     client.quizzing = false
 
     local teamID = net.ReadUInt(8)
-    if not impulse.Teams.Stored[teamID] or not impulse.Teams.Stored[teamID].quiz then return end
+    if !impulse.Teams.Stored[teamID] or !impulse.Teams.Stored[teamID].quiz then return end
 
     local quizPassed = net.ReadBool()
 
-    if not quizPassed then
+    if !quizPassed then
         client.nextQuiz = CurTime() + (impulse.Config.QuizWaitTime * 60)
-        return client:Notify("Quiz failed. You may retry the quiz in "..impulse.Config.QuizWaitTime.." minutes.")
+        return client:Notify("Quiz failed. You may retry the quiz in " .. impulse.Config.QuizWaitTime .. " minutes.")
     end
 
     local data = client:GetData("quiz") or {}
@@ -626,16 +627,16 @@ net.Receive("impulseQuizSubmit", function(len, client)
 
     if client:CanBecomeTeam(teamID, true) then
         client:SetTeam(teamID)
-        client:Notify("You have changed your team to "..team.GetName(teamID)..".")
+        client:Notify("You have changed your team to " .. team.GetName(teamID) .. ".")
     else
-        client:Notify("You passed the quiz, however "..team.GetName(teamID).." cannot be joined right now. Rejoin the team when it is available to play again.")
+        client:Notify("You passed the quiz, however " .. team.GetName(teamID) .. " cannot be joined right now. Rejoin the team when it is available to play again.")
     end
 end)
 
 net.Receive("impulseSellAllDoors", function(len, client)
     if (client.nextSellAllDoors or 0) > CurTime() then return end
     client.nextSellAllDoors = CurTime() + 5
-    if not client.impulseOwnedDoors or table.Count(client.impulseOwnedDoors) == 0 then return end
+    if !client.impulseOwnedDoors or table.Count(client.impulseOwnedDoors) == 0 then return end
 
     local sold = 0
     for v, k in pairs(client.impulseOwnedDoors) do
@@ -654,14 +655,14 @@ net.Receive("impulseSellAllDoors", function(len, client)
 
     local amount = sold * (impulse.Config.DoorPrice - 2)
     client:AddMoney(amount)
-    client:Notify("You have sold all your doors for "..impulse.Config.CurrencyPrefix..amount..".")
+    client:Notify("You have sold all your doors for " .. impulse.Config.CurrencyPrefix..amount .. ".")
 end)
 
 net.Receive("impulseInvDoEquip", function(len, client)
-    if not client.impulseBeenInventorySetup or (client.nextInvEquip or 0) > CurTime() then return end
+    if !client.impulseBeenInventorySetup or (client.nextInvEquip or 0) > CurTime() then return end
     client.nextInvEquip = CurTime() + 0.1
 
-    if not client:Alive() or client:GetRelay("arrested", false) then return end
+    if !client:Alive() or client:GetRelay("arrested", false) then return end
 
     local canUse = hook.Run("CanUseInventory", client)
 
@@ -678,10 +679,10 @@ net.Receive("impulseInvDoEquip", function(len, client)
 end)
 
 net.Receive("impulseInvDoDrop", function(len, client)
-    if not client.impulseBeenInventorySetup or (client.nextInvDrop or 0) > CurTime() then return end
+    if !client.impulseBeenInventorySetup or (client.nextInvDrop or 0) > CurTime() then return end
     client.nextInvDrop = CurTime() + 0.1
 
-    if not client:Alive() or client:GetRelay("arrested", false) then return end
+    if !client:Alive() or client:GetRelay("arrested", false) then return end
 
     local canUse = hook.Run("CanUseInventory", client)
 
@@ -698,10 +699,10 @@ net.Receive("impulseInvDoDrop", function(len, client)
 end)
 
 net.Receive("impulseInvDoUse", function(len, client)
-    if not client.impulseBeenInventorySetup or (client.nextInvUse or 0) > CurTime() then return end
+    if !client.impulseBeenInventorySetup or (client.nextInvUse or 0) > CurTime() then return end
     client.nextInvUse = CurTime() + 0.1
 
-    if not client:Alive() or client:GetRelay("arrested", false) then return end
+    if !client:Alive() or client:GetRelay("arrested", false) then return end
 
     local canUse = hook.Run("CanUseInventory", client)
 
@@ -717,12 +718,12 @@ net.Receive("impulseInvDoUse", function(len, client)
 end)
 
 net.Receive("impulseInvDoSearchConfiscate", function(len, client)
-    if not client:IsCP() then return end
+    if !client:IsCP() then return end
     if (client.nextInvConf or 0) > CurTime() then return end
     client.nextInfConf = CurTime() + 0.1
 
     local targ = client.impulseInventorySearching
-    if not IsValid(targ) or not client:CanArrest(targ) then return end
+    if !IsValid(targ) or !client:CanArrest(targ) then return end
 
     local count = net.ReadUInt(8) or 0
 
@@ -731,7 +732,7 @@ net.Receive("impulseInvDoSearchConfiscate", function(len, client)
             local netid = net.ReadUInt(10)
             local item = impulse.Inventory.Items[netid]
 
-            if not item then continue end
+            if !item then continue end
 
             if item.Illegal and targ:HasInventoryItem(item.UniqueID) then
                 targ:TakeInventoryItemClass(item.UniqueID, 1)
@@ -740,8 +741,8 @@ net.Receive("impulseInvDoSearchConfiscate", function(len, client)
             end
         end
 
-        client:Notify("You have confiscated "..count.." items.")
-        targ:Notify("The search has been completed and "..count.." items have been confiscated.")
+        client:Notify("You have confiscated " .. count .. " items.")
+        targ:Notify("The search has been completed and " .. count .. " items have been confiscated.")
     else
         targ:Notify("The search has been completed.")
     end
@@ -754,16 +755,16 @@ net.Receive("impulseInvDoMove", function(len, client)
     if (client.nextInvMove or 0) > CurTime() then return end
     client.nextInvMove = CurTime() + 0.1
 
-    if not client.currentStorage or not IsValid(client.currentStorage) then return end
+    if !client.currentStorage or !IsValid(client.currentStorage) then return end
     if client.currentStorage:GetPos():DistToSqr(client:GetPos()) > (100 ^ 2) then return end
     if client:IsCP() then return end
-    if client:GetRelay("arrested", false) or not client:Alive() then return end
+    if client:GetRelay("arrested", false) or !client:Alive() then return end
 
     local canUse = hook.Run("CanUseInventory", client)
 
     if canUse != nil and canUse == false then return end
 
-    if not client.currentStorage:CanPlayerUse(client) then return end
+    if !client.currentStorage:CanPlayerUse(client) then return end
 
     local itemid = net.ReadUInt(16)
     local from = net.ReadUInt(4)
@@ -777,17 +778,17 @@ net.Receive("impulseInvDoMove", function(len, client)
 
     if to == 2 and (client.impulseNextStorage or 0) > CurTime() then
         client.nextInvMove = CurTime() + 0.1
-        return client:Notify("Because you were recently in combat you must wait "..string.NiceTime(client.impulseNextStorage - CurTime()).." before depositing items into your storage.")
+        return client:Notify("Because you were recently in combat you must wait " .. string.NiceTime(client.impulseNextStorage - CurTime()) .. " before depositing items into your storage.")
     end
 
     local hasItem, item = client:HasInventoryItemSpecific(itemid, from)
 
-    if not hasItem then return end
+    if !hasItem then return end
 
     if client.currentStorage:GetClass() == "impulse_storage_public" then
         local item = impulse.Inventory.Items[impulse.Inventory:ClassToNetID(item.class)]
 
-        if not item then return end
+        if !item then return end
 
         if item.Illegal then
             return client:Notify("You may not access or store illegal items at public storage lockers.")
@@ -817,16 +818,16 @@ net.Receive("impulseInvDoMoveMass", function(len, client)
     if (client.nextInvMove or 0) > CurTime() then return end
     client.nextInvMove = CurTime() + 0.1
 
-    if not client.currentStorage or not IsValid(client.currentStorage) then return end
+    if !client.currentStorage or !IsValid(client.currentStorage) then return end
     if client.currentStorage:GetPos():DistToSqr(client:GetPos()) > (100 ^ 2) then return end
     if client:IsCP() then return end
-    if client:GetRelay("arrested", false) or not client:Alive() then return end
+    if client:GetRelay("arrested", false) or !client:Alive() then return end
 
     local canUse = hook.Run("CanUseInventory", client)
 
     if canUse != nil and canUse == false then return end
 
-    if not client.currentStorage:CanPlayerUse(client) then return end
+    if !client.currentStorage:CanPlayerUse(client) then return end
 
     local classid = net.ReadUInt(10)
     local amount = net.ReadUInt(8)
@@ -843,10 +844,10 @@ net.Receive("impulseInvDoMoveMass", function(len, client)
 
     if to == 2 and (client.impulseNextStorage or 0) > CurTime() then
         client.nextInvMove = CurTime() + 0.1
-        return client:Notify("Because you were recently in combat you must wait "..string.NiceTime(client.impulseNextStorage - CurTime()).." before depositing items into your storage.")
+        return client:Notify("Because you were recently in combat you must wait " .. string.NiceTime(client.impulseNextStorage - CurTime()) .. " before depositing items into your storage.")
     end
 
-    if not impulse.Inventory.Items[classid] then return end
+    if !impulse.Inventory.Items[classid] then return end
 
     local item = impulse.Inventory.Items[classid]
     local class = item.UniqueID
@@ -858,11 +859,11 @@ net.Receive("impulseInvDoMoveMass", function(len, client)
         hasItem = client:HasInventoryItemStorage(class, amount)
     end
 
-    if not hasItem then return end
+    if !hasItem then return end
 
     if client.currentStorage:GetClass() == "impulse_storage_public" then
         if item.Illegal then
-            return client:Notify("You may not access or store illegal items at public storage lockers.")
+            return client:Notify("You may !access or store illegal items at public storage lockers.")
         end
     end
 
@@ -897,7 +898,7 @@ net.Receive("impulseInvDoMoveMass", function(len, client)
 end)
 
 net.Receive("impulseChangeRPName", function(len, client)
-    if not client.impulseBeenSetup then return end
+    if !client.impulseBeenSetup then return end
     if (client.nextRPNameTry or 0) > CurTime() then return end
     client.nextRPNameTry = CurTime() + 0.1
 
@@ -906,7 +907,7 @@ net.Receive("impulseChangeRPName", function(len, client)
     end
 
     if (client.nextRPNameChange or 0) > CurTime() then
-        return client:Notify("You must wait "..string.NiceTime(client.nextRPNameChange - CurTime()).." before changing your name again.")
+        return client:Notify("You must wait " .. string.NiceTime(client.nextRPNameChange - CurTime()) .. " before changing your name again.")
     end
 
     local name = net.ReadString()
@@ -921,9 +922,9 @@ net.Receive("impulseChangeRPName", function(len, client)
             hook.Run("PlayerChangeRPName", client, output)
 
             client.nextRPNameChange = CurTime() + 240
-            client:Notify("You have changed your name to "..output.." for "..impulse.Config.CurrencyPrefix..impulse.Config.RPNameChangePrice..".")
+            client:Notify("You have changed your name to " .. output .. " for " .. impulse.Config.CurrencyPrefix .. impulse.Config.RPNameChangePrice .. ".")
         else
-            client:Notify("Name rejected: "..output)
+            client:Notify("Name rejected: " .. output)
         end
     else
         client:Notify("You cannot afford to change your name.")
@@ -931,11 +932,11 @@ net.Receive("impulseChangeRPName", function(len, client)
 end)
 
 net.Receive("impulseCharacterEdit", function(len, client)
-    if not client.impulseBeenSetup then return end
+    if !client.impulseBeenSetup then return end
     if (client.nextCharEditTry or 0) > CurTime() then return end
     client.nextCharEditTry = CurTime() + 3
 
-    if not client.currentCosmeticEditor or not IsValid(client.currentCosmeticEditor) or client.currentCosmeticEditor:GetPos():DistToSqr(client:GetPos()) > (120 ^ 2) then return end
+    if !client.currentCosmeticEditor or !IsValid(client.currentCosmeticEditor) or client.currentCosmeticEditor:GetPos():DistToSqr(client:GetPos()) > (120 ^ 2) then return end
 
     if client:Team() != impulse.Config.DefaultTeam then return end
 
@@ -947,7 +948,7 @@ net.Receive("impulseCharacterEdit", function(len, client)
     local curModel = client.impulseDefaultModel
     local curSkin = client.impulseDefaultSkin
 
-    if not table.HasValue(impulse.Config.DefaultMaleModels, newModel) and !table.HasValue(impulse.Config.DefaultFemaleModels, newModel) then return end
+    if !table.HasValue(impulse.Config.DefaultMaleModels, newModel) and !table.HasValue(impulse.Config.DefaultFemaleModels, newModel) then return end
 
     if table.HasValue(impulse.Config.DefaultFemaleModels, newModel) then
         newIsFemale = true
@@ -994,7 +995,7 @@ net.Receive("impulseCharacterEdit", function(len, client)
         end
 
         client:TakeMoney(cost)
-        client:Notify("You have changed your appearance for "..impulse.Config.CurrencyPrefix..cost..".")
+        client:Notify("You have changed your appearance for " .. impulse.Config.CurrencyPrefix..cost .. ".")
     else
         client:Notify("You cannot afford to change your appearance.")
     end
@@ -1004,16 +1005,16 @@ end)
 
 net.Receive("impulseDoConfiscate", function(len, client)
     if (client.nextDoConfiscate or 0) > CurTime() then return end
-    if not client:IsCP() then return end
+    if !client:IsCP() then return end
 
     local item = client.ConfiscatingItem
 
-    if not item or not IsValid(item) then return end
+    if !item or !IsValid(item) then return end
 
     local itemName = item.Item.Name
 
     if item:GetPos():DistToSqr(client:GetPos()) < (200 ^ 2) then
-        client:Notify("You have confiscated a "..itemName..".")
+        client:Notify("You have confiscated a " .. itemName .. ".")
         item:Remove()
     end
 
@@ -1021,7 +1022,7 @@ net.Receive("impulseDoConfiscate", function(len, client)
 end)
 
 net.Receive("impulseMixTry", function(len, client)
-    print("Received mix try from "..client:Nick())
+    print("Received mix try from " .. client:Nick())
     if (client.nextMixTry or 0) > CurTime() then return end
     client.nextMixTry = CurTime() + 0.1
     print("Passed time check")
@@ -1031,7 +1032,7 @@ net.Receive("impulseMixTry", function(len, client)
         return -- already crafting
     end
 
-    if not client:Alive() or client:GetRelay("arrested", false) then
+    if !client:Alive() or client:GetRelay("arrested", false) then
         client:Notify("You cannot craft while dead or arrested!")
         return -- ded or arrested
     end
@@ -1043,7 +1044,7 @@ net.Receive("impulseMixTry", function(len, client)
 
     local bench = client.currentBench
 
-    if not bench or not IsValid(bench) or bench:GetPos():DistToSqr(client:GetPos()) > (128 ^ 2) then
+    if !bench or !IsValid(bench) or bench:GetPos():DistToSqr(client:GetPos()) > (128 ^ 2) then
         client:Notify("You are too far away from the workbench!")
         return -- bench not real or too far from
     end
@@ -1057,7 +1058,7 @@ net.Receive("impulseMixTry", function(len, client)
     local mix = net.ReadUInt(8)
     local mixClass = impulse.Inventory.MixturesStored[mix]
 
-    if not mixClass then
+    if !mixClass then
         client:Notify("Invalid mixture selected, please contact a developer.")
         return
     end
@@ -1071,7 +1072,7 @@ net.Receive("impulseMixTry", function(len, client)
     local takeWeight = 0
 
     local can, reason = client:CanMakeMix(mixClass)
-    if not can then -- checks input items + craft level
+    if !can then -- checks input items + craft level
         if reason then
             client:Notify(reason)
         end
@@ -1103,7 +1104,7 @@ net.Receive("impulseMixTry", function(len, client)
 
     for v, k in pairs(sounds) do
         timer.Simple(k[1], function()
-            if not IsValid(client) or not IsValid(benchEnt) or not client:Alive() or client:GetRelay("arrested", false) or client.CraftFail or benchEnt:GetPos():DistToSqr(client:GetPos()) > (120 ^ 2) then
+            if !IsValid(client) or !IsValid(benchEnt) or !client:Alive() or client:GetRelay("arrested", false) or client.CraftFail or benchEnt:GetPos():DistToSqr(client:GetPos()) > (120 ^ 2) then
                 if IsValid(client) then
                     client.CraftFail = true
                 end
@@ -1131,7 +1132,7 @@ net.Receive("impulseMixTry", function(len, client)
 
         local can, reason = client:CanMakeMix(mixClass)
         if IsValid(client) and client:Alive() and IsValid(benchEnt) then
-            if not can then
+            if !can then
                 client.CraftFail = true
                 if reason then
                     client:Notify(reason)
@@ -1158,7 +1159,7 @@ net.Receive("impulseMixTry", function(len, client)
             end
 
             if ( amount > 1 ) then
-                client:Notify("You have crafted a "..item.Name..".")
+                client:Notify("You have crafted a " .. item.Name .. ".")
             else
                 client:Notify("You have crafted " .. amount .. " " .. item.Name .. "es .")
             end
@@ -1183,13 +1184,13 @@ net.Receive("impulseVendorBuy", function(len, client)
     if (client.nextVendorBuy or 0) > CurTime() then return end
     client.nextVendorBuy = CurTime() + 0.1
 
-    if not client.currentVendor or not IsValid(client.currentVendor) then return end
+    if !client.currentVendor or !IsValid(client.currentVendor) then return end
 
     local vendor = client.currentVendor
 
     if (client:GetPos() - vendor:GetPos()):LengthSqr() > (120 ^ 2) then return end
 
-    if client:GetRelay("arrested", false) or not client:Alive() then return end
+    if client:GetRelay("arrested", false) or !client:Alive() then return end
 
     local canUse = hook.Run("CanUseInventory", client)
 
@@ -1203,7 +1204,7 @@ net.Receive("impulseVendorBuy", function(len, client)
 
     local sellData = vendor.Vendor.Sell[class]
 
-    if not sellData then return end
+    if !sellData then return end
 
     if sellData.Cost and !client:CanAfford(sellData.Cost) then return end
 
@@ -1215,7 +1216,7 @@ net.Receive("impulseVendorBuy", function(len, client)
 
     if sellData.CanBuy and sellData.CanBuy(client) == false then return end
 
-    if not client:CanHoldItem(class) then
+    if !client:CanHoldItem(class) then
         return client:Notify("You don't have enough inventory space to hold this item.")
     end
 
@@ -1224,7 +1225,7 @@ net.Receive("impulseVendorBuy", function(len, client)
         local cooldown = client.VendorCooldowns[class]
 
         if cooldown and cooldown > CurTime() then
-            return client:Notify("Please wait "..string.NiceTime(cooldown - CurTime()).." before attempting to purchase this item again.")
+            return client:Notify("Please wait " .. string.NiceTime(cooldown - CurTime()) .. " before attempting to purchase this item again.")
         else
             client.VendorCooldowns[class] = CurTime() + sellData.Cooldown
         end
@@ -1238,7 +1239,7 @@ net.Receive("impulseVendorBuy", function(len, client)
             if tMax.Cooldown and tMax.Cooldown > CurTime() then
                 local cooldown = tMax.Cooldown
 
-                return client:Notify("This vendor has no more of this item to give you. Come back in "..string.NiceTime(cooldown - CurTime()).." for more.")
+                return client:Notify("This vendor has no more of this item to give you. Come back in " .. string.NiceTime(cooldown - CurTime()) .. " for more.")
             elseif tMax.Cooldown then
                 client.VendorBuyMax[class] = {
                     Count = 0,
@@ -1250,7 +1251,7 @@ net.Receive("impulseVendorBuy", function(len, client)
                 local cooldown = CurTime() + sellData.TempCooldown
                 client.VendorBuyMax[class].Cooldown = cooldown
 
-                return client:Notify("This vendor has no more of this item to give you. Come back in "..string.NiceTime(cooldown - CurTime()).." for more.")
+                return client:Notify("This vendor has no more of this item to give you. Come back in " .. string.NiceTime(cooldown - CurTime()) .. " for more.")
             end
         else
             client.VendorBuyMax[class] = {
@@ -1274,9 +1275,9 @@ net.Receive("impulseVendorBuy", function(len, client)
 
     if sellData.Cost then
         client:TakeMoney(sellData.Cost)
-        client:Notify("You have purchased "..item.Name.." for "..impulse.Config.CurrencyPrefix..sellData.Cost..".")
+        client:Notify("You have purchased " .. item.Name .. " for " .. impulse.Config.CurrencyPrefix..sellData.Cost .. ".")
     else
-        client:Notify("You have acquired a "..item.Name..".")
+        client:Notify("You have acquired a " .. item.Name .. ".")
     end
 
     client:GiveItem(class, 1, sellData.Restricted or false)
@@ -1292,13 +1293,13 @@ net.Receive("impulseVendorSell", function(len, client)
     if (client.nextVendorSell or 0) > CurTime() then return end
     client.nextVendorSell = CurTime() + 0.1
 
-    if not client.currentVendor or not IsValid(client.currentVendor) then return end
+    if !client.currentVendor or !IsValid(client.currentVendor) then return end
 
     local vendor = client.currentVendor
 
     if (client:GetPos() - vendor:GetPos()):LengthSqr() > (120 ^ 2) then return end
 
-    if client:GetRelay("arrested", false) or not client:Alive() then return end
+    if client:GetRelay("arrested", false) or !client:Alive() then return end
 
     local canUse = hook.Run("CanUseInventory", client)
 
@@ -1313,7 +1314,7 @@ net.Receive("impulseVendorSell", function(len, client)
     local itemid = net.ReadUInt(16)
     local hasItem, itemData = client:HasInventoryItemSpecific(itemid)
 
-    if not hasItem then return end
+    if !hasItem then return end
 
     if itemData.restricted then return end
 
@@ -1322,7 +1323,7 @@ net.Receive("impulseVendorSell", function(len, client)
     local buyData = vendor.Vendor.Buy[class]
     local itemName = impulse.Inventory.Items[impulse.Inventory:ClassToNetID(class)].Name
 
-    if not buyData then return end
+    if !buyData then return end
 
     if buyData.CanBuy and buyData.CanBuy(client) == false then return end
 
@@ -1334,9 +1335,9 @@ net.Receive("impulseVendorSell", function(len, client)
 
     if buyData.Cost then
         client:AddMoney(buyData.Cost)
-        client:Notify("You have sold a "..itemName.." for "..impulse.Config.CurrencyPrefix..buyData.Cost..".")
+        client:Notify("You have sold a " .. itemName .. " for " .. impulse.Config.CurrencyPrefix..buyData.Cost .. ".")
     else
-        client:Notify("You have handed over a "..itemName..".")
+        client:Notify("You have handed over a " .. itemName .. ".")
     end
 
     hook.Run("PlayerVendorSell", client, vendor, class, buyData.Cost or "free")
@@ -1385,9 +1386,9 @@ net.Receive("impulseUnRestrain", function(len, client)
     local tr = util.TraceLine(trace)
     local ent = tr.Entity
 
-    if not ent or not IsValid(ent) then return end
+    if !ent or !IsValid(ent) then return end
 
-    if not ent:IsPlayer() or ent:GetRelay("arrested", false) == false or not client:CanArrest(ent) then return end
+    if !ent:IsPlayer() or ent:GetRelay("arrested", false) == false or !client:CanArrest(ent) then return end
 
     if ent.impulseBeingJailed then return end
 
@@ -1397,8 +1398,8 @@ net.Receive("impulseUnRestrain", function(len, client)
 
     ent:UnArrest()
 
-    client:Notify("You have released "..ent:Name()..".")
-    ent:Notify("You have been released by "..client:Name()..".")
+    client:Notify("You have released " .. ent:Name() .. ".")
+    ent:Notify("You have been released by " .. client:Name() .. ".")
 
     hook.Run("PlayerUnArrested", ent, client)
     hook.Run("PlayerUnRestrain", client, ent)
@@ -1410,9 +1411,9 @@ net.Receive("impulseInvContainerCodeReply", function(len, client)
 
     local container = client.currentContainerPass
 
-    if not container or not IsValid(container) then return end
+    if !container or !IsValid(container) then return end
 
-    if not client:Alive() then return end
+    if !client:Alive() then return end
 
     if (client:GetPos() - container:GetPos()):LengthSqr() > (120 ^ 2) then return end
 
@@ -1449,7 +1450,7 @@ net.Receive("impulseInvContainerDoMove", function(len, client)
 
     local container = client.currentContainer
 
-    if not container or not IsValid(container) then return end
+    if !container or !IsValid(container) then return end
 
     if container:GetPos():DistToSqr(client:GetPos()) > (120 ^ 2) then return end
 
@@ -1458,7 +1459,7 @@ net.Receive("impulseInvContainerDoMove", function(len, client)
         if client:IsCP() then return end
     elseif container.Code and !container.Authorised[client] then return end
 
-    if client:GetRelay("arrested", false) or not client:Alive() then return end
+    if client:GetRelay("arrested", false) or !client:Alive() then return end
 
     local canUse = hook.Run("CanUseInventory", client)
 
@@ -1476,19 +1477,19 @@ net.Receive("impulseInvContainerDoMove", function(len, client)
 
     if from == 2 then
         local item = impulse.Inventory.Items[itemid]
-        if not item then return end
+        if !item then return end
 
         local class = impulse.Inventory.Items[itemid].UniqueID
 
-        if not container.Inventory[class] then return end
+        if !container.Inventory[class] then return end
 
-        if not client:CanHoldItem(class) then
+        if !client:CanHoldItem(class) then
             return client:Notify("Item is too heavy to hold.")
         end
 
         if item.Illegal and client:IsCP() then
             container:TakeItem(class)
-            return client:Notify(item.Name.." (illegal item) destroyed.")
+            return client:Notify(item.Name .. " (illegal item) destroyed.")
         end
 
         container:TakeItem(class, 1, true)
@@ -1497,13 +1498,13 @@ net.Receive("impulseInvContainerDoMove", function(len, client)
     elseif from == 1 then
         local hasItem, item = client:HasInventoryItemSpecific(itemid, 1)
 
-        if not hasItem then return end
+        if !hasItem then return end
 
         if item.restricted then
             return client:Notify("You cannot store a restricted item.")
         end
 
-        if not container:CanHoldItem(item.class) then
+        if !container:CanHoldItem(item.class) then
             return client:Notify("Item is too heavy to store.")
         end
 
@@ -1516,7 +1517,7 @@ net.Receive("impulseInvContainerRemovePadlock", function(len, client)
     if (client.nextPadlockBreak or 0) > CurTime() then return end
     client.nextPadlockBreak = CurTime() + 6
 
-    if not client:IsCP() then return end
+    if !client:IsCP() then return end
 
     local trace = {}
     trace.start = client:EyePos()
@@ -1526,7 +1527,7 @@ net.Receive("impulseInvContainerRemovePadlock", function(len, client)
     local tr = util.TraceLine(trace)
     local ent = tr.Entity
 
-    if not ent or not IsValid(ent) then return end
+    if !ent or !IsValid(ent) then return end
 
     if ent:GetClass() != "impulse_container" then return end
 
@@ -1538,7 +1539,7 @@ net.Receive("impulseInvContainerDoSetCode", function(len, client)
     if (client.nextSetContCode or 0) > CurTime() then return end
     client.nextSetContCode = CurTime() + 0.1
 
-    if not client.ContainerCodeSet or not IsValid(client.ContainerCodeSet) then return end
+    if !client.ContainerCodeSet or !IsValid(client.ContainerCodeSet) then return end
 
     local container = client.ContainerCodeSet
 
@@ -1552,7 +1553,7 @@ net.Receive("impulseInvContainerDoSetCode", function(len, client)
     container:SetCode(passcode)
     client.ContainerCodeSet = nil
 
-    client:Notify("You have set the containers passcode to "..passcode..".")
+    client:Notify("You have set the containers passcode to " .. passcode .. ".")
 
     hook.Run("ContainerPasscodeSet", client, container)
 end)
@@ -1567,13 +1568,13 @@ net.Receive("impulseGroupDoRankAdd", function(len, client)
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
 
-    if not name or not rank then return end
+    if !name or !rank then return end
 
     local groupData = impulse.Group.Groups[name]
 
-    if not groupData then return end
+    if !groupData then return end
 
-    if not client:GroupHasPermission(6) then return end
+    if !client:GroupHasPermission(6) then return end
 
     local rankName = net.ReadString()
     local nChange = net.ReadBool()
@@ -1676,17 +1677,17 @@ net.Receive("impulseGroupDoInvite", function(len, client)
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
 
-    if not name or not rank then return end
+    if !name or !rank then return end
 
     local groupData = impulse.Group.Groups[name]
 
-    if not groupData then return end
+    if !groupData then return end
 
-    if not client:GroupHasPermission(3) then return end
+    if !client:GroupHasPermission(3) then return end
 
     local targ = net.ReadEntity()
 
-    if not IsValid(targ) or not targ:IsPlayer() or not targ.impulseBeenSetup or targ:GetRelay("groupName", nil) then return end
+    if !IsValid(targ) or !targ:IsPlayer() or !targ.impulseBeenSetup or targ:GetRelay("groupName", nil) then return end
 
     if targ.GroupInvites and targ.GroupInvites[name] then
         return client:Notify("This player already has a pending invite for this group.")
@@ -1717,7 +1718,7 @@ net.Receive("impulseGroupDoInvite", function(len, client)
     net.WriteString(client:Nick())
     net.Send(targ)
 
-    client:Notify("You invited "..targ:Nick().." to your group.")
+    client:Notify("You invited " .. targ:Nick() .. " to your group.")
 end)
 
 net.Receive("impulseGroupDoInviteAccept", function(len, client)
@@ -1735,9 +1736,9 @@ net.Receive("impulseGroupDoInviteAccept", function(len, client)
 
     local groupData = impulse.Group.Groups[name]
 
-    if not groupData then return end
+    if !groupData then return end
 
-    if not client.GroupInvites or not client.GroupInvites[name] then return end
+    if !client.GroupInvites or !client.GroupInvites[name] then return end
 
     if groupData.MemberCount >= groupData.MaxSize then
         return client:Notify("This group is full.")
@@ -1746,7 +1747,7 @@ net.Receive("impulseGroupDoInviteAccept", function(len, client)
     client.GroupInvites[name] = nil
 
     client:GroupAdd(name)
-    client:Notify("You have joined the "..name.." group.")
+    client:Notify("You have joined the " .. name .. " group.")
 end)
 
 net.Receive("impulseGroupDoRankRemove", function(len, client)
@@ -1758,18 +1759,18 @@ net.Receive("impulseGroupDoRankRemove", function(len, client)
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
 
-    if not name or not rank then return end
+    if !name or !rank then return end
 
     local groupData = impulse.Group.Groups[name]
 
-    if not groupData then return end
+    if !groupData then return end
 
-    if not client:GroupHasPermission(6) then return end
+    if !client:GroupHasPermission(6) then return end
 
     local rankName = net.ReadString()
     local r = groupData.Ranks[rankName]
 
-    if not r then return end
+    if !r then return end
 
     if r[99] or r[0] then return end
 
@@ -1788,17 +1789,17 @@ net.Receive("impulseGroupDoSetRank", function(len, client)
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
 
-    if not name or not rank then return end
+    if !name or !rank then return end
 
     local groupData = impulse.Group.Groups[name]
 
-    if not groupData then return end
+    if !groupData then return end
 
-    if not client:GroupHasPermission(5) then return end
+    if !client:GroupHasPermission(5) then return end
 
     local targ = net.ReadString()
 
-    if not targ or not groupData.Members[targ] then return end
+    if !targ or !groupData.Members[targ] then return end
 
     local memberData = groupData.Members[targ]
 
@@ -1810,7 +1811,7 @@ net.Receive("impulseGroupDoSetRank", function(len, client)
     local rankName = net.ReadString()
     local r = groupData.Ranks[rankName]
 
-    if not r then return end
+    if !r then return end
 
     if r[99] then return end
 
@@ -1822,7 +1823,7 @@ net.Receive("impulseGroupDoSetRank", function(len, client)
 
     if IsValid(targEnt) then
         targEnt:GroupAdd(name, rankName)
-        targEnt:Notify(client:Nick().." set your group rank to "..rankName..".")
+        targEnt:Notify(client:Nick() .. " set your group rank to " .. rankName .. ".")
         n = targEnt:Nick()
     else
         impulse.Group:UpdatePlayerRank(targ, rankName)
@@ -1830,7 +1831,7 @@ net.Receive("impulseGroupDoSetRank", function(len, client)
         impulse.Group:NetworkMemberToOnline(name, targ)
     end
 
-    client:Notify("You set the group rank of "..n.." to "..rankName..".")
+    client:Notify("You set the group rank of " .. n .. " to " .. rankName .. ".")
 end)
 
 net.Receive("impulseGroupDoRemove", function(len, client)
@@ -1842,17 +1843,17 @@ net.Receive("impulseGroupDoRemove", function(len, client)
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
 
-    if not name or not rank then return end
+    if !name or !rank then return end
 
     local groupData = impulse.Group.Groups[name]
 
-    if not groupData then return end
+    if !groupData then return end
 
-    if not client:GroupHasPermission(4) then return end
+    if !client:GroupHasPermission(4) then return end
 
     local targ = net.ReadString()
 
-    if not targ or not groupData.Members[targ] then return end
+    if !targ or !groupData.Members[targ] then return end
 
     local memberData = groupData.Members[targ]
 
@@ -1869,7 +1870,7 @@ net.Receive("impulseGroupDoRemove", function(len, client)
 
     if IsValid(targEnt) then
         targEnt:GroupRemove(name)
-        targEnt:Notify(client:Nick().." has removed you from the "..name.." group.")
+        targEnt:Notify(client:Nick() .. " has removed you from the " .. name .. " group.")
         n = targEnt:Nick()
     else
         impulse.Group:RemovePlayer(targ, groupData.ID)
@@ -1877,20 +1878,20 @@ net.Receive("impulseGroupDoRemove", function(len, client)
         impulse.Group:NetworkMemberRemoveToOnline(name, targ)
     end
 
-    client:Notify("You removed "..n.." from the group.")
+    client:Notify("You removed " .. n .. " from the group.")
 end)
 
 net.Receive("impulseGroupDoCreate", function(len, client)
     if (client.nextRPGroupCreate or 0) > CurTime() then return end
     client.nextRPGroupCreate = CurTime() + 4
 
-    if not client.impulseID then return end
+    if !client.impulseID then return end
 
     if client:IsCP() then return end
 
     if client:GetXP() < impulse.Config.GroupXPRequirement then return end
 
-    if not client:CanAfford(impulse.Config.GroupMakeCost) then return end
+    if !client:CanAfford(impulse.Config.GroupMakeCost) then return end
 
     local curName = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
@@ -1910,19 +1911,19 @@ net.Receive("impulseGroupDoCreate", function(len, client)
     local slots = client:IsDonator() and impulse.Config.GroupMaxMembersVIP or impulse.Config.GroupMaxMembers
 
     impulse.Group:Create(name, client.impulseID, slots, 30, nil, function(groupid)
-        if not IsValid(client) then return end
+        if !IsValid(client) then return end
 
-        if not groupid then
+        if !groupid then
             return client:Notify("This group name is already in use.")
         end
 
         client:TakeMoney(impulse.Config.GroupMakeCost)
 
         impulse.Group:AddPlayer(client:SteamID64(), groupid, "Owner", function()
-            if not IsValid(client) then return end
+            if !IsValid(client) then return end
 
             client:GroupLoad(groupid, "Owner")
-            client:Notify("You have created a new group called "..name..".")
+            client:Notify("You have created a new group called " .. name .. ".")
         end)
     end)
 end)
@@ -1936,13 +1937,13 @@ net.Receive("impulseGroupDoDelete", function(len, client)
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
 
-    if not name or not rank then return end
+    if !name or !rank then return end
 
     local groupData = impulse.Group.Groups[name]
 
-    if not groupData or not groupData.ID then return end
+    if !groupData or !groupData.ID then return end
 
-    if not client:GroupHasPermission(99) then return end
+    if !client:GroupHasPermission(99) then return end
 
     for v, k in pairs(groupData.Members) do
         local targEnt = player.GetBySteamID(v)
@@ -1950,7 +1951,7 @@ net.Receive("impulseGroupDoDelete", function(len, client)
         if IsValid(targEnt) then
             targEnt:SetRelay("groupName", nil)
             targEnt:SetRelay("groupRank", nil)
-            targEnt:Notify("You were removed from the "..name.." group as it has been deleted by the owner.")
+            targEnt:Notify("You were removed from the " .. name .. " group as it has been deleted by the owner.")
         end
     end
 
@@ -1958,7 +1959,7 @@ net.Receive("impulseGroupDoDelete", function(len, client)
     impulse.Group:Remove(groupData.ID)
     impulse.Group:RemovePlayerMass(groupData.ID)
 
-    client:Notify("You deleted the "..name.." group.")
+    client:Notify("You deleted the " .. name .. " group.")
 end)
 
 net.Receive("impulseGroupDoLeave", function(len, client)
@@ -1970,16 +1971,16 @@ net.Receive("impulseGroupDoLeave", function(len, client)
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
 
-    if not name or not rank then return end
+    if !name or !rank then return end
 
     local groupData = impulse.Group.Groups[name]
 
-    if not groupData then return end
+    if !groupData then return end
 
     if client:GroupHasPermission(99) then return end
 
     client:GroupRemove(name)
-    client:Notify("You have left the "..name.." group.")
+    client:Notify("You have left the " .. name .. " group.")
 end)
 
 net.Receive("impulseGroupDoSetColor", function(len, client)
@@ -1991,17 +1992,17 @@ net.Receive("impulseGroupDoSetColor", function(len, client)
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
 
-    if not name or not rank then return end
+    if !name or !rank then return end
 
     local groupData = impulse.Group.Groups[name]
 
-    if not groupData then return end
+    if !groupData then return end
 
-    if not client:GroupHasPermission(99) then return end
+    if !client:GroupHasPermission(99) then return end
 
     local col = net.ReadColor()
 
-    if not col then return end
+    if !col then return end
 
     col.a = 255
 
@@ -2020,17 +2021,17 @@ net.Receive("impulseGroupDoSetInfo", function(len, client)
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
 
-    if not name or not rank then return end
+    if !name or !rank then return end
 
     local groupData = impulse.Group.Groups[name]
 
-    if not groupData then return end
+    if !groupData then return end
 
-    if not client:GroupHasPermission(8) then return end
+    if !client:GroupHasPermission(8) then return end
 
     local info = net.ReadString()
 
-    if not info then return end
+    if !info then return end
 
     info = string.sub(info, 1, 1024)
 
@@ -2041,7 +2042,7 @@ net.Receive("impulseGroupDoSetInfo", function(len, client)
 end)
 
 net.Receive("impulseInvRequestSync", function(len, client)
-    if not client.impulseBeenInventorySetup then return end
+    if !client.impulseBeenInventorySetup then return end
     if (client.nextInvSync or 0) > CurTime() then return end
     client.nextInvSync = CurTime() + 5 -- Prevent spam
 

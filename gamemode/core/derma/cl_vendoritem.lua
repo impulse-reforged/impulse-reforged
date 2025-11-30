@@ -119,19 +119,19 @@ function PANEL:Paint(w, h)
     local desc = ""
 
     if cost then
-        desc = cost.." "..impulse.Config.CurrencyName
+        desc = cost .. " " .. impulse.Config.CurrencyName
     else
         desc = "Free"
     end
 
     if self.SellData.Desc then
-        desc = desc.." ("..self.SellData.Desc..")"
+        desc = desc .. " (" .. self.SellData.Desc .. ")"
     end
 
     draw.SimpleText(desc, "Impulse-Elements17-Shadow", 80, 30, grey)
 
     if max then
-        draw.SimpleText((amount or 0).."/"..max.." (max limit)", "Impulse-Elements17-Shadow", 80, 45, grey)
+        draw.SimpleText((amount or 0) .. "/" .. max .. " (max limit)", "Impulse-Elements17-Shadow", 80, 45, grey)
     end
 end
 

@@ -56,16 +56,16 @@ if ( SERVER ) then
 else
     function SWEP:PrimaryAttack()
         if not self.Pos1 then
-            self.Pos1 = self.Owner:GetEyeTrace().HitPos
+            self.Pos1 = self:GetOwner():GetEyeTrace().HitPos
             self.State = "First position registered, awaiting second position."
 
             surface.PlaySound("buttons/blip1.wav")
         else
-            self.Pos2 = self.Owner:GetEyeTrace().HitPos
+            self.Pos2 = self:GetOwner():GetEyeTrace().HitPos
             self.State = "Both positions registered, ready for export."
 
             surface.PlaySound("buttons/blip1.wav")
-            self.Owner:Notify("Ready for export!")
+            self:GetOwner():Notify("Ready for export!")
         end
     end
 
@@ -79,9 +79,9 @@ else
 
     function SWEP:Reload()
         if self.Pos1 and self.Pos2 then
-            local pos1 = "Vector("..self.Pos1.x..", "..self.Pos1.y..", "..self.Pos1.z..")"
-            local pos2 = "Vector("..self.Pos2.x..", "..self.Pos2.y..", "..self.Pos2.z..")"
-            local output = pos1.."\n"..pos2
+            local pos1 = "Vector(" .. self.Pos1.x .. ", " .. self.Pos1.y .. ", " .. self.Pos1.z .. ")"
+            local pos2 = "Vector(" .. self.Pos2.x .. ", " .. self.Pos2.y .. ", " .. self.Pos2.z .. ")"
+            local output = pos1 .. "\n" .. pos2
 
             chat.AddText("-----------------OUTPUT-----------------")
             chat.AddText(output)
@@ -97,7 +97,7 @@ else
     local watermarkCol = Color(255, 255, 255, 120)
     function SWEP:DrawHUD()
         draw.SimpleText("LEFT: Register point, RIGHT: Reset, RELOAD: Export", "Impulse-Elements18-Shadow", 100, 100, watermarkCol)
-        draw.SimpleText("STATE: "..(self.State or "Nothing selected"), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
+        draw.SimpleText("STATE: " .. (self.State or "Nothing selected"), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
         draw.SimpleText("Warning, when you click your current position\nwill be registered, not your weapon aim position!", "Impulse-Elements18-Shadow", 100, 140, watermarkCol)
         if ( impulse.GasZones.Config and impulse.GasZones.Config[game.GetMap()] ) then
             for name,k in pairs(impulse.GasZones.Config[game.GetMap()]) do

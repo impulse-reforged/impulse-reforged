@@ -20,7 +20,7 @@ if ( SERVER ) then
             end
         end
 
-        client:Notify("Removed "..invSize.." items from "..targ:Nick().."'s inventory.")
+        client:Notify("Removed " .. invSize .. " items from " .. targ:Nick() .. "'s inventory.")
     end)
 else
     net.Receive("impulseOpsViewInv", function()
@@ -36,7 +36,7 @@ else
             local itemequipped = net.ReadBool()
             local itemid = net.ReadUInt(16)
             local item = impulse.Inventory.Items[itemnetid]
-            
+
             table.insert(invCompiled, {item, itemrestricted, itemequipped, itemid})
         end
 
@@ -72,7 +72,7 @@ local viewInvCommand = {
 
             net.Send(client)
         else
-            return client:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find player: " .. tostring(name))
         end
     end
 }
@@ -98,18 +98,18 @@ local restoreInvCommand = {
                 plyTarget.InventoryRestorePoint = nil
 
                 plyTarget:Notify("Your inventory has been restored to its last state by a game moderator.")
-                client:Notify("You have restored "..plyTarget:Nick().."'s inventory to the last state.")
+                client:Notify("You have restored " .. plyTarget:Nick() .. "'s inventory to the last state.")
 
                 for v, k in player.Iterator() do
                     if k:IsLeadAdmin() then
-                        k:AddChatText(Color(135, 206, 235), "[ops] Moderator "..client:SteamName().." restored "..plyTarget:SteamName().."'s inventory.")
+                        k:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " restored " .. plyTarget:SteamName() .. "'s inventory.")
                     end
                 end
             else
                 return client:Notify("No restore point found for this player.")
             end
         else
-            return client:Notify("Could not find player: "..tostring(name).." (needs SteamID64 value)")
+            return client:Notify("Could not find player: " .. tostring(name) .. " (needs SteamID64 value)")
         end
     end
 }

@@ -14,7 +14,7 @@ function opsSlackLog(message)
     }
 
     local struct = {
-        failed = function(error) MsgC(Color(255,0,0), "Impulse Slack log error: "..error) end,
+        failed = function(error) MsgC(Color(255,0,0), "Impulse Slack log error: " .. error) end,
         method = "post",
         url = impulse.YML.apis.slack_webhook,
         body = util.TableToJSON({post}),
@@ -48,7 +48,7 @@ function opsDiscordLog(message, embeds, webhookOverride)
     }
 
     local struct = {
-        failed = function(error) MsgC(Color(255,0,0), "impulse discord log error: "..error) end,
+        failed = function(error) MsgC(Color(255,0,0), "impulse discord log error: " .. error) end,
         success = function(body) print(code) print(code) print(body) end,
         method = "post",
         url = impulse.Config.DiscordRelayURL,

@@ -16,10 +16,10 @@ properties.Add("impulse_save_mark", {
     Receive = function(self, length, client)
         local ent = net.ReadEntity()
 
-        if not self:Filter(ent, client) then return end
+        if !self:Filter(ent, client) then return end
 
         ent.impulseSaveEnt = true
-        client:AddChatText("Marked "..ent:GetClass().." for saving.")
+        client:AddChatText("Marked " .. ent:GetClass() .. " for saving.")
     end
 })
 
@@ -41,10 +41,10 @@ properties.Add("impulse_save_unmark", {
     Receive = function(self, length, client)
         local ent = net.ReadEntity()
 
-        if not self:Filter(ent, client) then return end
+        if !self:Filter(ent, client) then return end
 
         ent.impulseSaveEnt = nil
-        client:AddChatText("Removed "..ent:GetClass().." for saving.")
+        client:AddChatText("Removed " .. ent:GetClass() .. " for saving.")
     end
 })
 
@@ -59,12 +59,12 @@ properties.Add("impulse_save_keyvalue", {
         return true
     end,
     Action = function(self, ent)
-        Derma_StringRequest("Set Key/Value", "Enter key/value pair for this entity.", "", function(value)
-            if not value then return end
+        Derma_StringRequest("Set Key/Value", "Enter key/value pair for this entity.", "", function(valueRaw)
+            if !valueRaw then return end
 
-            local key, value = string.match(value, "(.-)=(.+)")
+            local key, value = string.match(valueRaw, "(.-)=(.+)")
 
-            if not key or not value then return end
+            if !key or !value then return end
 
             if tonumber(value) then
                 value = tonumber(value)
@@ -86,9 +86,9 @@ properties.Add("impulse_save_keyvalue", {
         local key = net.ReadString()
         local value = net.ReadString()
 
-        if not self:Filter(ent, client) then return end
+        if !self:Filter(ent, client) then return end
 
-        if not key or not value then
+        if !key or !value then
             return client:AddChatText("Missing key/value.")
         end
 
@@ -103,7 +103,7 @@ properties.Add("impulse_save_keyvalue", {
 
             ent.impulseSaveKeyValue = ent.impulseSaveKeyValue or {}
             ent.impulseSaveKeyValue[key] = value
-            client:AddChatText("Key/Value ("..key.."="..(value or "VALUE REMOVED")..") pair set on "..ent:GetClass()..".")
+            client:AddChatText("Key/Value (" .. key .. "=" .. (value or "VALUE REMOVED") .. ") pair set on " .. ent:GetClass() .. ".")
         else
             client:AddChatText("Mark this entity for saving first.")
         end
@@ -128,10 +128,10 @@ properties.Add("impulse_save_printkeyvalues", {
     Receive = function(self, length, client)
         local ent = net.ReadEntity()
 
-        if not self:Filter(ent, client) then return end
+        if !self:Filter(ent, client) then return end
 
         if ent.impulseSaveEnt then
-            if not ent.impulseSaveKeyValue then
+            if !ent.impulseSaveKeyValue then
                 return client:AddChatText("Entity has no keyvalue table.")
             end
 
@@ -157,7 +157,7 @@ properties.Add("impulse_save_all", {
         self:MsgEnd()
     end,
     Receive = function(self, length, client)
-        if not client:IsSuperAdmin() then return end
+        if !client:IsSuperAdmin() then return end
 
         client:ConCommand("impulse_save_all")
     end

@@ -11,10 +11,10 @@ function PANEL:Init()
     local parent = self
 
     self.balance = vgui.Create("DLabel", self)
-    self.balance:SetText("Balance: "..prefix..bankBalance)
+    self.balance:SetText("Balance: " .. prefix .. bankBalance)
     self.balance:SetFont("Impulse-Elements18")
     self.balance:SizeToContents()
-    self.balance:SetPos(100 - (self.balance:GetWide()/2), 30)
+    self.balance:SetPos(100 - (self.balance:GetWide() / 2), 30)
 
     self.withdrawInput = vgui.Create("DTextEntry", self)
     self.withdrawInput:SetPos(10, 70)
@@ -29,7 +29,7 @@ function PANEL:Init()
         if parent.withdrawInput:GetValue() == "" then return true end
         local num = tonumber(parent.withdrawInput:GetValue())
 
-        if not num then return end
+        if !num then return end
 
         net.Start("impulseATMWithdraw")
         net.WriteUInt(math.floor(num), 32)
@@ -49,7 +49,7 @@ function PANEL:Init()
         if parent.depositInput:GetValue() == "" then return true end
         local num = tonumber(parent.depositInput:GetValue())
 
-        if not num then return end
+        if !num then return end
 
         net.Start("impulseATMDeposit")
         net.WriteUInt(math.floor(num), 32)

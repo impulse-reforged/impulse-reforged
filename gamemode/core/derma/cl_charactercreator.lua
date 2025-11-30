@@ -16,7 +16,7 @@ function PANEL:Init()
     self.nextButton:SetDisabled(false)
     self.nextButton.DoClick = function()
         local characterName = self.nameEntry:GetValue()
-        local characterGender = self.genderBox:GetValue():lower()
+        -- local characterGender = self.genderBox:GetValue():lower()
         local characterModel = self.characterPreview.Entity:GetModel()
         local characterSkin = self.characterPreview.Entity:GetSkin()
 
@@ -28,7 +28,7 @@ function PANEL:Init()
                 return msg("The skin you selected was on the blacklist.\nPlease select another skin or change the model.", "impulse", "OK")
             end
         end
-        
+
         local name, rejectReason = impulse.CanUseName(characterName)
         if name == false then return msg(rejectReason, "impulse", "OK") end
 
@@ -68,22 +68,22 @@ function PANEL:Init()
     self.characterPreview:SetCursor("arrow")
     self.characterPreview:SetFOV(70)
     self.characterPreview:SetCamPos(Vector(52, 52, 52))
-     function self.characterPreview:LayoutEntity(ent) 
-          ent:SetAngles(Angle(0,40,0))
-     end
+    function self.characterPreview:LayoutEntity(ent)
+        ent:SetAngles(Angle(0,40,0))
+    end
 
-     local characterPreview = self.characterPreview
+    local characterPreview = self.characterPreview
 
     self.nameLbl = vgui.Create("DLabel", self)
-     self.nameLbl:SetFont("Impulse-Elements18-Shadow")
+    self.nameLbl:SetFont("Impulse-Elements18-Shadow")
     self.nameLbl:SetText("Full Name:")
     self.nameLbl:SizeToContents()
     self.nameLbl:SetPos(10,40)
 
-     self.nameEntry = vgui.Create("DTextEntry", self)
-     self.nameEntry:SetSize(180,23)
-     self.nameEntry:SetPos(10,60)
-     self.nameEntry:SetAllowNonAsciiCharacters(false)
+    self.nameEntry = vgui.Create("DTextEntry", self)
+    self.nameEntry:SetSize(180,23)
+    self.nameEntry:SetPos(10,60)
+    self.nameEntry:SetAllowNonAsciiCharacters(false)
 
     self.genderLbl = vgui.Create("DLabel", self)
     self.genderLbl:SetFont("Impulse-Elements18-Shadow")
@@ -91,25 +91,25 @@ function PANEL:Init()
     self.genderLbl:SizeToContents()
     self.genderLbl:SetPos(10,90)
 
-      self.genderBox = vgui.Create("DComboBox", self)
-      self.genderBox:SetPos(10,110)
-      self.genderBox:SetSize(180,23)
-      self.genderBox:SetValue("Male")
-      self.genderBox:AddChoice("Male")
-      self.genderBox:AddChoice("Female")
-      function self.genderBox.OnSelect(panel, index, value)
-          if value == "Male" then
-              self:PopulateModels(impulse.Config.DefaultMaleModels)
-              characterPreview:SetModel(impulse.Config.DefaultMaleModels[1])
-              self.skinSlider:SetValue(0)
-              self.skinSlider:SetMax(characterPreview.Entity:SkinCount())
-          else
-              self:PopulateModels(impulse.Config.DefaultFemaleModels)
-              characterPreview:SetModel(impulse.Config.DefaultFemaleModels[1])
-              self.skinSlider:SetValue(0)
-              self.skinSlider:SetMax(characterPreview.Entity:SkinCount())
-          end
-      end
+    self.genderBox = vgui.Create("DComboBox", self)
+    self.genderBox:SetPos(10,110)
+    self.genderBox:SetSize(180,23)
+    self.genderBox:SetValue("Male")
+    self.genderBox:AddChoice("Male")
+    self.genderBox:AddChoice("Female")
+    function self.genderBox.OnSelect(panel, index, value)
+        if value == "Male" then
+            self:PopulateModels(impulse.Config.DefaultMaleModels)
+            characterPreview:SetModel(impulse.Config.DefaultMaleModels[1])
+            self.skinSlider:SetValue(0)
+            self.skinSlider:SetMax(characterPreview.Entity:SkinCount())
+        else
+            self:PopulateModels(impulse.Config.DefaultFemaleModels)
+            characterPreview:SetModel(impulse.Config.DefaultFemaleModels[1])
+            self.skinSlider:SetValue(0)
+            self.skinSlider:SetMax(characterPreview.Entity:SkinCount())
+        end
+    end
 
     self.modelLbl = vgui.Create("DLabel", self)
     self.modelLbl:SetFont("Impulse-Elements18-Shadow")
@@ -117,7 +117,7 @@ function PANEL:Init()
     self.modelLbl:SizeToContents()
     self.modelLbl:SetPos(400,40)
 
-      self:PopulateModels(impulse.Config.DefaultMaleModels)
+    self:PopulateModels(impulse.Config.DefaultMaleModels)
 
     self.skinLbl = vgui.Create("DLabel", self)
     self.skinLbl:SetFont("Impulse-Elements18-Shadow")
@@ -142,16 +142,16 @@ end
 function PANEL:PopulateModels(modelTable)
     if self.modelScroll then self.modelScroll:Remove() end -- done to fix some weird bugs when changing size of the iconlayout with the sidebar
 
-     self.modelScroll = vgui.Create("DScrollPanel", self)
-     self.modelScroll:SetPos(400,60)
-     self.modelScroll:SetSize(200,185)
+    self.modelScroll = vgui.Create("DScrollPanel", self)
+    self.modelScroll:SetPos(400,60)
+    self.modelScroll:SetSize(200,185)
 
-     self.modelBase = vgui.Create("DIconLayout", self.modelScroll)
-     self.modelBase:Dock(FILL)
-     self.modelBase:SetSpaceY(5)
-     self.modelBase:SetSpaceX(5)
+    self.modelBase = vgui.Create("DIconLayout", self.modelScroll)
+    self.modelBase:Dock(FILL)
+    self.modelBase:SetSpaceY(5)
+    self.modelBase:SetSpaceX(5)
 
-      for _, model in pairs(modelTable) do
+    for _, model in pairs(modelTable) do
         local modelIcon = vgui.Create("SpawnIcon", self.modelBase)
         modelIcon:SetModel(model)
         modelIcon:SetSize(58,58)
@@ -161,7 +161,7 @@ function PANEL:PopulateModels(modelTable)
             self.skinSlider:SetValue(0)
             self.skinSlider:SetMax(self.characterPreview.Entity:SkinCount()-1)
         end
-      end
+    end
 end
 
 

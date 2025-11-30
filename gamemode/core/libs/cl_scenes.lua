@@ -6,7 +6,7 @@ local function hideEnts(hide, hidePlayers)
             local owner = v:CPPIGetOwner()
 
             if owner then
-                if not hide and !v.sceneHide then
+                if !hide and !v.sceneHide then
                     continue
                 end
 
@@ -16,9 +16,9 @@ local function hideEnts(hide, hidePlayers)
         end
     end
 
-    if hidePlayers or not hide then
+    if hidePlayers or !hide then
         for v, k in player.Iterator() do
-            if not hidePlayers and k.sceneHide then
+            if !hidePlayers and k.sceneHide then
                 k:SetNoDraw(false)
                 k.sceneHide = nil
                 continue
@@ -95,7 +95,6 @@ function impulse.Scenes.Play(stage, sceneData, onDone, skipPVS, preLoad)
         return view
     end)
 
-    local outputText = ""
     local textPos = 1
     local nextTime = 0
 
@@ -116,10 +115,10 @@ function impulse.Scenes.Play(stage, sceneData, onDone, skipPVS, preLoad)
 
                     nextTime = CurTime() + delay
 
-                    surface.PlaySound("impulse-reforged/typewriter".. math.random(1, 4) .. ".wav")
+                    surface.PlaySound("impulse-reforged/typewriter" ..  math.random(1, 4) .. ".wav")
                 end
 
-                impulse.Scenes.markup = markup.Parse("<font=Impulse-Elements28-Shadow>"..string.sub(sceneData.text, 1, textPos).."</font>", ScrW() * 0.8)
+                impulse.Scenes.markup = markup.Parse("<font=Impulse-Elements28-Shadow>" .. string.sub(sceneData.text, 1, textPos) .. "</font>", ScrW() * 0.8)
                 impulse.Scenes.markup:Draw(ScrW() / 2, ScrH() * 0.75, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
             end)
         end
@@ -130,7 +129,7 @@ function impulse.Scenes.Play(stage, sceneData, onDone, skipPVS, preLoad)
             hook.Remove("CalcView", "impulseScene")
             hook.Remove("HUDPaint", "impulseScene")
 
-            if not sceneData.noHUDReEnable then
+            if !sceneData.noHUDReEnable then
                 impulse.HUDEnabled = true
             end
 
@@ -143,7 +142,7 @@ function impulse.Scenes.Play(stage, sceneData, onDone, skipPVS, preLoad)
 
         timer.Simple(sceneData.time - (sceneData.fadeOutTime or 1), function()
             if sceneData.fadeOut then
-                LocalPlayer():ScreenFade(SCREENFADE.OUT, color_black, (sceneData.fadeOutTime or 1), 0.05)
+                LocalPlayer():ScreenFade(SCREENFADE.OUT, color_black, sceneData.fadeOutTime or 1, 0.05)
             end
 
             if preLoad then

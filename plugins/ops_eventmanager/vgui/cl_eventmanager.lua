@@ -23,12 +23,12 @@ function PANEL:Init()
     menuFile:AddOption("New sequence", function()
         Derma_StringRequest("impulse ops",
             "Enter sequence name:",
-            nil, 
+            nil,
             function(text)
                 impulse.Ops.EventManager.Sequences[text] = {
-                    Name = text, 
+                    Name = text,
                     FileName = text,
-                    Events = {}, 
+                    Events = {},
                     VersionHash = impulse.Ops.EventManager.GetVersionHash()
                 }
                 self:ReloadSequences()
@@ -57,7 +57,7 @@ function PANEL:Init()
 
             if not result then
                 surface.PlaySound("common/bugreporter_failed.wav")
-                LocalPlayer():Notify(msg..".")
+                LocalPlayer():Notify(msg .. ".")
                 return
             end
 

@@ -26,12 +26,12 @@ function PANEL:AddLog(message, isMe, timestamp)
 
     for k, v in ipairs(message) do
         if type(v) == "table" then
-            msg = msg.."<color="..v.r..","..v.g..","..v.b..">"
+            msg = msg .. "<color=" .. v.r .. "," .. v.g .. "," .. v.b .. ">"
         else
             msg = msg..tostring(v):gsub("<", "&lt;"):gsub(">", "&gt;")
         end
     end
-    msg = msg.."</font>"
+    msg = msg .. "</font>"
 
     -- parse
     entry.message = markup.Parse(msg, 250)
@@ -57,13 +57,13 @@ function PANEL:AddLog(message, isMe, timestamp)
     if timestamp then
         local stamp = vgui.Create("DLabel", entry)
         stamp.timestamp = timestamp
-        stamp:SetText(string.NiceTime(CurTime() - timestamp).." ago")
+        stamp:SetText(string.NiceTime(CurTime() - timestamp) .. " ago")
         stamp:SetSize(120, 12)
         stamp:SetFont("Impulse-Elements14-Shadow")
         stamp:SetPos(2, 2)
 
         function stamp:Think()
-            self:SetText(string.NiceTime(CurTime() - self.timestamp).." ago")
+            self:SetText(string.NiceTime(CurTime() - self.timestamp) .. " ago")
         end
     end
 end
@@ -102,7 +102,7 @@ function PANEL:SetupUI()
     local sendText = "Submit"
 
     if curReport then
-        self.title:SetText("Active report #"..curReport)
+        self.title:SetText("Active report #" .. curReport)
         sendText = "Update"
     else
         self.title:SetText("Submit a new report")
@@ -212,7 +212,7 @@ function PANEL:SetupUI()
         panel.entry:SetValue("")
 
         net.Start("impulseChatMessage")
-        net.WriteString("/report "..msg)
+        net.WriteString("/report " .. msg)
         net.SendToServer()
     end
 end

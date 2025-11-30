@@ -7,17 +7,17 @@ function PANEL:Init()
     self.news = {}
     self.materials = {}
 
-    http.Fetch(impulse.Config.WordPressURL.."/wp-json/wp/v2/posts?per_page=4", 
+    http.Fetch(impulse.Config.WordPressURL .. "/wp-json/wp/v2/posts?per_page=4",
     function(body)
         if IsValid(self) then
             self:SetupNews(util.JSONToTable(body))
         end
-    end, 
-    function(error) 
-        if IsValid(self) then 
+    end,
+    function(error)
+        if IsValid(self) then
             self:Remove()
-            logs:Error("Failed to load newsfeed. Error: "..error)
-        end 
+            logs:Error("Failed to load newsfeed. Error: " .. error)
+        end
     end)
 end
 
@@ -25,7 +25,7 @@ function PANEL:SetupNews(newsData)
     if not newsData then
         return logs:Error("Failed to load newsfeed.")
     end
-    
+
     for v,postData in pairs(newsData) do
         if postData.type == "post" and postData.status == "publish" then
             local image

@@ -4,14 +4,14 @@ net.Receive("impulseOpsEMMenu", function()
     local count = net.ReadUInt(8)
     local svSequences = {}
 
-    for i=1, count do
+    for i = 1, count do
         table.insert(svSequences, net.ReadString())
     end
 
     if impulse_eventmenu and IsValid(impulse_eventmenu) then
         impulse_eventmenu:Remove()
     end
-    
+
     impulse_eventmenu = vgui.Create("impulseEventManager")
     impulse_eventmenu:SetupPlayer(svSequences)
 end)
@@ -48,7 +48,7 @@ net.Receive("impulseOpsEMPlayScene", function()
     local scene = net.ReadString()
 
     if not impulse.Ops.EventManager.Scenes[scene] then
-        return logs:Error("Can't find sceneset: "..scene)
+        return logs:Error("Can't find sceneset: " .. scene)
     end
 
     impulse.Scenes.PlaySet(impulse.Ops.EventManager.Scenes[scene])
@@ -61,8 +61,8 @@ net.Receive("impulseOpsEMEntAnim", function()
 
     customAnims[entid] = anim
 
-    timer.Remove("opsAnimEnt"..entid)
-    timer.Create("opsAnimEnt"..entid, 0.05, 0, function()
+    timer.Remove("opsAnimEnt" .. entid)
+    timer.Create("opsAnimEnt" .. entid, 0.05, 0, function()
         local ent = Entity(entid)
 
         if IsValid(ent) and customAnims[entid] and ent:GetSequence() == 0 then

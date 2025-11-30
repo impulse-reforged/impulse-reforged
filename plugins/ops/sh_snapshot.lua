@@ -18,11 +18,11 @@ local snapshotCommand = {
             return client:Notify("A snapshot could not be found with that ID.")
         end
 
-        client:Notify("Downloading snapshot #"..id.."...")
+        client:Notify("Downloading snapshot #" .. id .. " .. .")
 
         local snapshot = impulse.Ops.Snapshots[id]
         snapshot = pon.encode(snapshot)
-        
+
         net.Start("opsSnapshot")
         net.WriteUInt(id, 16)
         net.WriteUInt(#snapshot, 32)

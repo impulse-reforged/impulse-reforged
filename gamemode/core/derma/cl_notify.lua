@@ -20,15 +20,15 @@ function PANEL:SetMessage(...)
 
     for k, v in ipairs({...}) do
         if type(v) == "table" then
-            msg = msg.."<color="..v.r..","..v.g..","..v.b..">"
+            msg = msg .. "<color=" .. v.r .. "," .. v.g .. "," .. v.b .. ">"
         elseif type(v) == "Player" then
             local col = team.GetColor(v:Team())
-            msg= msg.."<color="..col.r..","..col.g..","..col.b..">"..tostring(v:Name()):gsub("<", "&lt;"):gsub(">", "&gt;").."</color>"
+            msg= msg .. "<color=" .. col.r .. "," .. col.g .. "," .. col.b .. ">" .. tostring(v:Name()):gsub("<", "&lt;"):gsub(">", "&gt;") .. "</color>"
         else
             msg = msg..tostring(v):gsub("<", "&lt;"):gsub(">", "&gt;")
         end
     end
-    msg = msg.."</font>"
+    msg = msg .. "</font>"
 
     -- parse
     self.message = markup.Parse(msg, baseSizeW-20)
@@ -51,7 +51,7 @@ function PANEL:Paint(w,h)
 
     surface.SetDrawColor(darkCol)
     surface.DrawRect(0,0,w,h)
-    
+
     surface.SetDrawColor(darkCol)
     surface.SetMaterial(gradient)
     surface.DrawTexturedRect(0,0,w,h)

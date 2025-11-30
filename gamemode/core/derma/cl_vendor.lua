@@ -31,7 +31,7 @@ function PANEL:SetupVendor()
     end
 
     if not impulse.Vendor.Data[vendorType] then
-        return logs:Error("VendorType "..vendorType.." is invalid!")
+        return logs:Error("VendorType " .. vendorType .. " is invalid!")
     end
 
     self.NPC = npc
@@ -65,7 +65,7 @@ function PANEL:SetupVendor()
     yNameLbl:SizeToContents()
 
     local yDescLbl = vgui.Create("DLabel", self)
-    yDescLbl:SetText("You have "..LocalPlayer():GetMoney().." "..impulse.Config.CurrencyName)
+    yDescLbl:SetText("You have " .. LocalPlayer():GetMoney() .. " " .. impulse.Config.CurrencyName)
     yDescLbl:SetFont("Impulse-Elements17-Shadow")
     yDescLbl:SetPos(450, 58)
     yDescLbl:SetSize(300, 20)
@@ -74,7 +74,7 @@ function PANEL:SetupVendor()
     function yDescLbl:Think()
         if self.lastMoney != LocalPlayer():GetMoney() then
             self.lastMoney = LocalPlayer():GetMoney()
-            self:SetText("You have "..LocalPlayer():GetMoney().." "..impulse.Config.CurrencyName)
+            self:SetText("You have " .. LocalPlayer():GetMoney() .. " " .. impulse.Config.CurrencyName)
         end
     end
 
@@ -90,14 +90,14 @@ function PANEL:SetupVendor()
             local itemid = impulse.Inventory:ClassToNetID(v)
 
             if not itemid then
-                logs:Error(""..v.." is invalid!")
+                logs:Error("" .. v .. " is invalid!")
                 continue
             end
 
             local item = impulse.Inventory.Items[itemid]
 
             if not item then
-                logs:Error("Failed to resolve ItemID "..itemid.."! (Class "..v..")!")
+                logs:Error("Failed to resolve ItemID " .. itemid .. "! (Class " .. v .. ")!")
                 continue
             end
 
@@ -115,14 +115,14 @@ function PANEL:SetupVendor()
             local itemid = impulse.Inventory:ClassToNetID(v)
 
             if not itemid then
-                logs:Error(""..v.." is invalid!")
+                logs:Error("" .. v .. " is invalid!")
                 continue
             end
 
             local item = impulse.Inventory.Items[itemid]
 
             if not item then
-                logs:Error("Failed to resolve ItemID "..itemid.."! (Class "..v..")!")
+                logs:Error("Failed to resolve ItemID " .. itemid .. "! (Class " .. v .. ")!")
                 continue
             end
 
@@ -153,7 +153,7 @@ function PANEL:SetupVendor()
 
     for v, k in pairs(impulse.Inventory.Data[0][INVENTORY_PLAYER]) do
         if k.restricted then
-            continue    
+            continue
         end
 
         local item = impulse.Inventory.Items[k.id]

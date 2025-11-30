@@ -7,11 +7,11 @@ function impulse.Ops.AutoMod.Ban(client, reason, risk, details)
 
     for v, k in player.Iterator() do
         if k:IsAdmin() then
-            k:AddChatText(Color(0, 163, 118), "[AutoMod] "..steamid.." issued ban for suspected "..reason.." (risk score "..risk..")")
+            k:AddChatText(Color(0, 163, 118), "[AutoMod] " .. steamid .. " issued ban for suspected " .. reason .. " (risk score " .. risk .. ")")
         end
     end
 
-    local ban_reason = "AutoMod ban for suspected "..reason..". Appeal @ impulse-community.com for review."
+    local ban_reason = "AutoMod ban for suspected " .. reason .. ". Appeal @ impulse-community.com for review."
 
     if GExtension then
         GExtension:AddBan(client:SteamID64(), 0, ban_reason, "0", GExtension:CurrentTime(), function()
@@ -23,13 +23,13 @@ function impulse.Ops.AutoMod.Ban(client, reason, risk, details)
 
     local embeds = {
         title = "AutoMod ban issued",
-        description = "User was identified as high risk by the automated moderator.\n<@&"..impulse.Config.DiscordLeadModRoleID.."> please investigate and review.",
-        url = "https://panel.impulse-community.com/index.php?t=admin_bans&id="..client:SteamID64(),
+        description = "User was identified as high risk by the automated moderator.\n<@&" .. impulse.Config.DiscordLeadModRoleID .. "> please investigate and review.",
+        url = "https://panel.impulse-community.com/index.php?t=admin_bans&id=" .. client:SteamID64(),
         color = 7774976,
         fields = {
             {
                 name = "User",
-                value = "**"..client:SteamName().."** ("..client:SteamID64()..") ("..client:Nick()..")"
+                value = "**" .. client:SteamName() .. "** (" .. client:SteamID64() .. ") (" .. client:Nick() .. ")"
             },
             {
                 name = "Risk Score",
@@ -41,7 +41,7 @@ function impulse.Ops.AutoMod.Ban(client, reason, risk, details)
             },
             {
                 name = "Details",
-                value = "```"..string.sub(details, 1, 1000).."```"
+                value = "```" .. string.sub(details, 1, 1000) .. "```"
             }
         }
     }
@@ -75,7 +75,7 @@ function impulse.Ops.AutoMod.Ban(client, reason, risk, details)
                             end
                         })
                     else
-                opsDiscordLog("<@&"..impulse.Config.DiscordLeadModRoleID..">", embeds)
+                opsDiscordLog("<@&" .. impulse.Config.DiscordLeadModRoleID .. ">", embeds)
                     end
 end
 
@@ -84,13 +84,13 @@ local PLAYER = FindMetaTable("Player")
 function PLAYER:AutoModLogAdd(msg)
     self.AutoModLog = self.AutoModLog or {}
 
-    table.insert(self.AutoModLog, "["..os.date("%H:%M:%S", os.time()).."] "..msg)
+    table.insert(self.AutoModLog, "[" .. os.date("%H:%M:%S", os.time()) .. "] " .. msg)
 end
 
 function PLAYER:AutoModLogGet()
     local o = ""
     for v, k in pairs(self.AutoModLog or {}) do
-        o = o.."\n"..k
+        o = o .. "\n" .. k
     end
 
     return o

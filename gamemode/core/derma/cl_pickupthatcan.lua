@@ -175,7 +175,7 @@ function PANEL:SpawnCan(speed)
         end
 
         if panel.bin and IsValid(panel.bin) and self:Distance(panel.bin) < 50 then
-            surface.PlaySound("physics/metal/metal_barrel_impact_soft"..math.random(1, 4)..".wav")
+            surface.PlaySound("physics/metal/metal_barrel_impact_soft" .. math.random(1, 4) .. ".wav")
             panel.Score = panel.Score + 1
             panel.Cans = panel.Cans - 1
 
@@ -225,7 +225,7 @@ function PANEL:SpawnBin()
             self:SetPos(math.Clamp(x + (FrameTime() * 630), 0, 400), y) -- idk why but right is slow af lol
         end
     end
-    
+
     function self.bin:PaintOver()
     end
 end
@@ -238,8 +238,8 @@ function PANEL:Paint(w,h)
     surface.SetDrawColor(levels[self.Level].col)
     surface.DrawTexturedRect(0, 0, w, h)
 
-    draw.SimpleText("SCORE: "..self.Score, "impulsePTCOther", 5, 15)
-    draw.SimpleText(self.Level.." :LEVEL", "impulsePTCOther", w - 5, 15, nil, TEXT_ALIGN_RIGHT)
+    draw.SimpleText("SCORE: " .. self.Score, "impulsePTCOther", 5, 15)
+    draw.SimpleText(self.Level .. " :LEVEL", "impulsePTCOther", w - 5, 15, nil, TEXT_ALIGN_RIGHT)
 end
 
 function PANEL:OnFocusChanged(state)

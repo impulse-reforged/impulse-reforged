@@ -13,7 +13,7 @@ local sequenceTime = 0
 
 local function queueEvent(sequence, eventid)
     local event = impulse.Ops.EventManager.Sequences[sequence][eventid]
-    local timerName = "impulseOpsEM-"..eventid
+    local timerName = "impulseOpsEM-" .. eventid
     local time = sequenceTime + (event.Delay or 0)
     local x = table.insert(eventTimerNames, timerName)
 
@@ -52,7 +52,7 @@ function impulse.Ops.EventManager.PlayEvent(sequence, eventid)
     local count = table.Count(impulse.Ops.EventManager.Sequences[sequence])
     local event = impulse.Ops.EventManager.Sequences[sequence][eventid]
 
-    if not impulse.Ops.EventManager.Config.Events[event.Type] then
+    if !impulse.Ops.EventManager.Config.Events[event.Type] then
         return impulse.Ops.EventManager.StopSequence()
     end
 

@@ -1,10 +1,10 @@
 util.AddNetworkString("opsUnderInvestigation")
 
 hook.Add("iac.CheaterConvicted", "iacCheaterLog", function(steamid, code, caseInfo)
-    print("[ops] [IAC CONVICTION] SteamID: "..steamid.." | Code: "..code.." | Detector: "..(caseInfo.detector or "Generic"))
+    print("[ops] [IAC CONVICTION] SteamID: " .. steamid .. " | Code: " .. code .. " | Detector: " .. (caseInfo.detector or "Generic"))
     for v, k in player.Iterator() do
         if k:IsAdmin() then
-            k:AddChatText(Color(255, 0, 0), "[IAC CONVICTION] "..steamid.." code: "..code)
+            k:AddChatText(Color(255, 0, 0), "[IAC CONVICTION] " .. steamid .. " code: " .. code)
         end
     end
 
@@ -15,13 +15,13 @@ hook.Add("iac.CheaterConvicted", "iacCheaterLog", function(steamid, code, caseIn
     for v, k in pairs(caseInfo) do
         if v == "detector" then continue end
 
-        evidence = evidence.."**"..tostring(v).."**: `"..tostring(k).."`\n"
+        evidence = evidence .. "**" .. tostring(v) .. "**: `" .. tostring(k) .. "`\n"
     end
 
     local embeds = {
         title = "IAC ban issued",
         description = "Evidence-based conviction.",
-        url = "https://panel.impulse-community.com/index.php?t=admin_bans&id="..steamid,
+        url = "https://panel.impulse-community.com/index.php?t=admin_bans&id=" .. steamid,
         color = 16720932,
         fields = {
             {

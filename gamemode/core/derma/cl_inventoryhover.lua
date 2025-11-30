@@ -44,14 +44,14 @@ function PANEL:SetItem(panel)
     end
 
     if self.ItemIsEquipped then
-        extraMarkup = extraMarkup.."<colour=0, 200, 0, 255>This item is equipped</colour>\n"
+        extraMarkup = extraMarkup .. "<colour=0, 200, 0, 255>This item is equipped</colour>\n"
     end
 
     if self.ItemIsRestricted then
-        extraMarkup = extraMarkup.."<colour=255, 223, 0, 255>This item is restricted</colour>\n"
+        extraMarkup = extraMarkup .. "<colour=255, 223, 0, 255>This item is restricted</colour>\n"
     end
 
-    self.ItemDescMarkup = markup.Parse("<font=Impulse-Elements16-Shadow>"..extraMarkup.."<colour=255, 255, 255, 255>"..self.ItemDesc.."</colour></font>", wide)
+    self.ItemDescMarkup = markup.Parse("<font=Impulse-Elements16-Shadow>" .. extraMarkup .. "<colour=255, 255, 255, 255>" .. self.ItemDesc .. "</colour></font>", wide)
 
     self:SetSize(wide + 20, 140 + extraTall)
     self:Show()
@@ -72,14 +72,14 @@ local outlineCol = Color(10, 10, 10, 255)
 local darkCol = Color(80, 80, 80, 100)
 local fullCol = Color(139, 0, 0, 15)
 
-function PANEL:Paint(w,h)
+function PANEL:Paint(width, height)
     impulse.Util:DrawBlur(self)
-    
+
     surface.SetDrawColor(darkCol)
-    surface.DrawRect(0, 0, w, h)
+    surface.DrawRect(0, 0, width, height)
 
     surface.SetDrawColor(outlineCol)
-    surface.DrawOutlinedRect(0, 0, w, h)
+    surface.DrawOutlinedRect(0, 0, width, height)
 
     surface.SetFont("Impulse-Elements18-Shadow")
     surface.SetTextColor(self.ItemColour)

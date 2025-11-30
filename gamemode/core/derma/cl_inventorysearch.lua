@@ -37,7 +37,7 @@ function PANEL:SetInv(invdata)
             draw.SimpleText(self.ItemName, "Impulse-Elements18-Shadow", 10, 5, color_white)
 
             if self.ItemIllegal then
-                draw.SimpleText("Contraband", "Impulse-Elements16-Shadow", 10, 22, red)    
+                draw.SimpleText("Contraband", "Impulse-Elements16-Shadow", 10, 22, red)
             end
 
             return true
@@ -56,7 +56,7 @@ function PANEL:SetInv(invdata)
                     table.RemoveByValue(panel.taking, self.ItemClass)
                 end
             end
-            
+
             local takeLbl = vgui.Create("DLabel", bg)
             takeLbl:SetPos(245, 10)
             takeLbl:SetText("Confiscate")
@@ -85,7 +85,7 @@ function PANEL:SetInv(invdata)
         local count = table.Count(panel.taking)
 
         if count > 0 then
-            self:SetText("Finish search (confiscating "..count.." items)")
+            self:SetText("Finish search (confiscating " .. count .. " items)")
         else
             self:SetText("Finish search")
         end
@@ -93,7 +93,7 @@ function PANEL:SetInv(invdata)
 end
 
 function PANEL:SetPlayer(ent)
-    self:SetTitle(ent:Nick().."'s Inventory")
+    self:SetTitle(ent:Nick() .. "'s Inventory")
     self.rangeEnt = ent
 end
 

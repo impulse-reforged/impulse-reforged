@@ -56,7 +56,7 @@ function PANEL:NoGroup()
 
     for v, k in pairs(impulse.Group.Invites) do
         local btn = scroll:Add("DButton")
-        btn:SetText("Accept invite to "..v.." from "..k)
+        btn:SetText("Accept invite to " .. v .. " from " .. k)
         btn:Dock(TOP)
 
         function btn:DoClick()
@@ -77,7 +77,7 @@ function PANEL:NoGroup()
     lbl:SetTextColor(darkText)
 
     local lbl = vgui.Create("DLabel", self)
-    lbl:SetText("Creating a new group will cost "..impulse.Config.CurrencyPrefix..impulse.Config.GroupMakeCost.." and will require at least "..impulse.Config.GroupXPRequirement.."XP.")
+    lbl:SetText("Creating a new group will cost " .. impulse.Config.CurrencyPrefix..impulse.Config.GroupMakeCost .. " and will require at least " .. impulse.Config.GroupXPRequirement .. "XP.")
     lbl:SetFont("Impulse-Elements14-Shadow")
     lbl:Dock(TOP)
     lbl:SetContentAlignment(5)
@@ -86,13 +86,13 @@ function PANEL:NoGroup()
     local newGroup = vgui.Create("DButton", self)
     newGroup:SetTall(25)
     newGroup:SetWide(450)
-    newGroup:SetText("Create new group ("..impulse.Config.CurrencyPrefix..impulse.Config.GroupMakeCost..")")
+    newGroup:SetText("Create new group (" .. impulse.Config.CurrencyPrefix..impulse.Config.GroupMakeCost .. ")")
     newGroup:DockMargin(120, 0, 120, 0)
     newGroup:Dock(TOP)
 
     function newGroup:DoClick()
         if LocalPlayer():GetXP() < impulse.Config.GroupXPRequirement then
-            return LocalPlayer():Notify("You need at least "..impulse.Config.GroupXPRequirement.."XP to make a group.")
+            return LocalPlayer():Notify("You need at least " .. impulse.Config.GroupXPRequirement .. "XP to make a group.")
         end
 
         if not LocalPlayer():CanAfford(impulse.Config.GroupMakeCost) then
@@ -143,7 +143,7 @@ function PANEL:ShowGroup()
     lblM:SetPos(5, 32)
 
     local lbl = vgui.Create("DLabel", sheet)
-    lbl:SetText("Your rank: "..LocalPlayer():GetRelay("groupRank", "Unknown Rank"))
+    lbl:SetText("Your rank: " .. LocalPlayer():GetRelay("groupRank", "Unknown Rank"))
     lbl:SetFont("Impulse-Elements18-Shadow")
     lbl:SetPos(5, 47)
     lbl:SizeToContents()
@@ -231,7 +231,7 @@ function PANEL:ShowGroup()
         line.Name = k.Name
     end
 
-    lblM:SetText("Total members: "..table.Count(group.Members).." ("..ons.." online)")
+    lblM:SetText("Total members: " .. table.Count(group.Members) .. " (" .. ons .. " online)")
     lblM:SizeToContents()
 
     function members:OnRowSelected(index, row)
@@ -242,7 +242,7 @@ function PANEL:ShowGroup()
         m:AddOption("View Steam profile", function()
             local sid64 = util.SteamIDTo64(sid)
 
-            gui.OpenURL("https://steamcommunity.com/profiles/"..sid64)
+            gui.OpenURL("https://steamcommunity.com/profiles/" .. sid64)
         end)
 
         if LocalPlayer():GroupHasPermission(5) then
@@ -270,7 +270,7 @@ function PANEL:ShowGroup()
 
         if LocalPlayer():GroupHasPermission(4) then
             local sRmv = m:AddOption("Remove", function()
-                Derma_Query("Are you sure you wish to remove "..row.Name.."?",
+                Derma_Query("Are you sure you wish to remove " .. row.Name .. "?",
                     "impulse",
                     "Yes",
                     function()
@@ -593,7 +593,7 @@ function PANEL:ShowAdmin()
 
     function del:DoClick()
         Derma_StringRequest("impulse",
-            "Closing this group will delete it forever. You will have to pay to make another group.\nPlease type '"..name.."' below to confirm the deletion:",
+            "Closing this group will delete it forever. You will have to pay to make another group.\nPlease type '" .. name .. "' below to confirm the deletion:",
             "",
             function(text)
                 if text != name then

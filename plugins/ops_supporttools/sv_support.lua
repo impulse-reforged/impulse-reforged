@@ -26,7 +26,7 @@ net.Receive("impulseOpsSTDoOOCEnabled", function(len, client)
 
     impulse.OOCClosed = !enabled
 
-    client:Notify("OOC has been "..(enabled and "enabled" or "disabled").."..")
+    client:Notify("OOC has been " .. (enabled and "enabled" or "disabled") .. " .. ")
 end)
 
 net.Receive("impulseOpsSTDoGroupRemove", function(len, client)
@@ -47,7 +47,7 @@ net.Receive("impulseOpsSTDoGroupRemove", function(len, client)
         if IsValid(targEnt) then
             targEnt:SetRelay("groupName", nil)
             targEnt:SetRelay("groupRank", nil)
-            targEnt:Notify("You have been removed from the "..name.." group as it has been removed by the staff team for violations of the RP group rules.")
+            targEnt:Notify("You have been removed from the " .. name .. " group as it has been removed by the staff team for violations of the RP group rules.")
         end
     end
 
@@ -55,7 +55,7 @@ net.Receive("impulseOpsSTDoGroupRemove", function(len, client)
     impulse.Group:RemovePlayerMass(groupData.ID)
     impulse.Group.Groups[name] = nil
 
-    client:Notify("The "..name.." group has been successfully removed.")
+    client:Notify("The " .. name .. " group has been successfully removed.")
 end)
 
 net.Receive("impulseOpsSTDoTeamLocked", function(len, client)
@@ -70,7 +70,7 @@ net.Receive("impulseOpsSTDoTeamLocked", function(len, client)
 
     lockedTeams[teamid] = locked
 
-    client:Notify("Team "..teamid.." has been successfully "..(locked and "locked" or "unlocked").."..")
+    client:Notify("Team " .. teamid .. " has been successfully " .. (locked and "locked" or "unlocked") .. " .. ")
 end)
 
 net.Receive("impulseOpsSTDoRefund", function(len, client)
@@ -101,9 +101,9 @@ net.Receive("impulseOpsSTDoRefund", function(len, client)
         end
 
         file.CreateDir("impulse-reforged/support-refunds")
-        file.Write("impulse-reforged/support-refunds/"..steamid64..".txt", util.TableToJSON(refundData))
+        file.Write("impulse-reforged/support-refunds/" .. steamid64 .. ".txt", util.TableToJSON(refundData))
 
-        client:Notify("Successfully issued a support refund for user "..steamid64.."..")
+        client:Notify("Successfully issued a support refund for user " .. steamid64 .. " .. ")
     end)
 
     query:Execute()
@@ -115,7 +115,7 @@ function impulse.Ops.ST.Open(client)
 end
 
 function PLUGIN:PostInventorySetup(client)
-    local refundData = file.Read("impulse-reforged/support-refunds/"..client:SteamID64()..".txt", "DATA")
+    local refundData = file.Read("impulse-reforged/support-refunds/" .. client:SteamID64() .. ".txt", "DATA")
     if ( refundData ) then
         if ( !IsValid(client) ) then return end
         
@@ -127,7 +127,7 @@ function PLUGIN:PostInventorySetup(client)
             end
         end
 
-        file.Delete("impulse-reforged/support-refunds/"..client:SteamID64()..".txt")
+        file.Delete("impulse-reforged/support-refunds/" .. client:SteamID64() .. ".txt")
 
         local data = pon.encode(refundData)
 

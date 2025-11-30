@@ -56,18 +56,18 @@ else
         if self.NextGo > CurTime() then return end
 
         if self.Pos1 then
-            self.Pos2 = self.Owner:EyePos()
-            self.Ang2 = self.Owner:EyeAngles()
+            self.Pos2 = self:GetOwner():EyePos()
+            self.Ang2 = self:GetOwner():EyeAngles()
             self.State = "Ready for export."
 
             surface.PlaySound("buttons/blip1.wav")
-            self.Owner:Notify("Ready for export!")
+            self:GetOwner():Notify("Ready for export!")
         else
-            self.Pos1 = self.Owner:EyePos()
-            self.Ang1 = self.Owner:EyeAngles()
+            self.Pos1 = self:GetOwner():EyePos()
+            self.Ang1 = self:GetOwner():EyeAngles()
             self.State = "Ready for shot 2."
 
-            self.Owner:Notify("First shot registered!")
+            self:GetOwner():Notify("First shot registered!")
         end
 
         self.NextGo = CurTime() + .3
@@ -93,12 +93,12 @@ else
         if self.Pos1 and self.Pos2 and !self.Exporting then
             self.Exporting = true
 
-            local pos1 = "Vector("..self.Pos1.x..", "..self.Pos1.y..", "..self.Pos1.z..")"
-            local ang1 = "Angle("..self.Ang1.p..", "..self.Ang1.y..", "..self.Ang1.r..")"
-            local pos2 = "Vector("..self.Pos2.x..", "..self.Pos2.y..", "..self.Pos2.z..")"
-            local ang2 = "Angle("..self.Ang2.p..", "..self.Ang2.y..", "..self.Ang2.r..")"
+            local pos1 = "Vector(" .. self.Pos1.x .. ", " .. self.Pos1.y .. ", " .. self.Pos1.z .. ")"
+            local ang1 = "Angle(" .. self.Ang1.p .. ", " .. self.Ang1.y .. ", " .. self.Ang1.r .. ")"
+            local pos2 = "Vector(" .. self.Pos2.x .. ", " .. self.Pos2.y .. ", " .. self.Pos2.z .. ")"
+            local ang2 = "Angle(" .. self.Ang2.p .. ", " .. self.Ang2.y .. ", " .. self.Ang2.r .. ")"
 
-            local output = "pos = "..pos1..",\nendpos = "..pos2..",\nang = "..ang1..",\nendang = "..ang2..","
+            local output = "pos = " .. pos1 .. ",\nendpos = " .. pos2 .. ",\nang = " .. ang1 .. ",\nendang = " .. ang2 .. ","
 
             chat.AddText("-----------------OUTPUT-----------------")
             chat.AddText(output)
@@ -115,6 +115,6 @@ else
     local watermarkCol = Color(255, 255, 255, 120)
     function SWEP:DrawHUD()
         draw.SimpleText("LEFT: Register shot, RIGHT: Reset, RELOAD: Export", "Impulse-Elements18-Shadow", 100, 100, watermarkCol)
-        draw.SimpleText("STATE: "..(self.State or "Ready for shot 1."), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
+        draw.SimpleText("STATE: " .. (self.State or "Ready for shot 1."), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
     end
 end

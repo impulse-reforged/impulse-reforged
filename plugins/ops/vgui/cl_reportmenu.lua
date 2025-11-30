@@ -33,7 +33,7 @@ function PANEL:Init()
                 cCount = cCount + 1
 
                 if k[3] == LocalPlayer() then
-                    panel.Status = "Processing report #"..v.."..."
+                    panel.Status = "Processing report #" .. v .. " .. ."
                     panel.StatusCol = claimedReportCol
                     return
                 end
@@ -43,7 +43,7 @@ function PANEL:Init()
         end
 
         if ucCount > 0 then
-            panel.Status = ucCount.." report(s) awaiting claim and "..cCount.." in processing..."
+            panel.Status = ucCount .. " report(s) awaiting claim and " .. cCount .. " in processing..."
             panel.StatusCol = Color(255, 255, 0)
         else
             panel.Status = "No reports waiting."
@@ -84,7 +84,7 @@ function PANEL:ReloadReports()
             claimBtn:SetColor(Color(0, 255, 0))
 
             function claimBtn:DoClick()
-                LocalPlayer():ConCommand("say /rc "..id)
+                LocalPlayer():ConCommand("say /rc " .. id)
             end
         else
             local replyBtn = vgui.Create("DButton", report)
@@ -99,9 +99,9 @@ function PANEL:ReloadReports()
                     reporteeName = report.data[1]:SteamName()
                 end 
 
-                local i = Derma_StringRequest("ops report reply to "..reporteeName, "Message to send:", nil, function(msg)
+                local i = Derma_StringRequest("ops report reply to " .. reporteeName, "Message to send:", nil, function(msg)
                     net.Start("impulseChatMessage")
-                    net.WriteString("/rmsg "..msg)
+                    net.WriteString("/rmsg " .. msg)
                     net.SendToServer()
                 end, nil, "Send")
 
@@ -128,7 +128,7 @@ function PANEL:ReloadReports()
         viewBtn:SetText("View")
 
         function viewBtn:DoClick()
-            Derma_Message(string.Replace(data[2], "+", "\n").."\n                                                    ", "ops report #"..id.." message", "Close")
+            Derma_Message(string.Replace(data[2], "+", "\n") .. "\n                                                    ", "ops report #" .. id .. " message", "Close")
         end
 
         local gotoBtn = vgui.Create("DButton", report)
@@ -185,7 +185,7 @@ function PANEL:ReloadReports()
                 LocalPlayer():ConCommand("say /rcl")
             else
                 Derma_Query("You are closing a report you have not claimed!\nDo not close reports that others are working on.","impulse", "I'm sure", function()
-                    LocalPlayer():ConCommand("say /rcl "..id)
+                    LocalPlayer():ConCommand("say /rcl " .. id)
                 end, "Take me back!")
             end
         end
@@ -194,7 +194,7 @@ function PANEL:ReloadReports()
             surface.SetDrawColor(Color(70, 70, 70))
             surface.DrawRect(0, 0, w, h)
 
-            draw.SimpleText("#"..self.id, "Impulse-Elements16", 3, 4, color_white)
+            draw.SimpleText("#" .. self.id, "Impulse-Elements16", 3, 4, color_white)
 
             if self.data[3] then
                 local claimerName = "disconnected, close me!"
@@ -208,7 +208,7 @@ function PANEL:ReloadReports()
                     end
                 end
 
-                draw.SimpleText("Claimed by: "..claimerName, "Impulse-Elements16", 25, 4, col)
+                draw.SimpleText("Claimed by: " .. claimerName, "Impulse-Elements16", 25, 4, col)
             else
                 if self.data[4] then
                     draw.SimpleText("Unclaimed (Dale replied)", "Impulse-Elements17", 25, 3, newReportCol)
@@ -219,11 +219,11 @@ function PANEL:ReloadReports()
 
             local reporteeName = "disconnected"
             if IsValid(self.data[1]) then
-                reporteeName = self.data[1]:SteamName().." ("..self.data[1]:Nick()..")"
+                reporteeName = self.data[1]:SteamName() .. " (" .. self.data[1]:Nick() .. ")"
             end 
 
-            draw.SimpleText("Submitted by: "..reporteeName, "Impulse-Elements16", 25, 19, color_white)
-            draw.SimpleText("Message: "..self.data[2], "Impulse-Elements16", 3, 36, color_white)
+            draw.SimpleText("Submitted by: " .. reporteeName, "Impulse-Elements16", 25, 19, color_white)
+            draw.SimpleText("Message: " .. self.data[2], "Impulse-Elements16", 3, 36, color_white)
 
             return true
         end

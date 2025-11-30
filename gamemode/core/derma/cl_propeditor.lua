@@ -81,7 +81,7 @@ function PANEL:SetTable(prop, callback)
                 m:SetSize(550, 700)
                 m:Center()
                 m:MakePopup()
-                m:SetTitle("Text Edtior for property "..v.." | Remember multi-line will not work with most events!")
+                m:SetTitle("Text Edtior for property " .. v .. " | Remember multi-line will not work with most events!")
 
                 ACTIVE_EM_TXTEDITOR = m
 
@@ -129,7 +129,7 @@ function PANEL:SetTable(prop, callback)
         elseif isvector(k) then
             local row = self.props:CreateRow("Properties", v)
             row:Setup("Generic")
-            row:SetValue(k.x..", "..k.y..", "..k.z)
+            row:SetValue(k.x .. ", " .. k.y .. ", " .. k.z)
 
             function row:DataChanged(newValue)
                 local vec = string.Trim(newValue, " ")
@@ -176,27 +176,27 @@ function PANEL:SetTable(prop, callback)
 
                 m:AddOption("Use eye pos", function()
                     local x = LocalPlayer():EyePos()
-                    row:SetValue(x.x..", "..x.y..", "..x.z)
+                    row:SetValue(x.x .. ", " .. x.y .. ", " .. x.z)
                     callback(v, x)
                 end)
                 m:AddOption("Use eye angle", function()
                     local x = LocalPlayer():EyeAngles()
-                    row:SetValue(x.p..", "..x.y..", "..x.r)
+                    row:SetValue(x.p .. ", " .. x.y .. ", " .. x.r)
                     callback(v, Vector(x.p, x.y, x.r))
                 end)
 
                 local tr = LocalPlayer():GetEyeTrace()
 
                 if IsValid(tr.Entity) then
-                    m:AddOption("Use "..tostring(tr.Entity).." pos", function()
+                    m:AddOption("Use " .. tostring(tr.Entity) .. " pos", function()
                         local x = tr.Entity:GetPos()
-                        row:SetValue(x.x..", "..x.y..", "..x.z)
+                        row:SetValue(x.x .. ", " .. x.y .. ", " .. x.z)
                         callback(v, x)
                     end)
 
-                    m:AddOption("Use "..tostring(tr.Entity).." angle", function()
+                    m:AddOption("Use " .. tostring(tr.Entity) .. " angle", function()
                         local x = tr.Entity:GetAngles()
-                        row:SetValue(x.p..", "..x.y..", "..x.r)
+                        row:SetValue(x.p .. ", " .. x.y .. ", " .. x.r)
                         callback(v, Vector(x.p, x.y, x.r))
                     end)
                 end

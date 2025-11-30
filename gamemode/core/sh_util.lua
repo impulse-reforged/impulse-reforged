@@ -43,7 +43,7 @@ function impulse.Util:Include(fileName, realm)
         error("[impulse] No file name specified for including.")
     end
 
-    --MsgC(Color(83, 143, 239), "[impulse-reforged] [util] Including file \""..fileName.."\"...\n")
+    --MsgC(Color(83, 143, 239), "[impulse-reforged] [util] Including file \"" .. fileName .. "\" .. .\n")
 
     -- Only include server-side if we're on the server.
     if ( ( realm == "server" or fileName:find("sv_") ) and SERVER ) then
@@ -187,15 +187,15 @@ local idleZombVO = {
 -- > vo/npc/female01/question23.wav
 function impulse.Util:GetRandomAmbientVO(gender)
     if gender == "male" then
-        return "vo/npc/male01/"..idleVO[math.random(#idleVO)]
+        return "vo/npc/male01/" .. idleVO[math.random(#idleVO)]
     elseif gender == "fisherman" then
-        return "lostcoast/vo/fisherman/"..idleFishVO[math.random(#idleFishVO)]
+        return "lostcoast/vo/fisherman/" .. idleFishVO[math.random(#idleFishVO)]
     elseif gender == "cp" then
-        return "npc/metropolice/vo/"..idleCPVO[math.random(#idleCPVO)]
+        return "npc/metropolice/vo/" .. idleCPVO[math.random(#idleCPVO)]
     elseif gender == "zombie" then
         return idleZombVO[math.random(#idleZombVO)]
     else
-        return "vo/npc/female01/"..idleVO[math.random(#idleVO)]
+        return "vo/npc/female01/" .. idleVO[math.random(#idleVO)]
     end
 end
 
@@ -249,7 +249,7 @@ function impulse.Util:ZeroNumber(number, length)
     return string.rep("0", amount)..tostring(number)
 end
 
-local ADJUST_SOUND = SoundDuration("npc/metropolice/pain1.wav") > 0 and "" or "../../hl2/sound/"
+local ADJUST_SOUND = SoundDuration("npc/metropolice/pain1.wav") > 0 and "" or " .. /../hl2/sound/"
 
 function impulse.Util:EmitQueuedSounds(entity, sounds, delay, spacing, volume, pitch)
     -- Let there be a delay before any sound is played.
@@ -379,7 +379,7 @@ function impulse.Util:GetAddress()
     local address = tonumber(GetConVarString("hostip"))
 
     if (!address) then
-        return "127.0.0.1"..":"..GetConVarString("hostport")
+        return "127.0.0.1" .. ":" .. GetConVarString("hostport")
     end
 
     local ip = {}
@@ -387,7 +387,7 @@ function impulse.Util:GetAddress()
         ip[2] = bit.rshift(bit.band(address, 0x00FF0000), 16)
         ip[3] = bit.rshift(bit.band(address, 0x0000FF00), 8)
         ip[4] = bit.band(address, 0x000000FF)
-    return table.concat(ip, ".")..":"..GetConVarString("hostport")
+    return table.concat(ip, ".") .. ":" .. GetConVarString("hostport")
 end
 
 --- Finds a target in the player's crosshair, with an optional range.

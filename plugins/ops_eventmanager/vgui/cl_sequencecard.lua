@@ -6,9 +6,9 @@ end
 function PANEL:SetSequence(key, data)
     self.main = vgui.Create("DCollapsibleCategory", self)
     self.main:Dock(FILL)
-    self.main:SetLabel("Sequence: "..key)
+    self.main:SetLabel("Sequence: " .. key)
     self.main.Header:SetTall(25)
-    self.main:SetTooltip("Version hash: "..(impulse.Ops.EventManager.Sequences[key].VersionHash or "outdated"))
+    self.main:SetTooltip("Version hash: " .. (impulse.Ops.EventManager.Sequences[key].VersionHash or "outdated"))
 
     self.mainScroll = vgui.Create("DScrollPanel", self.main)
     self.mainScroll:Dock(FILL)
@@ -64,15 +64,15 @@ function PANEL:SetSequence(key, data)
     saveSeq:SetImage("icon16/script_save.png")
 
     function saveSeq:DoClick()
-        if not impulse.Ops.EventManager.Sequences[key].FileName then
+        if !impulse.Ops.EventManager.Sequences[key].FileName then
             Derma_StringRequest("impulse", "Enter sequence file name:", nil, function(name)
                 impulse.Ops.EventManager.Sequences[key].FileName = name
                 impulse.Ops.EventManager.SequenceSave(key)
-                LocalPlayer():Notify("Successfully saved sequence: "..key.."..")
+                LocalPlayer():Notify("Successfully saved sequence: " .. key .. " .. ")
             end)
         else
             impulse.Ops.EventManager.SequenceSave(key)
-            LocalPlayer():Notify("Successfully saved sequence: "..key.."..")
+            LocalPlayer():Notify("Successfully saved sequence: " .. key .. " .. ")
         end
     end
 
@@ -121,13 +121,13 @@ function PANEL:AddEvent(id, eventdata)
 
         local curEvents = impulse.Ops.EventManager.GetCurEvents()
 
-        if not curEvents then return end
+        if !curEvents then return end
 
         local curEvent = curEvents[id]
 
-        if not curEvent then return end
+        if !curEvent then return end
 
-        if not curEvents[id + 1] and (impulse.Ops.EventManager.GetSequence() and panel.Sequence == impulse.Ops.EventManager.GetSequence()) then
+        if !curEvents[id + 1] and (impulse.Ops.EventManager.GetSequence() and panel.Sequence == impulse.Ops.EventManager.GetSequence()) then
             impulse_OpsEM_CurEvents[id] = CurTime()
         end
 
@@ -138,7 +138,7 @@ function PANEL:AddEvent(id, eventdata)
             impulse_OpsEM_CurEvents[id] = nil
         end
 
-        draw.RoundedBox(0, 0, 0, w, h, Color(127, 255, 0, (perc * 30)))
+        draw.RoundedBox(0, 0, 0, w, h, Color(127, 255, 0, perc * 30))
     end
 
     event.etypeicon = vgui.Create("DImage", event)
@@ -148,7 +148,7 @@ function PANEL:AddEvent(id, eventdata)
 
     event.etype = vgui.Create("DLabel", event)
     event.etype:SetPos(20, 2)
-    event.etype:SetText("Event: "..eventdata.Type.." ("..id..")")
+    event.etype:SetText("Event: " .. eventdata.Type .. " (" .. id .. ")")
     event.etype:SizeToContents()
 
     local delay = vgui.Create("DLabel", event)
@@ -196,7 +196,7 @@ function PANEL:AddEvent(id, eventdata)
         for v, k in pairs(impulse.Ops.EventManager.Config.Events) do
             if k.Cat == "hidden" then continue end
 
-            if not cats[k.Cat] then
+            if !cats[k.Cat] then
                 local c, p = m:AddSubMenu(k.Cat)
                 p:SetIcon(impulse.Ops.EventManager.Config.CategoryIcons[k.Cat])
                 cats[k.Cat] = c
@@ -233,7 +233,7 @@ function PANEL:AddEvent(id, eventdata)
         panel.Dad.Properties:SetTable(impulse.Ops.EventManager.Sequences[panel.Sequence].Events[id].Prop, function(key, val)
             impulse.Ops.EventManager.Sequences[panel.Sequence].Events[id].Prop[key] = val
         end)
-        panel.Dad.Properties:SetTitle(impulse.Ops.EventManager.Sequences[panel.Sequence].Events[id].Type.."("..id..") properties")
+        panel.Dad.Properties:SetTitle(impulse.Ops.EventManager.Sequences[panel.Sequence].Events[id].Type .. "(" .. id .. ") properties")
 
         local x, y = panel.Dad:GetPos()
         panel.Dad.Properties:SetPos(x + panel.Dad:GetWide() + 10, y)
@@ -242,7 +242,7 @@ function PANEL:AddEvent(id, eventdata)
         local x = self
 
         function panel.Dad.Properties:Think()
-            if not IsValid(x) then
+            if !IsValid(x) then
                 self:Remove()
             end
         end
@@ -354,7 +354,7 @@ function PANEL:AddEvent(id, eventdata)
 
     local function moveToCustomSlot()
         Derma_StringRequest("impulse ops", "Enter where you wish to move this event to:", "", function(slot)
-            if not tonumber(slot) then return end
+            if !tonumber(slot) then return end
 
             local me = impulse.Ops.EventManager.Sequences[panel.Sequence].Events[id]
             local oldId = id
@@ -417,7 +417,7 @@ function PANEL:AddEvent(id, eventdata)
     event.edupe:SetTooltip("Copy event")
 
     local function copy1(obj)
-        if type(obj) ~= 'table' then return obj end
+        if type(obj) != "table" then return obj end
         local res = {}
         for k, v in pairs(obj) do res[copy1(k)] = copy1(v) end
         return res

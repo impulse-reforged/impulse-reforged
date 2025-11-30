@@ -11,7 +11,7 @@ function PANEL:Init()
 
     self.info = vgui.Create("DLabel", self)
     self.info:SetFont("Impulse-Elements14")
-    self.info:SetText("Before you can become this team, you must complete a basic competency quiz.\nPlease complete the questions below, if you fail you will have to wait "..impulse.Config.QuizWaitTime.." minutes to take the quiz again.\nDo NOT ask other players for the answers.")
+    self.info:SetText("Before you can become this team, you must complete a basic competency quiz.\nPlease complete the questions below, if you fail you will have to wait " .. impulse.Config.QuizWaitTime .. " minutes to take the quiz again.\nDo NOT ask other players for the answers.")
     self.info:SizeToContents()
     self.info:Dock(TOP)
 
@@ -23,7 +23,7 @@ end
 function PANEL:SetQuiz(team)
     local teamData = impulse.Teams.Stored[team]
     local selections = {}
-    self:SetTitle(teamData.name.." Entry Quiz")
+    self:SetTitle(teamData.name .. " Entry Quiz")
 
     self.StartTeam = LocalPlayer():Team()
 

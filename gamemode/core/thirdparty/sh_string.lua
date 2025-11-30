@@ -10,7 +10,7 @@ local tblConcat = table.concat
 
 -- Explode a string with multiple separators
 function impulse.string.Explode( seperators, str )
-    local p = "[^"..tblConcat(seperators).."]+"
+    local p = "[^" .. tblConcat(seperators) .. "]+"
 
     local words = {}
     for w in str:gmatch(p) do
@@ -30,7 +30,7 @@ if ( CLIENT ) then
     local tblConcat = table.concat
 
 
-    local DOTS = "..."
+    local DOTS = " .. ."
 
     -- Breaks text into lines
     function impulse.string.WrapText( text, font, wLimit, dotLimit )
@@ -42,7 +42,7 @@ if ( CLIENT ) then
             local line = lines[index]
 
             if ( line ) then
-                return line.." "..word
+                return line .. " " .. word
             else
                 return word
             end

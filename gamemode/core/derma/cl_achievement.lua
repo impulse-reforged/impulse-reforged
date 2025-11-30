@@ -26,7 +26,7 @@ end
 local topCol = Color(30, 30, 30, 200)
 function PANEL:Paint(w,h)
     impulse.Util:DrawBlur(self)
-    
+
     draw.RoundedBox(0, 0, 0, w, h, topCol)
 
     draw.SimpleText("Achievement Unlocked", "Impulse-Elements27-Shadow", 120, 10, impulse.Config.MainColour)

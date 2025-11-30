@@ -56,16 +56,16 @@ else
         if self.NextGo > CurTime() then return end
 
         if not self.Pos1 then
-            self.Pos1 = self.Owner:GetPos()
+            self.Pos1 = self:GetOwner():GetPos()
             self.State = "First position registered, awaiting second position."
 
             surface.PlaySound("buttons/blip1.wav")
         else
-            self.Pos2 = self.Owner:GetPos()
+            self.Pos2 = self:GetOwner():GetPos()
             self.State = "Both positions registered, ready for export."
 
             surface.PlaySound("buttons/blip1.wav")
-            self.Owner:Notify("Ready for export!")
+            self:GetOwner():Notify("Ready for export!")
         end
 
         self.NextGo = CurTime() + .3
@@ -88,8 +88,8 @@ else
         if self.Pos1 and self.Pos2 and !self.Exporting then
             self.Exporting = true
             Derma_StringRequest("impulse", "Enter zone name (must be unique):", nil, function(name)
-                local pos1 = "Vector("..self.Pos1.x..", "..self.Pos1.y..", "..self.Pos1.z..")"
-                local pos2 = "Vector("..self.Pos2.x..", "..self.Pos2.y..", "..self.Pos2.z..")"
+                local pos1 = "Vector(" .. self.Pos1.x .. ", " .. self.Pos1.y .. ", " .. self.Pos1.z .. ")"
+                local pos2 = "Vector(" .. self.Pos2.x .. ", " .. self.Pos2.y .. ", " .. self.Pos2.z .. ")"
                 local output = '{name = "'..name..'", pos1 = '..pos1..', pos2 = '..pos2..'}'
 
                 chat.AddText("-----------------OUTPUT-----------------")
@@ -108,7 +108,7 @@ else
     local watermarkCol = Color(255, 255, 255, 120)
     function SWEP:DrawHUD()
         draw.SimpleText("LEFT: Register point, RIGHT: Reset, RELOAD: Export", "Impulse-Elements18-Shadow", 100, 100, watermarkCol)
-        draw.SimpleText("STATE: "..(self.State or "Nothing selected"), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
+        draw.SimpleText("STATE: " .. (self.State or "Nothing selected"), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
         draw.SimpleText("Warning, when you click your current position\nwill be registered, not your weapon aim position!", "Impulse-Elements18-Shadow", 100, 140, watermarkCol)
 
         for _, data in ipairs(impulse.Config.Zones or {}) do

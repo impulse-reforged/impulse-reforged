@@ -82,7 +82,7 @@ if ( SERVER ) then
                     activator:GiveItem(self.Item.UniqueID, nil, self.IsRestrictedItem or false)
                 end
 
-                --activator:Notify("You have picked up a "..self.Item.Name..".") grammatical problems + not really needed
+                --activator:Notify("You have picked up a " .. self.Item.Name .. ".") grammatical problems + not really needed
 
                 hook.Run("PlayerPickupItem", activator, self.Item.UniqueID)
             else

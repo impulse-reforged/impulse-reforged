@@ -172,9 +172,9 @@ impulse.Ops.EventManager.Config.Events = {
         Do = function(prop, uid)
             OPS_ENTS = OPS_ENTS or {}
 
-             if OPS_ENTS[ui] and IsValid(OPS_ENTS[uid]) then
-                 OPS_ENTS[uid]:Remove()
-             end
+            if OPS_ENTS[ui] and IsValid(OPS_ENTS[uid]) then
+                OPS_ENTS[uid]:Remove()
+            end
 
             OPS_ENTS[uid] = ents.Create("prop_physics")
             OPS_ENTS[uid]:SetModel("models/hunter/plates/plate.mdl")
@@ -354,7 +354,7 @@ impulse.Ops.EventManager.Config.Events = {
             local max = table.Count(items)
             local yAdd = prop["array_ygap"]
 
-            timer.Create("impulseOpsEMTextArray"..math.random(1,100000), prop["array_delay"], max, function()
+            timer.Create("impulseOpsEMTextArray" .. math.random(1,100000), prop["array_delay"], max, function()
                 local text = vgui.Create("impulseFadeText")
                 text:Setup(uiStringVarSwap(items[c]), prop["pos_x"], prop["pos_y"] + (((c - 1) * yAdd) / ScrH()), prop["message_fadein"], prop["message_fadeout"], prop["message_hold"] + ((max - c) * prop["array_delay"]), prop["message_colour"], prop["message_align"])
 
@@ -491,13 +491,9 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = true,
         Clientside = false,
         Do = function(prop, uid)
-            if not OPS_ENTS or not OPS_ENTS[uid] or not IsValid(OPS_ENTS[uid]) then return end
+            if !OPS_ENTS or !OPS_ENTS[uid] or !IsValid(OPS_ENTS[uid]) then return end
 
             local e = OPS_ENTS[uid]
-
-            if IsValid(e.loco) then
-                --e.loco:Remove()
-            end
 
             e.loco = ents.Create("func_movelinear")
             e.loco:SetPos(e:GetPos())
@@ -793,7 +789,7 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = false,
         Clientside = true,
         Do = function(prop, uid)
-            cookie.Set("impulse_em_"..prop["name"], prop["value"])
+            cookie.Set("impulse_em_" .. prop["name"], prop["value"])
         end
     },
     ["npc_spawn"] = {
@@ -808,26 +804,26 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = true,
         Clientside = false,
         Do = function(prop, uid)
-             OPS_NPCS = OPS_NPCS or {}
+            OPS_NPCS = OPS_NPCS or {}
 
-             if OPS_NPCS[uid] and IsValid(OPS_NPCS[uid]) then
-                 OPS_NPCS[uid]:Remove()
-             end
-
-             OPS_NPCS[uid] = ents.Create(prop["class"])
-             OPS_NPCS[uid]:SetPos(prop["pos"])
-             OPS_NPCS[uid]:SetAngles(Angle(prop["ang"].x, prop["ang"].y, prop["ang"].z))
-
-            if prop["class"] != "npc_combinegunship" then
-                 OPS_NPCS[uid]:SetKeyValue("spawnflags", OPS_NPCS[uid]:GetSpawnFlags() + SF_NPC_NO_WEAPON_DROP)
+            if OPS_NPCS[uid] and IsValid(OPS_NPCS[uid]) then
+                OPS_NPCS[uid]:Remove()
             end
 
-             OPS_NPCS[uid]:Spawn()
-             OPS_NPCS[uid]:Activate()
+            OPS_NPCS[uid] = ents.Create(prop["class"])
+            OPS_NPCS[uid]:SetPos(prop["pos"])
+            OPS_NPCS[uid]:SetAngles(Angle(prop["ang"].x, prop["ang"].y, prop["ang"].z))
 
-             if prop["weapon"] != "" then
-                 OPS_NPCS[uid]:Give(prop["weapon"])
-             end
+            if prop["class"] != "npc_combinegunship" then
+                OPS_NPCS[uid]:SetKeyValue("spawnflags", OPS_NPCS[uid]:GetSpawnFlags() + SF_NPC_NO_WEAPON_DROP)
+            end
+
+            OPS_NPCS[uid]:Spawn()
+            OPS_NPCS[uid]:Activate()
+
+            if prop["weapon"] != "" then
+                OPS_NPCS[uid]:Give(prop["weapon"])
+            end
         end
     },
     ["npc_remove"] = {
@@ -836,11 +832,11 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = true,
         Clientside = false,
         Do = function(prop, uid)
-             OPS_NPCS = OPS_NPCS or {}
+            OPS_NPCS = OPS_NPCS or {}
 
-             if OPS_NPCS[uid] and IsValid(OPS_NPCS[uid]) then
-                 OPS_NPCS[uid]:Remove()
-             end
+            if OPS_NPCS[uid] and IsValid(OPS_NPCS[uid]) then
+                OPS_NPCS[uid]:Remove()
+            end
         end
     },
     ["npc_sethp"] = {
@@ -851,11 +847,11 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = true,
         Clientside = false,
         Do = function(prop, uid)
-             OPS_NPCS = OPS_NPCS or {}
+            OPS_NPCS = OPS_NPCS or {}
 
-             if OPS_NPCS[uid] and IsValid(OPS_NPCS[uid]) then
-                 OPS_NPCS[uid]:SetHealth(prop["health"])
-             end
+            if OPS_NPCS[uid] and IsValid(OPS_NPCS[uid]) then
+                OPS_NPCS[uid]:SetHealth(prop["health"])
+            end
         end
     },
     ["npc_movetopos"] = {
@@ -866,12 +862,12 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = true,
         Clientside = false,
         Do = function(prop, uid)
-             OPS_NPCS = OPS_NPCS or {}
+            OPS_NPCS = OPS_NPCS or {}
 
-             if OPS_NPCS[uid] and IsValid(OPS_NPCS[uid]) then
-                 OPS_NPCS[uid]:SetLastPosition(prop["pos"])
-                 OPS_NPCS[uid]:SetSchedule(SCHED_FORCED_GO_RUN)
-             end
+            if OPS_NPCS[uid] and IsValid(OPS_NPCS[uid]) then
+                OPS_NPCS[uid]:SetLastPosition(prop["pos"])
+                OPS_NPCS[uid]:SetSchedule(SCHED_FORCED_GO_RUN)
+            end
         end
     },
     ["npc_movetotrack"] = {
@@ -882,22 +878,22 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = true,
         Clientside = false,
         Do = function(prop, uid)
-             OPS_NPCS = OPS_NPCS or {}
-             OPS_TRACKS = OPS_TRACKS or {}
+            OPS_NPCS = OPS_NPCS or {}
+            OPS_TRACKS = OPS_TRACKS or {}
 
-             if OPS_NPCS[uid] and IsValid(OPS_NPCS[uid]) then
-                 local npc = OPS_NPCS[uid]
+            if OPS_NPCS[uid] and IsValid(OPS_NPCS[uid]) then
+                local npc = OPS_NPCS[uid]
 
-                 if OPS_TRACKS[uid] and IsValid(OPS_TRACKS[uid]) then
-                     OPS_TRACKS[uid]:Remove()
-                 end
+                if OPS_TRACKS[uid] and IsValid(OPS_TRACKS[uid]) then
+                    OPS_TRACKS[uid]:Remove()
+                end
 
-                 OPS_TRACKS[uid] = ents.Create("path_track")
-                 OPS_TRACKS[uid]:SetName(uid.."Track5555")
-                 OPS_TRACKS[uid]:SetPos(prop["pos"])
+                OPS_TRACKS[uid] = ents.Create("path_track")
+                OPS_TRACKS[uid]:SetName(uid .. "Track5555")
+                OPS_TRACKS[uid]:SetPos(prop["pos"])
 
-                 npc:Fire("flytospecifictrackviapath", uid.."Track5555")
-             end
+                npc:Fire("flytospecifictrackviapath", uid .. "Track5555")
+            end
         end
     },
     ["dropship_spawn"] = {
@@ -916,19 +912,19 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = true,
         Clientside = false,
         Do = function(prop, uid)
-             OPS_NPCS = OPS_NPCS or {}
+            OPS_NPCS = OPS_NPCS or {}
 
-             if OPS_NPCS[uid] and IsValid(OPS_NPCS[uid]) then
-                 OPS_NPCS[uid]:Remove()
-             end
+            if OPS_NPCS[uid] and IsValid(OPS_NPCS[uid]) then
+                OPS_NPCS[uid]:Remove()
+            end
 
-             local secondPos = prop["second_pos"]
+            local secondPos = prop["second_pos"]
 
-             if secondPos.x == 0 and secondPos.y == 0 and secondPos.z == 0 then
-                 secondPos = nil
-             end
+            if secondPos.x == 0 and secondPos.y == 0 and secondPos.z == 0 then
+                secondPos = nil
+            end
 
-             OPS_NPCS[uid] = MakeDropship(uid, prop["start_pos"], Angle(prop["start_ang"].x, prop["start_ang"].y, prop["start_ang"].z), secondPos, prop["land_pos"], prop["god"], prop["soldier_smg"], prop["soldier_ar2"], prop["soldier_shotgun"], prop["soldier_elite"])
+            OPS_NPCS[uid] = MakeDropship(uid, prop["start_pos"], Angle(prop["start_ang"].x, prop["start_ang"].y, prop["start_ang"].z), secondPos, prop["land_pos"], prop["god"], prop["soldier_smg"], prop["soldier_ar2"], prop["soldier_shotgun"], prop["soldier_elite"])
         end
     },
     ["dropship_remove"] = {
@@ -937,21 +933,21 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = true,
         Clientside = false,
         Do = function(prop, uid)
-             OPS_NPCS = OPS_NPCS or {}
+            OPS_NPCS = OPS_NPCS or {}
 
-             if OPS_NPCS[uid] and IsValid(OPS_NPCS[uid]) then
-                 OPS_NPCS[uid]:Remove()
-             end
+            if OPS_NPCS[uid] and IsValid(OPS_NPCS[uid]) then
+                OPS_NPCS[uid]:Remove()
+            end
 
-             if DROPSHIP_TROOPS[uid] then
-                 for v, k in pairs(DROPSHIP_TROOPS[uid]) do
-                     if IsValid(k) then
-                         k:Remove()
-                     end
-                 end
+            if DROPSHIP_TROOPS[uid] then
+                for v, k in pairs(DROPSHIP_TROOPS[uid]) do
+                    if IsValid(k) then
+                        k:Remove()
+                    end
+                end
 
-                 DROPSHIP_TROOPS[uid] = nil
-             end
+                DROPSHIP_TROOPS[uid] = nil
+            end
         end
     },
     ["headcrabcanister"] = {
@@ -967,38 +963,38 @@ impulse.Ops.EventManager.Config.Events = {
             ["radius"] = 750,
             ["duration"] = 30,
             ["smoke"] = 0
-         },
-         NeedUID = true,
-         Clientside = false,
-         Do = function(prop, uid)
-             OPS_NPCS = OPS_NPCS or {}
+        },
+        NeedUID = true,
+        Clientside = false,
+        Do = function(prop, uid)
+            OPS_NPCS = OPS_NPCS or {}
 
-             if OPS_NPCS[uid] and IsValid(OPS_NPCS[uid]) then
-                 OPS_NPCS[uid]:Remove()
-             end
+            if OPS_NPCS[uid] and IsValid(OPS_NPCS[uid]) then
+                OPS_NPCS[uid]:Remove()
+            end
 
-             OPS_NPCS[uid] = MakeHeadcrabCanister(
-                 "models/props_combine/headcrabcannister01b.mdl",
-                 prop["pos"],
-                 Angle(prop["ang"].x, prop["ang"].y, prop["ang"].z),
-                 nil,
-                 nil,
-                 nil,
-                 nil,
-                 prop["headcrabtype"],
-                 prop["count"],
-                 prop["speed"],
-                 prop["time"],
-                 nil,
-                 prop["damage"],
-                 prop["radius"],
-                 prop["duration"],
-                 nil,
-                 prop["smoke"]
-             )
+            OPS_NPCS[uid] = MakeHeadcrabCanister(
+                "models/props_combine/headcrabcannister01b.mdl",
+                prop["pos"],
+                Angle(prop["ang"].x, prop["ang"].y, prop["ang"].z),
+                nil,
+                nil,
+                nil,
+                nil,
+                prop["headcrabtype"],
+                prop["count"],
+                prop["speed"],
+                prop["time"],
+                nil,
+                prop["damage"],
+                prop["radius"],
+                prop["duration"],
+                nil,
+                prop["smoke"]
+            )
 
-             OPS_NPCS[uid]:Fire("FireCanister")
-         end
+            OPS_NPCS[uid]:Fire("FireCanister")
+        end
     },
     ["thumper_spawn"] = {
         Cat = "npc",
@@ -1011,35 +1007,35 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = true,
         Clientside = false,
         Do = function(prop, uid)
-             OPS_NPCS = OPS_NPCS or {}
+            OPS_NPCS = OPS_NPCS or {}
 
-             if OPS_NPCS[uid] and IsValid(OPS_NPCS[uid]) then
-                 OPS_NPCS[uid]:Remove()
-             end
+            if OPS_NPCS[uid] and IsValid(OPS_NPCS[uid]) then
+                OPS_NPCS[uid]:Remove()
+            end
 
-             OPS_NPCS[uid] = ents.Create("prop_thumper")
-             OPS_NPCS[uid]:SetPos(prop["pos"])
-             OPS_NPCS[uid]:SetAngles(Angle(prop["ang"].x, prop["ang"].y, prop["ang"].z))
+            OPS_NPCS[uid] = ents.Create("prop_thumper")
+            OPS_NPCS[uid]:SetPos(prop["pos"])
+            OPS_NPCS[uid]:SetAngles(Angle(prop["ang"].x, prop["ang"].y, prop["ang"].z))
 
-             if prop["isBig"] then
-                 OPS_NPCS[uid]:SetModel("models/props_combine/combinethumper001a.mdl")
-             end
+            if prop["isBig"] then
+                OPS_NPCS[uid]:SetModel("models/props_combine/combinethumper001a.mdl")
+            end
 
-             OPS_NPCS[uid]:Spawn()
-             OPS_NPCS[uid]:Activate()
+            OPS_NPCS[uid]:Spawn()
+            OPS_NPCS[uid]:Activate()
 
-             if prop["on"] then
-                 OPS_NPCS[uid]:Fire("Enable")
-             else
-                 OPS_NPCS[uid]:Fire("Disable")
-             end
+            if prop["on"] then
+                OPS_NPCS[uid]:Fire("Enable")
+            else
+                OPS_NPCS[uid]:Fire("Disable")
+            end
 
-             if prop["isBig"] then
-                 OPS_NPCS[uid]:SetKeyValue("dustscale", 256)
+            if prop["isBig"] then
+                OPS_NPCS[uid]:SetKeyValue("dustscale", 256)
 
-             else
-                 OPS_NPCS[uid]:SetKeyValue("dustscale", 128)
-             end
+            else
+                OPS_NPCS[uid]:SetKeyValue("dustscale", 128)
+            end
         end
     },
     ["thumper_setstate"] = {
@@ -1050,17 +1046,17 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = true,
         Clientside = false,
         Do = function(prop, uid)
-             OPS_NPCS = OPS_NPCS or {}
+            OPS_NPCS = OPS_NPCS or {}
 
-             if not OPS_NPCS[uid] or not IsValid(OPS_NPCS[uid]) then
-                 return
-             end
+            if !OPS_NPCS[uid] or !IsValid(OPS_NPCS[uid]) then
+                return
+            end
 
-             if prop["on"] then
-                 OPS_NPCS[uid]:Fire("Enable")
-             else
-                 OPS_NPCS[uid]:Fire("Disable")
-             end
+            if prop["on"] then
+                OPS_NPCS[uid]:Fire("Enable")
+            else
+                OPS_NPCS[uid]:Fire("Disable")
+            end
         end
     },
     ["ai_disabled"] = {
@@ -1071,7 +1067,7 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = false,
         Clientside = false,
         Do = function(prop, uid)
-            RunConsoleCommand("ai_disabled", (prop["disabled"] and "1" or "0"))
+            RunConsoleCommand("ai_disabled", prop["disabled"] and "1" or "0")
         end
     },
     ["citycodeset"] = {
@@ -1128,7 +1124,7 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = true,
         Clientside = true,
         Do = function(prop, uid)
-            if not impulse.Ops.EventManager.Scenes then return end
+            if !impulse.Ops.EventManager.Scenes then return end
 
             if prop["text"] == "" then
                 prop["text"] = nil
@@ -1187,25 +1183,25 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = true,
         Clientside = false,
         Do = function(prop, uid)
-             OPS_RTCAMS = OPS_RTCAMS or {}
+            OPS_RTCAMS = OPS_RTCAMS or {}
 
-             if OPS_RTCAMS[uid] and IsValid(OPS_RTCAMS[uid]) then
-                 OPS_RTCAMS[uid]:Fire("SetOff")
-                 OPS_RTCAMS[uid]:Remove()
-             end
+            if OPS_RTCAMS[uid] and IsValid(OPS_RTCAMS[uid]) then
+                OPS_RTCAMS[uid]:Fire("SetOff")
+                OPS_RTCAMS[uid]:Remove()
+            end
 
-             OPS_RTCAMS[uid] = ents.Create("point_camera")
+            OPS_RTCAMS[uid] = ents.Create("point_camera")
 
-             if prop["force_override"] then
-                 OPS_RTCAMS[uid]:SetKeyValue("GlobalOverride", 1)
-             end
+            if prop["force_override"] then
+                OPS_RTCAMS[uid]:SetKeyValue("GlobalOverride", 1)
+            end
 
-             OPS_RTCAMS[uid]:SetPos(prop["pos"])
-             OPS_RTCAMS[uid]:SetAngles(Angle(prop["ang"].x, prop["ang"].y, prop["ang"].z))
-             OPS_RTCAMS[uid]:Spawn()
-             OPS_RTCAMS[uid]:Activate()
+            OPS_RTCAMS[uid]:SetPos(prop["pos"])
+            OPS_RTCAMS[uid]:SetAngles(Angle(prop["ang"].x, prop["ang"].y, prop["ang"].z))
+            OPS_RTCAMS[uid]:Spawn()
+            OPS_RTCAMS[uid]:Activate()
 
-             OPS_RTCAMS[uid]:Fire("SetOn")
+            OPS_RTCAMS[uid]:Fire("SetOn")
         end
     },
     ["rtcamera_remove"] = {
@@ -1214,12 +1210,12 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = true,
         Clientside = false,
         Do = function(prop, uid)
-             OPS_RTCAMS = OPS_RTCAMS or {}
+            OPS_RTCAMS = OPS_RTCAMS or {}
 
-             if OPS_RTCAMS[uid] and IsValid(OPS_RTCAMS[uid]) then
-                 OPS_RTCAMS[uid]:Fire("SetOff")
-                 OPS_RTCAMS[uid]:Remove()
-             end
+            if OPS_RTCAMS[uid] and IsValid(OPS_RTCAMS[uid]) then
+                OPS_RTCAMS[uid]:Fire("SetOff")
+                OPS_RTCAMS[uid]:Remove()
+            end
         end
     },
     ["freezeplayers"] = {
@@ -1230,9 +1226,9 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = false,
         Clientside = false,
         Do = function(prop, uid)
-             for v, k in player.Iterator() do
-                 k:Freeze(prop["freeze"])
-             end
+            for v, k in player.Iterator() do
+                k:Freeze(prop["freeze"])
+            end
         end
     },
     ["lookat"] = {
@@ -1277,9 +1273,9 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = false,
         Clientside = false,
         Do = function(prop, uid)
-             if DNCSetTime then
-                 DNCSetTime(prop["time"])
-             end
+            if DNCSetTime then
+                DNCSetTime(prop["time"])
+            end
         end
     },
     ["colourcorrection"] = {

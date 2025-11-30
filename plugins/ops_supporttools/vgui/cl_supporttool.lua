@@ -62,7 +62,7 @@ function PANEL:Init()
         end
 
         local btn = vgui.Create("DButton")
-        btn:SetText("  "..k.Name.." ("..k.UniqueID..")")
+        btn:SetText("  " .. k.Name .. " (" .. k.UniqueID .. ")")
         btn:SetContentAlignment(4)
         btn:Dock(TOP)
         btn:SetFont("Impulse-Elements18")
@@ -70,7 +70,7 @@ function PANEL:Init()
         btn.ItemClass = k.UniqueID
 
         function btn:DoClick()
-            Derma_StringRequest("impulse", "Amount of "..k.Name.." to refund", "1", function(val)
+            Derma_StringRequest("impulse", "Amount of " .. k.Name .. " to refund", "1", function(val)
                 if not tonumber(val) then
                     return LocalPlayer():Notify("The value entered is not a number.")
                 end
@@ -86,7 +86,7 @@ function PANEL:Init()
                         end
                     end
 
-                    return LocalPlayer():Notify("Successfully removed "..self.ItemClass.."..")
+                    return LocalPlayer():Notify("Successfully removed " .. self.ItemClass .. " .. ")
                 end
 
                 for v, k in pairs(refund2) do
@@ -98,7 +98,7 @@ function PANEL:Init()
                 refund[self.ItemClass] = val
                 table.insert(refund2, {self.ItemClass, val})
 
-                LocalPlayer():Notify("Selected "..k.Name.." x"..val..".")
+                LocalPlayer():Notify("Selected " .. k.Name .. " x" .. val .. ".")
             end)
         end
 
@@ -126,7 +126,7 @@ function PANEL:Init()
     function lbl:Think()
         local t = ""
         for v, k in pairs(refund2) do
-            t = t..k[1].." x"..k[2]..", "
+            t = t..k[1] .. " x" .. k[2] .. ", "
         end
 
         self:SetText(t)
@@ -202,7 +202,7 @@ function PANEL:Init()
         end
 
         local lbl = vgui.Create("DLabel", t)
-        lbl:SetText(k.name.." (ID: "..v..") (Current players: "..#team.GetPlayers(v)..")")
+        lbl:SetText(k.name .. " (ID: " .. v .. ") (Current players: " .. #team.GetPlayers(v) .. ")")
         lbl:SetFont("Impulse-Elements18")
         lbl:SizeToContents()
         lbl:SetPos(5, 5)
@@ -247,7 +247,7 @@ function PANEL:Init()
     btn:SetText("Remove Group")
 
     function btn:DoClick()
-        Derma_Query("Are you sure you want to remove the "..text:GetValue().." group?", "impulse",
+        Derma_Query("Are you sure you want to remove the " .. text:GetValue() .. " group?", "impulse",
         "Remove", function()
             net.Start("impulseOpsSTDoGroupRemove")
             net.WriteString(text:GetValue())

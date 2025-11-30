@@ -65,11 +65,11 @@ else
 
         if not self.Selected and IsValid(button) and button:GetClass() == "class C_BaseEntity" then
             self.Selected = button
-            self.State = "Button "..button:EntIndex().." registered, ready for export."
+            self.State = "Button " .. button:EntIndex() .. " registered, ready for export."
 
             surface.PlaySound("buttons/blip1.wav")
 
-            self.Owner:Notify("Ready for export!")
+            self:GetOwner():Notify("Ready for export!")
         end
 
         self.NextGo = CurTime() + .3
@@ -93,7 +93,7 @@ else
 
         if self.Selected then
             local buttonPos = self.Selected:GetPos()
-            local pos = "Vector("..buttonPos.x..", "..buttonPos.y..", "..buttonPos.z..")"
+            local pos = "Vector(" .. buttonPos.x .. ", " .. buttonPos.y .. ", " .. buttonPos.z .. ")"
             -- im sorry i had to do this indent god, pls forgiv
             local output = ""
 
@@ -101,7 +101,7 @@ else
                 "generic", function()
                     output = [[{
     desc = "Desc or remove line for no desc",
-    pos = ]]..pos.."\n}"
+    pos = ]]..pos .. "\n}"
 
             chat.AddText("-----------------OUTPUT-----------------")
             chat.AddText(output)

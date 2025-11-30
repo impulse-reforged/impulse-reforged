@@ -48,7 +48,7 @@ else
     local watermarkCol = Color(255, 255, 255, 120)
     function SWEP:DrawHUD()
         draw.SimpleText("LEFT: Register entity, RIGHT: Reset, RELOAD: Set as loot", "Impulse-Elements18-Shadow", 100, 100, watermarkCol)
-        draw.SimpleText("STATE: "..(self.State or "Spawn a prop and select it..."), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
+        draw.SimpleText("STATE: " .. (self.State or "Spawn a prop and select it..."), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
 
         local count = 0
         for k, v in pairs(ents.FindByClass("impulse_container")) do
@@ -56,11 +56,11 @@ else
                 count = count + 1
 
                 local sPos = v:GetPos():ToScreen()
-                draw.SimpleText("Loot#"..v:EntIndex(), "Impulse-Elements18-Shadow", sPos.x, sPos.y, Color(255, 0, 0, 120), TEXT_ALIGN_CENTER)
+                draw.SimpleText("Loot#" .. v:EntIndex(), "Impulse-Elements18-Shadow", sPos.x, sPos.y, Color(255, 0, 0, 120), TEXT_ALIGN_CENTER)
             end
         end
 
-        draw.SimpleText("INFO: LOOT CONTAINER COUNT: "..count, "Impulse-Elements18-Shadow", 100, 140, watermarkCol)
+        draw.SimpleText("INFO: LOOT CONTAINER COUNT: " .. count, "Impulse-Elements18-Shadow", 100, 140, watermarkCol)
     end
 end
 
@@ -85,19 +85,19 @@ function SWEP:PrimaryAttack()
     if ( SERVER ) then return end
 
     local trace = {}
-    trace.start = self.Owner:EyePos()
-    trace.endpos = trace.start + self.Owner:GetAimVector() * 140
-    trace.filter = self.Owner
+    trace.start = self:GetOwner():EyePos()
+    trace.endpos = trace.start + self:GetOwner():GetAimVector() * 140
+    trace.filter = self:GetOwner()
 
     local tr = util.TraceLine(trace)
     local ent = tr.Entity
 
     if not self.SelectedStorage and IsValid(ent) and ent:GetClass() == "prop_physics" then
         self.SelectedStorage = ent
-        self.State = "Prop "..ent:EntIndex().." ("..ent:GetModel()..") selected, ready for export..."
+        self.State = "Prop " .. ent:EntIndex() .. " (" .. ent:GetModel() .. ") selected, ready for export..."
 
         surface.PlaySound("buttons/blip1.wav")
-        self.Owner:Notify("Ready for export!")
+        self:GetOwner():Notify("Ready for export!")
     end
 
     local function sendLootReq(pool)
@@ -181,7 +181,7 @@ if ( SERVER ) then
         container:SetAngles(entAng)
         container:Spawn()
 
-        client:Notify("Lootable container for with pool as "..pool.." created. Please mark and save the generated entity.")
+        client:Notify("Lootable container for with pool as " .. pool .. " created. Please mark and save the generated entity.")
     end)
 end
 

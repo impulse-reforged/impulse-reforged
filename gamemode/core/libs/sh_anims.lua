@@ -367,8 +367,8 @@ local translations = translations or {}
 -- @string class The animation class
 -- @see DefaultAnimClasses
 function impulse.Anim:SetModelClass(model, class)
-    if not impulse.Anim[class] then
-        error("'"..tostring(class).."' is not a valid animation class!")
+    if !impulse.Anim[class] then
+        error("'" .. tostring(class) .. "' is not a valid animation class!")
     end
 
     translations[model:lower()] = class
@@ -445,7 +445,7 @@ function GM:TranslateActivity(client, act)
     if class == "player" then
         if IsValid(weapon) and !client.IsWeaponRaised(client) and client.OnGround(client) then
             local holdType = IsValid(weapon) and (weapon.HoldType or weapon.GetHoldType(weapon)) or "normal"
-            if not client.IsWeaponRaised(client) and client.OnGround(client) then
+            if !client.IsWeaponRaised(client) and client.OnGround(client) then
                 holdType = PLAYER_HOLDTYPE_TRANSLATOR[holdType] or "passive"
 
                 if ( ARC9 and weapon.HoldTypeHolstered and weapon.Class == ARC9:GetPhrase("eft_class_weapon_pist") ) then
@@ -712,7 +712,7 @@ if ( CLIENT ) then
         end
     end)
 
--- Support for blocking TPIK in ARC9 when weapon is not raised
+    -- Support for blocking TPIK in ARC9 when weapon is not raised
     function GM:ARC9_Hook_BlockTPIK(weapon)
         local owner = weapon:GetOwner()
         if ( !owner or !owner:IsPlayer() ) then return false end

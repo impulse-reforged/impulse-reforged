@@ -15,7 +15,7 @@ if ( SERVER ) then
         end
 
         client:SetRPName(output, true)
-        client:Notify("You have changed your name to "..output..".")
+        client:Notify("You have changed your name to " .. output .. ".")
 
         client.NameChangeForced = nil
     end)
@@ -78,9 +78,9 @@ local changeNameCommand =  {
             net.Send(plyTarget)
 
             plyTarget.NameChangeForced = true
-            client:Notify(plyTarget:Name().." has been forced name-changed.")
+            client:Notify(plyTarget:Name() .. " has been forced name-changed.")
         else
-            return client:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find player: " .. tostring(name))
         end
     end
 }

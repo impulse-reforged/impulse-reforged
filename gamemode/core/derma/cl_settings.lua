@@ -24,7 +24,7 @@ function PANEL:Init()
 
         if k.category == "ops" and !LocalPlayer():IsAdmin() then continue end -- ops settings can only be viewed by admins
 
-        if not addedCategories[k.category] then -- If category does not exist, create it
+        if !addedCategories[k.category] then -- If category does not exist, create it
             local settingSheetScroll = vgui.Create("DScrollPanel", settingsPages)
             settingsPages:AddSheet(k.category, settingSheetScroll)
             addedCategories[k.category] = settingSheetScroll
@@ -122,8 +122,6 @@ function PANEL:Init()
         LocalPlayer():ConCommand("impulse_resetsettings")
         panelSelf:Remove()
     end
-
 end
-
 
 vgui.Register("impulseSettings", PANEL, "DFrame")

@@ -58,7 +58,7 @@ function PANEL:Init()
 
         if cost > 0 then
             self:SetDisabled(false)
-            self:SetText("Change ("..impulse.Config.CurrencyPrefix..cost..")")
+            self:SetText("Change (" .. impulse.Config.CurrencyPrefix .. cost .. ")")
         else
             self:SetDisabled(true)
             self:SetText("Change")
@@ -74,11 +74,11 @@ function PANEL:Init()
     self.characterPreview:SetFOV(70)
     self.characterPreview:SetCamPos(Vector(52, 52, 52))
     self.characterPreview.Entity:SetSkin(curSkin)
-     function self.characterPreview:LayoutEntity(ent) 
-          ent:SetAngles(Angle(0,40,0))
-     end
+    function self.characterPreview:LayoutEntity(ent)
+        ent:SetAngles(Angle(0,40,0))
+    end
 
-     local characterPreview = self.characterPreview
+    local characterPreview = self.characterPreview
 
     self.genderLbl = vgui.Create("DLabel", self)
     self.genderLbl:SetFont("Impulse-Elements18-Shadow")
@@ -86,39 +86,39 @@ function PANEL:Init()
     self.genderLbl:SizeToContents()
     self.genderLbl:SetPos(10,40)
 
-      self.genderBox = vgui.Create("DComboBox", self)
-      self.genderBox:SetPos(10,60)
-      self.genderBox:SetSize(180,23)
+    self.genderBox = vgui.Create("DComboBox", self)
+    self.genderBox:SetPos(10,60)
+    self.genderBox:SetSize(180,23)
 
-      if isFemale then
-          self.genderBox:SetValue("Female")
-      else
-          self.genderBox:SetValue("Male")
-      end
+    if isFemale then
+        self.genderBox:SetValue("Female")
+    else
+        self.genderBox:SetValue("Male")
+    end
 
-      self.genderBox.normal = self.genderBox:GetValue()
+    self.genderBox.normal = self.genderBox:GetValue()
 
-      self.genderBox:AddChoice("Male")
-      self.genderBox:AddChoice("Female")
-      function self.genderBox.OnSelect(panel, index, value)
-          if value == "Male" then
-              self:PopulateModels(impulse.Config.DefaultMaleModels)
-              characterPreview:SetModel(impulse.Config.DefaultMaleModels[1])
-              self.skinSlider:SetValue(0)
-              self.skinSlider:SetMax(characterPreview.Entity:SkinCount())
-          else
-              self:PopulateModels(impulse.Config.DefaultFemaleModels)
-              characterPreview:SetModel(impulse.Config.DefaultFemaleModels[1])
-              self.skinSlider:SetValue(0)
-              self.skinSlider:SetMax(characterPreview.Entity:SkinCount())
-          end
-      end
+    self.genderBox:AddChoice("Male")
+    self.genderBox:AddChoice("Female")
+    function self.genderBox.OnSelect(panel, index, value)
+        if value == "Male" then
+            self:PopulateModels(impulse.Config.DefaultMaleModels)
+            characterPreview:SetModel(impulse.Config.DefaultMaleModels[1])
+            self.skinSlider:SetValue(0)
+            self.skinSlider:SetMax(characterPreview.Entity:SkinCount())
+        else
+            self:PopulateModels(impulse.Config.DefaultFemaleModels)
+            characterPreview:SetModel(impulse.Config.DefaultFemaleModels[1])
+            self.skinSlider:SetValue(0)
+            self.skinSlider:SetMax(characterPreview.Entity:SkinCount())
+        end
+    end
 
-      self.genderWarn = vgui.Create("DLabel", self)
-      self.genderWarn:SetFont("Impulse-Elements16")
-      self.genderWarn:SetText("Costs "..impulse.Config.CurrencyPrefix..impulse.Config.CosmeticGenderPrice.." per change")
-      self.genderWarn:SizeToContents()
-      self.genderWarn:SetPos(10, 90)
+    self.genderWarn = vgui.Create("DLabel", self)
+    self.genderWarn:SetFont("Impulse-Elements16")
+    self.genderWarn:SetText("Costs " .. impulse.Config.CurrencyPrefix .. impulse.Config.CosmeticGenderPrice .. " per change")
+    self.genderWarn:SizeToContents()
+    self.genderWarn:SetPos(10, 90)
 
     self.modelLbl = vgui.Create("DLabel", self)
     self.modelLbl:SetFont("Impulse-Elements18-Shadow")
@@ -151,26 +151,26 @@ function PANEL:Init()
         characterPreview.Entity:SetSkin(newSkin)
     end
 
-      self.skinWarn = vgui.Create("DLabel", self)
-      self.skinWarn:SetFont("Impulse-Elements16")
-      self.skinWarn:SetText("Costs "..impulse.Config.CurrencyPrefix..impulse.Config.CosmeticModelSkinPrice.." per change")
-      self.skinWarn:SizeToContents()
-      self.skinWarn:SetPos(400, 310)
+    self.skinWarn = vgui.Create("DLabel", self)
+    self.skinWarn:SetFont("Impulse-Elements16")
+    self.skinWarn:SetText("Costs " .. impulse.Config.CurrencyPrefix .. impulse.Config.CosmeticModelSkinPrice .. " per change")
+    self.skinWarn:SizeToContents()
+    self.skinWarn:SetPos(400, 310)
 end
 
 function PANEL:PopulateModels(modelTable)
     if self.modelScroll then self.modelScroll:Remove() end -- done to fix some weird bugs when changing size of the iconlayout with the sidebar
 
-     self.modelScroll = vgui.Create("DScrollPanel", self)
-     self.modelScroll:SetPos(400,60)
-     self.modelScroll:SetSize(200,185)
+    self.modelScroll = vgui.Create("DScrollPanel", self)
+    self.modelScroll:SetPos(400,60)
+    self.modelScroll:SetSize(200,185)
 
-     self.modelBase = vgui.Create("DIconLayout", self.modelScroll)
-     self.modelBase:Dock(FILL)
-     self.modelBase:SetSpaceY(5)
-     self.modelBase:SetSpaceX(5)
+    self.modelBase = vgui.Create("DIconLayout", self.modelScroll)
+    self.modelBase:Dock(FILL)
+    self.modelBase:SetSpaceY(5)
+    self.modelBase:SetSpaceX(5)
 
-      for _, model in pairs(modelTable) do
+    for _, model in pairs(modelTable) do
         local modelIcon = vgui.Create("SpawnIcon", self.modelBase)
         modelIcon:SetModel(model)
         modelIcon:SetSize(58,58)
@@ -180,8 +180,7 @@ function PANEL:PopulateModels(modelTable)
             self.skinSlider:SetValue(0)
             self.skinSlider:SetMax(self.characterPreview.Entity:SkinCount()-1)
         end
-      end
+    end
 end
-
 
 vgui.Register("impulseCharacterEditor", PANEL, "DFrame")

@@ -14,7 +14,7 @@ if ( CLIENT ) then
         targetBox:AddChoice("Custom SteamID64 (Offline User)")
 
         for v, k in player.Iterator() do
-            targetBox:AddChoice("PLAYER: "..k:Nick().." ("..k:SteamName()..")", k:SteamID64())
+            targetBox:AddChoice("PLAYER: " .. k:Nick() .. " (" .. k:SteamName() .. ")", k:SteamID64())
         end
 
         targetBox:SetSortItems(false)
@@ -27,7 +27,7 @@ if ( CLIENT ) then
                     if IsValid(panel) then
                         sid = string.Trim(sid, " ")
                         panel.Selected = sid
-                        self:SetText("Custom SteamID64 ("..sid..")")
+                        self:SetText("Custom SteamID64 (" .. sid .. ")")
                     end
                 end)
             else
@@ -38,9 +38,11 @@ if ( CLIENT ) then
         local scroll = vgui.Create("DScrollPanel", panel)
         scroll:Dock(FILL)
 
-        local cats = {}
+        local items = table.Copy(impulse.Inventory.Items)
+        table.sort(items, function(a, b) return a.Name < b.Name end)
 
-        for v, k in pairs(impulse.Inventory.Items) do
+        local cats = {}
+        for v, k in pairs(items) do
             if not cats[k.Category or "Unknown"] then
                 local cat = scroll:Add("DCollapsibleCategory")
                 cat:Dock(TOP)
@@ -60,6 +62,7 @@ if ( CLIENT ) then
             local btn = vgui.Create("DButton", cats[k.Category or "Unknown"])
             btn:SetText("")
             btn:SetSize(128, 128)
+            btn:SetTooltip(k.UniqueID)
             btn.ItemClass = k.UniqueID
 
             function btn:DoClick()
@@ -67,7 +70,7 @@ if ( CLIENT ) then
                     return LocalPlayer():Notify("No target selected.")
                 end
 
-                LocalPlayer():ConCommand("say /giveitem "..panel.Selected.." "..self.ItemClass)
+                LocalPlayer():ConCommand("say /giveitem " .. panel.Selected .. " " .. self.ItemClass)
             end
 
             local label = vgui.Create("DLabel", btn)
@@ -120,20 +123,20 @@ local giveItemCommand = {
             end
 
             if not impulse.Inventory.ItemsStored[item] then
-                return client:Notify("Item: "..item.." does not exist.")
+                return client:Notify("Item: " .. item .. " does not exist.")
             end
 
             local target = player.GetBySteamID64(steamid)
 
             if target and IsValid(target) then
                 target:GiveItem(item)
-                return client:Notify("You have given "..target:Nick().." a "..item..".")
+                return client:Notify("You have given " .. target:Nick() .. " a " .. item .. ".")
             end
 
             local impulseID = result[1].id
 
             impulse.Inventory:AddItem(impulseID, item)
-            client:Notify("Offline player ("..steamid..") has been given a "..item..".")
+            client:Notify("Offline player (" .. steamid .. ") has been given a " .. item .. ".")
         end)
 
         query:Execute()

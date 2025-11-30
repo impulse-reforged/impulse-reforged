@@ -12,25 +12,25 @@ net.Receive("impulseOpsEMPushSequence", function(len, client)
     if (client.nextOpsEMPush or 0) > CurTime() then return end
     client.nextOpsEMPush = CurTime() + 1
 
-    if not client:IsEventAdmin() then return end
+    if !client:IsEventAdmin() then return end
 
     local seqName = net.ReadString()
     local seqEventCount = net.ReadUInt(16)
     local events = {}
 
-    print("[ops-em] Starting pull of "..seqName.." (by "..client:SteamName().."). Total events: "..seqEventCount.."")
+    print("[ops-em] Starting pull of " .. seqName .. " (by " .. client:SteamName() .. "). Total events: " .. seqEventCount .. "")
 
-    for i=1, seqEventCount do
+    for i = 1, seqEventCount do
         local dataSize = net.ReadUInt(16)
         local eventData = pon.decode(net.ReadData(dataSize))
 
         table.insert(events, eventData)
-        print("[ops-em] Got event "..i.."/"..seqEventCount.." ("..eventData.Type..")")
+        print("[ops-em] Got event " .. i .. "/" .. seqEventCount .. " (" .. eventData.Type .. ")")
     end
 
     impulse.Ops.EventManager.Sequences[seqName] = events
 
-    print("[ops-em] Finished pull of "..seqName..". Ready to play sequence!")
+    print("[ops-em] Finished pull of " .. seqName .. ". Ready to play sequence!")
 
     if IsValid(client) then
         client:Notify("Sequence push has been completed successfully.")
@@ -41,11 +41,11 @@ net.Receive("impulseOpsEMPlaySequence", function(len, client)
     if (client.nextOpsEMPlay or 0) > CurTime() then return end
     client.nextOpsEMPlay = CurTime() + 1
 
-    if not client:IsEventAdmin() then return end
+    if !client:IsEventAdmin() then return end
 
     local seqName = net.ReadString()
 
-    if not impulse.Ops.EventManager.Sequences[seqName] then
+    if !impulse.Ops.EventManager.Sequences[seqName] then
         return client:Notify("The sequence does not exist on the server. Please push it first.")
     end
 
@@ -55,19 +55,19 @@ net.Receive("impulseOpsEMPlaySequence", function(len, client)
 
     impulse.Ops.EventManager.PlaySequence(seqName)
 
-    print("[ops-em] Playing sequence "..seqName.." (by "..client:SteamName()..")..")
-    client:Notify("Now playing sequence "..seqName.."..")
+    print("[ops-em] Playing sequence " .. seqName .. " (by " .. client:SteamName() .. ") .. ")
+    client:Notify("Now playing sequence " .. seqName .. " .. ")
 end)
 
 net.Receive("impulseOpsEMStopSequence", function(len, client)
     if (client.nextOpsEMStop or 0) > CurTime() then return end
     client.nextOpsEMStop = CurTime() + 1
 
-    if not client:IsEventAdmin() then return end
+    if !client:IsEventAdmin() then return end
 
     local seqName = net.ReadString()
 
-    if not impulse.Ops.EventManager.Sequences[seqName] then
+    if !impulse.Ops.EventManager.Sequences[seqName] then
         return client:Notify("The sequence does not exist on the server. Please push it first.")
     end
 
@@ -77,13 +77,13 @@ net.Receive("impulseOpsEMStopSequence", function(len, client)
 
     impulse.Ops.EventManager.StopSequence(seqName)
 
-    print("[ops-em] Stopping sequence "..seqName.." (by "..client:SteamName()..")..")
-    client:Notify("Successfully stopped sequence "..seqName.."..")
+    print("[ops-em] Stopping sequence " .. seqName .. " (by " .. client:SteamName() .. ") .. ")
+    client:Notify("Successfully stopped sequence " .. seqName .. " .. ")
 end)
 
 net.Receive("impulseOpsEMIntroCookie", function(len, client)
-    if client.usedIntroCookie or not impulse.Ops.EventManager.GetEventMode() then return end
-    
+    if client.usedIntroCookie or !impulse.Ops.EventManager.GetEventMode() then return end
+
     client.usedIntroCookie = true
 
     client:AllowScenePVSControl(true)

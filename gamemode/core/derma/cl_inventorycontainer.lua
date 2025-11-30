@@ -41,12 +41,12 @@ function PANEL:PaintOver(w, h)
 
     draw.SimpleText("You", "Impulse-Elements23-Shadow", 5, 30, grey)
     if self.invWeight then
-        draw.SimpleText(self.invWeight.."kg/"..impulse.Config.InventoryMaxWeight.."kg", "Impulse-Elements18-Shadow", 345, 35, grey, TEXT_ALIGN_RIGHT)
+        draw.SimpleText(self.invWeight .. "kg/" .. impulse.Config.InventoryMaxWeight .. "kg", "Impulse-Elements18-Shadow", 345, 35, grey, TEXT_ALIGN_RIGHT)
     end
 
     draw.SimpleText("Container", "Impulse-Elements23-Shadow", w - 5, 30, grey, TEXT_ALIGN_RIGHT)
     if self.storageWeight and self.container then
-        draw.SimpleText(self.storageWeight.."kg/"..capacity.."kg", "Impulse-Elements18-Shadow", 355, 35, grey, TEXT_ALIGN_LEFT)
+        draw.SimpleText(self.storageWeight .. "kg/" .. capacity .. "kg", "Impulse-Elements18-Shadow", 355, 35, grey, TEXT_ALIGN_LEFT)
     end
 end
 
@@ -55,7 +55,7 @@ function PANEL:Think()
         if not IsValid(self.container) or self.container:GetPos():DistToSqr(LocalPlayer():GetPos()) > (120 ^ 2) then
             return self:Remove()
         end
-    
+
         if not LocalPlayer():Alive()  then
             return self:Remove()
         end

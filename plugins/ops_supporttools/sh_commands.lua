@@ -38,7 +38,7 @@ if ( CLIENT ) then
             local item = impulse.Inventory.Items[netid]
 
 
-            msg = msg.."\n"..item.Name.." x"..k 
+            msg = msg .. "\n" .. item.Name .. " x" .. k 
         end
         
         Derma_Message(msg, "impulse", "Claim Refund")

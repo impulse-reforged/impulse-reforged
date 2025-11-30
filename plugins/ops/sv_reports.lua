@@ -57,12 +57,12 @@ function impulse.Ops.ReportNew(client, arg, rawText)
             net.WriteUInt(1, 4)
             net.Send(client)
 
-            print("[ops] NEW REPORT #"..reportId.." from "..client:Name().." ("..client:SteamID64().."): "..rawText)
-            opsSlackLog(":warning: *[NEW REPORT]* [#"..reportId.."] ".. client:SteamName().. " (".. client:Name().. ") ("..client:SteamID64().."): ```"..rawText.."```")
+            print("[ops] NEW REPORT #" .. reportId .. " from " .. client:Name() .. " (" .. client:SteamID64() .. "): " .. rawText)
+            opsSlackLog(":warning: *[NEW REPORT]* [#" .. reportId .. "] " ..  client:SteamName() .. " (" ..  client:Name() .. ") (" .. client:SteamID64() .. "): ```" .. rawText .. "```")
             return
         else
             client:Notify("Unfortunately, no game moderators are currently available to review your report. Please visit impulse-community.com and submit a ban request.")
-            opsSlackLog(":exclamation: *A user is requesting help but no moderators are online!* Report: ```".. rawText.."```")
+            opsSlackLog(":exclamation: *A user is requesting help but no moderators are online!* Report: ```" ..  rawText .. "```")
         end
     else
         if string.len(impulse.Ops.Reports[reportId][2]) > 3000 then
@@ -81,9 +81,9 @@ function impulse.Ops.ReportNew(client, arg, rawText)
             end
         end
 
-        impulse.Ops.Reports[reportId][2] = impulse.Ops.Reports[reportId][2].." + "..rawText
-        print("[ops] REPORT UPDATE #"..reportId.." from "..client:Name().." ("..client:SteamID64().."): "..rawText)
-        opsSlackLog(":speech_balloon: *[REPORT UPDATE]* [#"..reportId.."] ".. client:SteamName().. " (".. client:Name().. ") ("..client:SteamID64().."): ```".. rawText.."```")
+        impulse.Ops.Reports[reportId][2] = impulse.Ops.Reports[reportId][2] .. " + " .. rawText
+        print("[ops] REPORT UPDATE #" .. reportId .. " from " .. client:Name() .. " (" .. client:SteamID64() .. "): " .. rawText)
+        opsSlackLog(":speech_balloon: *[REPORT UPDATE]* [#" .. reportId .. "] " ..  client:SteamName() .. " (" ..  client:Name() .. ") (" .. client:SteamID64() .. "): ```" ..  rawText .. "```")
 
         net.Start("opsReportMessage")
         net.WriteUInt(reportId, 16)
@@ -104,7 +104,7 @@ function impulse.Ops.ReportClaim(client, arg, rawText)
         local reportStartTime = targetReport[4]
 
         if targetReport[3] and IsValid(targetReport[3]) then
-            return client:AddChatText(newReportCol, "Report #"..reportId.." has already been claimed by "..targetReport[3]:SteamName())
+            return client:AddChatText(newReportCol, "Report #" .. reportId .. " has already been claimed by " .. targetReport[3]:SteamName())
         end
 
         if not IsValid(reporter) then
@@ -121,12 +121,12 @@ function impulse.Ops.ReportClaim(client, arg, rawText)
         end
 
         if hasClaimedReport then
-            return client:AddChatText(newReportCol, "You already have a claimed report in progress. Current report #"..hasClaimedReport)
+            return client:AddChatText(newReportCol, "You already have a claimed report in progress. Current report #" .. hasClaimedReport)
         end
 
         impulse.Ops.Reports[reportId] = {reporter, reportMessage, client, reportStartTime, CurTime()}
 
-        print("[ops] REPORT CLAIMED #"..reportId.." by "..client:Name().." ("..client:SteamID64()..")")
+        print("[ops] REPORT CLAIMED #" .. reportId .. " by " .. client:Name() .. " (" .. client:SteamID64() .. ")")
         for v, k in player.Iterator() do
             if k:IsAdmin() then
                 net.Start("opsReportClaimed")
@@ -135,7 +135,7 @@ function impulse.Ops.ReportClaim(client, arg, rawText)
                 net.Send(k)
             end
         end
-        opsSlackLog(":passport_control: *[REPORT CLAIMED]* [#"..reportId.."] claimed by "..client:SteamName().." ("..client:SteamID64()..")")
+        opsSlackLog(":passport_control: *[REPORT CLAIMED]* [#" .. reportId .. "] claimed by " .. client:SteamName() .. " (" .. client:SteamID64() .. ")")
 
         net.Start("opsReportMessage")
         net.WriteUInt(reportId, 16)
@@ -143,7 +143,7 @@ function impulse.Ops.ReportClaim(client, arg, rawText)
         net.WriteEntity(client)
         net.Send(reporter)
     else
-        client:AddChatText(claimedReportCol, "Report #"..arg[1].." does not exist.")
+        client:AddChatText(claimedReportCol, "Report #" .. arg[1] .. " does not exist.")
     end
 end
 
@@ -209,10 +209,10 @@ function impulse.Ops.ReportClose(client, arg, rawText)
 
         if not IsValid(client) or not client:IsPlayer() then return end
 
-        print("[ops] REPORT CLOSED #"..reportId.." by "..client:Name().." ("..client:SteamID64()..")")
-        opsSlackLog(":no_entry: *[REPORT CLOSED]* [#"..reportId.."] closed by "..client:SteamName().." ("..client:SteamID64()..")")
+        print("[ops] REPORT CLOSED #" .. reportId .. " by " .. client:Name() .. " (" .. client:SteamID64() .. ")")
+        opsSlackLog(":no_entry: *[REPORT CLOSED]* [#" .. reportId .. "] closed by " .. client:SteamName() .. " (" .. client:SteamID64() .. ")")
     else
-        client:AddChatText(claimedReportCol, "Report #"..reportId.." does not exist.")
+        client:AddChatText(claimedReportCol, "Report #" .. reportId .. " does not exist.")
     end
 end
 
@@ -243,11 +243,11 @@ function impulse.Ops.ReportGoto(client, arg, rawText)
             return client:AddChatText(newReportCol, "The player who submitted this report has left the game. Please close.")
         end
 
-        print("[ops] "..client:Name().." ("..client:SteamID64()..") used /reportgoto to teleport to "..reporter:Name().." for report #"..reportId)
+        print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") used /reportgoto to teleport to " .. reporter:Name() .. " for report #" .. reportId)
         opsGoto(client, reporter:GetPos())
-        client:Notify("You have successfully teleported to "..reporter:Nick().."..")
+        client:Notify("You have successfully teleported to " .. reporter:Nick() .. " .. ")
     else
-        client:AddChatText(claimedReportCol, "Report #"..reportId.." does not exist.")
+        client:AddChatText(claimedReportCol, "Report #" .. reportId .. " does not exist.")
     end
 end
 
@@ -273,13 +273,13 @@ function impulse.Ops.ReportMsg(client, arg, rawText)
             return client:AddChatText(newReportCol, "The player who submitted this report has left the game. Please close.")
         end
 
-        print("[ops] "..client:Name().." ("..client:SteamID64()..") sent report message to "..reporter:Name()..":  "..rawText)
+        print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") sent report message to " .. reporter:Name() .. ":  " .. rawText)
         net.Start("opsReportAdminMessage")
         net.WriteEntity(client)
         net.WriteString(rawText)
         net.Send(reporter)
 
-        client:Notify("Your reply has been sent to "..reporter:Nick()..".")
+        client:Notify("Your reply has been sent to " .. reporter:Nick() .. ".")
     end
 end
 

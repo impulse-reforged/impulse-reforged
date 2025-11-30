@@ -125,7 +125,7 @@ end
 
 function PANEL:PaintOver(w, h)
     -- if ( self.IsCrafting ) then
-    --     draw.SimpleText("Crafting " .. self.CraftingItem .. "...", "Impulse-Elements22-Shadow", w / 2, h - ScreenScale(16) / 2 - ScreenScale(8), color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
+    --     draw.SimpleText("Crafting " .. self.CraftingItem .. " .. .", "Impulse-Elements22-Shadow", w / 2, h - ScreenScale(16) / 2 - ScreenScale(8), color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER)
     -- end
 end
 
@@ -173,8 +173,8 @@ function PANEL:DoCraft(item, mix)
     self.EndTime = CurTime() + length
 
     function self.craftBar:Think()
-        local timeDist = panel.EndTime - CurTime()
-        local progress = math.Clamp(((panel.StartTime - CurTime()) / (panel.StartTime - panel.EndTime)), 0, 1)
+        -- local timeDist = panel.EndTime - CurTime()
+        local progress = math.Clamp((panel.StartTime - CurTime()) / (panel.StartTime - panel.EndTime), 0, 1)
 
         self:SetFraction(progress)
         panel.model:SetColor(Color(255, 255, 255, progress * 255))

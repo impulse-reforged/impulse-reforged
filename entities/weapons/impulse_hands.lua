@@ -70,10 +70,10 @@ local IsValid = IsValid
 local CurTime = CurTime
 
 function SWEP:Deploy()
-    if not IsValid(self.Owner) then return end
+    if not IsValid(self:GetOwner()) then return end
 
     if ( SERVER ) then
-        self.Owner:DrawWorldModel(false)
+        self:GetOwner():DrawWorldModel(false)
     end
 
     self:Reset()
@@ -86,7 +86,7 @@ function SWEP:OnRemove()
 end
 
 function SWEP:Holster()
-    if not IsValid(self.Owner) then return end
+    if not IsValid(self:GetOwner()) then return end
 
     self:Reset()
 
@@ -201,7 +201,7 @@ function SWEP:Reset(throw)
         if not throw then
             RemoveVelocity(self.HoldingEntity)
         else
-            ThrowVelocity(self.HoldingEntity, self.Owner, 300)
+            ThrowVelocity(self.HoldingEntity, self:GetOwner(), 300)
         end
 
         hook.Run("GravGunOnDropped", self:GetOwner(), self.HoldingEntity, throw)
@@ -240,7 +240,7 @@ function SWEP:Drop(throw)
         end
 
         ent:SetPhysicsAttacker(self:GetOwner())
-        if ent.OnHandsDropped then ent.OnHandsDropped(ent, self.Owner) end
+        if ent.OnHandsDropped then ent.OnHandsDropped(ent, self:GetOwner()) end
     end
 
     self:Reset()
@@ -353,7 +353,7 @@ function SWEP:PrimaryAttack()
         return
     end
 
-    local client = self.Owner
+    local client = self:GetOwner()
 
     local trace = {}
     trace.start = client:EyePos()
@@ -378,7 +378,7 @@ end
 
 function SWEP:SecondaryAttack()
     if not IsFirstTimePredicted() then return end
-    local client = self.Owner
+    local client = self:GetOwner()
 
     local trace = {}
     trace.start = client:EyePos()
@@ -575,7 +575,7 @@ function SWEP:Pickup()
             end
 
             self.Constr = constraint.Weld(self.CarryHack, self.HoldingEntity, 0, bone, max_force, true)
-            self.Owner:EmitSound("physics/body/body_medium_impact_soft"..math.random(1, 3)..".wav", 75)
+            self:GetOwner():EmitSound("physics/body/body_medium_impact_soft" .. math.random(1, 3) .. ".wav", 75)
 
             hook.Run("GravGunOnPickedUp", self:GetOwner(), self.HoldingEntity)
         end

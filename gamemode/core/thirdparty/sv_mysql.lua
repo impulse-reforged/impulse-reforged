@@ -92,37 +92,37 @@ function QUERY_CLASS:Where(key, value)
 end
 
 function QUERY_CLASS:WhereEqual(key, value)
-    self.whereList[#self.whereList + 1] = "`"..key.."` = '"..self:Escape(value).."'"
+    self.whereList[#self.whereList + 1] = "`" .. key .. "` = '" .. self:Escape(value) .. "'"
 end
 
 function QUERY_CLASS:WhereNotEqual(key, value)
-    self.whereList[#self.whereList + 1] = "`"..key.."` != '"..self:Escape(value).."'"
+    self.whereList[#self.whereList + 1] = "`" .. key .. "` != '" .. self:Escape(value) .. "'"
 end
 
 function QUERY_CLASS:WhereLike(key, value, format)
     format = format or "%%%s%%"
-    self.whereList[#self.whereList + 1] = "`"..key.."` LIKE '"..string.format(format, self:Escape(value)).."'"
+    self.whereList[#self.whereList + 1] = "`" .. key .. "` LIKE '" .. string.format(format, self:Escape(value)) .. "'"
 end
 
 function QUERY_CLASS:WhereNotLike(key, value, format)
     format = format or "%%%s%%"
-    self.whereList[#self.whereList + 1] = "`"..key.."` NOT LIKE '"..string.format(format, self:Escape(value)).."'"
+    self.whereList[#self.whereList + 1] = "`" .. key .. "` NOT LIKE '" .. string.format(format, self:Escape(value)) .. "'"
 end
 
 function QUERY_CLASS:WhereGT(key, value)
-    self.whereList[#self.whereList + 1] = "`"..key.."` > '"..self:Escape(value).."'"
+    self.whereList[#self.whereList + 1] = "`" .. key .. "` > '" .. self:Escape(value) .. "'"
 end
 
 function QUERY_CLASS:WhereLT(key, value)
-    self.whereList[#self.whereList + 1] = "`"..key.."` < '"..self:Escape(value).."'"
+    self.whereList[#self.whereList + 1] = "`" .. key .. "` < '" .. self:Escape(value) .. "'"
 end
 
 function QUERY_CLASS:WhereGTE(key, value)
-    self.whereList[#self.whereList + 1] = "`"..key.."` >= '"..self:Escape(value).."'"
+    self.whereList[#self.whereList + 1] = "`" .. key .. "` >= '" .. self:Escape(value) .. "'"
 end
 
 function QUERY_CLASS:WhereLTE(key, value)
-    self.whereList[#self.whereList + 1] = "`"..key.."` <= '"..self:Escape(value).."'"
+    self.whereList[#self.whereList + 1] = "`" .. key .. "` <= '" .. self:Escape(value) .. "'"
 end
 
 function QUERY_CLASS:WhereIn(key, value)
@@ -136,15 +136,15 @@ function QUERY_CLASS:WhereIn(key, value)
         bFirst = false
     end
 
-    self.whereList[#self.whereList + 1] = "`"..key.."` IN ("..values..")"
+    self.whereList[#self.whereList + 1] = "`" .. key .. "` IN (" .. values .. ")"
 end
 
 function QUERY_CLASS:OrderByDesc(key)
-    self.orderByList[#self.orderByList + 1] = "`"..key.."` DESC"
+    self.orderByList[#self.orderByList + 1] = "`" .. key .. "` DESC"
 end
 
 function QUERY_CLASS:OrderByAsc(key)
-    self.orderByList[#self.orderByList + 1] = "`"..key.."` ASC"
+    self.orderByList[#self.orderByList + 1] = "`" .. key .. "` ASC"
 end
 
 function QUERY_CLASS:Callback(queryCallback)
@@ -152,31 +152,31 @@ function QUERY_CLASS:Callback(queryCallback)
 end
 
 function QUERY_CLASS:Select(fieldName)
-    self.selectList[#self.selectList + 1] = "`"..fieldName.."`"
+    self.selectList[#self.selectList + 1] = "`" .. fieldName .. "`"
 end
 
 function QUERY_CLASS:Insert(key, value)
-    self.insertList[#self.insertList + 1] = {"`"..key.."`", "'"..self:Escape(value).."'"}
+    self.insertList[#self.insertList + 1] = {"`" .. key .. "`", "'" .. self:Escape(value) .. "'"}
 end
 
 function QUERY_CLASS:Update(key, value)
-    self.updateList[#self.updateList + 1] = {"`"..key.."`", "'"..self:Escape(value).."'"}
+    self.updateList[#self.updateList + 1] = {"`" .. key .. "`", "'" .. self:Escape(value) .. "'"}
 end
 
 function QUERY_CLASS:Create(key, value)
-    self.createList[#self.createList + 1] = {"`"..key.."`", value}
+    self.createList[#self.createList + 1] = {"`" .. key .. "`", value}
 end
 
 function QUERY_CLASS:Add(key, value)
-    self.add = {"`"..key.."`", value}
+    self.add = {"`" .. key .. "`", value}
 end
 
 function QUERY_CLASS:Drop(key)
-    self.drop = "`"..key.."`"
+    self.drop = "`" .. key .. "`"
 end
 
 function QUERY_CLASS:PrimaryKey(key)
-    self.primaryKey = "`"..key.."`"
+    self.primaryKey = "`" .. key .. "`"
 end
 
 function QUERY_CLASS:Limit(value)
@@ -208,11 +208,11 @@ local function BuildSelectQuery(queryObj)
     if (!istable(queryObj.selectList) or #queryObj.selectList == 0) then
         queryString[#queryString + 1] = " *"
     else
-        queryString[#queryString + 1] = " "..table.concat(queryObj.selectList, ", ")
+        queryString[#queryString + 1] = " " .. table.concat(queryObj.selectList, ", ")
     end
 
     if (isstring(queryObj.tableName)) then
-        queryString[#queryString + 1] = " FROM `"..queryObj.tableName.."` "
+        queryString[#queryString + 1] = " FROM `" .. queryObj.tableName .. "` "
     else
         ErrorNoHalt("[mysql] No table name specified!\n")
         return
@@ -243,7 +243,7 @@ local function BuildInsertQuery(queryObj, bIgnore)
     local valueList = {}
 
     if (isstring(queryObj.tableName)) then
-        queryString[#queryString + 1] = " `"..queryObj.tableName.."`"
+        queryString[#queryString + 1] = " `" .. queryObj.tableName .. "`"
     else
         ErrorNoHalt("[mysql] No table name specified!\n")
         return
@@ -256,8 +256,8 @@ local function BuildInsertQuery(queryObj, bIgnore)
 
     if (#keyList == 0) then return end
 
-    queryString[#queryString + 1] = " ("..table.concat(keyList, ", ")..")"
-    queryString[#queryString + 1] = " VALUES ("..table.concat(valueList, ", ")..")"
+    queryString[#queryString + 1] = " (" .. table.concat(keyList, ", ") .. ")"
+    queryString[#queryString + 1] = " VALUES (" .. table.concat(valueList, ", ") .. ")"
 
     return table.concat(queryString)
 end
@@ -266,7 +266,7 @@ local function BuildUpdateQuery(queryObj)
     local queryString = {"UPDATE"}
 
     if (isstring(queryObj.tableName)) then
-        queryString[#queryString + 1] = " `"..queryObj.tableName.."`"
+        queryString[#queryString + 1] = " `" .. queryObj.tableName .. "`"
     else
         ErrorNoHalt("[mysql] No table name specified!\n")
         return
@@ -278,10 +278,10 @@ local function BuildUpdateQuery(queryObj)
         queryString[#queryString + 1] = " SET"
 
         for i = 1, #queryObj.updateList do
-            updateList[#updateList + 1] = queryObj.updateList[i][1].." = "..queryObj.updateList[i][2]
+            updateList[#updateList + 1] = queryObj.updateList[i][1] .. " = " .. queryObj.updateList[i][2]
         end
 
-        queryString[#queryString + 1] = " "..table.concat(updateList, ", ")
+        queryString[#queryString + 1] = " " .. table.concat(updateList, ", ")
     end
 
     if (istable(queryObj.whereList) and #queryObj.whereList > 0) then
@@ -301,7 +301,7 @@ local function BuildDeleteQuery(queryObj)
     local queryString = {"DELETE FROM"}
 
     if (isstring(queryObj.tableName)) then
-        queryString[#queryString + 1] = " `"..queryObj.tableName.."`"
+        queryString[#queryString + 1] = " `" .. queryObj.tableName .. "`"
     else
         ErrorNoHalt("[mysql] No table name specified!\n")
         return
@@ -337,7 +337,7 @@ local function BuildDropQuery(queryObj)
     local queryString = {"DROP TABLE"}
 
     if (isstring(queryObj.tableName)) then
-        queryString[#queryString + 1] = " `"..queryObj.tableName.."`"
+        queryString[#queryString + 1] = " `" .. queryObj.tableName .. "`"
     else
         ErrorNoHalt("[mysql] No table name specified!\n")
         return
@@ -350,7 +350,7 @@ local function BuildTruncateQuery(queryObj)
     local queryString = {"TRUNCATE TABLE"}
 
     if (isstring(queryObj.tableName)) then
-        queryString[#queryString + 1] = " `"..queryObj.tableName.."`"
+        queryString[#queryString + 1] = " `" .. queryObj.tableName .. "`"
     else
         ErrorNoHalt("[mysql] No table name specified!\n")
         return
@@ -363,7 +363,7 @@ local function BuildCreateQuery(queryObj)
     local queryString = {"CREATE TABLE IF NOT EXISTS"}
 
     if (isstring(queryObj.tableName)) then
-        queryString[#queryString + 1] = " `"..queryObj.tableName.."`"
+        queryString[#queryString + 1] = " `" .. queryObj.tableName .. "`"
     else
         ErrorNoHalt("[mysql] No table name specified!\n")
         return
@@ -376,18 +376,18 @@ local function BuildCreateQuery(queryObj)
 
         for i = 1, #queryObj.createList do
             if (mysql.module == "sqlite") then
-                createList[#createList + 1] = queryObj.createList[i][1].." "..ApplyQueryReplacements("Create", queryObj.createList[i][2])
+                createList[#createList + 1] = queryObj.createList[i][1] .. " " .. ApplyQueryReplacements("Create", queryObj.createList[i][2])
             else
-                createList[#createList + 1] = queryObj.createList[i][1].." "..queryObj.createList[i][2]
+                createList[#createList + 1] = queryObj.createList[i][1] .. " " .. queryObj.createList[i][2]
             end
         end
 
-        queryString[#queryString + 1] = " "..table.concat(createList, ", ")
+        queryString[#queryString + 1] = " " .. table.concat(createList, ", ")
     end
 
     if (isstring(queryObj.primaryKey)) then
         queryString[#queryString + 1] = ", PRIMARY KEY"
-        queryString[#queryString + 1] = " ("..queryObj.primaryKey..")"
+        queryString[#queryString + 1] = " (" .. queryObj.primaryKey .. ")"
     end
 
     queryString[#queryString + 1] = " )"
@@ -399,21 +399,21 @@ local function BuildAlterQuery(queryObj)
     local queryString = {"ALTER TABLE"}
 
     if (isstring(queryObj.tableName)) then
-        queryString[#queryString + 1] = " `"..queryObj.tableName.."`"
+        queryString[#queryString + 1] = " `" .. queryObj.tableName .. "`"
     else
         ErrorNoHalt("[mysql] No table name specified!\n")
         return
     end
 
     if (istable(queryObj.add)) then
-        queryString[#queryString + 1] = " ADD "..queryObj.add[1].." "..ApplyQueryReplacements("Create", queryObj.add[2])
+        queryString[#queryString + 1] = " ADD " .. queryObj.add[1] .. " " .. ApplyQueryReplacements("Create", queryObj.add[2])
     elseif (isstring(queryObj.drop)) then
         if (mysql.module == "sqlite") then
             ErrorNoHalt("[mysql] Cannot drop columns in sqlite!\n")
             return
         end
 
-        queryString[#queryString + 1] = " DROP COLUMN "..queryObj.drop
+        queryString[#queryString + 1] = " DROP COLUMN " .. queryObj.drop
     end
 
     return table.concat(queryString)

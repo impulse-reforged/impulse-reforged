@@ -19,7 +19,7 @@ local setHealthCommand = {
 
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") health to "..amount)
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") set " .. target:Name() .. "'s (" .. target:SteamID64() .. ") health to " .. amount)
             target:SetHealth(amount)
             client:Notify("You have successfully set " .. target:Nick() .. "'s health to " .. amount .. ".")
 
@@ -52,7 +52,7 @@ local setArmorCommand = {
         end
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") armor to "..amount)
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") set " .. target:Name() .. "'s (" .. target:SteamID64() .. ") armor to " .. amount)
             target:SetArmor(amount)
             client:Notify("You have successfully set " .. target:Nick() .. "'s armor to " .. amount .. ".")
 
@@ -84,7 +84,7 @@ local setHungerCommand = {
         end
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") hunger to "..amount)
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") set " .. target:Name() .. "'s (" .. target:SteamID64() .. ") hunger to " .. amount)
             target:SetHunger(amount)
             client:Notify("You have successfully set " .. target:Nick() .. "'s hunger to " .. amount .. ".")
 
@@ -112,7 +112,7 @@ local setMoneyCommand = {
         if ( !amount or !tonumber(amount) ) then return end
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") money to $"..amount)
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") set " .. target:Name() .. "'s (" .. target:SteamID64() .. ") money to $" .. amount)
             target:SetMoney(amount)
             client:Notify("You have successfully set " .. target:Nick() .. "'s money to $" .. amount .. ".")
 
@@ -140,7 +140,7 @@ local addMoneyCommand = {
         if ( !amount or !tonumber(amount) ) then return end
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") added $"..amount.." to "..target:Name().."'s ("..target:SteamID64()..") money")
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") added $" .. amount .. " to " .. target:Name() .. "'s (" .. target:SteamID64() .. ") money")
             target:AddMoney(amount)
             client:Notify("You have successfully added $" .. amount .. " to " .. target:Nick() .. "'s money.")
 
@@ -169,7 +169,7 @@ local takeMoneyCommand = {
         if ( !amount or !tonumber(amount) ) then return end
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") took $"..amount.." from "..target:Name().."'s ("..target:SteamID64()..") money")
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") took $" .. amount .. " from " .. target:Name() .. "'s (" .. target:SteamID64() .. ") money")
             target:TakeMoney(amount)
             client:Notify("You have successfully taken $" .. amount .. " from " .. target:Nick() .. "'s money.")
 
@@ -198,7 +198,7 @@ local setBankMoneyCommand = {
         if ( !amount or !tonumber(amount) ) then return end
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") bank money to $"..amount)
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") set " .. target:Name() .. "'s (" .. target:SteamID64() .. ") bank money to $" .. amount)
             target:SetBankMoney(amount)
             client:Notify("You have successfully set " .. target:Nick() .. "'s bank money to $" .. amount .. ".")
 
@@ -226,7 +226,7 @@ local addBankMoneyCommand = {
         if ( !amount or !tonumber(amount) ) then return end
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") added $"..amount.." to "..target:Name().."'s ("..target:SteamID64()..") bank money")
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") added $" .. amount .. " to " .. target:Name() .. "'s (" .. target:SteamID64() .. ") bank money")
             target:AddBankMoney(amount)
             client:Notify("You have successfully added $" .. amount .. " to " .. target:Nick() .. "'s bank money.")
 
@@ -255,7 +255,7 @@ local takeBankMoneyCommand = {
         if ( !amount or !tonumber(amount) ) then return end
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") took $"..amount.." from "..target:Name().."'s ("..target:SteamID64()..") bank money")
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") took $" .. amount .. " from " .. target:Name() .. "'s (" .. target:SteamID64() .. ") bank money")
             target:TakeBankMoney(amount)
             client:Notify("You have successfully taken $" .. amount .. " from " .. target:Nick() .. "'s bank money.")
 
@@ -282,7 +282,7 @@ local fixLegsCommand = {
 
         if ( IsValid(target) ) then
             if ( target:HasBrokenLegs() ) then
-                print("[ops] "..client:Name().." ("..client:SteamID64()..") fixed "..target:Name().."'s ("..target:SteamID64()..") broken legs")
+                print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") fixed " .. target:Name() .. "'s (" .. target:SteamID64() .. ") broken legs")
                 target:FixLegs()
                 client:Notify("You have successfully fixed " .. target:Nick() .. "'s legs.")
 
@@ -319,7 +319,7 @@ local setClassCommand = {
         end
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") class to "..class.name.." (ID: "..id..")")
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") set " .. target:Name() .. "'s (" .. target:SteamID64() .. ") class to " .. class.name .. " (ID: " .. id .. ")")
             target:SetTeamClass(id)
             client:Notify("You have successfully set " .. target:Nick() .. "'s class to " .. class.name .. ".")
 
@@ -354,7 +354,7 @@ local setRankCommand = {
 
         if ( IsValid(target) ) then
             if ( target:SetTeamRank(id) ) then
-                print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") rank to "..rank.name.." (ID: "..id..")")
+                print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") set " .. target:Name() .. "'s (" .. target:SteamID64() .. ") rank to " .. rank.name .. " (ID: " .. id .. ")")
                 client:Notify("You have successfully set " .. target:Nick() .. "'s rank to " .. rank.name .. ".")
 
                 local oldRankName = target:GetTeamRankName() or "None"
@@ -388,7 +388,7 @@ local setSavedModelCommand = {
         end
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") saved model to "..newModel)
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") set " .. target:Name() .. "'s (" .. target:SteamID64() .. ") saved model to " .. newModel)
             local query = mysql:Update("impulse_players")
             query:Update("model", newModel)
             query:Where("steamid", target:SteamID64())
@@ -428,7 +428,7 @@ local setModelCommand = {
         end
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") model to "..newModel)
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") set " .. target:Name() .. "'s (" .. target:SteamID64() .. ") model to " .. newModel)
             target:SetModel(newModel)
 
             client:Notify("You have successfully set " .. target:Nick() .. "'s model to " .. newModel .. ".")
@@ -463,7 +463,7 @@ local setSavedSkinCommand = {
         end
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") saved skin to "..newSkin)
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") set " .. target:Name() .. "'s (" .. target:SteamID64() .. ") saved skin to " .. newSkin)
             local query = mysql:Update("impulse_players")
             query:Update("skin", newSkin)
             query:Where("steamid", target:SteamID64())
@@ -503,7 +503,7 @@ local setSkinCommand = {
         end
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") skin to "..newSkin)
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") set " .. target:Name() .. "'s (" .. target:SteamID64() .. ") skin to " .. newSkin)
             target:SetSkin(newSkin)
 
             client:Notify("You have successfully set " .. target:Nick() .. "'s skin to " .. newSkin .. ".")
@@ -536,7 +536,7 @@ local setSavedNameCommand = {
         newName = table.concat(args, " ", 2)
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") saved name to "..newName)
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") set " .. target:Name() .. "'s (" .. target:SteamID64() .. ") saved name to " .. newName)
             target:SetRPName(newName, true)
 
             client:Notify("You have successfully set " .. target:Nick() .. "'s saved name to " .. newName .. ".")
@@ -569,7 +569,7 @@ local setNameCommand = {
         newName = table.concat(args, " ", 2)
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") name to "..newName)
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") set " .. target:Name() .. "'s (" .. target:SteamID64() .. ") name to " .. newName)
             target:SetRPName(newName)
 
             client:Notify("You have successfully set " .. target:Nick() .. "'s name to " .. newName .. ".")
@@ -596,7 +596,7 @@ local respawnCommand = {
         local target = impulse.Util:FindPlayer(args[1])
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") respawned "..target:Name().." ("..target:SteamID64()..")")
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") respawned " .. target:Name() .. " (" .. target:SteamID64() .. ")")
             target:Spawn()
             client:Notify("You have successfully respawned " .. target:Nick() .. ".")
 
@@ -626,7 +626,7 @@ local addXPCommand = {
         if not xp or not tonumber(xp) then return end
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") added "..xp.." XP to "..target:Name().." ("..target:SteamID64()..")")
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") added " .. xp .. " XP to " .. target:Name() .. " (" .. target:SteamID64() .. ")")
             target:AddXP(xp)
             client:Notify("You have successfully added " .. xp .. " XP to " .. target:Nick() .. ".")
 
@@ -655,7 +655,7 @@ local setXPCommand = {
         if not xp or not tonumber(xp) then return end
 
         if ( IsValid(target) ) then
-            print("[ops] "..client:Name().." ("..client:SteamID64()..") set "..target:Name().."'s ("..target:SteamID64()..") XP to "..xp)
+            print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") set " .. target:Name() .. "'s (" .. target:SteamID64() .. ") XP to " .. xp)
             target:SetXP(xp)
             client:Notify("You have successfully set " .. target:Nick() .. "'s XP to " .. xp .. ".")
 

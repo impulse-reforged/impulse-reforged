@@ -47,14 +47,14 @@ else
     local watermarkCol = Color(255, 255, 255, 120)
     function SWEP:DrawHUD()
         draw.SimpleText("LEFT: Register entity, RIGHT: Reset, RELOAD: Link", "Impulse-Elements18-Shadow", 100, 100, watermarkCol)
-        draw.SimpleText("STATE: "..(self.State or "Select a storage container..."), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
+        draw.SimpleText("STATE: " .. (self.State or "Select a storage container..."), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
 
         local count = 0
         for k, v in pairs(ents.FindByClass("impulse_storage")) do
             count = count + 1
             if v:GetPos():DistToSqr(LocalPlayer():GetPos()) < (1000 ^ 2) then
                 local sPos = v:GetPos():ToScreen()
-                draw.SimpleText("Cont#"..v:EntIndex(), "ChatFont", sPos.x, sPos.y, Color(255, 0, 0, 120), TEXT_ALIGN_CENTER)
+                draw.SimpleText("Cont#" .. v:EntIndex(), "ChatFont", sPos.x, sPos.y, Color(255, 0, 0, 120), TEXT_ALIGN_CENTER)
             end
         end
     end
@@ -65,27 +65,27 @@ function SWEP:PrimaryAttack()
     self.NextGo = CurTime() + .3
 
     local trace = {}
-    trace.start = self.Owner:EyePos()
-    trace.endpos = trace.start + self.Owner:GetAimVector() * 140
-    trace.filter = self.Owner
+    trace.start = self:GetOwner():EyePos()
+    trace.endpos = trace.start + self:GetOwner():GetAimVector() * 140
+    trace.filter = self:GetOwner()
 
     local tr = util.TraceLine(trace)
     local ent = tr.Entity
 
     if not self.SelectedStorage and IsValid(ent) and ent:GetClass() == "impulse_storage" then
         if SERVER and !ent.impulseSaveEnt then
-            self.Owner:Notify("You must mark the storage chest for saving first! Reset.")
+            self:GetOwner():Notify("You must mark the storage chest for saving first! Reset.")
             return
         end
         self.SelectedStorage = ent
-        self.State = "Storage "..ent:EntIndex().." selected, now select door..."
+        self.State = "Storage " .. ent:EntIndex() .. " selected, now select door..."
     elseif not self.SelectedDoor and IsValid(ent) and ent:IsDoor() then
         self.SelectedDoor = ent
-        self.State = "Storage "..self.SelectedStorage:EntIndex().." and door "..ent:EntIndex().." selected, ready for export."
+        self.State = "Storage " .. self.SelectedStorage:EntIndex() .. " and door " .. ent:EntIndex() .. " selected, ready for export."
 
         if ( CLIENT ) then
             surface.PlaySound("buttons/blip1.wav")
-            self.Owner:Notify("Ready for export!")
+            self:GetOwner():Notify("Ready for export!")
         end
     end
 end
@@ -114,7 +114,7 @@ function SWEP:Reload()
             self.SelectedStorage.impulseSaveKeyValue = self.SelectedStorage.impulseSaveKeyValue or {}
             self.SelectedStorage.impulseSaveKeyValue["MasterDoor"] = self.SelectedDoor:MapCreationID()
 
-            self.Owner:Notify("Linked. When done remember to run impulse_save_saveall!")
+            self:GetOwner():Notify("Linked. When done remember to run impulse_save_saveall!")
 
             self.SelectedStorage = nil
             self.SelectedDoor = nil

@@ -110,7 +110,7 @@ function PANEL:SetDoor(door)
                     local name = k:Nick()
 
                     if k:GetFriendStatus() == "friend" then
-                        name = "(FRIEND) "..name
+                        name = "(FRIEND) " .. name
                     end
 
                     local x = removeMenu:AddOption(name, function()
@@ -133,7 +133,7 @@ function PANEL:SetDoor(door)
                     local name = k:Nick()
 
                     if k:GetFriendStatus() == "friend" then
-                        name = "(FRIEND) "..name
+                        name = "(FRIEND) " .. name
                     end
 
                     local x = addMenu:AddOption(name, function()

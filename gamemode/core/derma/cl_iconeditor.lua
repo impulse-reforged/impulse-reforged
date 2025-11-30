@@ -174,11 +174,11 @@ function PANEL:Init()
 
     function self.output:DoClick()
         local camPos = panel.model:GetCamPos()
-        local output = "ITEM.FOV = "..panel.model:GetFOV().."\n"
-        output = output.."ITEM.CamPos = Vector("..camPos.x..", "..camPos.y..", "..camPos.z..")"
+        local output = "ITEM.FOV = " .. panel.model:GetFOV() .. "\n"
+        output = output .. "ITEM.CamPos = Vector(" .. camPos.x .. ", " .. camPos.y .. ", " .. camPos.z .. ")"
 
         if noCnt then
-            output = output.."\nITEM.NoCenter = true"
+            output = output .. "\nITEM.NoCenter = true"
         end
 
         print(output)

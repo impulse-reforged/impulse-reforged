@@ -118,14 +118,12 @@ function PLAYER:CanBecomeTeam(teamID, notify)
         return false
     end
 
-    if ( SERVER and teamData.cp ) then
-        if ( self:HasIllegalInventoryItem() ) then
-            if ( notify ) then
-                self:Notify("You cannot join this team while carrying illegal items in your inventory.")
-            end
-
-            return false
+    if ( SERVER and teamData.cp and self:HasIllegalInventoryItem() ) then
+        if ( notify ) then
+            self:Notify("You cannot join this team while carrying illegal items in your inventory.")
         end
+
+        return false
     end
 
     if ( teamData.limit ) then
@@ -173,11 +171,9 @@ function PLAYER:CanBecomeTeamClass(classID, forced)
     end
     ]]
 
-    if ( classData.whitelistLevel and classData.whitelistUID ) then
-        if ( !self:HasTeamWhitelist(classData.whitelistUID, classData.whitelistLevel) ) then
-            local add = classData.whitelistFailMessage or ""
-            return false, "You must be whitelisted to play as this rank. "..add
-        end
+    if ( classData.whitelistLevel and classData.whitelistUID and !self:HasTeamWhitelist(classData.whitelistUID, classData.whitelistLevel) ) then
+        local add = classData.whitelistFailMessage or ""
+        return false, "You must be whitelisted to play as this rank. " .. add
     end
 
     if classData.xp and classData.xp > self:GetXP() and forced != true then

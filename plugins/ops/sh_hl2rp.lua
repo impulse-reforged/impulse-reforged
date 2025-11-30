@@ -32,14 +32,14 @@ local combineBanCommand = {
 
             local howLong = string.NiceTime(time)
 
-            client:Notify("You have combine banned "..plyTarget:Nick().." for "..howLong..".")
-            plyTarget:Notify("You have been banned from the combine faction for "..howLong.." by a game moderator ("..client:SteamName()..").")
+            client:Notify("You have combine banned " .. plyTarget:Nick() .. " for " .. howLong .. ".")
+            plyTarget:Notify("You have been banned from the combine faction for " .. howLong .. " by a game moderator (" .. client:SteamName() .. ").")
 
             net.Start("opsGiveCombineBan")
             net.WriteUInt(time, 16)
             net.Send(plyTarget)
         else
-            return client:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find player: " .. tostring(name))
         end
     end
 }
@@ -58,9 +58,9 @@ local combineUnBanCommand = {
             plyTarget.impulseData.CombineBan = nil
             plyTarget:SaveData()
 
-            client:Notify("You have removed "..plyTarget:Nick().."'s combine ban.")
+            client:Notify("You have removed " .. plyTarget:Nick() .. "'s combine ban.")
         else
-            return client:Notify("Could not find player: "..tostring(name))
+            return client:Notify("Could not find player: " .. tostring(name))
         end
     end
 }

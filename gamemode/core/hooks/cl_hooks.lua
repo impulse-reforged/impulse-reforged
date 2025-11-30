@@ -5,7 +5,7 @@ function GM:ForceDermaSkin()
 end
 
 function GM:OnSchemaLoaded()
-    if not impulse.MainMenu and !IsValid(impulse.MainMenu) then
+    if !impulse.MainMenu and !IsValid(impulse.MainMenu) then
         impulse.SplashScreen = vgui.Create("impulseSplash")
 
         if system.IsWindows() then
@@ -14,12 +14,12 @@ function GM:OnSchemaLoaded()
     end
 
     local dir = "impulse-reforged/menumsgs/"
-    for v, k in ipairs(file.Find(dir.."*.json", "DATA")) do
+    for v, k in ipairs(file.Find(dir .. "*.json", "DATA")) do
         local f = file.Read(dir..k, "DATA")
         local data = util.JSONToTable(f)
 
-        if not data then
-            logs:Error("Error loading menu message "..k.."!")
+        if !data then
+            logs:Error("Error loading menu message " .. k .. "!")
             continue
         end
 
@@ -96,7 +96,7 @@ function GM:Think()
         nextLoopThink = CurTime() + 0.5
     end
 
-    if not SERVER_DOWN and nextCrashAnalysis and nextCrashAnalysis < CurTime() then
+    if !SERVER_DOWN and nextCrashAnalysis and nextCrashAnalysis < CurTime() then
         nextCrashAnalysis = CurTime() + 0.05
 
         local a, b = engine.ServerFrameTime()
@@ -466,14 +466,14 @@ function GM:FinishChat()
 end
 
 function GM:OnContextMenuOpen()
-    if LocalPlayer():Team() == 0 or not LocalPlayer():Alive() or impulse_ActiveWorkbar then return end
+    if LocalPlayer():Team() == 0 or !LocalPlayer():Alive() or impulse_ActiveWorkbar then return end
     if LocalPlayer():GetRelay("arrested", false) then return end
 
     local canUse = hook.Run("CanUseInventory", LocalPlayer())
 
     if canUse != nil and canUse == false then return end
 
-    if not input.IsKeyDown(KEY_LALT) then
+    if !input.IsKeyDown(KEY_LALT) then
         impulse_inventory = vgui.Create("impulseInventory")
         gui.EnableScreenClicker(true)
     else
@@ -543,7 +543,7 @@ function GM:PostReloadToolsMenu()
 end
 
 function GM:SpawnMenuOpen()
-    if LocalPlayer():Team() == 0 or not LocalPlayer():Alive() then
+    if LocalPlayer():Team() == 0 or !LocalPlayer():Alive() then
         return false
     else
         return true
