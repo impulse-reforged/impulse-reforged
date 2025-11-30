@@ -38,11 +38,17 @@ local propDoors = {
     ["models/combine_gate_citizen.mdl"] = true
 }
 
+local doors = {
+    ["prop_door_rotating"] = true,
+    ["func_door"] = true,
+    ["func_door_rotating"] = true
+}
+
 --- Returns if the entity is a door
 -- @realm shared
 -- @treturn bool Is door
 function ENTITY:IsDoor()
-    return self:GetClass():find("door")
+    return doors[self:GetClass()] or false
 end
 
 --- Helper function that can detect if the door is a players prop door
@@ -293,8 +299,8 @@ if (SERVER) then
 
         dummy:GetPhysicsObject():SetVelocity(velocity)
 
-        local uniqueID = "doorRestore"..self:EntIndex()
-        local uniqueID2 = "doorOpener"..self:EntIndex()
+        local uniqueID = "doorRestore" .. self:EntIndex()
+        local uniqueID2 = "doorOpener" .. self:EntIndex()
 
         timer.Create(uniqueID2, 1, 0, function()
             if ( IsValid(self) and IsValid(self.impulseDummy) ) then
