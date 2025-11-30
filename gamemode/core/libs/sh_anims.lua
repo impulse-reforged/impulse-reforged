@@ -591,7 +591,7 @@ local PLAYER = FindMetaTable("Player")
 -- @string sequence The sequence name
 -- @func[opt] callback Called when the animation is completed
 -- @int[opt] time How long until we force the sequence to stop
--- @bool[opt=false] noFreeze If the player should not freeze when the sequence is playing
+-- @bool[opt = false] noFreeze If the player should not freeze when the sequence is playing
 function PLAYER:ForceSequence(sequence, callback, time, noFreeze)
     hook.Run("OnPlayerEnterSequence", self, sequence, callback, time, noFreeze)
 

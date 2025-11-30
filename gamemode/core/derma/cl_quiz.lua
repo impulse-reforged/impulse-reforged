@@ -43,7 +43,7 @@ function PANEL:SetQuiz(team)
             return true
         end
 
-        local question =  vgui.Create("DLabel", bg)
+        local question = vgui.Create("DLabel", bg)
         question:SetText(k.question)
         question:SetFont("Impulse-Elements16")
         question:SetPos(5, 5)

@@ -223,7 +223,7 @@ local teamInfoCommand = {
             return client:Notify("Invalid team specified. Please use a valid team name or ID.")
         end
 
-        client:Notify("========================================")
+        client:Notify(" = == = == = == = == = == = == = == = == = == = == = == = == = == = ")
         client:Notify("Team: " .. teamData.name .. " (ID: " .. teamID .. ")")
         client:Notify("XP Required: " .. (teamData.xp or 0))
         if teamData.donatorOnly then
@@ -256,7 +256,7 @@ local teamInfoCommand = {
             end
         end
 
-        client:Notify("========================================")
+        client:Notify(" = == = == = == = == = == = == = == = == = == = == = == = == = == = ")
     end
 }
 

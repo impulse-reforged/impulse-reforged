@@ -1,7 +1,7 @@
 if ( SERVER ) then
     ENT.Base = "base_brush"
     ENT.Type = "brush"
-    ENT.IsZoneTrigger =  true
+    ENT.IsZoneTrigger = true
 
     -- Updates the bounds of this collision box
     function ENT:SetBounds(min, max)

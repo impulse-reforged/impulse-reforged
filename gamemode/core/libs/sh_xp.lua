@@ -14,7 +14,7 @@ if ( SERVER ) then
     --- Sets the amount of XP a player has
     -- @realm server
     -- @int amount The amount of XP to set for the player
-    -- @opt[opt=false] bNoSave If true, the XP will not be saved to the database
+    -- @opt[opt = false] bNoSave If true, the XP will not be saved to the database
     -- @treturn int amount The new amount of XP the player has received
     function PLAYER:SetXP(amount, bNoSave)
         if ( !self.impulseBeenSetup or self.impulseBeenSetup == false ) then return end

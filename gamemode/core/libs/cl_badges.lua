@@ -260,14 +260,14 @@ concommand.Add("impulse_badges_list", function(ply, cmd, args)
         return ply:ChatPrint("You must be an admin to use this command.")
     end
 
-    print("=== impulse Badge Users ===")
+    print(" = == impulse Badge Users == = ")
     for category, users in pairs(BADGE_USERS) do
         print("\n[" .. category .. "]")
         for steamID, name in pairs(users) do
             print("  " .. steamID .. " - " .. name)
         end
     end
-    print("\n=========================")
+    print("\n = == = == = == = == = == = == = == = == = ")
 end)
 
 -- Console command to add competition winner

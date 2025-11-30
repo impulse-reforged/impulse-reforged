@@ -23,7 +23,7 @@ function PANEL:SetMessage(...)
             msg = msg .. "<color=" .. v.r .. "," .. v.g .. "," .. v.b .. ">"
         elseif type(v) == "Player" then
             local col = team.GetColor(v:Team())
-            msg= msg .. "<color=" .. col.r .. "," .. col.g .. "," .. col.b .. ">" .. tostring(v:Name()):gsub("<", "&lt;"):gsub(">", "&gt;") .. "</color>"
+            msg = msg .. "<color=" .. col.r .. "," .. col.g .. "," .. col.b .. ">" .. tostring(v:Name()):gsub("<", "&lt;"):gsub(">", "&gt;") .. "</color>"
         else
             msg = msg..tostring(v):gsub("<", "&lt;"):gsub(">", "&gt;")
         end

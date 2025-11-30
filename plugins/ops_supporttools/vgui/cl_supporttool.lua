@@ -55,7 +55,7 @@ function PANEL:Init()
             cat:SetExpanded(false)
 
             cats[k.Category or "Unknown"] = vgui.Create("DPanelList", panel)
-            local list =  cats[k.Category or "Unknown"]
+            local list = cats[k.Category or "Unknown"]
             list:Dock(FILL)
             list:SetSpacing(5)
             cat:SetContents(list)

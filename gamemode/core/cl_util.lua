@@ -13,9 +13,9 @@ local render = render
 -- blurring disabled.
 -- @realm client
 -- @tparam panel panel Panel to draw the blur for
--- @number[opt=5] amount Intensity of the blur. This should be kept between 0 and 10 for performance reasons
--- @number[opt=0.2] passes Quality of the blur. This should be kept as default
--- @number[opt=255] alpha Opacity of the blur
+-- @number[opt = 5] amount Intensity of the blur. This should be kept between 0 and 10 for performance reasons
+-- @number[opt = 0.2] passes Quality of the blur. This should be kept as default
+-- @number[opt = 255] alpha Opacity of the blur
 -- @usage function PANEL:Paint(width, height)
 --     impulse.Util:DrawBlur(self)
 -- end
@@ -50,9 +50,9 @@ end
 -- @number y Y-position of the rectangle
 -- @number width Width of the rectangle
 -- @number height Height of the rectangle
--- @number[opt=5] amount Intensity of the blur. This should be kept between 0 and 10 for performance reasons
--- @number[opt=0.2] passes Quality of the blur. This should be kept as default
--- @number[opt=255] alpha Opacity of the blur
+-- @number[opt = 5] amount Intensity of the blur. This should be kept between 0 and 10 for performance reasons
+-- @number[opt = 0.2] passes Quality of the blur. This should be kept as default
+-- @number[opt = 255] alpha Opacity of the blur
 -- @usage hook.Add("HUDPaint", "MyHUDPaint", function()
 --     impulse.Util:DrawBlurAt(0, 0, ScrW(), ScrH())
 -- end)
@@ -93,7 +93,7 @@ end
 -- @realm client
 -- @string text Text to wrap
 -- @number maxWidth Maximum allowed width in pixels
--- @string[opt="Impulse-Elements19-Shadow"] font Font to use for the text
+-- @string[opt = "Impulse-Elements19-Shadow"] font Font to use for the text
 function impulse.Util:WrapText(text, maxWidth, font)
     font = font or "Impulse-Elements19-Shadow"
     surface.SetFont(font)
@@ -162,7 +162,7 @@ end
 -- @int time The time it will take to complete the bar
 -- @string[opt] text Text to display on the bar
 -- @func[opt] onDone Called when bar is complete
--- @bool[opt=false] popup If the bar should stop player input
+-- @bool[opt = false] popup If the bar should stop player input
 function impulse.Util:MakeWorkbar(time, text, onDone, popup)
     if ( IsValid(impulse.WorkbarPanel) ) then
         impulse.WorkbarPanel:Remove()
@@ -281,7 +281,7 @@ end
 --- Returns the text size of a string using the specified font
 -- @realm client
 -- @string text Text to measure
--- @string[opt="Impulse-Elements20"] font Font to use
+-- @string[opt = "Impulse-Elements20"] font Font to use
 -- @treturn number Width of the text
 -- @treturn number Height of the text
 function impulse.Util:GetTextSize(text, font)
@@ -292,7 +292,7 @@ end
 --- Returns the text width of a string using the specified font
 -- @realm client
 -- @string text Text to measure
--- @string[opt="Impulse-Elements20"] font Font to use
+-- @string[opt = "Impulse-Elements20"] font Font to use
 -- @treturn number Width of the text
 function impulse.Util:GetTextWidth(text, font)
     surface.SetFont(font or "Impulse-Elements20")
@@ -302,7 +302,7 @@ end
 --- Returns the text height of a string using the specified font
 -- @realm client
 -- @string text Text to measure
--- @string[opt="Impulse-Elements20"] font Font to use
+-- @string[opt = "Impulse-Elements20"] font Font to use
 -- @treturn number Height of the text
 function impulse.Util:GetTextHeight(text, font)
     surface.SetFont(font or "Impulse-Elements20")

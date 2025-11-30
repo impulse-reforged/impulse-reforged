@@ -394,7 +394,7 @@ end
 -- @realm shared
 -- @player client Player to find the target for
 -- @entity target Target entity to check
--- @number[opt=0.9] range Range to check for the target
+-- @number[opt = 0.9] range Range to check for the target
 -- @treturn bool Whether or not the target is in the player's crosshair
 -- @usage -- returns true if Entity(2) is in Entity(1)'s crosshair
 -- print(impulse.Util:FindInCrosshair(Entity(1), Entity(2)))

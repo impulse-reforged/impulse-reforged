@@ -8,9 +8,9 @@ local HIGHLIGHT = Color(14, 141, 201)
 
 SKIN = {}
 
-SKIN.PrintName         = "impulse"
-SKIN.Author         = "vin"
-SKIN.DermaVersion    = 1
+SKIN.PrintName = "impulse"
+SKIN.Author = "vin"
+SKIN.DermaVersion = 1
 SKIN.fontFrame = "Impulse-UI-SmallFont"
 SKIN.fontTab = "Impulse-UI-SmallFont"
 SKIN.fontButton = "Impulse-UI-SmallFont"
@@ -222,7 +222,7 @@ local function PaintNotches(x, y, w, h, num)
 
     local space = w / num
 
-    for i=0, num do
+    for i = 0, num do
         surface.DrawRect(x + i * space, y + 4, 1, 5)
     end
 end

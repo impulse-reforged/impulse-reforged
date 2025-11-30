@@ -1,39 +1,40 @@
 AddCSLuaFile()
-if( CLIENT ) then
+if ( CLIENT ) then
     SWEP.PrintName = "Door Editor"
     SWEP.Slot = 0
     SWEP.SlotPos = 0
     SWEP.CLMode = 0
 end
+
 SWEP.HoldType = "fists"
 
 SWEP.Category = "impulse"
-SWEP.Spawnable            = true
-SWEP.AdminSpawnable        = true
+SWEP.Spawnable = true
+SWEP.AdminSpawnable = true
 
 SWEP.ViewModel = "models/weapons/v_pistol.mdl"
 SWEP.WorldModel = "models/weapons/w_pistol.mdl"
 
-SWEP.Primary.Delay            = 0
-SWEP.Primary.Recoil            = 0
-SWEP.Primary.Damage            = 0
-SWEP.Primary.NumShots        = 0
-SWEP.Primary.Cone            = 0
-SWEP.Primary.ClipSize        = -1
-SWEP.Primary.DefaultClip    = -1
-SWEP.Primary.Automatic       = true
-SWEP.Primary.Ammo             = "none"
+SWEP.Primary.Delay = 0
+SWEP.Primary.Recoil = 0
+SWEP.Primary.Damage = 0
+SWEP.Primary.NumShots = 0
+SWEP.Primary.Cone = 0
+SWEP.Primary.ClipSize = -1
+SWEP.Primary.DefaultClip = -1
+SWEP.Primary.Automatic = true
+SWEP.Primary.Ammo  = "none"
 SWEP.IsAlwaysRaised = true
 
-SWEP.Secondary.Delay        = 0
-SWEP.Secondary.Recoil        = 0
-SWEP.Secondary.Damage        = 0
-SWEP.Secondary.NumShots        = 1
-SWEP.Secondary.Cone            = 0
-SWEP.Secondary.ClipSize        = -1
-SWEP.Secondary.DefaultClip    = -1
-SWEP.Secondary.Automatic       = true
-SWEP.Secondary.Ammo         = "none"
+SWEP.Secondary.Delay = 0
+SWEP.Secondary.Recoil = 0
+SWEP.Secondary.Damage = 0
+SWEP.Secondary.NumShots = 1
+SWEP.Secondary.Cone = 0
+SWEP.Secondary.ClipSize = -1
+SWEP.Secondary.DefaultClip = -1
+SWEP.Secondary.Automatic = true
+SWEP.Secondary.Ammo = "none"
 
 SWEP.DoorGroup = 0
 SWEP.NextGo = 0

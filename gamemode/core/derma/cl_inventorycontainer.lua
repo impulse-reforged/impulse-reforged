@@ -144,7 +144,7 @@ function PANEL:SetupItems(containerInv, invscroll, storescroll)
                 self.items[k.id] = item
             end
 
-            invWeight =  invWeight + (itemX.Weight or 0)
+            invWeight = invWeight + (itemX.Weight or 0)
         end
     else
         self.empty = self.invScroll:Add("DLabel", self)

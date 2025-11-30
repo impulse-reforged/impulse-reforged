@@ -7,7 +7,7 @@ function PANEL:Init()
     self.news = {}
     self.materials = {}
 
-    http.Fetch(impulse.Config.WordPressURL .. "/wp-json/wp/v2/posts?per_page=4",
+    http.Fetch(impulse.Config.WordPressURL .. "/wp-json/wp/v2/posts?per_page = 4",
     function(body)
         if IsValid(self) then
             self:SetupNews(util.JSONToTable(body))
@@ -62,12 +62,12 @@ function PANEL:SetupNews(newsData)
             postBackground:SetPos(-10,-10)
             postBackground:SetSize(self:GetWide()+20, self:GetTall()+10)
             postBackground:SetCursor("hand")
-            postBackground:SetHTML([[<style type="text/css">
+            postBackground:SetHTML([[<style type = "text/css">
                 body {
                     overflow:hidden;
                 }
                 </style>
-                <img src="]]..postData[4]..[[" style="width:100%;height:100%;">]])
+                <img src = "]]..postData[4]..[[" style = "width:100%;height:100%;">]])
 
         end
 

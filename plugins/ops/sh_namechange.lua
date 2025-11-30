@@ -65,7 +65,7 @@ else
     end)
 end
 
-local changeNameCommand =  {
+local changeNameCommand = {
     description = "Force changes the specified players name.",
     requiresArg = true,
     adminOnly = true,

@@ -142,7 +142,7 @@ end
 function PANEL:Think()
     if CurTime() > self.killTime then
         if self.killing then return end
-        
+
         self.killing = true
         self:AlphaTo(0, 2, 0, function()
             self:Remove()

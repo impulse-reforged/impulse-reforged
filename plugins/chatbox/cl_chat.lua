@@ -8,8 +8,8 @@ end
 
 impulse.chatBox = {}
 
-impulse.Settings:Define("chat_fadetime", {name="Chatbox fade time", category="Chatbox", type="slider", default=12, minValue=4, maxValue=120})
-impulse.Settings:Define("chat_fontsize", {name="Chatbox font size", category="Chatbox", type="dropdown", default="Medium", options={"Small", "Medium", "Large"}})
+impulse.Settings:Define("chat_fadetime", {name = "Chatbox fade time", category = "Chatbox", type = "slider", default = 12, minValue = 4, maxValue = 120})
+impulse.Settings:Define("chat_fontsize", {name = "Chatbox font size", category = "Chatbox", type = "dropdown", default = "Medium", options = {"Small", "Medium", "Large"}})
 
 -- Builds the chatbox but doesn't display it
 function impulse.chatBox.buildBox()

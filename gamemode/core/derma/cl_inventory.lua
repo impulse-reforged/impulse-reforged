@@ -132,7 +132,7 @@ function PANEL:SetupItems(width, height)
                 self.itemsPanels[v] = item
             end
 
-            weight =  weight + (itemX.Weight or 0)
+            weight = weight + (itemX.Weight or 0)
         end
     else
         self.empty = self.invScroll:Add("DLabel", self)

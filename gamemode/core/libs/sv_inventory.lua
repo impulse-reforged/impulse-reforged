@@ -14,7 +14,7 @@ impulse.Inventory.Data = impulse.Inventory.Data or {}
 -- @realm server
 -- @int ownerid OwnerID number
 -- @string class Class name of the item to add
--- @int[opt=1] storageType Storage type (1 is player inventory, 2 is storage)
+-- @int[opt = 1] storageType Storage type (1 is player inventory, 2 is storage)
 function impulse.Inventory:AddItem(ownerid, class, storageType)
     storageType = storageType or INVENTORY_PLAYER
 
@@ -29,8 +29,8 @@ end
 -- @realm server
 -- @int ownerid OwnerID number
 -- @string class Class name of the item to remove
--- @int[opt=1] storageType Storage type (1 is player inventory, 2 is storage)
--- @int[opt=1] limit The amount of items to remove
+-- @int[opt = 1] storageType Storage type (1 is player inventory, 2 is storage)
+-- @int[opt = 1] limit The amount of items to remove
 function impulse.Inventory:RemoveItem(ownerid, class, storageType, limit)
     local query = mysql:Delete("impulse_inventory")
     query:Where("ownerid", ownerid)
@@ -43,7 +43,7 @@ end
 --- Clears a players inventory. This can be used to control the inventory of offline users
 -- @realm server
 -- @int ownerid OwnerID number
--- @int[opt=1] storageType Storage type (1 is player inventory, 2 is storage)
+-- @int[opt = 1] storageType Storage type (1 is player inventory, 2 is storage)
 function impulse.Inventory:ClearInventory(ownerid, storageType)
     local query = mysql:Delete("impulse_inventory")
     query:Where("ownerid", ownerid)
@@ -72,7 +72,7 @@ end)
 -- @realm server
 -- @int ownerid OwnerID number
 -- @string class Class name of the item to update
--- @int[opt=1] limit The amount of items to update
+-- @int[opt = 1] limit The amount of items to update
 -- @int oldstoragetype Old storage type (1 is player inventory, 2 is storage)
 -- @int newstoragetype New storage type (1 is player inventory, 2 is storage)
 function impulse.Inventory:UpdateStorageType(ownerid, class, limit, oldstoragetype, newstoragetype)
@@ -154,7 +154,7 @@ local PLAYER = FindMetaTable("Player")
 
 --- Gets a players inventory table
 -- @realm server
--- @int[opt=1] storageType Storage type (1 is player inventory, 2 is storage)
+-- @int[opt = 1] storageType Storage type (1 is player inventory, 2 is storage)
 -- @treturn table Inventory
 function PLAYER:GetInventory(storageType)
     storageType = storageType or INVENTORY_PLAYER
@@ -172,7 +172,7 @@ end
 --- Returns if a player can hold an item in their local inventory
 -- @realm server
 -- @string class Item class name
--- @int[opt=1] amount Amount of the item
+-- @int[opt = 1] amount Amount of the item
 -- @treturn bool Can hold item
 function PLAYER:CanHoldItem(class, amount)
     local item = impulse.Inventory.Items[impulse.Inventory:ClassToNetID(class)]
@@ -184,7 +184,7 @@ end
 --- Returns if a player can hold an item in their storage chest
 -- @realm server
 -- @string class Item class name
--- @int[opt=1] amount Amount of the item
+-- @int[opt = 1] amount Amount of the item
 -- @treturn bool Can hold item
 function PLAYER:CanHoldItemStorage(class, amount)
     local item = impulse.Inventory.Items[impulse.Inventory:ClassToNetID(class)]
@@ -200,7 +200,7 @@ end
 --- Returns if a player has an item in their local inventory
 -- @realm server
 -- @string class Item class name
--- @int[opt=1] amount Amount of the item
+-- @int[opt = 1] amount Amount of the item
 -- @treturn bool Has item
 function PLAYER:HasInventoryItem(class, amount)
     local has = self.InventoryRegister[class]
@@ -223,7 +223,7 @@ end
 --- Returns if a player has an item in their storage chest
 -- @realm server
 -- @string class Item class name
--- @int[opt=1] amount Amount of the item
+-- @int[opt = 1] amount Amount of the item
 -- @treturn bool Has item
 function PLAYER:HasInventoryItemStorage(class, amount)
     local has = self.InventoryStorageRegister[class]
@@ -246,7 +246,7 @@ end
 --- Returns if a player has an specific item. This is used to check if they have the exact item, not just an item of the class specified
 -- @realm server
 -- @int itemID Item ID
--- @int[opt=1] storageType Storage type (1 is player inventory, 2 is storage)
+-- @int[opt = 1] storageType Storage type (1 is player inventory, 2 is storage)
 -- @treturn bool Has item
 function PLAYER:HasInventoryItemSpecific(itemID, storageType)
     if ( !self.impulseBeenInventorySetup ) then
@@ -265,7 +265,7 @@ end
 
 --- Returns if a player has an illegal inventory item
 -- @realm server
--- @int[opt=1] storageType Storage type (1 is player inventory, 2 is storage)
+-- @int[opt = 1] storageType Storage type (1 is player inventory, 2 is storage)
 -- @treturn bool Has illegal item
 -- @treturn int Item ID of illegal item
 function PLAYER:HasIllegalInventoryItem(storageType)
@@ -291,7 +291,7 @@ end
 --- Returns if a specific inventory item is restricted
 -- @realm server
 -- @int itemID Item ID
--- @int[opt=1] storageType Storage type (1 is player inventory, 2 is storage)
+-- @int[opt = 1] storageType Storage type (1 is player inventory, 2 is storage)
 -- @treturn bool Is restricted
 function PLAYER:IsInventoryItemRestricted(itemID, storageType)
     if ( !self.impulseBeenInventorySetup ) then
@@ -311,10 +311,10 @@ end
 --- Gives an inventory item to a player
 -- @realm server
 -- @string class Item class name
--- @int[opt=1] storageType Storage type (1 is player inventory, 2 is storage)
--- @bool[opt=false] restricted Is item restricted
--- @bool[opt=false] isLoaded (INTERNAL) Used for first time setup when player connects
--- @bool[opt=false] moving (INTERNAL) Is item just being moved? (stops database requests)
+-- @int[opt = 1] storageType Storage type (1 is player inventory, 2 is storage)
+-- @bool[opt = false] restricted Is item restricted
+-- @bool[opt = false] isLoaded (INTERNAL) Used for first time setup when player connects
+-- @bool[opt = false] moving (INTERNAL) Is item just being moved? (stops database requests)
 -- @int[opt] clip (INTERNAL) (Only used for weapons) Item clip
 -- @treturn int ItemID
 function PLAYER:GiveItem(class, storageType, restricted, isLoaded, moving, clip) -- isLoaded is a internal arg used for first time item setup, when they are already half loaded
@@ -375,9 +375,9 @@ end
 --- Takes an inventory item from a player
 -- @realm server
 -- @int itemID Item ID
--- @int[opt=1] storageType Storage type (1 is player inventory, 2 is storage)
--- @bool[opt=false] moving (INTERNAL) Is item just being moved? (stops database requests)
--- @number[opt=1] amount Amount to take
+-- @int[opt = 1] storageType Storage type (1 is player inventory, 2 is storage)
+-- @bool[opt = false] moving (INTERNAL) Is item just being moved? (stops database requests)
+-- @number[opt = 1] amount Amount to take
 -- @treturn int Clip
 function PLAYER:TakeInventoryItem(itemID, storageType, moving, amount)
     if ( !self.impulseBeenInventorySetup ) then
@@ -440,7 +440,7 @@ end
 
 --- Clears a players inventory
 -- @realm server
--- @int[opt=1] storageType Storage type (1 is player inventory, 2 is storage)
+-- @int[opt = 1] storageType Storage type (1 is player inventory, 2 is storage)
 function PLAYER:ClearInventory(storageType)
     if ( !self.impulseBeenInventorySetup ) then
         return false
@@ -462,7 +462,7 @@ end
 
 --- Clears restricted items from a players inventory
 -- @realm server
--- @int[opt=1] storageType Storage type (1 is player inventory, 2 is storage)
+-- @int[opt = 1] storageType Storage type (1 is player inventory, 2 is storage)
 function PLAYER:ClearRestrictedInventory(storageType)
     if ( !self.impulseBeenInventorySetup ) then
         return false
@@ -484,7 +484,7 @@ end
 
 --- Clears illegal items from a players inventory
 -- @realm server
--- @int[opt=1] storageType Storage type (1 is player inventory, 2 is storage)
+-- @int[opt = 1] storageType Storage type (1 is player inventory, 2 is storage)
 function PLAYER:ClearIllegalInventory(storageType)
     if ( !self.impulseBeenInventorySetup ) then
         return false
@@ -505,8 +505,8 @@ end
 --- Takes an item from a players inventory by class name
 -- @realm server
 -- @string class Item class name
--- @int[opt=1] storageType Storage type (1 is player inventory, 2 is storage)
--- @int[opt=1] amount Amount to take
+-- @int[opt = 1] storageType Storage type (1 is player inventory, 2 is storage)
+-- @int[opt = 1] amount Amount to take
 function PLAYER:TakeInventoryItemClass(class, storageType, amount)
     if ( !self.impulseBeenInventorySetup ) then
         return false

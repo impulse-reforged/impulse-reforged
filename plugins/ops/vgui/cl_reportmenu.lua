@@ -77,7 +77,7 @@ function PANEL:ReloadReports()
         local data = k
 
         if not report.data[3] then
-            local claimBtn =  vgui.Create("DButton", report)
+            local claimBtn = vgui.Create("DButton", report)
             claimBtn:SetPos(300, 0)
             claimBtn:SetSize(40, 23)
             claimBtn:SetText("Claim")
@@ -169,7 +169,7 @@ function PANEL:ReloadReports()
             ownsReport = false
         end
 
-        local closeBtn =  vgui.Create("DButton", report)
+        local closeBtn = vgui.Create("DButton", report)
         closeBtn:SetPos(420, 0)
         closeBtn:SetSize(40, 23)
         closeBtn:SetText("Close")

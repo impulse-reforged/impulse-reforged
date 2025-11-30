@@ -40,18 +40,18 @@ function PANEL:SetItem(panel)
     local extraMarkup = ""
 
     if self.ItemIsIllegal then
-        extraMarkup = "<colour=255, 0, 0, 255>This item is contraband</colour>\n"
+        extraMarkup = "<colour = 255, 0, 0, 255>This item is contraband</colour>\n"
     end
 
     if self.ItemIsEquipped then
-        extraMarkup = extraMarkup .. "<colour=0, 200, 0, 255>This item is equipped</colour>\n"
+        extraMarkup = extraMarkup .. "<colour = 0, 200, 0, 255>This item is equipped</colour>\n"
     end
 
     if self.ItemIsRestricted then
-        extraMarkup = extraMarkup .. "<colour=255, 223, 0, 255>This item is restricted</colour>\n"
+        extraMarkup = extraMarkup .. "<colour = 255, 223, 0, 255>This item is restricted</colour>\n"
     end
 
-    self.ItemDescMarkup = markup.Parse("<font=Impulse-Elements16-Shadow>" .. extraMarkup .. "<colour=255, 255, 255, 255>" .. self.ItemDesc .. "</colour></font>", wide)
+    self.ItemDescMarkup = markup.Parse("<font=Impulse-Elements16-Shadow>" .. extraMarkup .. "<colour = 255, 255, 255, 255>" .. self.ItemDesc .. "</colour></font>", wide)
 
     self:SetSize(wide + 20, 140 + extraTall)
     self:Show()

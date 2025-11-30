@@ -5,7 +5,7 @@ impulse.Schema = impulse.Schema or {}
 
 SCHEMA = {}
 
-local logs =  impulse.Logs
+local logs = impulse.Logs
 
 local default = {
     Name = "Unknown",

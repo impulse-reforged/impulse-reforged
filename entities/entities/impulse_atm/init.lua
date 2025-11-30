@@ -30,4 +30,3 @@ function ENT:Use(activator, caller)
         activator.currentATM = self
     end
 end
-

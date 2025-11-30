@@ -123,10 +123,10 @@ local ADJUST_SOUND = SoundDuration("npc/metropolice/pain1.wav") > 0 and "" or ""
 --- Emits queued sounds on an entity one by one
 -- @realm shared
 -- @param sounds A table of all the sounds
--- @int[opt=0] delay The delay between each sound
--- @int[opt=0.1] spacing The spacing between each sound
--- @int[opt=1] volume The volume of each sound
--- @int[opt=100] pitch The pitch of each sound
+-- @int[opt = 0] delay The delay between each sound
+-- @int[opt = 0.1] spacing The spacing between each sound
+-- @int[opt = 1] volume The volume of each sound
+-- @int[opt = 100] pitch The pitch of each sound
 -- @treturn int How long it will take to emit all the sounds
 function ENTITY:EmitQueuedSounds(sounds, delay, spacing, volume, pitch)
     delay = delay or 0
@@ -162,9 +162,9 @@ if ( SERVER ) then
     --- Emits a that is only networked to nearby players
     -- @realm server
     -- @string sound Sound path
-    -- @int[opt=660] range Radius in Source units to network the sound to
-    -- @int[opt=1] level Sound level of the sound
-    -- @int[opt=100] pitch Pitch of the sound
+    -- @int[opt = 660] range Radius in Source units to network the sound to
+    -- @int[opt = 1] level Sound level of the sound
+    -- @int[opt = 100] pitch Pitch of the sound
     function ENTITY:EmitBudgetSound(sound, range, level, pitch)
         local range = range or 600
         local pos = self:GetPos()

@@ -62,7 +62,7 @@ properties.Add("impulse_save_keyvalue", {
         Derma_StringRequest("Set Key/Value", "Enter key/value pair for this entity.", "", function(valueRaw)
             if !valueRaw then return end
 
-            local key, value = string.match(valueRaw, "(.-)=(.+)")
+            local key, value = string.match(valueRaw, "(.-) = (.+)")
 
             if !key or !value then return end
 
@@ -103,7 +103,7 @@ properties.Add("impulse_save_keyvalue", {
 
             ent.impulseSaveKeyValue = ent.impulseSaveKeyValue or {}
             ent.impulseSaveKeyValue[key] = value
-            client:AddChatText("Key/Value (" .. key .. "=" .. (value or "VALUE REMOVED") .. ") pair set on " .. ent:GetClass() .. ".")
+            client:AddChatText("Key/Value (" .. key .. " = " .. (value or "VALUE REMOVED") .. ") pair set on " .. ent:GetClass() .. ".")
         else
             client:AddChatText("Mark this entity for saving first.")
         end

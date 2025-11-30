@@ -2,7 +2,7 @@ local PANEL = {}
 
 function PANEL:Init()
     impulse.WorkbarPanel = self
-    
+
     self:SetSize(500, 50)
     self:Center()
     self.Progress = 0
@@ -22,8 +22,7 @@ end
 
 function PANEL:Think()
     if not self.EndTime then return end
-    local timeDist = self.EndTime - CurTime()
-    self.Progress = math.Clamp(((self.StartTime - CurTime()) / (self.StartTime - self.EndTime)), 0, 1)
+    self.Progress = math.Clamp((self.StartTime - CurTime()) / (self.StartTime - self.EndTime), 0, 1)
 
     if self.Progress == 1 then
         impulse_ActiveWorkbar = false
@@ -36,12 +35,11 @@ function PANEL:Think()
     end
 end
 
-local bgCol = impulse.Config.MainColour
 local outlineCol = Color(50, 50, 50, 255)
 local bodyCol = Color(30, 30, 30, 100)
 function PANEL:Paint(w, h)
     impulse.Util:DrawBlur(self)
-    
+
     surface.SetDrawColor(bodyCol)
     surface.DrawRect(0, 0, w, h)
 

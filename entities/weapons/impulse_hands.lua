@@ -10,7 +10,7 @@ if ( CLIENT ) then
 end
 
 SWEP.ViewModel = Model("models/weapons/c_hands.mdl")
-SWEP.WorldModel    = ""
+SWEP.WorldModel = ""
 
 SWEP.ViewModelFOV = 0
 SWEP.ViewModelFlip = false
@@ -96,7 +96,7 @@ end
 local function SetSubPhysMotionEnabled(ent, enabled)
     if not IsValid(ent) then return end
 
-    for i=0, ent:GetPhysicsObjectCount() - 1 do
+    for i = 0, ent:GetPhysicsObjectCount() - 1 do
         local subPhys = ent:GetPhysicsObjectNum(i)
 
         if IsValid(subPhys) then

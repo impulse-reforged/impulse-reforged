@@ -225,7 +225,7 @@ net.Receive("impulseInvDoSearch", function()
 
     if not IsValid(searchee) then return end
 
-    for i=1,invSize do
+    for i = 1,invSize do
         local itemnetid = net.ReadUInt(10)
         local item = impulse.Inventory.Items[itemnetid]
 
@@ -367,7 +367,7 @@ net.Receive("impulseViewWhitelists", function()
     local top = targ:SteamName() .. "'s whitelist(s):\n\n"
     local mid = ""
 
-    for i=1, count do
+    for i = 1, count do
         local teamid = net.ReadUInt(8)
         local level = net.ReadUInt(8)
         local teamname = team.GetName(teamid)
@@ -405,7 +405,7 @@ net.Receive("impulseInvContainerOpen", function()
     local count = net.ReadUInt(8)
     local containerInv = {}
 
-    for i=1,count do
+    for i = 1,count do
         local itemid = net.ReadUInt(10)
         local amount = net.ReadUInt(8)
 
@@ -425,7 +425,7 @@ net.Receive("impulseInvContainerUpdate", function()
     local count = net.ReadUInt(8)
     local containerInv = {}
 
-    for i=1,count do
+    for i = 1,count do
         local itemid = net.ReadUInt(10)
         local amount = net.ReadUInt(8)
 
@@ -477,7 +477,7 @@ net.Receive("impulseAchievementSync", function()
     impulse.Achievements = {}
     local count = net.ReadUInt(8)
 
-    for i=1, count do
+    for i = 1, count do
         local id = net.ReadString()
         local time = net.ReadUInt(32)
 
@@ -604,7 +604,7 @@ net.Receive("impulseGetButtons", function()
 
     impulse_ActiveButtons = {}
 
-    for i=1,count do
+    for i = 1,count do
         local entIndex = net.ReadUInt(16)
         local buttonId = net.ReadUInt(16)
 

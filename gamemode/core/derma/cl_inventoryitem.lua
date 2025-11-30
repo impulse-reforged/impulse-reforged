@@ -328,7 +328,7 @@ function PANEL:OnMousePressed(keycode)
 end
 
 local bodyCol = Color(50, 50, 50, 210)
-local equippedCol =  Color(0, 220, 0, 140)
+local equippedCol = Color(0, 220, 0, 140)
 function PANEL:Paint(width, height)
     surface.SetDrawColor(bodyCol)
     surface.DrawRect(0, 0, width, height)

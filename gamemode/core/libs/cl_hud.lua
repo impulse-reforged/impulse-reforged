@@ -99,7 +99,7 @@ local function DrawDoorInfo(target, alpha)
     local pos = target.LocalToWorld(target, target:OBBCenter()):ToScreen()
     local doorOwners = target:GetRelay("doorOwners", nil)
     local doorName = target:GetRelay("doorName", nil)
-    local doorGroup =  target:GetRelay("doorGroup", nil)
+    local doorGroup = target:GetRelay("doorGroup", nil)
     local doorBuyable = target:GetRelay("doorBuyable", true)
     local col = ColorAlpha(impulse.Config.MainColour, alpha)
 
@@ -748,7 +748,7 @@ function GM:HUDPaintBackground()
 
     if impulse.CinematicIntro and client:Alive() then
         local ft = FrameTime()
-        local maxTall =  ScrH() * .12
+        local maxTall = ScrH() * .12
 
         if holdTime and holdTime + 6 < CurTime() then
             letterboxFde = math.Clamp(letterboxFde - ft / 2, 0, 1)

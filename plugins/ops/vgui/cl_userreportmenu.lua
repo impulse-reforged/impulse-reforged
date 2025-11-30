@@ -28,7 +28,7 @@ function PANEL:AddLog(message, isMe, timestamp)
         if type(v) == "table" then
             msg = msg .. "<color=" .. v.r .. "," .. v.g .. "," .. v.b .. ">"
         else
-            msg = msg..tostring(v):gsub("<", "&lt;"):gsub(">", "&gt;")
+            msg = msg .. tostring(v):gsub("<", "&lt;"):gsub(">", "&gt;")
         end
     end
     msg = msg .. "</font>"

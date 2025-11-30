@@ -219,7 +219,7 @@ end)
 
 net.Receive("opsGiveCombineBan", function()
     local time = net.ReadUInt(16)
-    local endTime =  os.time() + time
+    local endTime = os.time() + time
     local endDate = os.date("%H:%M:%S - %d/%m/%Y", endTime)
     local template = "You have an active combine ban for a violation of the server rules.\nExpiry time: " .. endDate
     local id = "combineban_" .. endDate
@@ -230,7 +230,7 @@ end)
 
 net.Receive("opsGiveOOCBan", function()
     local time = net.ReadUInt(16)
-    local endTime =  os.time() + time
+    local endTime = os.time() + time
     local endDate = os.date("%H:%M:%S - %d/%m/%Y", endTime)
     local template = "You have an active OOC communication timeout for a violation of the server rules.\nExpiry time: " .. endDate
     local id = "oocban_" .. endDate
@@ -277,7 +277,7 @@ net.Receive("opsE2Viewer", function()
     local count = net.ReadUInt(8)
     local e2s = {}
 
-    for i=1, count do
+    for i = 1, count do
         local e2 = net.ReadEntity()
         local name = net.ReadString()
         local perf = net.ReadFloat()

@@ -204,7 +204,7 @@ local sounds = {
 
 --- Used to pick a random crafting sound for the correct crafting type
 -- @realm shared
--- @string[opt=generic] craftType Crafting type
+-- @string[opt = generic] craftType Crafting type
 -- @see CraftingTypes
 -- @treturn string The random crafting sound based on the crafting type (eg: if type is wood then return wood2.wav)
 function impulse.Inventory:PickRandomCraftSound(crafttype)

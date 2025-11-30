@@ -1,42 +1,43 @@
 AddCSLuaFile()
 
-if( CLIENT ) then
+if ( CLIENT ) then
     SWEP.PrintName = "Position Debugger"
     SWEP.Slot = 0
     SWEP.SlotPos = 0
     SWEP.CLMode = 0
     SWEP.Author = "Riggs"
 end
+
 SWEP.HoldType = "fists"
 
 SWEP.Category = "impulse"
-SWEP.Spawnable            = true
-SWEP.AdminSpawnable        = true
+SWEP.Spawnable = true
+SWEP.AdminSpawnable = true
 
 SWEP.ViewModel = "models/weapons/c_toolgun.mdl"
 SWEP.WorldModel = "models/weapons/w_toolgun.mdl"
 SWEP.UseHands = true
 
-SWEP.Primary.Delay            = 1
-SWEP.Primary.Recoil            = 0
-SWEP.Primary.Damage            = 0
-SWEP.Primary.NumShots        = 0
-SWEP.Primary.Cone            = 0
-SWEP.Primary.ClipSize        = -1
-SWEP.Primary.DefaultClip    = -1
-SWEP.Primary.Automatic       = false
-SWEP.Primary.Ammo             = "none"
+SWEP.Primary.Delay = 1
+SWEP.Primary.Recoil = 0
+SWEP.Primary.Damage = 0
+SWEP.Primary.NumShots = 0
+SWEP.Primary.Cone = 0
+SWEP.Primary.ClipSize = -1
+SWEP.Primary.DefaultClip = -1
+SWEP.Primary.Automatic = false
+SWEP.Primary.Ammo  = "none"
 SWEP.IsAlwaysRaised = true
 
-SWEP.Secondary.Delay        = 0.9
-SWEP.Secondary.Recoil        = 0
-SWEP.Secondary.Damage        = 0
-SWEP.Secondary.NumShots        = 1
-SWEP.Secondary.Cone            = 0
-SWEP.Secondary.ClipSize        = -1
-SWEP.Secondary.DefaultClip    = -1
-SWEP.Secondary.Automatic       = false
-SWEP.Secondary.Ammo         = "none"
+SWEP.Secondary.Delay = 0.9
+SWEP.Secondary.Recoil = 0
+SWEP.Secondary.Damage = 0
+SWEP.Secondary.NumShots = 1
+SWEP.Secondary.Cone = 0
+SWEP.Secondary.ClipSize = -1
+SWEP.Secondary.DefaultClip = -1
+SWEP.Secondary.Automatic = false
+SWEP.Secondary.Ammo = "none"
 SWEP.NextGo = 0
 
 if ( SERVER ) then
@@ -108,7 +109,7 @@ else
     end
 
     hook.Add("PostDrawOpaqueRenderables", "posDebugger3D", function()
-        local activeWep =  LocalPlayer():GetActiveWeapon()
+        local activeWep = LocalPlayer():GetActiveWeapon()
         if activeWep and IsValid(activeWep) and activeWep:GetClass() == "impulse_posdebugger" then
             local pos1, pos2
             local col

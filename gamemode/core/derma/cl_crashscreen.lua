@@ -22,7 +22,7 @@ function PANEL:Init()
     end
 
     wait(3.33, function()
-        http.Fetch("http://api.steampowered.com/ISteamApps/GetServersAtAddress/v0001?addr=" .. game.GetIPAddress(), function(json)
+        http.Fetch("http://api.steampowered.com/ISteamApps/GetServersAtAddress/v0001?addr = " .. game.GetIPAddress(), function(json)
             if not IsValid(self) then
                 return
             end

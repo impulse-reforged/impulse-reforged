@@ -11,7 +11,7 @@ if ( SERVER ) then
         targ = Entity(targ)
         if not IsValid(targ) then return end
 
-        for i=1,invSize do
+        for i = 1,invSize do
             local itemid = net.ReadUInt(16)
             local hasItem = targ:HasInventoryItemSpecific(itemid)
 
@@ -30,7 +30,7 @@ else
 
         if not IsValid(searchee) then return end
 
-        for i=1,invSize do
+        for i = 1,invSize do
             local itemnetid = net.ReadUInt(10)
             local itemrestricted = net.ReadBool()
             local itemequipped = net.ReadBool()

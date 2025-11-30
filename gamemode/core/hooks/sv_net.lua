@@ -728,7 +728,7 @@ net.Receive("impulseInvDoSearchConfiscate", function(len, client)
     local count = net.ReadUInt(8) or 0
 
     if count > 0 then
-        for i=1,count do
+        for i = 1,count do
             local netid = net.ReadUInt(10)
             local item = impulse.Inventory.Items[netid]
 

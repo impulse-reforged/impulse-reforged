@@ -18,7 +18,7 @@ if ( SERVER ) then
     --- Gives an achievement to a player
     -- @realm server
     -- @string class Achievement class
-    -- @bool[opt=false] skipPoints Wether to skip calculating the points from this achievement
+    -- @bool[opt = false] skipPoints Wether to skip calculating the points from this achievement
     function PLAYER:AchievementGive(class, skipPoints)
         if not self.impulseData then return end
 

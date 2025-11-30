@@ -440,7 +440,7 @@ local PLAYER = FindMetaTable("Player")
 -- @realm server
 -- @string name Group name
 -- @string[opt] rank Rank
--- @bool[opt=false] skipDb If true, the player will not be added to the database
+-- @bool[opt = false] skipDb If true, the player will not be added to the database
 function PLAYER:GroupAdd(name, rank, skipDb)
     local id = impulse.Group.Groups[name].ID
     local rank = rank or impulse.Group:GetDefaultRank(name)
