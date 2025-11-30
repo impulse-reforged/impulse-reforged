@@ -125,6 +125,14 @@ end
 
 function PLAYER:SetTeamClass(classID, skipLoadout)
     local teamData = impulse.Teams:FindTeam(self:Team())
+    if ( !teamData ) then
+        return false, "Invalid team ID!"
+    end
+
+    if ( !teamData.classes ) then
+        return false, "Team does not support classes"
+    end
+
     local classData = teamData.classes[classID]
     if ( !classData ) then
         return false, "Invalid class ID! (" .. tostring(classID) .. ")"
@@ -170,44 +178,74 @@ function PLAYER:SetTeamClass(classID, skipLoadout)
 
         self:StripWeapons()
 
-        if ( classData.loadout ) then
-            for v,weapon in pairs(classData.loadout) do
+        if ( teamData.loadout ) then
+            for _, weapon in pairs(teamData.loadout) do
                 self:Give(weapon)
             end
-        else
-            for v,weapon in pairs(teamData.loadout) do
+        end
+
+        if ( classData.loadout ) then
+            for _, weapon in pairs(classData.loadout) do
                 self:Give(weapon)
+            end
+        end
+
+        -- Check for rank-specific loadouts for this class
+        local currentRank = self:GetTeamRank()
+        if ( classData.rankLoadouts and currentRank and classData.rankLoadouts[currentRank] ) then
+            for _, weapon in pairs(classData.rankLoadouts[currentRank]) do
+                self:Give(weapon)
+            end
+        end
+
+        -- Check for class-specific loadouts in current rank
+        if ( currentRank and teamData.ranks and teamData.ranks[currentRank] ) then
+            local rankData = teamData.ranks[currentRank]
+            if ( rankData.classLoadouts and rankData.classLoadouts[classID] ) then
+                for _, weapon in pairs(rankData.classLoadouts[classID]) do
+                    self:Give(weapon)
+                end
             end
 
-            if ( classData.loadoutAdd ) then
-                for v,weapon in pairs(classData.loadoutAdd) do
-                    self:Give(weapon)
+            -- Parallel: class-specific items in current rank
+            if ( rankData.classItems and rankData.classItems[classID] ) then
+                for _, item in pairs(rankData.classItems[classID]) do
+                    local cls = item.class or item[1]
+                    local amt = item.amount or item[2] or 1
+                    for i = 1, amt do
+                        self:GiveItem(cls, 1, true)
+                    end
                 end
             end
         end
 
         self:ClearRestrictedInventory()
 
-        if ( classData.items ) then
-            for v, item in pairs(classData.items) do
+        if ( teamData.items ) then
+            for _, item in pairs(teamData.items) do
                 for i = 1, (item.amount or 1) do
                     self:GiveItem(item.class, 1, true)
                 end
             end
-        else
-            if ( teamData.items ) then
-                for v, item in pairs(teamData.items) do
-                    for i = 1, (item.amount or 1) do
-                        self:GiveItem(item.class, 1, true)
-                    end
+        end
+
+        if ( classData.items ) then
+            for _, item in pairs(classData.items) do
+                local cls = item.class or item[1]
+                local amt = item.amount or item[2] or 1
+                for i = 1, amt do
+                    self:GiveItem(cls, 1, true)
                 end
             end
+        end
 
-            if ( classData.itemsAdd ) then
-                for v, item in pairs(classData.itemsAdd) do
-                    for i = 1, (item.amount or 1) do
-                        self:GiveItem(item.class, 1, true)
-                    end
+        -- Parallel: rank-specific items for this class
+        if ( classData.rankItems and currentRank and classData.rankItems[currentRank] ) then
+            for _, item in pairs(classData.rankItems[currentRank]) do
+                local cls = item.class or item[1]
+                local amt = item.amount or item[2] or 1
+                for i = 1, amt do
+                    self:GiveItem(cls, 1, true)
                 end
             end
         end
@@ -234,6 +272,14 @@ end
 
 function PLAYER:SetTeamRank(rankID)
     local teamData = impulse.Teams:FindTeam(self:Team())
+    if ( !teamData ) then
+        return false, "Invalid team ID!"
+    end
+
+    if ( !teamData.ranks ) then
+        return false, "Team does not support ranks"
+    end
+
     local classData = teamData.classes and teamData.classes[self:GetTeamClass()] or nil
     local rankData = teamData.ranks and teamData.ranks[rankID] or nil
 
@@ -303,58 +349,95 @@ function PLAYER:SetTeamRank(rankID)
 
     self:StripWeapons()
 
-    if ( rankData and rankData.loadout ) then
-        for _,weapon in pairs(rankData.loadout) do
-            self:Give(weapon)
-        end
-    else
+    if ( teamData.loadout ) then
         for _, weapon in pairs(teamData.loadout) do
             self:Give(weapon)
         end
+    end
 
-        if ( classData and classData.loadoutAdd ) then
-            for _, weapon in pairs(classData.loadoutAdd) do
-                self:Give(weapon)
-            end
+    if ( classData and classData.loadout ) then
+        for _, weapon in pairs(classData.loadout) do
+            self:Give(weapon)
         end
+    end
 
-        if ( rankData and rankData.loadoutAdd ) then
-            for _, weapon in pairs(rankData.loadoutAdd) do
-                self:Give(weapon)
-            end
+    -- Add rank-specific loadout
+    if ( rankData and rankData.loadout ) then
+        for _, weapon in pairs(rankData.loadout) do
+            self:Give(weapon)
+        end
+    end
+
+    -- Legacy support for rank loadoutAdd
+    if ( rankData and rankData.loadoutAdd ) then
+        for _, weapon in pairs(rankData.loadoutAdd) do
+            self:Give(weapon)
+        end
+    end
+
+    -- Check for rank-specific loadouts for current class
+    if ( classData and classData.rankLoadouts and classData.rankLoadouts[rankID] ) then
+        for _, weapon in pairs(classData.rankLoadouts[rankID]) do
+            self:Give(weapon)
+        end
+    end
+
+    -- Check for class-specific loadouts for current rank
+    local currentClass = self:GetTeamClass()
+    if ( rankData and rankData.classLoadouts and currentClass and rankData.classLoadouts[currentClass] ) then
+        for _, weapon in pairs(rankData.classLoadouts[currentClass]) do
+            self:Give(weapon)
         end
     end
 
     self:ClearRestrictedInventory()
 
-    if ( rankData and rankData.items ) then
-        for _, item in pairs(rankData.items) do
+    if ( teamData.items ) then
+        for _, item in pairs(teamData.items) do
             for i = 1, (item.amount or 1) do
                 self:GiveItem(item.class, 1, true)
             end
         end
-    else
-        if ( teamData and teamData.items ) then
-            for _, item in pairs(teamData.items) do
-                for i = 1, (item.amount or 1) do
-                    self:GiveItem(item.class, 1, true)
-                end
+    end
+
+    if ( classData and classData.items ) then
+        for _, item in pairs(classData.items) do
+            local cls = item.class or item[1]
+            local amt = item.amount or item[2] or 1
+            for i = 1, amt do
+                self:GiveItem(cls, 1, true)
             end
         end
+    end
 
-        if ( classData and classData.itemsAdd ) then
-            for _, item in pairs(classData.itemsAdd) do
-                for i = 1, (item.amount or 1) do
-                    self:GiveItem(item.class, 1, true)
-                end
+    if ( rankData and rankData.items ) then
+        for _, item in pairs(rankData.items) do
+            local cls = item.class or item[1]
+            local amt = item.amount or item[2] or 1
+            for i = 1, amt do
+                self:GiveItem(cls, 1, true)
             end
         end
+    end
 
-        if ( rankData and rankData.itemsAdd ) then
-            for _, item in pairs(rankData.itemsAdd) do
-                for i = 1, (item.amount or 1) do
-                    self:GiveItem(item.class, 1, true)
-                end
+    -- Parallel: rank-specific items for class
+    if ( classData and classData.rankItems and classData.rankItems[rankID] ) then
+        for _, item in pairs(classData.rankItems[rankID]) do
+            local cls = item.class or item[1]
+            local amt = item.amount or item[2] or 1
+            for i = 1, amt do
+                self:GiveItem(cls, 1, true)
+            end
+        end
+    end
+
+    -- Parallel: class-specific items within rank
+    if ( rankData and rankData.classItems and currentClass and rankData.classItems[currentClass] ) then
+        for _, item in pairs(rankData.classItems[currentClass]) do
+            local cls = item.class or item[1]
+            local amt = item.amount or item[2] or 1
+            for i = 1, amt do
+                self:GiveItem(cls, 1, true)
             end
         end
     end
