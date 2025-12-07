@@ -60,7 +60,7 @@ function PANEL:Init()
             impulse.Util:DrawBlurAt(70, 0, 400, height) -- left panel
 
             if ( impulse.Config.WordPressURL != "" or !table.IsEmpty(impulse.Config.SchemaChangelogs) ) then
-                impulse.Util:DrawBlurAt(self:GetWide() - 600, 0, 500, 380) -- news panel
+                impulse.Util:DrawBlurAt(self:GetWide() - 600, 0, 500, 80) -- news panel
             end
         end
     end
@@ -260,18 +260,18 @@ function PANEL:Init()
     if ( impulse.Config.WordPressURL != "" or !table.IsEmpty(impulse.Config.SchemaChangelogs) ) then
         local newsContainer = vgui.Create("DPanel", self.core)
         newsContainer:SetPos(self:GetWide() - 600, 0)
-        newsContainer:SetSize(500, 400)
+        newsContainer:SetSize(500, 350)
         newsContainer.Paint = function(this, width, height)
             surface.SetDrawColor(bodyCol)
-            surface.DrawRect(0, 0, width, height - 20)
+            surface.DrawRect(0, 0, width, 80)
         end
 
         local newsLabel = vgui.Create("DLabel", newsContainer)
         newsLabel:Dock(TOP)
-        newsLabel:DockMargin(10, 40, 0, 5)
+        newsLabel:DockMargin(10, 40, 0, 0)
         newsLabel:SetFont("Impulse-Elements32")
         newsLabel:SetText("News")
-        newsLabel:SizeToContents()
+        newsLabel:SetTall(40)
 
         local newsFeed = vgui.Create("impulseNewsfeed", newsContainer)
         newsFeed:Dock(FILL)
