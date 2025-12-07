@@ -22,7 +22,7 @@ local lasthealth
 local time = 0
 local zoneLbl
 local gradient = Material("vgui/gradient-l")
-local watermark = Material("impulse-reforged/impulse-white.png")
+local watermark = Material("impulse-reforged/impulse-reforged-title-white.png")
 local watermarkCol = Color(255,255,255,120)
 local fde = 0
 local hudBlackGrad = Color(40,40,40,180)
@@ -198,30 +198,28 @@ function GM:HUDPaint()
 
     local seeColIcons = impulse.Settings:Get("hud_iconcolours")
     local aboveHUDUsed = false
-    local deathSoundPlayed
-
-    if SERVER_DOWN and CRASHSCREEN_ALLOW then
-        if not IsValid(CRASH_SCREEN) then
+    if ( SERVER_DOWN and CRASHSCREEN_ALLOW ) then
+        if ( !IsValid(CRASH_SCREEN) ) then
             CRASH_SCREEN = vgui.Create("impulseCrashScreen")
         end
-    elseif IsValid(CRASH_SCREEN) and !CRASH_SCREEN.fadin then
+    elseif ( IsValid(CRASH_SCREEN) and !CRASH_SCREEN.fadin ) then
         CRASH_SCREEN.fadin = true
         CRASH_SCREEN:AlphaTo(0, 1.2, nil, function()
-            if IsValid(CRASH_SCREEN) then
+            if ( IsValid(CRASH_SCREEN) ) then
                 CRASH_SCREEN:Remove()
             end
         end)
     end
 
-    if not client:Alive() and !SCENES_PLAYING then
+    if ( !client:Alive() and !SCENES_PLAYING ) then
         local ft = FrameTime()
 
-        if not deathRegistered then
+        if ( !deathRegistered ) then
             local deathSound = hook.Run("GetDeathSound") or "impulse-reforged/death.mp3"
             surface.PlaySound(deathSound)
 
             deathWait = CurTime() + impulse.Config.RespawnTime
-            if client:IsDonator() then
+            if ( client:IsDonator() ) then
                 deathWait = CurTime() + impulse.Config.RespawnTimeDonator
             end
 
@@ -233,22 +231,21 @@ function GM:HUDPaint()
         painFde = 0.7
 
         surface.SetDrawColor(ColorAlpha(color_black, math.ceil(fde * 255)))
-        surface.DrawRect(-1, -1, ScrW() +2, ScrH() +2)
+        surface.DrawRect(-1, -1, ScrW() + 2, ScrH() + 2)
 
         local textCol = Color(255, 255, 255, math.ceil(fde * 255))
 
         draw.SimpleText("You have died", "Impulse-Elements32", scrW / 2, scrH / 2, textCol, TEXT_ALIGN_CENTER)
 
         local wait = math.ceil(deathWait - CurTime())
+        if ( wait > 0 ) then
+            draw.SimpleText("You will respawn in " .. string.NiceTime(wait) .. ".", "Impulse-Elements23", scrW / 2, scrH / 2 + 30, textCol, TEXT_ALIGN_CENTER)
+            draw.SimpleText("WARNING: NLR applies, you may not return to this area until 5 minutes after your death.", "Impulse-Elements18", scrW / 2, scrH / 2 + 70, textCol, TEXT_ALIGN_CENTER)
 
-        if wait > 0 then
-            draw.SimpleText("You will respawn in " .. wait .. " " .. (wait == 1 and "second" or "seconds") .. ".", "Impulse-Elements23", scrW/2, (scrH/2)+30, textCol, TEXT_ALIGN_CENTER)
-            draw.SimpleText("WARNING: NLR applies, you may not return to this area until 5 minutes after your death.", "Impulse-Elements18", scrW/2, (scrH/2)+70, textCol, TEXT_ALIGN_CENTER)
-
-            draw.SimpleText("If you feel you were unfairly killed, submit a report (F3) for assistance.", "Impulse-Elements16", scrW/2, scrH-20, textCol, TEXT_ALIGN_CENTER)
+            draw.SimpleText("If you feel you were unfairly killed, submit a report (F3) for assistance.", "Impulse-Elements16", scrW / 2, scrH - 20, textCol, TEXT_ALIGN_CENTER)
         end
 
-        if IsValid(PlayerIcon) then
+        if ( IsValid(PlayerIcon) ) then
             PlayerIcon:Remove()
         end
 
@@ -300,23 +297,21 @@ function GM:HUDPaint()
     surface.SetDrawColor(ColorAlpha(painCol, 255 * (0.7 - painFde)))
     surface.DrawRect(0, 0, scrW, scrH)
 
-    --Crosshair
+    -- Crosshair
     local hud_crosshair = impulse.Settings:Get("hud_crosshair")
-    if hud_crosshair == true then
+    if ( hud_crosshair == true ) then
         local curWep = client:GetActiveWeapon()
-
-        if not curWep or not curWep.ShouldDrawCrosshair or (curWep.ShouldDrawCrosshair and curWep.ShouldDrawCrosshair(curWep) != false) then
-            if impulse.Settings:Get("view_thirdperson") == true or impulse.Settings:Get("view_firstperson_smooth_origin") == true or impulse.Settings:Get("view_firstperson_smooth_angles") == true then
-                --local p = client:GetEyeTrace().HitPos:ToScreen()
+        if ( !curWep or !curWep.ShouldDrawCrosshair or (curWep.ShouldDrawCrosshair and curWep.ShouldDrawCrosshair(curWep) != false) ) then
+            if ( impulse.Settings:Get("view_thirdperson") == true or impulse.Settings:Get("view_firstperson_smooth_origin") == true or impulse.Settings:Get("view_firstperson_smooth_angles") == true ) then
                 local p = util.TraceLine({
                     start = client:GetShootPos(),
-                    endpos = client:GetShootPos() + client:GetAimVector() * 10000,
+                    endpos = client:GetShootPos() + client:GetAimVector() * 8192,
                     filter = client,
                     mask = MASK_SHOT
                 }).HitPos:ToScreen()
                 x, y = p.x, p.y
             else
-                x, y = scrW/2, scrH/2
+                x, y = scrW / 2, scrH / 2
             end
 
             DrawCrosshair(x, y)
@@ -326,26 +321,26 @@ function GM:HUDPaint()
     -- HUD
 
     local shouldDraw = hook.Run("ShouldDrawHUD")
-    if shouldDraw != false then
+    if ( shouldDraw != false ) then
         local teamName = team.GetName(clientTeam)
         local className = client:GetTeamClassName()
         local rankName = client:GetTeamRankName()
         local displayTeamName = teamName
-        if className and className != "" then
+        if ( className and className != "" ) then
             displayTeamName = displayTeamName .. ", " .. className
         end
 
-        if rankName and rankName != "" then
+        if ( rankName and rankName != "" ) then
             displayTeamName = displayTeamName .. ", " .. rankName
         end
 
         surface.SetFont("Impulse-Elements23")
-        local textWidth, textHeight = surface.GetTextSize(displayTeamName)
-        if textWidth > hudWidth - 40 then
+        local textWidth, _ = surface.GetTextSize(displayTeamName)
+        if ( textWidth > hudWidth - 40 ) then
             hudWidth = textWidth + 40
         end
 
-        y = scrH-hudHeight-8-10
+        y = scrH - hudHeight - 8 - 10
         impulse.Util:DrawBlurAt(10, y, hudWidth, hudHeight)
         surface.SetDrawColor(darkCol)
         surface.DrawRect(10, y, hudWidth, hudHeight)
@@ -354,7 +349,7 @@ function GM:HUDPaint()
 
         surface.SetTextColor(color_white)
         surface.SetDrawColor(color_white)
-        surface.SetTextPos(30, y+10)
+        surface.SetTextPos(30, y + 10)
         surface.DrawText(LocalPlayer():Name())
 
         local hookReplaceTeamName = hook.Run("GetHUDTeamName", clientTeam, displayTeamName)
@@ -363,7 +358,7 @@ function GM:HUDPaint()
         end
 
         surface.SetTextColor(team.GetColor(clientTeam))
-        surface.SetTextPos(30, y+30)
+        surface.SetTextPos(30, y + 30)
         surface.DrawText(displayTeamName)
 
         local yAdd = 0
@@ -371,23 +366,23 @@ function GM:HUDPaint()
         surface.SetTextColor(color_white)
         surface.SetFont("Impulse-Elements19")
 
-        surface.SetTextPos(136, y+64+yAdd)
+        surface.SetTextPos(136, y + 64 + yAdd)
         surface.DrawText("Health: " .. LocalPlayer():Health())
         if seeColIcons == true then surface.SetDrawColor(healthCol) end
         surface.SetMaterial(healthIcon)
-        surface.DrawTexturedRect(110, y+66+yAdd, 18, 16)
+        surface.DrawTexturedRect(110, y + 66 + yAdd, 18, 16)
 
-        surface.SetTextPos(136, y+86+yAdd)
+        surface.SetTextPos(136, y + 86 + yAdd)
         surface.DrawText("Hunger: " .. LocalPlayer():GetHunger())
         if seeColIcons == true then surface.SetDrawColor(hungerCol) end
         surface.SetMaterial(hungerIcon)
-        surface.DrawTexturedRect(110, y+87+yAdd, 18, 18)
+        surface.DrawTexturedRect(110, y + 87 + yAdd, 18, 18)
 
-        surface.SetTextPos(136, y+108+yAdd)
+        surface.SetTextPos(136, y + 108 + yAdd)
         surface.DrawText("Money: " .. impulse.Config.CurrencyPrefix .. LocalPlayer():GetMoney())
         if seeColIcons == true then surface.SetDrawColor(moneyCol) end
         surface.SetMaterial(moneyIcon)
-        surface.DrawTexturedRect(110, y+107+yAdd, 18, 18)
+        surface.DrawTexturedRect(110, y + 107 + yAdd, 18, 18)
 
         surface.SetDrawColor(color_white)
 
@@ -395,25 +390,24 @@ function GM:HUDPaint()
             local timeLeft = math.ceil(impulse_JailTimeEnd - CurTime())
 
             surface.SetMaterial(exitIcon)
-            surface.DrawTexturedRect(10, y-30, 18, 18)
-            draw.DrawText("Sentence remaining: " .. string.FormattedTime(timeLeft, "%02i:%02i"), "Impulse-Elements19", 35, y-30, color_white, TEXT_ALIGN_LEFT)
+            surface.DrawTexturedRect(10, y - 30, 18, 18)
+            draw.DrawText("Sentence remaining: " .. string.FormattedTime(timeLeft, "%02i:%02i"), "Impulse-Elements19", 35, y - 30, color_white, TEXT_ALIGN_LEFT)
             aboveHUDUsed = true
         end
 
-        draw.DrawText(client:GetXP() .. "XP", "Impulse-Elements19", 55, y+150+(yAdd-8), color_white, TEXT_ALIGN_LEFT)
+        draw.DrawText(client:GetXP() .. "XP", "Impulse-Elements19", 55, y + 150 + (yAdd - 8), color_white, TEXT_ALIGN_LEFT)
         surface.SetMaterial(xpIcon)
-        surface.DrawTexturedRect(30, y+150+(yAdd-8), 18, 18)
+        surface.DrawTexturedRect(30, y + 150 + (yAdd - 8), 18, 18)
 
         local iconsX = 315
         local bleedIconCol
-
-        if client:GetRelay(SYNC_BLEEDING, false) then
-            if (nextBleedFlash or 0) < CurTime() then
+        if ( client:GetRelay(SYNC_BLEEDING, false) ) then
+            if ( ( nextBleedFlash or 0 ) < CurTime() ) then
                 bleedFlash = !bleedFlash
                 nextBleedFlash = CurTime() + 1
             end
 
-            if bleedFlash then
+            if ( bleedFlash ) then
                 bleedIconCol = bleedFlashCol
             else
                 bleedIconCol = iconsWhiteCol
@@ -426,15 +420,14 @@ function GM:HUDPaint()
 
         surface.SetDrawColor(color_white)
 
-
         local weapon = client:GetActiveWeapon()
-        if IsValid(weapon) then
-            if weapon:GetMaxClip1() != -1 then
+        if ( IsValid(weapon) ) then
+            if ( weapon:GetMaxClip1() != -1 ) then
                 surface.SetDrawColor(darkCol)
                 surface.DrawRect(scrW-70, scrH-45, 70, 30)
                 surface.SetTextPos(scrW-60, scrH-40)
                 surface.DrawText(weapon:Clip1() .. "/" .. client:GetAmmoCount(weapon:GetPrimaryAmmoType()))
-            elseif weapon:GetClass() == "weapon_physgun" or weapon:GetClass() == "gmod_tool" then
+            elseif ( weapon:GetClass() == "weapon_physgun" or weapon:GetClass() == "gmod_tool" ) then
                 draw.DrawText("Don't have this weapon out in RP.\nYou may be punished for this.", "Impulse-Elements16", 35, y-35, color_white, TEXT_ALIGN_LEFT)
                 surface.SetMaterial(warningIcon)
                 surface.DrawTexturedRect(10, y-32, 18, 18)
@@ -449,8 +442,8 @@ function GM:HUDPaint()
             end
         end
 
-        if not aboveHUDUsed then
-            if impulse.ShowZone then
+        if ( !aboveHUDUsed ) then
+            if ( impulse.ShowZone ) then
                 if IsValid(zoneLbl) then
                     zoneLbl:Remove()
                 end
@@ -461,24 +454,21 @@ function GM:HUDPaint()
 
                 impulse.ShowZone = false
             end
-        elseif zoneLbl and IsValid(zoneLbl) then
+        elseif ( zoneLbl and IsValid(zoneLbl) ) then
             zoneLbl:Remove()
         end
 
-        if not IsValid(PlayerIcon) and impulse.HUDEnabled == true then
+        if ( !IsValid(PlayerIcon) and impulse.HUDEnabled == true ) then
             PlayerIcon = vgui.Create("impulseSpawnIcon")
-            PlayerIcon:SetPos(30, y+60)
+            PlayerIcon:SetPos(30, y + 60)
             PlayerIcon:SetSize(64, 64)
             PlayerIcon:SetModel(LocalPlayer():GetModel(), LocalPlayer():GetSkin())
 
             timer.Simple(0, function()
-                if not IsValid(PlayerIcon) then
-                    return
-                end
+                if ( !IsValid(PlayerIcon) ) then return end
 
                 local ent = PlayerIcon.Entity
-
-                if IsValid(ent) then
+                if ( IsValid(ent) ) then
                     for v, k in pairs(LocalPlayer():GetBodyGroups()) do
                         ent:SetBodygroup(k.id, LocalPlayer():GetBodygroup(k.id))
                     end
@@ -487,13 +477,12 @@ function GM:HUDPaint()
         end
 
         local bodygroupChange = false
-
-        if (nextBodygroupChangeCheck or 0) < CurTime() and IsValid(PlayerIcon) then
+        if ( ( nextBodygroupChangeCheck or 0 ) < CurTime() and IsValid(PlayerIcon) ) then
             local curBodygroups = client:GetBodyGroups()
             local ent = PlayerIcon.Entity
 
             for v, k in pairs(lastBodygroups) do
-                if not curBodygroups[v] or ent:GetBodygroup(k.id) != LocalPlayer():GetBodygroup(curBodygroups[v].id) then
+                if ( !curBodygroups[v] or ent:GetBodygroup(k.id) != LocalPlayer():GetBodygroup(curBodygroups[v].id) ) then
                     bodygroupChange = true
                     break
                 end
@@ -502,7 +491,8 @@ function GM:HUDPaint()
             nextBodygroupChangeCheck = CurTime() + 0.5
         end
 
-        if (client:GetModel() != lastModel) or (client:GetSkin() != lastSkin) or bodygroupChange == true or (iconLoaded == false and input.IsKeyDown(KEY_W)) and IsValid(PlayerIcon) then -- input is super hacking fix for SpawnIcon issue
+        -- input is super hacking fix for SpawnIcon issue
+        if ( client:GetModel() != lastModel or client:GetSkin() != lastSkin or bodygroupChange == true or iconLoaded == false and input.IsKeyDown(KEY_W) and IsValid(PlayerIcon) ) then
             PlayerIcon:SetModel(client:GetModel(), client:GetSkin())
             lastModel = client:GetModel()
             lastSkin = client:GetSkin()
@@ -513,13 +503,10 @@ function GM:HUDPaint()
             bodygroupChange = false
 
             timer.Simple(0, function()
-                if not IsValid(PlayerIcon) then
-                    return
-                end
+                if ( !IsValid(PlayerIcon) ) then return end
 
                 local ent = PlayerIcon.Entity
-
-                if IsValid(ent) then
+                if ( IsValid(ent) ) then
                     for v, k in ipairs(client:GetBodyGroups()) do
                         ent:SetBodygroup(k.id, client:GetBodygroup(k.id))
                     end
@@ -527,15 +514,15 @@ function GM:HUDPaint()
             end)
         end
     else
-        if IsValid(PlayerIcon) then
+        if ( IsValid(PlayerIcon) ) then
             PlayerIcon:Remove()
         end
     end
 
     hook.Run("impulseHUDPaint")
 
-    if impulse.ShowZone then
-        if IsValid(zoneLbl) then
+    if ( impulse.ShowZone ) then
+        if ( IsValid(zoneLbl) ) then
             zoneLbl:Remove()
         end
 
@@ -559,19 +546,20 @@ function GM:HUDPaint()
     end
 
     local isPreview = GetConVar("impulse_preview"):GetBool()
-    if isPreview then
+    if ( isPreview ) then
         local schemaName = ""
-        if schemaName != "" and SCHEMA.Name then
+        if ( schemaName == "" and SCHEMA.Name ) then
             schemaName = SCHEMA.Name
-        elseif schemaName != "" and impulse.Config.SchemaName then
+        elseif ( schemaName == "" and impulse.Config.SchemaName ) then
             schemaName = impulse.Config.SchemaName
         end
 
         y = ScrH() / 2
+
         -- watermark
         surface.SetDrawColor(watermarkCol)
         surface.SetMaterial(watermark)
-        surface.DrawTexturedRect(390, y, 112, 30)
+        surface.DrawTexturedRect(390, y, 253, 30)
 
         surface.SetTextPos(390, y + 30)
         surface.SetTextColor(watermarkCol)
@@ -582,8 +570,7 @@ function GM:HUDPaint()
     end
 
     -- dev hud
-
-    if impulse_DevHud and (client:IsSuperAdmin() or client:IsDeveloper()) then
+    if ( impulse_DevHud and ( client:IsSuperAdmin() or client:IsDeveloper() ) ) then
         surface.SetTextColor(watermarkCol)
 
         local trace = {}
@@ -593,8 +580,7 @@ function GM:HUDPaint()
 
         local traceData = util.TraceLine(trace)
         local traceEnt = traceData.Entity
-
-        if traceEnt and traceEnt != NULL then
+        if ( traceEnt and traceEnt != NULL ) then
             surface.SetTextPos((scrW / 2) + 30, (scrH / 2) - 100)
             surface.DrawText(tostring(traceEnt))
 
@@ -605,9 +591,9 @@ function GM:HUDPaint()
             local netData
             local y = (scrH / 2) - 40
 
-            if syncData then
+            if ( syncData ) then
                 for v, k in pairs(syncData) do
-                    if type(k) == "table" then
+                    if ( istable(k) ) then
                         k = table.ToString(k)
                     end
 
@@ -617,11 +603,11 @@ function GM:HUDPaint()
                 end
             end
 
-            if IsValid(traceEnt) and traceEnt.GetNetworkVars then
+            if ( IsValid(traceEnt) and traceEnt.GetNetworkVars ) then
                 netData = traceEnt:GetNetworkVars()
             end
 
-            if netData then
+            if ( netData ) then
                 for v, k in pairs(netData) do
                     surface.SetTextPos((scrW / 2) + 30, y)
                     surface.DrawText("netvalue: " .. v .. " ; " .. tostring(k))
@@ -635,27 +621,27 @@ function GM:HUDPaint()
 
         surface.SetTextPos(400, scrH / 1.5)
         surface.DrawText(tostring(client:GetPos()))
-        surface.SetTextPos(400, (scrH / 1.5) + 20)
+        surface.SetTextPos(400, scrH / 1.5 + 20)
         surface.DrawText(tostring(client:GetAngles()))
-        surface.SetTextPos(400, (scrH / 1.5) + 40)
+        surface.SetTextPos(400, scrH / 1.5 + 40)
         surface.DrawText(client:GetVelocity():Length2D())
 
         local team_current = client:Team()
         local team_name = team.GetName(team_current)
         local team_col = team.GetColor(team_current)
-        surface.SetTextPos(400, (scrH / 1.5) + 60)
+        surface.SetTextPos(400, scrH / 1.5 + 60)
         surface.SetTextColor(team_col)
         surface.DrawText("Team: " .. team_name .. " (" .. team_current .. ")")
 
         local class_current = client:GetTeamClass()
         local class_name = client:GetTeamClassName()
-        surface.SetTextPos(400, (scrH / 1.5) + 80)
+        surface.SetTextPos(400, scrH / 1.5 + 80)
         surface.SetTextColor(watermarkCol)
         surface.DrawText("Class: " .. class_name .. " (" .. class_current .. ")")
 
         local rank_current = client:GetTeamRank()
         local rank_name = client:GetTeamRankName()
-        surface.SetTextPos(400, (scrH / 1.5) + 100)
+        surface.SetTextPos(400, scrH / 1.5 + 100)
         surface.SetTextColor(watermarkCol)
         surface.DrawText("Rank: " .. rank_name .. " (" .. rank_current .. ")")
     end
@@ -673,7 +659,7 @@ local holdTime
 overheadEntCache = {}
 -- overhead info is HEAVILY based off nutscript. I'm not taking credit for it. but it saves clients like 70 fps so its worth it
 function GM:HUDPaintBackground()
-    if impulse.Settings:Get("hud_vignette") == true then
+    if ( impulse.Settings:Get("hud_vignette") == true ) then
         hook.Run("PreDrawVignette")
 
         surface.SetMaterial(vignette)
@@ -690,7 +676,7 @@ function GM:HUDPaintBackground()
     local frameTime = FrameTime()
 
     local shouldDrawOverhead = hook.Run("ShouldDrawOverhead")
-    if shouldDrawOverhead != false then
+    if ( shouldDrawOverhead != false ) then
         if ( nextOverheadCheck < realTime ) then
             nextOverheadCheck = realTime + 0.5
 
@@ -703,41 +689,39 @@ function GM:HUDPaintBackground()
 
             lastEnt = util.TraceHull(trace).Entity
 
-            if IsValid(lastEnt) then
+            if ( IsValid(lastEnt) ) then
                 overheadEntCache[lastEnt] = true
             end
         end
 
         for entTarg, shouldDraw in pairs(overheadEntCache) do
-            if IsValid(entTarg) then
+            if ( IsValid(entTarg) ) then
                 local goal = shouldDraw and 255 or 0
                 local alpha = approach(entTarg.overheadAlpha or 0, goal, frameTime * 1000)
 
-                if lastEnt != entTarg then
+                if ( lastEnt != entTarg ) then
                     overheadEntCache[entTarg] = false
                 end
 
-                if alpha > 0 then
-                    if not entTarg:GetNoDraw() then
-                        hook.Run("DrawOverheadInfo", entTarg, alpha)
+                if ( alpha > 0 and !entTarg:GetNoDraw() ) then
+                    hook.Run("DrawOverheadInfo", entTarg, alpha)
 
-                        if entTarg:IsPlayer() and hook.Run("ShouldDrawPlayerInfo", entTarg) != false then
-                            DrawPlayerInfo(entTarg, alpha)
-                        elseif entTarg.HUDName and hook.Run("ShouldDrawEntityInfo", entTarg) != false then
-                            DrawEntInfo(entTarg, alpha)
-                        elseif entTarg:IsDoor() and hook.Run("ShouldDrawDoorInfo", entTarg) != false then
-                            DrawDoorInfo(entTarg, alpha)
-                        elseif impulse_ActiveButtons and impulse_ActiveButtons[entTarg:EntIndex()] and hook.Run("ShouldDrawButtonInfo", entTarg) != false then
-                            DrawButtonInfo(entTarg, alpha)
-                        else
-                            hook.Run("DrawOtherOverheadInfo", entTarg, alpha)
-                        end
+                    if ( entTarg:IsPlayer() and hook.Run("ShouldDrawPlayerInfo", entTarg) != false ) then
+                        DrawPlayerInfo(entTarg, alpha)
+                    elseif ( entTarg.HUDName and hook.Run("ShouldDrawEntityInfo", entTarg) != false ) then
+                        DrawEntInfo(entTarg, alpha)
+                    elseif ( entTarg:IsDoor() and hook.Run("ShouldDrawDoorInfo", entTarg) != false ) then
+                        DrawDoorInfo(entTarg, alpha)
+                    elseif ( impulse_ActiveButtons and impulse_ActiveButtons[entTarg:EntIndex()] and hook.Run("ShouldDrawButtonInfo", entTarg) != false ) then
+                        DrawButtonInfo(entTarg, alpha)
+                    else
+                        hook.Run("DrawOtherOverheadInfo", entTarg, alpha)
                     end
                 end
 
                 entTarg.overheadAlpha = alpha
 
-                if alpha == 0 and goal == 0 then
+                if ( alpha == 0 and goal == 0 ) then
                     overheadEntCache[entTarg] = nil
                 end
             else
@@ -746,33 +730,33 @@ function GM:HUDPaintBackground()
         end
     end
 
-    if impulse.CinematicIntro and client:Alive() then
+    if ( impulse.CinematicIntro and client:Alive() ) then
         local ft = FrameTime()
         local maxTall = ScrH() * .12
 
-        if holdTime and holdTime + 6 < CurTime() then
+        if ( holdTime and holdTime + 6 < CurTime() ) then
             letterboxFde = math.Clamp(letterboxFde - ft / 2, 0, 1)
             textFde = math.Clamp(textFde - ft * .3, 0, 1)
 
-            if letterboxFde == 0 then
+            if ( letterboxFde == 0 ) then
                 impulse.CinematicIntro = false
             end
-        elseif holdTime and holdTime + 4 < CurTime() then
+        elseif ( holdTime and holdTime + 4 < CurTime() ) then
             textFde = math.Clamp(textFde - ft * .3, 0, 1)
         else
             letterboxFde = math.Clamp(letterboxFde + ft / 2, 0, 1)
 
-            if letterboxFde == 1 then
+            if ( letterboxFde == 1 ) then
                 textFde = math.Clamp(textFde + ft * .1, 0, 1)
                 holdTime = holdTime or CurTime()
             end
         end
 
         surface.SetDrawColor(color_black)
-        surface.DrawRect(0, 0, ScrW(), (maxTall * letterboxFde))
+        surface.DrawRect(0, 0, ScrW(), maxTall * letterboxFde)
         surface.DrawRect(0, (ScrH() - (maxTall * letterboxFde)) + 1, ScrW(), maxTall)
 
-        draw.DrawText(impulse.CinematicTitle, "Impulse-Elements36", ScrW() - 150, ScrH() * .905, ColorAlpha(color_white, (255 * textFde)), TEXT_ALIGN_RIGHT)
+        draw.DrawText(impulse.CinematicTitle, "Impulse-Elements36", ScrW() - 150, ScrH() * .905, ColorAlpha(color_white, 255 * textFde), TEXT_ALIGN_RIGHT)
     else
         letterboxFde = 0
         textFde = 0
@@ -781,11 +765,11 @@ function GM:HUDPaintBackground()
 end
 
 concommand.Add("impulse_cameratoggle", function()
-    impulse.HUDEnabled = (!impulse.HUDEnabled)
+    impulse.HUDEnabled = !impulse.HUDEnabled
 
-    if not IsValid(impulse.chatBox.frame) then return end
+    if ( !IsValid(impulse.chatBox.frame) ) then return end
 
-    if impulse.HUDEnabled then
+    if ( impulse.HUDEnabled ) then
         impulse.chatBox.frame:Show()
     else
         impulse.chatBox.frame:Hide()
