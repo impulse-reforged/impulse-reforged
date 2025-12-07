@@ -1,7 +1,7 @@
 local PANEL = {}
 
 function PANEL:Init()
-    self.Colour = Color(60,255,105,150)
+    self.Colour = Color(60, 255, 105, 150)
     self.Name = "Connecting..."
     self.Ping = 0
 
@@ -80,13 +80,13 @@ function PANEL:SetPlayer(player)
     self.Badges = {}
 
     for v, k in pairs(impulse.Badges) do
-        if k[3](player) then
+        if ( k[3](player) ) then
             self.Badges[v] = k
         end
     end
 
     -- Avatar / model icon
-    if IsValid(self.modelIcon) then self.modelIcon:Remove() end
+    if ( IsValid(self.modelIcon) ) then self.modelIcon:Remove() end
 
     self.modelIcon = vgui.Create("impulseSpawnIcon", self)
     self.modelIcon:Dock(LEFT)
@@ -95,9 +95,10 @@ function PANEL:SetPlayer(player)
     self.modelIcon:SetMouseInputEnabled(false)
 
     timer.Simple(0, function()
-        if not IsValid(self) then return end
+        if ( !IsValid(self) ) then return end
+
         local ent = self.modelIcon and self.modelIcon.Entity
-        if IsValid(ent) and IsValid(self.Player) then
+        if ( IsValid(ent) and IsValid(self.Player) ) then
             for _, k in pairs(self.Player:GetBodyGroups()) do
                 ent:SetBodygroup(k.id, self.Player:GetBodygroup(k.id))
             end
@@ -113,21 +114,23 @@ function PANEL:SetPlayer(player)
 end
 
 function PANEL:GetDisplayName()
-    if not IsValid(self.Player) then return self.Name end
+    if ( !IsValid(self.Player) ) then return self.Name end
 
     local icName = ""
-    if LocalPlayer():IsAdmin() then
+    if ( LocalPlayer():IsAdmin() ) then
         icName = " (" .. self.Player:Name() .. ")"
         local rpGroup = self.Player:GetRelay("groupName", nil)
-        if impulse.Settings:Get("admin_showgroup") and rpGroup then
+        if ( impulse.Settings:Get("admin_showgroup") and rpGroup ) then
             icName = icName .. " (" .. rpGroup .. ")"
         end
     end
+
     return self.Player:SteamName() .. icName
 end
 
 function PANEL:RefreshText()
-    if not IsValid(self.Player) then return end
+    if ( !IsValid(self.Player) ) then return end
+
     self.nameLabel:SetText(self:GetDisplayName())
     self.pingLabel:SetText(self.Player:Ping())
 
@@ -136,11 +139,11 @@ function PANEL:RefreshText()
     local className = self.Player:GetTeamClassName()
     local rankName = self.Player:GetTeamRankName()
 
-    if className and className != "" then
+    if ( className and className != "" ) then
         teamText = teamText .. ", " .. className
     end
 
-    if rankName and rankName != "" then
+    if ( rankName and rankName != "" ) then
         teamText = teamText .. ", " .. rankName
     end
 
@@ -149,7 +152,8 @@ function PANEL:RefreshText()
 end
 
 function PANEL:RefreshBadges()
-    if not IsValid(self.badgeWrap) then return end
+    if ( !IsValid(self.badgeWrap) ) then return end
+
     -- Clear previous
     for _, child in ipairs(self.badgeWrap:GetChildren()) do child:Remove() end
 
@@ -164,19 +168,20 @@ function PANEL:RefreshBadges()
             Derma_Message(info, "impulse", "Close")
         end
     end
+
     self.badgeWrap:InvalidateLayout(true)
 end
 
 function PANEL:Think()
-    if not IsValid(self.Player) then return end
+    if ( !IsValid(self.Player) ) then return end
 
     local ct = CurTime()
-    if ct > self.nextPingUpdate then
+    if ( ct > self.nextPingUpdate ) then
         self.pingLabel:SetText(self.Player:Ping())
         self.nextPingUpdate = ct + 1 -- update ping every second
     end
 
-    if ct > self.nextTeamUpdate then
+    if ( ct > self.nextTeamUpdate ) then
         -- Build team text with class and rank
         local teamText = team.GetName(self.Player:Team())
         local className = self.Player:GetTeamClassName()
@@ -195,7 +200,7 @@ function PANEL:Think()
         self.nextTeamUpdate = ct + 2
     end
 
-    if ct > self.nextNameUpdate then
+    if ( ct > self.nextNameUpdate ) then
         self.nameLabel:SetText(self:GetDisplayName())
         self.nextNameUpdate = ct + 5
     end
@@ -207,13 +212,14 @@ local outlineCol = Color(190,190,190,240)
 local darkCol = Color(30,30,30,200)
 
 function PANEL:Paint(width,height)
-    if not IsValid(self.Player) then return end
+    if ( !IsValid(self.Player) ) then return end
+
     -- Background gradient layers (retain original visual style)
     surface.SetDrawColor(self.Colour)
     surface.SetMaterial(gradient)
     surface.DrawTexturedRect(1,1,width-1,height-2)
 
-    if self.Player == LocalPlayer() or self.Player:GetFriendStatus() == "friend" then
+    if ( self.Player == LocalPlayer() or self.Player:GetFriendStatus() == "friend" ) then
         surface.SetDrawColor(ColorAlpha(color_white, (50 + math.sin(RealTime() * 2) * 50) * .4))
         surface.SetMaterial(gradientr)
         surface.DrawTexturedRect(width * 0.6, 1, width * 0.4 - 1, height - 1) -- proportional instead of magic number
@@ -230,13 +236,13 @@ function PANEL:PaintOver(width, height)
 end
 
 function PANEL:OnMousePressed(key)
-    if not IsValid(self.Player) then return false end
+    if ( !IsValid(self.Player) ) then return false end
 
-    if key == MOUSE_RIGHT then
+    if ( key == MOUSE_RIGHT ) then
         LocalPlayer():Notify("You have copied " .. self.Player:SteamName() .. "'s Steam ID.")
         SetClipboardText(self.Player:SteamID64())
     else
-        if impulse_infoCard and IsValid(impulse_infoCard) then
+        if ( impulse_infoCard and IsValid(impulse_infoCard) ) then
             impulse_infoCard:Remove()
         end
 
