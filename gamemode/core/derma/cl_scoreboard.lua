@@ -3,7 +3,7 @@ local PANEL = {}
 function PANEL:Init()
     self:SetSize(ScrW() / 2, ScrH() / 1.25)
     self:Center()
-    self:SetTitle("Scoreboard")
+    self:SetTitle(string.format("Scoreboard (%s)", GetHostName()))
     self:ShowCloseButton(false)
     self:SetDraggable(false)
     self:MakePopup()
