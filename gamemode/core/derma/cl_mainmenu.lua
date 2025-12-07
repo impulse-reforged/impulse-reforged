@@ -355,14 +355,14 @@ function PANEL:Paint(width, height)
         surface.SetMaterial(gradient)
         surface.DrawTexturedRect(0, 0, width, height)
     else
+        impulse.Util:DrawBlur(self)
+
         surface.SetDrawColor(0, 0, 0, 100)
         surface.DrawRect(0, 0, width, height)
 
         surface.SetDrawColor(0, 0, 0, 100)
         surface.SetMaterial(vignette)
         surface.DrawTexturedRect(0, 0, width, height)
-
-        impulse.Util:DrawBlur(self)
     end
 end
 
