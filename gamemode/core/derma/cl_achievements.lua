@@ -71,5 +71,10 @@ function PANEL:Init()
     end
 end
 
+function PANEL:OnFocusChanged(gained)
+    if ( !gained ) then
+        self:Close()
+    end
+end
 
 vgui.Register("impulseAchievements", PANEL, "DFrame")
