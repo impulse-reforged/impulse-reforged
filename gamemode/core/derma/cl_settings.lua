@@ -81,7 +81,7 @@ function PANEL:Init()
             numSlider:SetMax(k.maxValue or 100)
             numSlider:SetDecimals(k.decimals or 0)
             numSlider:SetValue(impulse.Settings:Get(v))
-            numSlider:SetSize(320,30)
+            numSlider:SetSize(320, 30)
             numSlider:SetPos(310, numSlider.y)
 
             function numSlider:OnValueChanged(value)
