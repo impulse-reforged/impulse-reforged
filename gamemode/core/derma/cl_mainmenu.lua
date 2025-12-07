@@ -57,13 +57,11 @@ function PANEL:Init()
 
     self.core.Paint = function(this, width, height)
         if ( self.popup ) then
-            impulse.Util:DrawBlurAt(70, 0, 400, height)
-        end
+            impulse.Util:DrawBlurAt(70, 0, 400, height) -- left panel
 
-        surface.SetDrawColor(bodyCol) -- menu body
-
-        if ( impulse.Config.WordPressURL != "" ) then
-            surface.DrawRect(width - 540, 0, 520, 380) -- news body
+            if ( impulse.Config.WordPressURL != "" or !table.IsEmpty(impulse.Config.SchemaChangelogs) ) then
+                impulse.Util:DrawBlurAt(self:GetWide() - 600, 0, 500, 380) -- news panel
+            end
         end
     end
 
@@ -259,16 +257,24 @@ function PANEL:Init()
     copyrightLabel:SizeToContents()
     copyrightLabel:SetPos(ScrW() - copyrightLabel:GetWide(), ScrH() - copyrightLabel:GetTall() - 5)
 
-    if ( impulse.Config.WordPressURL != "" ) then
-        local newsLabel = vgui.Create("DLabel", self.core)
+    if ( impulse.Config.WordPressURL != "" or !table.IsEmpty(impulse.Config.SchemaChangelogs) ) then
+        local newsContainer = vgui.Create("DPanel", self.core)
+        newsContainer:SetPos(self:GetWide() - 600, 0)
+        newsContainer:SetSize(500, 400)
+        newsContainer.Paint = function(this, width, height)
+            surface.SetDrawColor(bodyCol)
+            surface.DrawRect(0, 0, width, height - 20)
+        end
+
+        local newsLabel = vgui.Create("DLabel", newsContainer)
+        newsLabel:Dock(TOP)
+        newsLabel:DockMargin(10, 40, 0, 5)
         newsLabel:SetFont("Impulse-Elements32")
         newsLabel:SetText("News")
         newsLabel:SizeToContents()
-        newsLabel:SetPos(self:GetWide() - 530, 60)
 
-        local newsfeed = vgui.Create("impulseNewsfeed", self.core)
-        newsfeed:SetSize(500, 270)
-        newsfeed:SetPos(self:GetWide() - 530, 100)
+        local newsFeed = vgui.Create("impulseNewsfeed", newsContainer)
+        newsFeed:Dock(FILL)
     end
 
     local testMessage = function()
