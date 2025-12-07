@@ -233,6 +233,35 @@ end
 function PANEL:SetupChangelogs(changelog)
     self.version = changelog.Version or "1.0"
 
+    self.text:SetMouseInputEnabled(true)
+    self.text.OnMousePressed = function()
+        -- Provide a detailed changelog popup with full changes list
+        local changelogPopup = vgui.Create("DFrame")
+        changelogPopup:SetTitle("Changelog - " .. (changelog.Title or "Changelog"))
+        changelogPopup:SetSize(500, 400)
+        changelogPopup:Center()
+        changelogPopup:MakePopup()
+        changelogPopup.OnFocusChanged = function(this, gained)
+            if ( !gained ) then
+                changelogPopup:Close()
+            end
+        end
+
+        local scroll = changelogPopup:Add("DScrollPanel")
+        scroll:Dock(FILL)
+
+        for _, change in pairs(changelog.Changes or {}) do
+            local changeLabel = scroll:Add("DLabel")
+            changeLabel:Dock(TOP)
+            changeLabel:DockMargin(10, 5, 10, 0)
+            changeLabel:SetFont("Impulse-Elements14")
+            changeLabel:SetText("• " .. change)
+            changeLabel:SizeToContents()
+            changeLabel:SetContentAlignment(4)
+            changeLabel:SetMouseInputEnabled(false)
+        end
+    end
+
     local parent = self:GetParent()
 
     local title = self.text:Add("DLabel")
@@ -242,6 +271,7 @@ function PANEL:SetupChangelogs(changelog)
     title:SetText(changelog.Title or "Changelog")
     title:SizeToContents()
     title:SetContentAlignment(6)
+    title:SetMouseInputEnabled(false)
 
     local descriptionWrapped = impulse.Util:WrapText(changelog.Description or "No description available.", parent:GetWide() - 20, "Impulse-Elements14")
     for _, line in pairs(descriptionWrapped) do
@@ -252,6 +282,7 @@ function PANEL:SetupChangelogs(changelog)
         descriptionLine:SetText(line)
         descriptionLine:SizeToContents()
         descriptionLine:SetContentAlignment(6)
+        descriptionLine:SetMouseInputEnabled(false)
     end
 
     self.image = changelog.Image or "impulse-reforged/impulse-reforged-blue-banner-opaque.png"
@@ -261,7 +292,10 @@ function PANEL:SetupChangelogs(changelog)
             if ( !IsValid(self) ) then return end
 
             local image = self.container:Add("DHTML")
-            image:Dock(FILL)
+            image:SetSize(self.container:GetWide(), self.container:GetTall())
+            image:SetPos(0, 0)
+            image:SetZPos(-1)
+            image:SetMouseInputEnabled(false)
             image:SetHTML([[<style type = "text/css">
                 body {
                     overflow:hidden;
