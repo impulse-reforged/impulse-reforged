@@ -1,17 +1,22 @@
+function GM:PlayerCheckLimit(client, limitName, current, defaultMax)
+    if ( client:IsAdmin() ) then
+        return true
+    end
+end
+
 local KEY_BLACKLIST = IN_ATTACK + IN_ATTACK2
 function GM:StartCommand(client, cmd)
-    if !client:IsWeaponRaised() then
+    if ( !client:IsWeaponRaised() ) then
         cmd:RemoveKey(KEY_BLACKLIST)
     end
 
     if ( SERVER ) then
         local dragger = client.impulseArrestedDragger
-
-        if IsValid(dragger) and client == dragger.impulseArrestedDragging and client:Alive() and dragger:Alive() then
+        if ( IsValid(dragger) and client == dragger.impulseArrestedDragging and client:Alive() and dragger:Alive() ) then
             cmd:ClearMovement()
             cmd:ClearButtons()
 
-            if client:GetPos():DistToSqr(dragger:GetPos()) > (60 ^ 2) then
+            if ( client:GetPos():DistToSqr(dragger:GetPos()) > 60 ^ 2 ) then
                 cmd:SetForwardMove(200)
             end
 
