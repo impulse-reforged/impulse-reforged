@@ -297,13 +297,6 @@ function PANEL:Init()
             for _, addon in ipairs(addons) do
                 if ( !steamworks.IsSubscribed(addon.id) ) then
                     table.insert(missing, addon)
-                    -- Derma_Query("You are not subscribed to the addon \"" .. addon.title .. "\"!\nIf you do not subscribe you will experience missing textures and errors.\nAfter subscribing, rejoin the server.-- ",
-                    --     "impulse",
-                    --     "Subscribe",
-                    --     function()
-                    --         gui.OpenURL("https://steamcommunity.com/sharedfiles/filedetails/?id=" .. addon.id)
-                    --     end,
-                    --     "No thanks")
                 end
             end
         end
