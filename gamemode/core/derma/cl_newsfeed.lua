@@ -238,7 +238,7 @@ function PANEL:SetupChangelogs(changelog)
         -- Provide a detailed changelog popup with full changes list
         local changelogPopup = vgui.Create("DFrame")
         changelogPopup:SetTitle("Changelog - " .. (changelog.Title or "Changelog"))
-        changelogPopup:SetSize(500, 400)
+        changelogPopup:SetSize(ScrW() / 3, ScrH() / 3)
         changelogPopup:Center()
         changelogPopup:MakePopup()
         changelogPopup.OnFocusChanged = function(this, gained)
@@ -250,6 +250,25 @@ function PANEL:SetupChangelogs(changelog)
         local scroll = changelogPopup:Add("DScrollPanel")
         scroll:Dock(FILL)
 
+        local changelogTitle = scroll:Add("DLabel")
+        changelogTitle:Dock(TOP)
+        changelogTitle:DockMargin(0, 5, 10, 0)
+        changelogTitle:SetFont("Impulse-Elements32")
+        changelogTitle:SetText(changelog.Title or "Changelog")
+        changelogTitle:SizeToContents()
+        changelogTitle:SetContentAlignment(5)
+
+        local changelogDescriptionWrapped = impulse.Util:WrapText(changelog.Description or "No description available.", changelogPopup:GetWide() / 1.5, "Impulse-Elements24")
+        for _, line in pairs(changelogDescriptionWrapped) do
+            local descriptionLine = scroll:Add("DLabel")
+            descriptionLine:Dock(TOP)
+            descriptionLine:DockMargin(10, 0, 10, 0)
+            descriptionLine:SetFont("Impulse-Elements24")
+            descriptionLine:SetText(line)
+            descriptionLine:SizeToContents()
+            descriptionLine:SetContentAlignment(5)
+        end
+
         for _, change in pairs(changelog.Changes or {}) do
             local changeLabel = scroll:Add("DLabel")
             changeLabel:Dock(TOP)
@@ -257,8 +276,6 @@ function PANEL:SetupChangelogs(changelog)
             changeLabel:SetFont("Impulse-Elements14")
             changeLabel:SetText("• " .. change)
             changeLabel:SizeToContents()
-            changeLabel:SetContentAlignment(4)
-            changeLabel:SetMouseInputEnabled(false)
         end
     end
 
