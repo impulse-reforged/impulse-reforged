@@ -1,0 +1,516 @@
+﻿======================================================
+impulse.Config Properties Found in impulse-reforged
+======================================================
+
+Total: 108 properties
+
+------------------------------------------------------
+
+impulse.Config.Achievements
+  Used in: 4 file(s)
+    - gamemode\core\derma\cl_achievement.lua
+    - gamemode\core\derma\cl_achievements.lua
+    - gamemode\core\hooks\sv_hooks.lua
+    ... and 1 more
+
+impulse.Config.AFKKickRatio
+  Used in: 1 file(s)
+    - gamemode\core\libs\sv_afk.lua
+
+impulse.Config.AFKTime
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.ATMModel
+  Used in: 1 file(s)
+    - entities\entities\impulse_atm\init.lua
+
+impulse.Config.AutoModCooldown
+  Used in: 1 file(s)
+    - plugins\ops_automod\sv_hooks.lua
+
+impulse.Config.AutoModDict
+  Used in: 1 file(s)
+    - plugins\ops\cl_dale.lua
+
+impulse.Config.AutoModMaxRisk
+  Used in: 1 file(s)
+    - plugins\ops_automod\sv_hooks.lua
+
+impulse.Config.BlacklistEnts
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.BodyDeSpawnTime
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.BrokenLegsHealTime
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.Buttons
+  Used in: 3 file(s)
+    - entities\weapons\impulse_buttoneditor.lua
+    - gamemode\core\hooks\sv_hooks.lua
+    - gamemode\core\libs\cl_hud.lua
+
+impulse.Config.BuyableSpawnLimit
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.ChairsLimit
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.ClassChangeTime
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.CommunityURL
+  Used in: 1 file(s)
+    - gamemode\core\derma\cl_mainmenu.lua
+
+impulse.Config.CosmeticGenderPrice
+  Used in: 2 file(s)
+    - gamemode\core\derma\cl_charactereditor.lua
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.CosmeticModelSkinPrice
+  Used in: 2 file(s)
+    - gamemode\core\derma\cl_charactereditor.lua
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.CurrencyName
+  Used in: 2 file(s)
+    - gamemode\core\derma\cl_vendor.lua
+    - gamemode\core\derma\cl_vendoritem.lua
+
+impulse.Config.CurrencyPrefix
+  Used in: 10 file(s)
+    - entities\entities\impulse_money.lua
+    - gamemode\core\derma\cl_atm.lua
+    - gamemode\core\derma\cl_charactereditor.lua
+    ... and 7 more
+
+impulse.Config.DefaultFemaleModels
+  Used in: 3 file(s)
+    - gamemode\core\derma\cl_charactercreator.lua
+    - gamemode\core\derma\cl_charactereditor.lua
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.DefaultMaleModels
+  Used in: 3 file(s)
+    - gamemode\core\derma\cl_charactercreator.lua
+    - gamemode\core\derma\cl_charactereditor.lua
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.DefaultSkinBlacklist
+  Used in: 3 file(s)
+    - gamemode\core\derma\cl_charactercreator.lua
+    - gamemode\core\derma\cl_charactereditor.lua
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.DefaultTeam
+  Used in: 6 file(s)
+    - entities\entities\impulse_cosmetic_npc\init.lua
+    - gamemode\core\hooks\sv_hooks.lua
+    - gamemode\core\hooks\sv_net.lua
+    ... and 3 more
+
+impulse.Config.DefaultWordPressImage
+  Used in: 1 file(s)
+    - gamemode\core\derma\cl_newsfeed.lua
+
+impulse.Config.DisabledPlugins
+  Used in: 1 file(s)
+    - gamemode\core\libs\sh_plugins.lua
+
+impulse.Config.DiscordLeadModRoleID
+  Used in: 1 file(s)
+    - plugins\ops_automod\sv_bans.lua
+
+impulse.Config.DiscordRelayURL
+  Used in: 1 file(s)
+    - plugins\ops\sv_weblink.lua
+
+impulse.Config.DiscordURL
+  Used in: 1 file(s)
+    - gamemode\core\derma\cl_mainmenu.lua
+
+impulse.Config.DonateURL
+  Used in: 2 file(s)
+    - gamemode\core\derma\cl_mainmenu.lua
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.DoorGroups
+  Used in: 2 file(s)
+    - entities\weapons\impulse_doortool.lua
+    - gamemode\core\libs\cl_hud.lua
+
+impulse.Config.DoorPrice
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.DroppedItemsLimit
+  Used in: 2 file(s)
+    - entities\entities\impulse_item.lua
+    - gamemode\core\libs\sv_inventory.lua
+
+impulse.Config.DroppedMoneyLimit
+  Used in: 2 file(s)
+    - entities\entities\impulse_money.lua
+    - gamemode\core\libs\sh_chat.lua
+
+impulse.Config.GroupMakeCost
+  Used in: 2 file(s)
+    - gamemode\core\derma\cl_groupeditor.lua
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.GroupMaxMembers
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.GroupMaxMembersVIP
+  Used in: 2 file(s)
+    - gamemode\core\hooks\sv_net.lua
+    - gamemode\core\libs\sv_group.lua
+
+impulse.Config.GroupMaxRanks
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.GroupMaxRanksVIP
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.GroupXPRequirement
+  Used in: 2 file(s)
+    - gamemode\core\derma\cl_groupeditor.lua
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.HungerHealTime
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.HungerTime
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.InteractColour
+  Used in: 4 file(s)
+    - gamemode\core\derma\cl_playermenu.lua
+    - gamemode\core\libs\cl_hud.lua
+    - plugins\chatbox\cl_chat.lua
+    ... and 1 more
+
+impulse.Config.IntroMusic
+  Used in: 2 file(s)
+    - gamemode\core\cl_util.lua
+    - gamemode\core\derma\cl_splash.lua
+
+impulse.Config.IntroScenes
+  Used in: 2 file(s)
+    - gamemode\core\cl_util.lua
+    - gamemode\core\derma\cl_splash.lua
+
+impulse.Config.InventoryItemDeSpawnTime
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.InventoryMaxWeight
+  Used in: 5 file(s)
+    - gamemode\core\derma\cl_inventory.lua
+    - gamemode\core\derma\cl_inventorycontainer.lua
+    - gamemode\core\derma\cl_inventorystorage.lua
+    ... and 2 more
+
+impulse.Config.InventoryStorageMaxWeight
+  Used in: 2 file(s)
+    - gamemode\core\libs\sh_inventory.lua
+    - gamemode\core\libs\sv_inventory.lua
+
+impulse.Config.InventoryStorageMaxWeightDonator
+  Used in: 2 file(s)
+    - gamemode\core\libs\sh_inventory.lua
+    - gamemode\core\libs\sv_inventory.lua
+
+impulse.Config.InventoryStorageModel
+  Used in: 1 file(s)
+    - entities\entities\impulse_storage\init.lua
+
+impulse.Config.InventoryStoragePublicModel
+  Used in: 1 file(s)
+    - entities\entities\impulse_storage_public\init.lua
+
+impulse.Config.JogSpeed
+  Used in: 3 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+    - gamemode\core\libs\sv_arrest.lua
+    - gamemode\core\libs\sv_teams.lua
+
+impulse.Config.JumpPower
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.LoadScript
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.LogLevel
+  Used in: 1 file(s)
+    - gamemode\core\libs\sh_logging.lua
+
+impulse.Config.LootPools
+  Used in: 3 file(s)
+    - entities\entities\impulse_container\init.lua
+    - entities\weapons\impulse_looteditor.lua
+    - gamemode\core\libs\sv_loot.lua
+
+impulse.Config.MainColour
+  Used in: 12 file(s)
+    - gamemode\core\derma\cl_achievement.lua
+    - gamemode\core\derma\cl_entmenu.lua
+    - gamemode\core\derma\cl_inventoryhover.lua
+    ... and 9 more
+
+impulse.Config.MaxJailTime
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.MaxLetters
+  Used in: 1 file(s)
+    - gamemode\core\libs\sh_chat.lua
+
+impulse.Config.MenuCamAng
+  Used in: 1 file(s)
+    - gamemode\core\hooks\cl_hooks.lua
+
+impulse.Config.MenuCamFOV
+  Used in: 1 file(s)
+    - gamemode\core\hooks\cl_hooks.lua
+
+impulse.Config.MenuCamPos
+  Used in: 1 file(s)
+    - gamemode\core\hooks\cl_hooks.lua
+
+impulse.Config.ModQuickReplies
+  Used in: 1 file(s)
+    - plugins\ops\vgui\cl_reportmenu.lua
+
+impulse.Config.NPCSpawns
+  Used in: 1 file(s)
+    - entities\weapons\impulse_npcspawneditor.lua
+
+impulse.Config.OOCLimit
+  Used in: 4 file(s)
+    - gamemode\core\hooks\cl_net.lua
+    - gamemode\core\hooks\sv_hooks.lua
+    - gamemode\core\libs\sh_chat.lua
+    ... and 1 more
+
+impulse.Config.OOCLimitVIP
+  Used in: 4 file(s)
+    - gamemode\core\hooks\cl_net.lua
+    - gamemode\core\hooks\sv_hooks.lua
+    - gamemode\core\libs\sh_chat.lua
+    ... and 1 more
+
+impulse.Config.PanelURL
+  Used in: 1 file(s)
+    - gamemode\core\derma\cl_playerinfocard.lua
+
+impulse.Config.PayDayTime
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.PrisonAngle
+  Used in: 2 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+    - gamemode\core\libs\sv_arrest.lua
+
+impulse.Config.PrisonCells
+  Used in: 2 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+    - gamemode\core\libs\sv_arrest.lua
+
+impulse.Config.PropLimit
+  Used in: 2 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+    - gamemode\core\libs\cl_hud.lua
+
+impulse.Config.PropLimitDonator
+  Used in: 2 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+    - gamemode\core\libs\cl_hud.lua
+
+impulse.Config.PropPrice
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.PropPriceDonator
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.QuizWaitTime
+  Used in: 2 file(s)
+    - gamemode\core\derma\cl_quiz.lua
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.RankColours
+  Used in: 2 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+    - gamemode\core\libs\sh_chat.lua
+
+impulse.Config.ReqwestDiscordWebhookURL
+  Used in: 3 file(s)
+    - plugins\ops\sh_util.lua
+    - plugins\ops\sv_anticheat.lua
+    - plugins\ops_automod\sv_bans.lua
+
+impulse.Config.ResetTeamOnDeath
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.RespawnTime
+  Used in: 2 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+    - gamemode\core\libs\cl_hud.lua
+
+impulse.Config.RespawnTimeDonator
+  Used in: 2 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+    - gamemode\core\libs\cl_hud.lua
+
+impulse.Config.RPNameChangePrice
+  Used in: 2 file(s)
+    - gamemode\core\derma\cl_playermenu.lua
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.RulesURL
+  Used in: 2 file(s)
+    - gamemode\core\derma\cl_playermenu.lua
+    - plugins\ops\cl_messages.lua
+
+impulse.Config.SaveableAmmo
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.SchemaChangelogs
+  Used in: 2 file(s)
+    - gamemode\core\derma\cl_mainmenu.lua
+    - gamemode\core\derma\cl_newsfeed.lua
+
+impulse.Config.SchemaCredits
+  Used in: 1 file(s)
+    - gamemode\core\derma\cl_credits.lua
+
+impulse.Config.SchemaName
+  Used in: 4 file(s)
+    - gamemode\core\derma\cl_credits.lua
+    - gamemode\core\derma\cl_mainmenu.lua
+    - gamemode\core\libs\cl_hud.lua
+    ... and 1 more
+
+impulse.Config.SchemaVersion
+  Used in: 2 file(s)
+    - gamemode\core\derma\cl_newsfeed.lua
+    - gamemode\core\libs\cl_hud.lua
+
+impulse.Config.SlowWalkRatio
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sh_hooks.lua
+
+impulse.Config.SpawnPoints
+  Used in: 2 file(s)
+    - gamemode\core\hooks\sh_hooks.lua
+    - gamemode\core\libs\sv_teams.lua
+
+impulse.Config.SpawnPos1
+  Used in: 1 file(s)
+    - gamemode\core\meta\sh_player.lua
+
+impulse.Config.SpawnPos2
+  Used in: 1 file(s)
+    - gamemode\core\meta\sh_player.lua
+
+impulse.Config.StartingBankMoney
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.StartingMoney
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.SupportURL
+  Used in: 1 file(s)
+    - plugins\ops\vgui\cl_securitycheck.lua
+
+impulse.Config.TalkDistance
+  Used in: 3 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+    - gamemode\core\libs\cl_hud.lua
+    - gamemode\core\libs\sh_chat.lua
+
+impulse.Config.TeamChangeTime
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.TeamChangeTimeDonator
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_net.lua
+
+impulse.Config.TutorialURL
+  Used in: 1 file(s)
+    - gamemode\core\derma\cl_playermenu.lua
+
+impulse.Config.UserSlots
+  Used in: 2 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+    - gamemode\core\libs\sv_afk.lua
+
+impulse.Config.VoiceDistance
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.WalkSpeed
+  Used in: 2 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+    - gamemode\core\libs\sv_arrest.lua
+
+impulse.Config.WeaponRaiseTime
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.WhisperDistance
+  Used in: 1 file(s)
+    - gamemode\core\libs\sh_chat.lua
+
+impulse.Config.WordPressURL
+  Used in: 2 file(s)
+    - gamemode\core\derma\cl_mainmenu.lua
+    - gamemode\core\derma\cl_newsfeed.lua
+
+impulse.Config.XPGet
+  Used in: 1 file(s)
+    - gamemode\core\libs\sh_xp.lua
+
+impulse.Config.XPGetDonator
+  Used in: 1 file(s)
+    - gamemode\core\libs\sh_xp.lua
+
+impulse.Config.XPTime
+  Used in: 1 file(s)
+    - gamemode\core\hooks\sv_hooks.lua
+
+impulse.Config.YellDistance
+  Used in: 1 file(s)
+    - gamemode\core\libs\sh_chat.lua
+
+impulse.Config.Zones
+  Used in: 4 file(s)
+    - entities\weapons\impulse_zoneeditor.lua
+    - gamemode\core\hooks\sv_hooks.lua
+    - gamemode\core\libs\sh_zones.lua
+    ... and 1 more
+
