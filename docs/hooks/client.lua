@@ -33,14 +33,14 @@ end
 
 --- Called when the menu is active and MenuMessages are ready to be created
 -- @realm client
--- @see MenuMessage
+-- @see impulse.MenuMessage
 function CreateMenuMessages()
 end
 
 --- Called when the menu is active and MenuMessages are ready to be displayed
 -- @realm client
 -- @internal
--- @see MenuMessage
+-- @see impulse.MenuMessage
 function DisplayMenuMessages()
 end
 
