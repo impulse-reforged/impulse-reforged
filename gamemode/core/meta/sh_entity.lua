@@ -55,15 +55,13 @@ end
 -- @realm shared
 -- @treturn bool Is player prop door
 function ENTITY:IsPropDoor()
-    if not IsValid(self) then return end
+    if ( !IsValid(self) ) then return end
+    if ( !self.GetModel or !propDoors[self:GetModel()] ) then return false end
+    if ( self:CPPIGetOwner() and IsValid(self:CPPIGetOwner()) and self:CPPIGetOwner():IsPlayer() ) then return true end
 
-    if not self.GetModel or not propDoors[self:GetModel()] then return false end
-
-    if (self:CPPIGetOwner() and IsValid(self:CPPIGetOwner())) and self:CPPIGetOwner():IsPlayer() then return true end
-
-    if (self:CPPIGetOwner() and IsValid(self:CPPIGetOwner())) and self:CPPIGetOwner() == Entity(0) then
+    if ( self:CPPIGetOwner() and IsValid(self:CPPIGetOwner()) and self:CPPIGetOwner() == Entity(0) ) then
         if ( SERVER ) then
-            if self:MapCreationID() == -1 then
+            if ( self:MapCreationID() == -1 ) then
                 return true
             else
                 return false
@@ -109,11 +107,10 @@ end
 -- @realm shared
 -- @treturn bool Can be carried
 function ENTITY:CanBeCarried()
-    local phys = self:GetPhysicsObject()
+    local physicsObject = self:GetPhysicsObject()
+    if ( !IsValid(physicsObject) ) then return false end
 
-    if not IsValid(phys) then return false end
-
-    if phys:GetMass() > 100 or not phys:IsMoveable() then return false end
+    if ( physicsObject:GetMass() > 100 or !physicsObject:IsMoveable() ) then return false end
 
     return true
 end
@@ -135,18 +132,18 @@ function ENTITY:EmitQueuedSounds(sounds, delay, spacing, volume, pitch)
     for k, v in ipairs(sounds) do
         local postSet, preSet = 0, 0
 
-        if (type(v) == "table") then
+        if ( istable(v) ) then
             postSet, preSet = v[2] or 0, v[3] or 0
             v = v[1]
         end
 
-        local length = SoundDuration(ADJUST_SOUND..v)
+        local length = SoundDuration(ADJUST_SOUND .. v)
         delay = delay + preSet
 
         timer.Simple(delay, function()
-            if (IsValid(self)) then
-                self:EmitSound(v, volume, pitch)
-            end
+            if ( !IsValid(self) ) then return end
+
+            self:EmitSound(v, volume, pitch)
         end)
 
         delay = delay + length + postSet + spacing
@@ -166,20 +163,20 @@ if ( SERVER ) then
     -- @int[opt = 1] level Sound level of the sound
     -- @int[opt = 100] pitch Pitch of the sound
     function ENTITY:EmitBudgetSound(sound, range, level, pitch)
-        local range = range or 600
+        range = range or 600
+        range = range ^ 2
+
         local pos = self:GetPos()
         local entIndex = self:EntIndex()
-        local range = range ^ 2
-
         local recipFilter = RecipientFilter()
 
-        for v, k in player.Iterator() do
-            if k:GetPos():DistToSqr(pos) < range then
-                recipFilter:AddPlayer(k)
+        for _, client in player.Iterator() do
+            if ( client:GetPos():DistToSqr(pos) < range ) then
+                recipFilter:AddPlayer(client)
             end
         end
 
-        if level or pitch then
+        if ( level or pitch ) then
             net.Start("impulseBudgetSoundExtra")
             net.WriteUInt(entIndex, 16)
             net.WriteString(sound)
@@ -249,26 +246,29 @@ if (SERVER) then
         dummy:SetMaterial(self:GetMaterial())
         dummy:SetSkin(self:GetSkin() or 0)
         dummy:SetRenderMode(RENDERMODE_TRANSALPHA)
+
         dummy:CallOnRemove("restoreDoor", function()
-            if ( IsValid(self) ) then
-                self:SetNotSolid(false)
-                self:SetNoDraw(false)
-                self:DrawShadow(true)
-                self.ignoreUse = false
-                self.impulseIsMuted = false
+            if ( !IsValid(self) ) then return end
 
-                for _, v in ents.Iterator() do
-                    if ( v:GetParent() == self ) then
-                        v:SetNotSolid(false)
-                        v:SetNoDraw(false)
+            self:SetNotSolid(false)
+            self:SetNoDraw(false)
+            self:DrawShadow(true)
 
-                        if ( v.OnDoorRestored ) then
-                            v:OnDoorRestored(self)
-                        end
+            self.ignoreUse = false
+            self.impulseIsMuted = false
+
+            for _, v in ents.Iterator() do
+                if ( v:GetParent() == self ) then
+                    v:SetNotSolid(false)
+                    v:SetNoDraw(false)
+
+                    if ( v.OnDoorRestored ) then
+                        v:OnDoorRestored(self)
                     end
                 end
             end
         end)
+
         dummy:SetOwner(self)
         dummy:SetCollisionGroup(COLLISION_GROUP_WEAPON)
 
@@ -311,23 +311,22 @@ if (SERVER) then
         end)
 
         timer.Create(uniqueID, lifeTime, 1, function()
-            if ( IsValid(self) and IsValid(dummy) ) then
-                uniqueID = "dummyFade" .. dummy:EntIndex()
-                local alpha = 255
+            if ( !IsValid(self) or !IsValid(dummy) ) then return end
+            uniqueID = "dummyFade" .. dummy:EntIndex()
+            local alpha = 255
 
-                timer.Create(uniqueID, 0.1, 255, function()
-                    if ( IsValid(dummy) ) then
-                        alpha = alpha - 1
-                        dummy:SetColor(ColorAlpha(color, alpha))
+            timer.Create(uniqueID, 0.1, 255, function()
+                if ( IsValid(dummy) ) then
+                    alpha = alpha - 1
+                    dummy:SetColor(ColorAlpha(color, alpha))
 
-                        if ( alpha <= 0 ) then
-                            dummy:Remove()
-                        end
-                    else
-                        timer.Remove(uniqueID)
+                    if ( alpha <= 0 ) then
+                        dummy:Remove()
                     end
-                end)
-            end
+                else
+                    timer.Remove(uniqueID)
+                end
+            end)
         end)
 
         return dummy
