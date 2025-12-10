@@ -57,4 +57,4 @@ function GM:OnReloaded()
     GM = nil
 end
 
-local isPreview = CreateConVar("impulse_preview", 0, FCVAR_REPLICATED, "If the current build is in preview mode.")
+impulse_ispreview = CreateConVar("impulse_preview", 0, FCVAR_REPLICATED, "If the current build is in preview mode.")
