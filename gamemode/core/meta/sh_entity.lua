@@ -78,7 +78,7 @@ end
 -- @realm shared
 -- @treturn bool Is button
 function ENTITY:IsButton()
-    return (self:GetClass():find("button") or self:GetClass() == ("class C_BaseEntity"))
+    return self:GetClass():find("button") or self:GetClass() == "class C_BaseEntity"
 end
 
 --- Returns if a door is locked
@@ -89,9 +89,8 @@ function ENTITY:IsDoorLocked()
 end
 
 local chairs = {}
-
 for k, v in pairs(list.Get("Vehicles")) do
-    if v.Category == "Chairs" then
+    if ( v.Category == "Chairs" ) then
         chairs[v.Model] = true
     end
 end
@@ -192,8 +191,7 @@ if ( SERVER ) then
     end
 end
 
-
-if (SERVER) then
+if ( SERVER ) then
     --- Returns the neighbouring door entity for double doors.
     -- @realm shared
     -- @treturn[1] Entity This door's partner
@@ -208,7 +206,6 @@ if (SERVER) then
     -- @treturn[2] nil If this entity is not a door, or there is no blocking entity
     function ENTITY:GetBlocker()
         local datatable = self:GetSaveTable()
-
         return datatable.pBlocker
     end
 
@@ -217,7 +214,7 @@ if (SERVER) then
     -- @realm server
     -- @vector velocity Velocity to apply to the door
     -- @number lifeTime How long to wait in seconds before the door is put back on its hinges
-    -- @bool bIgnorePartner Whether or not to ignore the door's partner in the case of double doors
+    -- @bool bIgnorePartner Whether or !to ignore the door's partner in the case of double doors
     -- @treturn[1] Entity The physics prop created for the door
     -- @treturn nil If the entity is not a door
     function ENTITY:BlastDoor(velocity, lifeTime, bIgnorePartner)
