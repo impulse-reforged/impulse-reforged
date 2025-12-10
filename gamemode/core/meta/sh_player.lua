@@ -200,13 +200,12 @@ end
 
 if ( SERVER ) then
     function PLAYER:GetData(key, default)
-        if (key == true) then
+        if ( key == true ) then
             return self.impulseData
         end
 
         local data = self.impulseData and self.impulseData[key]
-
-        if (data == nil) then
+        if ( data == nil ) then
             return default
         else
             return data
@@ -215,8 +214,7 @@ if ( SERVER ) then
 else
     function PLAYER:GetData(key, default)
         local data = impulse.localData and impulse.localData[key]
-
-        if (data == nil) then
+        if ( data == nil ) then
             return default
         else
             return data
