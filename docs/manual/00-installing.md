@@ -45,19 +45,8 @@ Here's some extra setup you can do to get access to extra features.
 If you want anti-family sharing features and slack logging, you'll need to provide your Steam API key and a Slack webhook URL. Just add this to the config.yml file:
 ```
 apis:
- steam_key: "XXXXXXXXXXXXXXXXXXXXXXX"
- slack_webhook: "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXX"
+  discord_ops_webhook: "https://discord.com/api/webhooks/XXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  discord_relaykey: "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  slack_webhook: "https://hooks.slack.com/services/XXXXXXXXX/XXXXXXXXXXXXXXXXXXXXXXXX"
+  steam_key: "XXXXXXXXXXXXXXXXXXXXXXX"
 ```
-
-### Signals
-Signals is a system in impulse that allows for simple cross-server communication. You'll need to create a signals database first. Then, add the stuff below, and configure it for your config.yml:
-```
-signals:
- serverid: 1
- ip: "127.0.0.1"
- username: "root"
- password: ""
- database: "impulse_development_signals"
- port: 3306
-```
-Remember to make your serverid unique, each server on the same signals database needs a new serverid, for example, server 1 has an serverid of 1, 2 has serverid of 2, ect.
