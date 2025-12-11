@@ -40,7 +40,7 @@ SWEP.NextGo = 0
 
 if ( SERVER ) then
     function SWEP:Equip(owner)
-        if not owner:IsAdmin() then
+        if !owner:IsAdmin() then
             owner:StripWeapon("impulse_npcspawneditor")
         end
     end
@@ -56,7 +56,7 @@ else
     function SWEP:PrimaryAttack()
         if self.NextGo > CurTime() then return end
 
-        if not self.Pos1 then
+        if !self.Pos1 then
             self.Pos1 = self:GetOwner():GetPos()
             self.Pos2 = self:GetOwner():GetAngles()
             self.State = "Ready for export."
@@ -108,7 +108,7 @@ else
         draw.SimpleText("LEFT: Register spawn, RIGHT: Reset, RELOAD: Export", "Impulse-Elements18-Shadow", 100, 100, watermarkCol)
         draw.SimpleText("STATE: " .. (self.State or "Nothing selected"), "Impulse-Elements18-Shadow", 100, 120, watermarkCol)
         draw.SimpleText("Warning, when you click your current position\nwill be registered, not your weapon aim position!", "Impulse-Elements18-Shadow", 100, 140, watermarkCol)
-        if not impulse.Config.NPCSpawns then return end
+        if !impulse.Config.NPCSpawns then return end
 
         for k, v in pairs(impulse.Config.NPCSpawns) do
             local cent = v.pos:ToScreen()

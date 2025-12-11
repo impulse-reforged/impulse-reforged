@@ -3,7 +3,7 @@
 
 -- Helper function to find team by name or ID
 local function findTeam(identifier)
-    if not identifier then return nil end
+    if !identifier then return nil end
 
     -- Try as number first
     local teamID = tonumber(identifier)
@@ -26,22 +26,22 @@ local addWhitelistCommand = {
     requiresArg = true,
     adminOnly = true,
     onRun = function(client, args, rawText)
-        if not args[1] or not args[2] or not args[3] then
+        if !args[1] or !args[2] or !args[3] then
             return client:Notify("Usage: /addwhitelist <player> <team> <level>")
         end
 
         local target = impulse.Util:FindPlayer(args[1])
-        if not IsValid(target) then
+        if !IsValid(target) then
             return client:Notify("Could not find player: " .. tostring(args[1]))
         end
 
         local teamID, teamData = findTeam(args[2])
-        if not teamID then
+        if !teamID then
             return client:Notify("Invalid team. Use team name or ID.")
         end
 
         local level = tonumber(args[3])
-        if not level or level < 1 then
+        if !level or level < 1 then
             return client:Notify("Invalid whitelist level specified. The level must be a number greater than or equal to 1.")
         end
 
@@ -75,17 +75,17 @@ local removeWhitelistCommand = {
     requiresArg = true,
     adminOnly = true,
     onRun = function(client, args, rawText)
-        if not args[1] or not args[2] then
+        if !args[1] or !args[2] then
             return client:Notify("Usage: /removewhitelist <player> <team>")
         end
 
         local target = impulse.Util:FindPlayer(args[1])
-        if not IsValid(target) then
+        if !IsValid(target) then
             return client:Notify("Could not find player: " .. tostring(args[1]))
         end
 
         local teamID, teamData = findTeam(args[2])
-        if not teamID then
+        if !teamID then
             return client:Notify("Invalid team. Use team name or ID.")
         end
 
@@ -127,19 +127,19 @@ local checkWhitelistCommand = {
     requiresArg = true,
     adminOnly = true,
     onRun = function(client, args, rawText)
-        if not args[1] then
+        if !args[1] then
             return client:Notify("Usage: /checkwhitelist <player> [team]")
         end
 
         local target = impulse.Util:FindPlayer(args[1])
-        if not IsValid(target) then
+        if !IsValid(target) then
             return client:Notify("Could not find player: " .. tostring(args[1]))
         end
 
         if args[2] then
             -- Check specific team
             local teamID, teamData = findTeam(args[2])
-            if not teamID then
+            if !teamID then
                 return client:Notify("Invalid team specified. Please use a valid team name or ID.")
             end
 
@@ -151,7 +151,7 @@ local checkWhitelistCommand = {
             end
         else
             -- Check all teams
-            if not target.Whitelists or table.Count(target.Whitelists) == 0 then
+            if !target.Whitelists or table.Count(target.Whitelists) == 0 then
                 return client:Notify(target:Nick() .. " does not have any whitelists.")
             end
 
@@ -176,20 +176,20 @@ local listWhitelistsCommand = {
     requiresArg = true,
     adminOnly = true,
     onRun = function(client, args, rawText)
-        if not args[1] then
+        if !args[1] then
             return client:Notify("Usage: /listwhitelists <team>")
         end
 
         local teamID, teamData = findTeam(args[1])
-        if not teamID then
+        if !teamID then
             return client:Notify("Invalid team specified. Please use a valid team name or ID.")
         end
 
         local teamCodeName = teamData.codeName
         impulse.Teams.GetAllWhitelists(teamCodeName, function(result)
-            if not IsValid(client) then return end
+            if !IsValid(client) then return end
 
-            if not result or #result == 0 then
+            if !result or #result == 0 then
                 return client:Notify("No whitelists were found for " .. teamData.name .. ".")
             end
 
@@ -214,12 +214,12 @@ local teamInfoCommand = {
     requiresArg = true,
     adminOnly = true,
     onRun = function(client, args, rawText)
-        if not args[1] then
+        if !args[1] then
             return client:Notify("Usage: /teaminfo <team>")
         end
 
         local teamID, teamData = findTeam(args[1])
-        if not teamID then
+        if !teamID then
             return client:Notify("Invalid team specified. Please use a valid team name or ID.")
         end
 
@@ -246,7 +246,7 @@ local teamInfoCommand = {
         if teamData.classes and table.Count(teamData.classes) > 0 then
             client:Notify("--- Classes ---")
             for classID, classData in ipairs(teamData.classes) do
-                if not classData.noMenu then
+                if !classData.noMenu then
                     local reqText = "XP: " .. (classData.xp or 0)
                     if classData.whitelistLevel then
                         reqText = reqText .. " | WL Level: " .. classData.whitelistLevel
@@ -271,7 +271,7 @@ if SERVER then
             return client:Notify("You must be an admin to use this command.")
         end
 
-        if not args[1] or not args[2] or not args[3] then
+        if !args[1] or !args[2] or !args[3] then
             local msg = "Usage: impulse_whitelists_add <steamid64> <team> <level>"
             if IsValid(client) then
                 client:Notify(msg)
@@ -282,7 +282,7 @@ if SERVER then
         end
 
         local steamID = args[1]
-        if not string.match(steamID, "^%d+$") or #steamID != 17 then
+        if !string.match(steamID, "^%d+$") or #steamID != 17 then
             local msg = "Invalid SteamID64 format"
             if IsValid(client) then
                 client:Notify(msg)
@@ -293,7 +293,7 @@ if SERVER then
         end
 
         local teamID, teamData = findTeam(args[2])
-        if not teamID then
+        if !teamID then
             local msg = "Invalid team specified. Please use a valid team name or ID."
             if IsValid(client) then
                 client:Notify(msg)
@@ -304,7 +304,7 @@ if SERVER then
         end
 
         local level = tonumber(args[3])
-        if not level or level < 1 then
+        if !level or level < 1 then
             local msg = "Invalid whitelist level specified. The level must be a number greater than or equal to 1."
             if IsValid(client) then
                 client:Notify(msg)
@@ -341,7 +341,7 @@ if SERVER then
             return client:Notify("You must be an admin to use this command.")
         end
 
-        if not args[1] or not args[2] then
+        if !args[1] or !args[2] then
             local msg = "Usage: impulse_whitelists_remove <steamid64> <team>"
             if IsValid(client) then
                 client:Notify(msg)
@@ -352,7 +352,7 @@ if SERVER then
         end
 
         local steamID = args[1]
-        if not string.match(steamID, "^%d+$") or #steamID != 17 then
+        if !string.match(steamID, "^%d+$") or #steamID != 17 then
             local msg = "Invalid SteamID64 format"
             if IsValid(client) then
                 client:Notify(msg)
@@ -363,7 +363,7 @@ if SERVER then
         end
 
         local teamID, teamData = findTeam(args[2])
-        if not teamID then
+        if !teamID then
             local msg = "Invalid team. Use team name or ID."
             if IsValid(client) then
                 client:Notify(msg)
@@ -405,7 +405,7 @@ if SERVER then
             return client:Notify("You must be an admin to use this command.")
         end
 
-        if not args[1] then
+        if !args[1] then
             local msg = "Usage: impulse_whitelists_list <team>"
             if IsValid(client) then
                 client:Notify(msg)
@@ -416,7 +416,7 @@ if SERVER then
         end
 
         local teamID, teamData = findTeam(args[1])
-        if not teamID then
+        if !teamID then
             local msg = "Invalid team specified. Please use a valid team name or ID."
             if IsValid(client) then
                 client:Notify(msg)
@@ -430,7 +430,7 @@ if SERVER then
         impulse.Teams.GetAllWhitelists(teamCodeName, function(result)
             if IsValid(client) and not IsValid(client) then return end
 
-            if not result or #result == 0 then
+            if !result or #result == 0 then
                 local msg = "No whitelists were found for " .. teamData.name .. "."
                 if IsValid(client) then
                     client:Notify(msg)

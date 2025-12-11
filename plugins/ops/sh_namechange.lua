@@ -3,13 +3,13 @@ if ( SERVER ) then
     util.AddNetworkString("impulseOpsDoNamechange")
 
     net.Receive("impulseOpsDoNamechange", function(len, client)
-        if not client.NameChangeForced then return end
+        if !client.NameChangeForced then return end
 
         local charName = net.ReadString()
 
         local canUse, output = impulse.CanUseName(charName)
 
-        if not canUse then
+        if !canUse then
             client:Kick("Inappropriate roleplay name.")
             return
         end
@@ -52,7 +52,7 @@ else
         function done:DoClick()
             local clear, rejectReason = impulse.CanUseName(entry:GetValue())
 
-            if not clear then
+            if !clear then
                 Derma_Message(rejectReason, "impulse", "OK")
             else
                 net.Start("impulseOpsDoNamechange")

@@ -41,7 +41,7 @@ SWEP.Secondary.Ammo = "none"
 
 if ( SERVER ) then
     function SWEP:Equip(owner)
-        if not owner:IsAdmin() then
+        if !owner:IsAdmin() then
             owner:StripWeapon("impulse_looteditor")
         end
     end
@@ -93,7 +93,7 @@ function SWEP:PrimaryAttack()
     local tr = util.TraceLine(trace)
     local ent = tr.Entity
 
-    if not self.SelectedStorage and IsValid(ent) and ent:GetClass() == "prop_physics" then
+    if !self.SelectedStorage and IsValid(ent) and ent:GetClass() == "prop_physics" then
         self.SelectedStorage = ent
         self.State = "Prop " .. ent:EntIndex() .. " (" .. ent:GetModel() .. ") selected, ready for export..."
 
@@ -102,7 +102,7 @@ function SWEP:PrimaryAttack()
     end
 
     local function sendLootReq(pool)
-        if not IsValid(self.SelectedStorage) then
+        if !IsValid(self.SelectedStorage) then
             return LocalPlayer():Notify("Entity missing.")
         end
 
@@ -159,14 +159,14 @@ if ( SERVER ) then
     util.AddNetworkString("impulseLootEditorSet")
 
     net.Receive("impulseLootEditorSet", function(len, client)
-        if not client:IsSuperAdmin() then return end
+        if !client:IsSuperAdmin() then return end
 
         local pool = net.ReadString()
         local ent = net.ReadEntity()
 
-        if not IsValid(ent) or ent:GetClass() != "prop_physics" then return end
+        if !IsValid(ent) or ent:GetClass() != "prop_physics" then return end
 
-        if not impulse.Config.LootPools[pool] then return end
+        if !impulse.Config.LootPools[pool] then return end
 
         local entModel = ent:GetModel()
         local entPos = ent:GetPos()

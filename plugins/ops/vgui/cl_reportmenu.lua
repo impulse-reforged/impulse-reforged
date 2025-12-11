@@ -76,7 +76,7 @@ function PANEL:ReloadReports()
         local id = report.id
         local data = k
 
-        if not report.data[3] then
+        if !report.data[3] then
             local claimBtn = vgui.Create("DButton", report)
             claimBtn:SetPos(300, 0)
             claimBtn:SetSize(40, 23)
@@ -149,7 +149,7 @@ function PANEL:ReloadReports()
             local ent = report.data[1]
             local badges = {}
 
-            if not ent or not IsValid(ent) or not ent:IsPlayer() then
+            if !ent or !IsValid(ent) or !ent:IsPlayer() then
                 return LocalPlayer():Notify("User left the game.")
             end
 
@@ -164,7 +164,7 @@ function PANEL:ReloadReports()
         end
 
         local ownsReport = true
-        if not report.data[3] or not IsValid(report.data[3]) or report.data[3] != LocalPlayer() then
+        if !report.data[3] or !IsValid(report.data[3]) or report.data[3] != LocalPlayer() then
             gotoBtn:SetDisabled(true)
             ownsReport = false
         end
@@ -177,7 +177,7 @@ function PANEL:ReloadReports()
 
         function closeBtn:DoClick()
             local ownsReport = true
-            if not report.data[3] or not IsValid(report.data[3]) or report.data[3] != LocalPlayer() then
+            if !report.data[3] or !IsValid(report.data[3]) or report.data[3] != LocalPlayer() then
                 ownsReport = false
             end
 
@@ -239,20 +239,20 @@ hook.Add("Think", "impulseReportMenuFastOpen", function()
         if impulse_reportMenu and IsValid(impulse_reportMenu) then
             local alpha = impulse.Settings:Get("admin_reportalpha", 130)
 
-            if not impulse_reportMenu.changing then
+            if !impulse_reportMenu.changing then
                 impulse_reportMenu.changing = true
 
                 if impulse_reportMenu.hiding then
                     gui.EnableScreenClicker(true)
                     impulse_reportMenu:AlphaTo(255, 0.5, 0, function()
-                        if not IsValid(impulse_reportMenu) then return end
+                        if !IsValid(impulse_reportMenu) then return end
                         impulse_reportMenu.changing = false
                         impulse_reportMenu.hiding = false
                     end)
                 else
                     gui.EnableScreenClicker(false)
                     impulse_reportMenu:AlphaTo(alpha, 0.5, 0, function()
-                        if not IsValid(impulse_reportMenu) then return end
+                        if !IsValid(impulse_reportMenu) then return end
                         impulse_reportMenu.changing = false
                         impulse_reportMenu.hiding = true
                     end)
@@ -263,8 +263,8 @@ hook.Add("Think", "impulseReportMenuFastOpen", function()
             wait = CurTime() + 1
         end
 
-        if not LocalPlayer():IsAdmin() and !vgui.CursorVisible() then
-            if not impulse_userReportMenu or not IsValid(impulse_userReportMenu) then
+        if !LocalPlayer():IsAdmin() and !vgui.CursorVisible() then
+            if !impulse_userReportMenu or !IsValid(impulse_userReportMenu) then
                 impulse_userReportMenu = vgui.Create("impulseUserReportMenu")
             end
         end

@@ -8,13 +8,13 @@ local snapshotCommand = {
     onRun = function(client, arg, rawText)
         local id = arg[1]
 
-        if not tonumber(id) then
+        if !tonumber(id) then
             return client:Notify("The ID must be a number.")
         end
 
         id = tonumber(id)
 
-        if not impulse.Ops.Snapshots[id] then
+        if !impulse.Ops.Snapshots[id] then
             return client:Notify("A snapshot could not be found with that ID.")
         end
 

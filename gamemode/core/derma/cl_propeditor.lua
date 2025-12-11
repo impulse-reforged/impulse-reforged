@@ -95,7 +95,7 @@ function PANEL:SetTable(prop, callback)
                 txt:SetPlaceholderText("Click to edit text...")
 
                 function txt:Think()
-                    if not IsValid(row) then
+                    if !IsValid(row) then
                         return m:Remove()
                     end
                 end
@@ -117,7 +117,7 @@ function PANEL:SetTable(prop, callback)
                 local vec = string.Split(newVal, " ")
 
                 for v, k in pairs(vec) do
-                    if not tonumber(k) then
+                    if !tonumber(k) then
                         return vector_origin
                     else
                         vec[v] = tonumber(k)
@@ -155,7 +155,7 @@ function PANEL:SetTable(prop, callback)
                 for v, k in pairs(vec) do
                     string.Trim(k, " ")
 
-                    if not tonumber(k) then
+                    if !tonumber(k) then
                         return vector_origin
                     else
                         vec[v] = tonumber(k)

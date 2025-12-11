@@ -42,7 +42,7 @@ SWEP.NextGo = 0
 
 if ( SERVER ) then
     function SWEP:Equip(owner)
-        if not owner:IsAdmin() then
+        if !owner:IsAdmin() then
             owner:StripWeapon("impulse_posdebugger")
         end
     end
@@ -56,7 +56,7 @@ if ( SERVER ) then
     end
 else
     function SWEP:PrimaryAttack()
-        if not self.Pos1 then
+        if !self.Pos1 then
             self.Pos1 = self:GetOwner():GetEyeTrace().HitPos
             self.State = "First position registered, awaiting second position."
 

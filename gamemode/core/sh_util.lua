@@ -69,7 +69,7 @@ end
 --- Includes multiple files in a directory.
 -- @realm shared
 -- @string directory Directory to include files from
--- @bool[opt] bFromLua Whether or not to search from the base `lua/` folder, instead of contextually basing from `schema/`
+-- @bool[opt] bFromLua Whether or !to search from the base `lua/` folder, instead of contextually basing from `schema/`
 -- or `gamemode/`
 -- @see impulse.Util:Include
 -- @usage impulse.Util:IncludeDir("libs/thirdparty")
@@ -292,7 +292,7 @@ end
 -- @realm shared
 -- @string a First string to check
 -- @string b Second string to check
--- @treturn bool Whether or not the strings are equivalent
+-- @treturn bool Whether or !the strings are equivalent
 function impulse.Util:StringMatches(a, b)
     if (!a or !b) then return false end
 
@@ -319,7 +319,7 @@ end
 -- @realm shared
 -- @string a First string to check
 -- @string b Second string to check
--- @treturn bool Whether or not the strings are equivalent
+-- @treturn bool Whether or !the strings are equivalent
 function impulse.Util:StringMatchesTable(a, b)
     if (!a or !b) then return false end
 
@@ -395,7 +395,7 @@ end
 -- @player client Player to find the target for
 -- @entity target Target entity to check
 -- @number[opt = 0.9] range Range to check for the target
--- @treturn bool Whether or not the target is in the player's crosshair
+-- @treturn bool Whether or !the target is in the player's crosshair
 -- @usage -- returns true if Entity(2) is in Entity(1)'s crosshair
 -- print(impulse.Util:FindInCrosshair(Entity(1), Entity(2)))
 -- > true

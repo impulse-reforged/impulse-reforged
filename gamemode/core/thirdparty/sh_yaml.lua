@@ -87,7 +87,7 @@ local pop = function(stack)
 end
 
 local context = function (str)
-  if not isstring(str) then
+  if !isstring(str) then
     return ""
   end
 
@@ -164,7 +164,7 @@ exports.tokenize = function (str)
   while #str > 0 do
     for i in ipairs(tokens) do
       local captures = {}
-      if not inline or tokens[i].noinline == nil then
+      if !inline or tokens[i].noinline == nil then
         captures = {str:match(tokens[i][2])}
       end
 
@@ -191,7 +191,7 @@ exports.tokenize = function (str)
         elseif token[1] == "string" then
           -- Finding numbers
           local snip = token[2][1]
-          if not token.force_text then
+          if !token.force_text then
             if snip:match("^(%d+%.%d+)$") or snip:match("^(%d+)$") then
               token[1] = "number"
             end
@@ -235,7 +235,7 @@ exports.tokenize = function (str)
       end -- if #captures > 0
     end
 
-    if not ignore then
+    if !ignore then
       if token then
         push(stack, token)
         token = nil
@@ -372,7 +372,7 @@ end
 
 Parser.inline = function (self)
   local current = self:peek(0)
-  if not current then
+  if !current then
     return {}, 0
   end
 
@@ -411,7 +411,7 @@ Parser.parseString = function (self)
     --]]
     local types = self:inline()
     if types["id"] and types["-"] then
-      if not self:peekType("indent") or not self:peekType("indent", 2) then
+      if !self:peekType("indent") or !self:peekType("indent", 2) then
         return result
       end
     end
@@ -460,7 +460,7 @@ Parser.parseTextBlock = function (self, sep)
   local token = self:advance()
   local result = string_trim(token.raw, "\n")
   local indents = 0
-  while self:peek() != nil and ( indents > 0 or not self:peekType("dedent") ) do
+  while self:peek() != nil and ( indents > 0 or !self:peekType("dedent") ) do
     local newtoken = self:advance()
     while token.row < newtoken.row do
       result = result .. sep

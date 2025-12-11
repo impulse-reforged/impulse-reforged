@@ -40,7 +40,7 @@ SWEP.NextGo = 0
 
 if ( SERVER ) then
     function SWEP:Equip(owner)
-        if not owner:IsAdmin() then
+        if !owner:IsAdmin() then
             owner:StripWeapon("impulse_zoneeditor")
         end
     end
@@ -56,7 +56,7 @@ else
     function SWEP:PrimaryAttack()
         if self.NextGo > CurTime() then return end
 
-        if not self.Pos1 then
+        if !self.Pos1 then
             self.Pos1 = self:GetOwner():GetPos()
             self.State = "First position registered, awaiting second position."
 

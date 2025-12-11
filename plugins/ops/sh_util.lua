@@ -314,7 +314,7 @@ local setClassCommand = {
 
         local id, class = impulse.Teams:FindClass(args[2])
 
-        if not class then
+        if !class then
             return client:Notify("The specified class is invalid.")
         end
 
@@ -379,11 +379,11 @@ local setSavedModelCommand = {
     onRun = function(client, args, rawText)
         local target = impulse.Util:FindPlayer(args[1])
         local newModel = args[2]
-        if not newModel then
+        if !newModel then
             return client:Notify("No model was specified.")
         end
 
-        if not Model(newModel) then
+        if !Model(newModel) then
             return client:Notify("The specified model is invalid.")
         end
 
@@ -419,11 +419,11 @@ local setModelCommand = {
     onRun = function(client, args, rawText)
         local target = impulse.Util:FindPlayer(args[1])
         local newModel = args[2]
-        if not newModel then
+        if !newModel then
             return client:Notify("No model was specified.")
         end
 
-        if not Model(newModel) then
+        if !Model(newModel) then
             return client:Notify("The specified model is invalid.")
         end
 
@@ -454,11 +454,11 @@ local setSavedSkinCommand = {
     onRun = function(client, args, rawText)
         local target = impulse.Util:FindPlayer(args[1])
         local newSkin = args[2]
-        if not newSkin then
+        if !newSkin then
             return client:Notify("No skin was specified.")
         end
 
-        if not tonumber(newSkin) then
+        if !tonumber(newSkin) then
             return client:Notify("The specified skin is invalid.")
         end
 
@@ -494,11 +494,11 @@ local setSkinCommand = {
     onRun = function(client, args, rawText)
         local target = impulse.Util:FindPlayer(args[1])
         local newSkin = args[2]
-        if not newSkin then
+        if !newSkin then
             return client:Notify("No skin was specified.")
         end
 
-        if not tonumber(newSkin) then
+        if !tonumber(newSkin) then
             return client:Notify("The specified skin is invalid.")
         end
 
@@ -529,7 +529,7 @@ local setSavedNameCommand = {
     onRun = function(client, args, rawText)
         local target = impulse.Util:FindPlayer(args[1])
         local newName = args[2]
-        if not newName then
+        if !newName then
             return client:Notify("No name was specified.")
         end
 
@@ -562,7 +562,7 @@ local setNameCommand = {
     onRun = function(client, args, rawText)
         local target = impulse.Util:FindPlayer(args[1])
         local newName = args[2]
-        if not newName then
+        if !newName then
             return client:Notify("No name was specified.")
         end
 
@@ -623,7 +623,7 @@ local addXPCommand = {
         local target = impulse.Util:FindPlayer(args[1])
         local xp = tonumber(args[2])
 
-        if not xp or not tonumber(xp) then return end
+        if !xp or !tonumber(xp) then return end
 
         if ( IsValid(target) ) then
             print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") added " .. xp .. " XP to " .. target:Name() .. " (" .. target:SteamID64() .. ")")
@@ -652,7 +652,7 @@ local setXPCommand = {
         local target = impulse.Util:FindPlayer(args[1])
         local xp = tonumber(args[2])
 
-        if not xp or not tonumber(xp) then return end
+        if !xp or !tonumber(xp) then return end
 
         if ( IsValid(target) ) then
             print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") set " .. target:Name() .. "'s (" .. target:SteamID64() .. ") XP to " .. xp)
@@ -680,7 +680,7 @@ local takeXPCommand = {
         local target = impulse.Util:FindPlayer(args[1])
         local xp = tonumber(args[2])
 
-        if not xp or not tonumber(xp) then return end
+        if !xp or !tonumber(xp) then return end
 
         if ( IsValid(target) ) then
             target:TakeXP(xp)
@@ -708,7 +708,7 @@ local addSkillXPCommand = {
         local skill = args[2]
         local xp = tonumber(args[3])
 
-        if not xp or not tonumber(xp) then return end
+        if !xp or !tonumber(xp) then return end
 
         if ( IsValid(target) ) then
             target:AddSkillXP(skill, xp)
@@ -736,7 +736,7 @@ local setSkillXPCommand = {
         local skill = args[2]
         local xp = tonumber(args[3])
 
-        if not xp or not tonumber(xp) then return end
+        if !xp or !tonumber(xp) then return end
 
         if ( IsValid(target) ) then
             target:SetSkillXP(skill, xp)
@@ -764,7 +764,7 @@ local takeSkillXPCommand = {
         local skill = args[2]
         local xp = tonumber(args[3])
 
-        if not xp or not tonumber(xp) then return end
+        if !xp or !tonumber(xp) then return end
 
         if ( IsValid(target) ) then
             target:TakeSkillXP(skill, xp)
@@ -791,12 +791,12 @@ local quizBypassCommand = {
         local target = impulse.Util:FindPlayer(args[1])
         local data = impulse.Teams:FindTeam(args[2])
 
-        if not data then
+        if !data then
             return client:Notify("You have entered an incorrect team name or index.")
         end
 
         if ( IsValid(target) ) then
-            if not data.quiz then
+            if !data.quiz then
                 return client:Notify("This team does not have a quiz.")
             end
 
@@ -869,7 +869,7 @@ if GExtension then
 
             local time = args[2]
 
-            if not time or not tonumber(time) then
+            if !time or !tonumber(time) then
                 return client:Notify("No time value was supplied.")
             end
 
@@ -982,7 +982,7 @@ if GExtension then
             end
 
             if plyTarget and client != plyTarget then
-                if not client:GE_HasPermission("warnings_add") then
+                if !client:GE_HasPermission("warnings_add") then
                     return client:Notify("You don't have permission to do this.")
                 end
 

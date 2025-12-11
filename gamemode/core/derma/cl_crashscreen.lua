@@ -23,20 +23,20 @@ function PANEL:Init()
 
     wait(3.33, function()
         http.Fetch("http://api.steampowered.com/ISteamApps/GetServersAtAddress/v0001?addr = " .. game.GetIPAddress(), function(json)
-            if not IsValid(self) then
+            if !IsValid(self) then
                 return
             end
 
             local data = util.JSONToTable(json)
 
-            if not data["response"]["servers"] or not data["response"]["servers"][0] then
+            if !data["response"]["servers"] or !data["response"]["servers"][0] then
                 self.ServerIsOff = true
                 self:DoLamar()
             else
                 self.ServerIsOff = false
             end
         end, function()
-            if not IsValid(self) then
+            if !IsValid(self) then
                 return
             end
 

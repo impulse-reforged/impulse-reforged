@@ -26,6 +26,9 @@ impulse.Util:IncludeDir("core/thirdparty")
 -- Attempt to connect to a database if we have the details
 impulse.Config.YML = impulse.Yaml.Read("data/impulse-reforged/config.yml") or {}
 
+-- Load core config defaults
+impulse.Util:IncludeDir("core/config")
+
 -- Load the rest of the gamemode
 impulse.Util:IncludeDir("core/libs")
 impulse.Util:IncludeDir("core/meta")

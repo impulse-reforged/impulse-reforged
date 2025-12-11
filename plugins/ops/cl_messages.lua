@@ -9,7 +9,7 @@ function impulse.Ops.NewLog(msg, isMe)
         time = CurTime()
     })
 
-    if not isMe then
+    if !isMe then
         OPS_LASTMSG_CLOSE = false
     end
 end
@@ -103,7 +103,7 @@ net.Receive("opsNewReport", function()
     local reportId = net.ReadUInt(16)
     local message = net.ReadString()
 
-    if not IsValid(sender) then return end
+    if !IsValid(sender) then return end
 
     if impulse.Settings:Get("admin_onduty") then
         chat.AddText(newReportCol, "[NEW REPORT] [#" .. reportId .. "] ", sender:SteamName(), " (", sender:Name(), "): ", message)
@@ -126,7 +126,7 @@ net.Receive("opsReportUpdate", function()
     local reportId = net.ReadUInt(16)
     local message = net.ReadString()
 
-    if not IsValid(sender) then return end
+    if !IsValid(sender) then return end
 
     if impulse.Settings:Get("admin_onduty") then
         if impulse.Ops.Reports[reportId] and impulse.Ops.Reports[reportId][3] and impulse.Ops.Reports[reportId][3] == LocalPlayer() then
@@ -148,7 +148,7 @@ net.Receive("opsReportClaimed", function()
     local claimer = net.ReadEntity()
     local reportId = net.ReadUInt(16)
 
-    if not IsValid(claimer) then return end
+    if !IsValid(claimer) then return end
 
     if impulse.Settings:Get("admin_onduty") then
         if LocalPlayer() == claimer then
@@ -171,13 +171,13 @@ net.Receive("opsReportClosed", function()
     local closer = net.ReadEntity()
     local reportId = net.ReadUInt(16)
 
-    if not IsValid(closer) or closer == Entity(0) then
-        if impulse.Ops.Reports and impulse.Ops.Reports[reportId] and (not impulse.Ops.Reports[reportId][3] or not IsValid(impulse.Ops.Reports[reportId][3])) then
+    if !IsValid(closer) or closer == Entity(0) then
+        if impulse.Ops.Reports and impulse.Ops.Reports[reportId] and (not impulse.Ops.Reports[reportId][3] or !IsValid(impulse.Ops.Reports[reportId][3])) then
             chat.AddText(newReportCol, "[REPORT] [#" .. reportId .. "] closed by Dale")
         end
     else
         if impulse.Settings:Get("admin_onduty") then
-            if impulse.Ops.Reports and impulse.Ops.Reports[reportId] and (not impulse.Ops.Reports[reportId][3] or not IsValid(impulse.Ops.Reports[reportId][3])) then
+            if impulse.Ops.Reports and impulse.Ops.Reports[reportId] and (not impulse.Ops.Reports[reportId][3] or !IsValid(impulse.Ops.Reports[reportId][3])) then
                 chat.AddText(newReportCol, "[REPORT] [#" .. reportId .. "] closed by " .. closer:SteamName())
             elseif LocalPlayer() and LocalPlayer() == closer then
                 chat.AddText(claimedReportCol, "[REPORT] [#" .. reportId .. "] closed by " .. closer:SteamName())

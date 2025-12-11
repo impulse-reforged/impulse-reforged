@@ -2,7 +2,7 @@ local PLAYER = FindMetaTable("Player")
 
 function PLAYER:GetSkillXP(name)
     local skills = self.impulseSkills
-    if not skills then return end
+    if !skills then return end
 
     if skills[name] then
         return skills[name]
@@ -12,8 +12,8 @@ function PLAYER:GetSkillXP(name)
 end
 
 function PLAYER:SetSkillXP(name, value)
-    if not self.impulseSkills then return end
-    if not impulse.Skills.Skills[name] then return end
+    if !self.impulseSkills then return end
+    if !impulse.Skills.Skills[name] then return end
 
     value = math.Round(value)
 
@@ -39,7 +39,7 @@ function PLAYER:NetworkSkill(name, value)
 end
 
 function PLAYER:AddSkillXP(name, value)
-    if not self.impulseSkills then return end
+    if !self.impulseSkills then return end
 
     local cur = self:GetSkillXP(name)
     local new = math.Round(math.Clamp(cur + value, 0, 4500))
@@ -51,7 +51,7 @@ function PLAYER:AddSkillXP(name, value)
 end
 
 function PLAYER:TakeSkillXP(name, value)
-    if not self.impulseSkills then return end
+    if !self.impulseSkills then return end
 
     local cur = self:GetSkillXP(name)
     local new = math.Round(math.Clamp(cur - value, 0, 4500))

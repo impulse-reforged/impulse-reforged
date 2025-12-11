@@ -55,7 +55,7 @@ function PANEL:Init()
         function browser:OnSelect(path)
             local result, msg = impulse.Ops.EventManager.SequenceLoad(path)
 
-            if not result then
+            if !result then
                 surface.PlaySound("common/bugreporter_failed.wav")
                 LocalPlayer():Notify(msg .. ".")
                 return

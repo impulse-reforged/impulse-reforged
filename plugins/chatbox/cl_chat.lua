@@ -90,7 +90,7 @@ function impulse.chatBox.buildBox()
 
                     self.LastMessage = "/r " .. self:GetText()
                 else
-                    if not impulse.Settings:Get("chat_oocenabled", true) then
+                    if !impulse.Settings:Get("chat_oocenabled", true) then
                         local text = string.Explode(" ", impulse.chatBox.entry:GetValue())
                         text = text[1] or ""
 
@@ -140,7 +140,7 @@ function impulse.chatBox.buildBox()
                 if text == "//" or text == "/ooc" then
                     local limit = LocalPlayer().OOCLimit
 
-                    if not limit then
+                    if !limit then
                         if LocalPlayer():IsDonator() then
                             LocalPlayer().OOCLimit = impulse.Config.OOCLimitVIP
                         else
@@ -233,8 +233,8 @@ function impulse.chatBox.buildBox()
         end
 
         if s then
-            if not s.pw then s.pw = self:GetWide() + 10 end
-            if not s.sw then s.sw = impulse.chatBox.frame:GetWide() - self:GetWide() - 15 end
+            if !s.pw then s.pw = self:GetWide() + 10 end
+            if !s.sw then s.sw = impulse.chatBox.frame:GetWide() - self:GetWide() - 15 end
         end
 
         local w, h = surface.GetTextSize( text )
@@ -315,7 +315,7 @@ chat.oldAddText = chat.oldAddText or chat.AddText
 
 -- Overwrite chat.AddText to detour it into my chatbox
 function chat.AddText(...)
-    if not impulse.chatBox.chatLog then
+    if !impulse.chatBox.chatLog then
         impulse.chatBox.buildBox()
     end
 

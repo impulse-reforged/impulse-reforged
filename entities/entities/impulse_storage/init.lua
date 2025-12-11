@@ -23,11 +23,11 @@ function ENT:OnTakeDamage(dmg)
 end
 
 function ENT:CanPlayerUse(client)
-    if not self.impulseSaveKeyValue or not self.impulseSaveKeyValue["MasterDoor"] then return true end
+    if !self.impulseSaveKeyValue or !self.impulseSaveKeyValue["MasterDoor"] then return true end
 
     local door = ents.GetMapCreatedEntity(self.impulseSaveKeyValue["MasterDoor"])
 
-    if not door:IsValid() or not door:IsDoor() then return true end
+    if !door:IsValid() or !door:IsDoor() then return true end
 
     if client.impulseOwnedDoors and client.impulseOwnedDoors[door] then
         return true
@@ -46,7 +46,7 @@ function ENT:Use(activator, caller)
             return activator:Notify("You cannot access your storage as this team.")
         end
 
-        if not self:CanPlayerUse(activator) then
+        if !self:CanPlayerUse(activator) then
             return activator:Notify("You do not have access to this storage chest.")
         end
 

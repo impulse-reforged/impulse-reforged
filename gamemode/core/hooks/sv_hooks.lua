@@ -346,7 +346,7 @@ function GM:PlayerSetup(client, data)
 
                     impulse.Refunds.Remove(sid, v.item)
 
-                    if not buyable then
+                    if !buyable then
                         continue
                     end
 

@@ -55,7 +55,7 @@ function impulse.Ops.DaleRead(message)
 
             local fail = false
             for a,b in pairs(k.Terms) do
-                if not tempTerms[b] then
+                if !tempTerms[b] then
                     fail = true
                     break
                 end

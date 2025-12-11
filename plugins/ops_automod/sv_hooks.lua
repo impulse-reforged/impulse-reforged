@@ -1,10 +1,10 @@
 function PLUGIN:PlayerDeath(victim, inflictor, attacker)
     if !impulse.Config.AutoModCooldown then return end
-    if not IsValid(victim) or not IsValid(attacker) then return end
+    if !IsValid(victim) or !IsValid(attacker) then return end
 
     local inflictor = (IsValid(attacker) and attacker.GetActiveWeapon) and attacker:GetActiveWeapon() or nil
 
-    if not IsValid(inflictor) or not inflictor.IsWeapon or not inflictor:IsWeapon() then return end
+    if !IsValid(inflictor) or !inflictor.IsWeapon or !inflictor:IsWeapon() then return end
 
     if attacker.AutoModKillCooldown and attacker.AutoModKillCooldown < CurTime() - impulse.Config.AutoModCooldown then
         attacker.AutoModRisk = 0

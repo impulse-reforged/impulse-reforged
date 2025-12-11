@@ -72,7 +72,7 @@ end
 -- @realm shared
 -- @param name string The variable name to retrieve
 -- @param fallback any Optional fallback value if variable is not set
--- @return any The stored value or fallback if not found
+-- @return any The stored value or fallback if !found
 -- @usage local health = entity:GetRelay("health_percentage", 1.0)
 -- @usage local status = player:GetRelay("status", "healthy")
 function ENTITY:GetRelay(name, fallback)
@@ -144,7 +144,7 @@ end
 -- @realm shared
 -- @param name string The variable name to retrieve
 -- @param fallback any Optional fallback value if variable is not set
--- @return any The stored value or fallback if not found
+-- @return any The stored value or fallback if !found
 -- @usage local roundState = GetRelay("round_state", "waiting")
 -- @usage local message = GetRelay("server_message", "")
 function GetRelay(name, fallback)

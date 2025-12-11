@@ -2,11 +2,11 @@ function impulse.Ops.EventManager.SequenceLoad(path)
     local fileData = file.Read(path, "DATA")
     local json = util.JSONToTable(fileData)
 
-    if not json or not istable(json) then
+    if !json or !istable(json) then
         return false, "Corrupted sequence file"
     end
 
-    if not json.Name or not json.Events or not json.FileName then
+    if !json.Name or !json.Events or !json.FileName then
         return false, "Corrupted sequence file vital metadata"
     end
 

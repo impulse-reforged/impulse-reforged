@@ -16,7 +16,7 @@ local timeoutCommand = {
         local reason = arg[3]
         local plyTarget = impulse.Util:FindPlayer(name)
 
-        if not time or not tonumber(time) then
+        if !time or !tonumber(time) then
             return client:Notify("Please specific a valid time value in minutes.")
         end
 
@@ -30,7 +30,7 @@ local timeoutCommand = {
             plyTarget:Notify("You have been issued an OOC communication timeout by a game moderator that will last " .. (time / 60) .. " minutes.")
 
             timer.Create("impulseOOCTimeout" .. sid, time, 1, function()
-                if not impulse.OOCTimeouts[sid] then return end
+                if !impulse.OOCTimeouts[sid] then return end
 
                 impulse.OOCTimeouts[sid] = nil
 

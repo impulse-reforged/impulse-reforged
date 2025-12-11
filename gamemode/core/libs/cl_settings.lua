@@ -65,19 +65,19 @@ impulse.Settings.Stored = {}
 
 local logs = impulse.Logs
 function impulse.Settings:Define(name, settingData)
-    if not settingData then
+    if !settingData then
         logs:Error("Could not Define Setting. Data is nil, attempted name: " .. name)
     end
 
-    if not type(settingData) == "table" then
+    if !type(settingData) == "table" then
         logs:Error("Could not Define Setting. Data is not a table, attempted name: " .. name)
     end
 
-    if not settingData.name then
+    if !settingData.name then
         logs:Error("Could not Define Setting. Name is nil, attempted name: " .. name)
     end
 
-    if not settingData.type then
+    if !settingData.type then
         logs:Error("Could not Define Setting. Type is nil, attempted name: " .. name)
     end
 
@@ -86,24 +86,24 @@ function impulse.Settings:Define(name, settingData)
     end
 
     if settingData.type == "slider" then
-        if not settingData.minValue then
+        if !settingData.minValue then
             settingData.minValue = 0
         end
 
-        if not settingData.maxValue then
+        if !settingData.maxValue then
             settingData.maxValue = 100
         end
 
-        if not settingData.decimals then
+        if !settingData.decimals then
             settingData.decimals = 0
         end
     elseif settingData.type == "dropdown" then
-        if not settingData.options then
+        if !settingData.options then
             logs:Error("Could not Define Setting. Options is nil, attempted name: " .. name)
         end
     end
 
-    if not settingData.category then
+    if !settingData.category then
         settingData.category = "Other"
     end
 
@@ -122,7 +122,7 @@ local optX = {["tickbox"] = true} -- hash comparisons faster than string
 -- @return Setting value
 function impulse.Settings:Get(name)
     local settingData = self.Stored[name]
-    if not settingData then
+    if !settingData then
         return --MsgC(Color(255, 0, 0), "[impulse-reforged] Error, could not GetSetting. Please contact a developer, attempted name: " .. name .. "\n")
     end
 
@@ -142,7 +142,7 @@ end
 -- @internal
 function impulse.Settings:Load()
     for v, k in pairs(self.Stored) do
-        if not k then
+        if !k then
             logs:Error("Could not load setting. Please contact a developer. Attempted name: " .. v)
             continue
         end

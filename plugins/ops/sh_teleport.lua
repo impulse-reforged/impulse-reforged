@@ -1,7 +1,7 @@
 if ( SERVER ) then
     function opsGoto(client, pos)
         client:ExitVehicle()
-        if not client:Alive() then client:Spawn() end
+        if !client:Alive() then client:Spawn() end
 
         client:SetPos(impulse.Util:FindEmptyPos(pos, {client}, 600, 30, Vector(16, 16, 64)))
     end
@@ -10,7 +10,7 @@ if ( SERVER ) then
         local hasPhysgun = false
         local wep = target:GetActiveWeapon()
 
-        if not target:IsBot() and wep and IsValid(wep) and wep:GetClass() == "weapon_physgun" and target:KeyDown(IN_ATTACK) then
+        if !target:IsBot() and wep and IsValid(wep) and wep:GetClass() == "weapon_physgun" and target:KeyDown(IN_ATTACK) then
             target:ConCommand("-attack")
             target:GetActiveWeapon():Remove()
             hasPhysgun = true
@@ -45,7 +45,7 @@ local gotoCommand = {
         elseif string.sub(name, 1, 1) == "#" then
             local id = string.sub(name, 2)
 
-            if not tonumber(id) then
+            if !tonumber(id) then
                 return client:Notify("Invalid entity ID: " .. id .. " .. ")
             end
 
@@ -53,7 +53,7 @@ local gotoCommand = {
 
             local ent = Entity(id)
 
-            if not IsValid(ent) then
+            if !IsValid(ent) then
                 return client:Notify("Entity " .. id .. " does not exist.")
             end
 
@@ -103,7 +103,7 @@ local bringCommand = {
         local plyTarget = impulse.Util:FindPlayer(name)
 
         if plyTarget and client != plyTarget then
-            if not plyTarget:Alive() then
+            if !plyTarget:Alive() then
                 plyTarget:Spawn()
                 plyTarget:Notify("You have been respawned by a game moderator.")
                 client:Notify("The target was dead and has been automatically respawned.")
@@ -130,7 +130,7 @@ local returnCommand = {
 
         if plyTarget and client != plyTarget then
             if plyTarget.lastPos then
-                if not plyTarget:Alive() then
+                if !plyTarget:Alive() then
                     return client:Notify("The player is dead.")
                 end
                 

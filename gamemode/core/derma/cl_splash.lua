@@ -82,6 +82,13 @@ function PANEL:OnKeyCodeReleased(keyCode)
 
             self:Remove()
 
+            -- Check if player needs to complete entrance quiz
+            if ( impulse.Quiz and impulse.Quiz:IsEnabled() and !impulse.Quiz:HasPassed() ) then
+                -- Show entrance quiz instead of main menu
+                impulse.Quiz:Show()
+                return
+            end
+
             if ( impulse_isNewPlayer or cookie.GetString("impulse_intro", "") == "true" ) then
                 if ( cookie.GetString("impulse_intro", "") == "true" ) then
                     cookie.Delete("impulse_intro")

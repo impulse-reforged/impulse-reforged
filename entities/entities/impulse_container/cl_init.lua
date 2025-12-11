@@ -5,7 +5,7 @@ function ENT:Draw()
 end
 
 function ENT:Think()
-    if not self.LootSet and self:GetLoot() then
+    if !self.LootSet and self:GetLoot() then
         self.HUDName = "Lootable Container"
         self.HUDDesc = "Press E to loot this container."
 

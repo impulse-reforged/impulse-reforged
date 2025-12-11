@@ -414,14 +414,14 @@ function impulse.Group:NetworkRanks(to, name)
 end
 
 local function postCompute(self, name, rank, skipDb)
-    if not IsValid(self) then return end
+    if !IsValid(self) then return end
 
     impulse.Group:NetworkMemberToOnline(name, self:SteamID64())
 
     self:SetRelay("groupName", name)
     self:SetRelay("groupRank", rank)
 
-    if not skipDb then
+    if !skipDb then
         impulse.Group:NetworkAllMembers(self, name)
     end
 
@@ -445,7 +445,7 @@ function PLAYER:GroupAdd(name, rank, skipDb)
     local id = impulse.Group.Groups[name].ID
     local rank = rank or impulse.Group:GetDefaultRank(name)
 
-    if not skipDb then
+    if !skipDb then
         impulse.Group:AddPlayer(self:SteamID64(), id, rank)
     end
 
@@ -475,10 +475,10 @@ end
 -- @string[opt] rank Rank
 function PLAYER:GroupLoad(groupID, rank)
     impulse.Group:Load(groupID, function(name)
-        if not IsValid(self) then return end
+        if !IsValid(self) then return end
 
         impulse.Group:ComputeMembers(name, function()
-            if not IsValid(self) then return end
+            if !IsValid(self) then return end
 
             impulse.Group:NetworkAllMembers(self, name)
 
@@ -490,7 +490,7 @@ function PLAYER:GroupLoad(groupID, rank)
         end)
 
         if rank then
-            if not impulse.Group.Groups[name].Ranks[rank] then
+            if !impulse.Group.Groups[name].Ranks[rank] then
                 rank = impulse.Group:GetDefaultRank(name)
                 impulse.Group:UpdatePlayerRank(self:SteamID64(), rank)
             end
@@ -510,7 +510,7 @@ function PLAYER:GroupLoad(groupID, rank)
     end)
 end
 
---- Returns wether or not the provided group name is unique or not
+--- Returns wether or !the provided group name is unique or not
 -- @realm server
 -- @string name Group name
 -- @func callback Callback function

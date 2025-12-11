@@ -103,7 +103,7 @@ function PANEL:SetDoor(door)
 
                     exclude[k] = true
 
-                    if not IsValid(k) or not k:IsPlayer() or k == LocalPlayer() then
+                    if !IsValid(k) or !k:IsPlayer() or k == LocalPlayer() then
                         continue
                     end
 
@@ -161,7 +161,7 @@ function PANEL:SetDoor(door)
 
     hook.Run("DoorMenuAddOptions", self, door, doorOwners, doorGroup, doorBuyable)
 
-    if not self.hasAction then return self:Remove() end
+    if !self.hasAction then return self:Remove() end
 end
 
 function PANEL:SetPlayer(client)
@@ -182,7 +182,7 @@ function PANEL:SetPlayer(client)
 
     hook.Run("PlayerMenuAddOptions", self, client)
 
-    if not self.hasAction then return self:Remove() end
+    if !self.hasAction then return self:Remove() end
 end
 
 function PANEL:SetContainer(ent)
@@ -190,7 +190,7 @@ function PANEL:SetContainer(ent)
         if LocalPlayer():IsCP() then
             self:AddAction("impulse-reforged/icons/padlock-2-256.png", "Remove Padlock", function()
                 impulse.Util:MakeWorkbar(15, "Breaking padlock...", function()
-                    if not IsValid(ent) then return end
+                    if !IsValid(ent) then return end
 
                     net.Start("impulseInvContainerRemovePadlock")
                     net.SendToServer()
@@ -201,13 +201,13 @@ function PANEL:SetContainer(ent)
         end
     end
 
-    if not self.hasAction then return self:Remove() end
+    if !self.hasAction then return self:Remove() end
 end
 
 function PANEL:SetBody(ragdoll)
     hook.Run("RagdollMenuAddOptions", self, ragdoll)
 
-    if not self.hasAction then return self:Remove() end
+    if !self.hasAction then return self:Remove() end
 end
 
 function PANEL:Think()

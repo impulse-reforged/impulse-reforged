@@ -24,7 +24,7 @@ function PLAYER:GroupHasPermission(act)
     local group = self:GetRelay("groupName", nil)
     local rank = self:GetRelay("groupRank", nil)
 
-    if not group or not rank then return false end
+    if !group or !rank then return false end
 
     local groupData = impulse.Group.Groups[group]
 
@@ -32,17 +32,17 @@ function PLAYER:GroupHasPermission(act)
         groupData = impulse.Group.Groups[1]
     end
 
-    if not groupData then return false end
+    if !groupData then return false end
 
-    if not groupData.Ranks then return false end
+    if !groupData.Ranks then return false end
     
-    if not groupData.Ranks[rank] then return false end
+    if !groupData.Ranks[rank] then return false end
 
     if groupData.Ranks[rank][99] then -- is owner
         return true
     end
 
-    if not groupData.Ranks[rank][act] then return false end
+    if !groupData.Ranks[rank][act] then return false end
 
     return true
 end

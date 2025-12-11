@@ -3,12 +3,12 @@ impulse.chatCommands = impulse.chatCommands or {}
 impulse.chatClasses = impulse.chatClasses or {}
 
 function impulse.RegisterChatCommand(name, cmdData)
-    if not cmdData.adminOnly then cmdData.adminOnly = false end
-    if not cmdData.leadAdminOnly then cmdData.leadAdminOnly = false end
-    if not cmdData.superAdminOnly then cmdData.superAdminOnly = false end
-    if not cmdData.description then cmdData.description = "" end
-    if not cmdData.requiresArg then cmdData.requiresArg = false end
-    if not cmdData.requiresAlive then cmdData.requiresAlive = false end
+    if !cmdData.adminOnly then cmdData.adminOnly = false end
+    if !cmdData.leadAdminOnly then cmdData.leadAdminOnly = false end
+    if !cmdData.superAdminOnly then cmdData.superAdminOnly = false end
+    if !cmdData.description then cmdData.description = "" end
+    if !cmdData.requiresArg then cmdData.requiresArg = false end
+    if !cmdData.requiresAlive then cmdData.requiresAlive = false end
 
     impulse.chatCommands[name] = cmdData
 end
@@ -108,7 +108,7 @@ local pmCommand = {
         local message = string.sub(rawText, (string.len(name) + 2))
         message = string.Trim(message)
 
-        if not message or message == "" then
+        if !message or message == "" then
             return client:Notify("Invalid argument.")
         end
 
@@ -133,11 +133,11 @@ local replyCommand = {
     onRun = function(client, arg, rawText)
         local message = rawText
 
-        if not message or message == "" then
+        if !message or message == "" then
             return client:Notify("Invalid argument.")
         end
 
-        if not client.PMReply or not IsValid(client.PMReply) then
+        if !client.PMReply or !IsValid(client.PMReply) then
             return client:Notify("Target not found.")
         end
 
@@ -245,7 +245,7 @@ local advertCommand = {
     requiresArg = true,
     requiresAlive = true,
     onRun = function(client, arg, rawText)
-        if not impulse.Teams.Stored[client:Team()].canAdvert or impulse.Teams.Stored[client:Team()].canAdvert == false then
+        if !impulse.Teams.Stored[client:Team()].canAdvert or impulse.Teams.Stored[client:Team()].canAdvert == false then
             return client:Notify("Your team is not allowed to make adverts.")
         end        if client:GetRelay("arrested", false) then
             return client:Notify("You cannot make an advert while you are arrested.")
@@ -373,7 +373,7 @@ local searchCommand = {
     requiresArg = false,
     requiresAlive = true,
     onRun = function(client, args, text)
-        if not client:IsCP() then return end
+        if !client:IsCP() then return end
         if client.impulseInventorySearching and IsValid(client.impulseInventorySearching) then return end
 
         local trace = {}
@@ -385,13 +385,13 @@ local searchCommand = {
         local targ = tr.Entity
 
         if targ and IsValid(targ) and targ:IsPlayer() and targ:OnGround() then
-            if not targ.impulseBeenInventorySetup then return end
+            if !targ.impulseBeenInventorySetup then return end
 
-            if not client:CanArrest(targ) then
+            if !client:CanArrest(targ) then
                 return client:Notify("You do not have permission to search this player.")
             end
 
-            if not targ:GetRelay("arrested", false) then
+            if !targ:GetRelay("arrested", false) then
                 return client:Notify("You must detain the player before you can search them.")
             end
 
@@ -439,7 +439,7 @@ local groupChatCommand = {
     onRun = function(client, arg, rawText)
         local group = client:GetRelay("groupName", nil)
 
-        if not group then
+        if !group then
             return client:Notify("You must be a member of a group to use this command.")
         end
 
@@ -447,7 +447,7 @@ local groupChatCommand = {
             return client:Notify("You cannot use this command while on this team.")
         end
 
-        if not client:GroupHasPermission(2) then
+        if !client:GroupHasPermission(2) then
             return client:Notify("Your group rank does not have permission to use this command.")
         end
 
@@ -488,7 +488,7 @@ if ( CLIENT ) then
 
     local strFind = string.find
     impulse.RegisterChatClass(2, function(message, speaker)
-        if not impulse.Settings:Get("chat_oocenabled", true) then
+        if !impulse.Settings:Get("chat_oocenabled", true) then
             return print("(OOC DISABLED) [OOC] " .. speaker:SteamName() .. ": " .. message)
         end
 
@@ -579,11 +579,11 @@ if ( CLIENT ) then
         local groupName = LocalPlayer():GetRelay("groupName", nil)
         local groupRank = speaker:GetRelay("groupRank", nil)
 
-        if not groupName or not groupRank then return end
+        if !groupName or !groupRank then return end
 
         local myGroup = impulse.Group.Groups[1]
 
-        if not myGroup then return end
+        if !myGroup then return end
 
         if myGroup.Color then
             chat.AddText(myGroup.Color, "[" .. groupName .. "] (" .. groupRank .. ") ", speaker:Nick(), ": ", message)

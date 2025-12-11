@@ -268,12 +268,12 @@ do
             -- READ THE KEY
             index = index + 1;
             index, k = self[ tk ]( self, index, str, cache );
-            if not k then continue end
+            if !k then continue end
 
             -- READ THE VALUE
             tv = sub( str, index, index );
             index = index + 1;
-            if not self[tv] then
+            if !self[tv] then
                 print('did not find type: '..tv)
             end
             index, v = self[ tv ]( self, index, str, cache );

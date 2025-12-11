@@ -40,7 +40,7 @@ SWEP.NextGo = 0
 
 if ( SERVER ) then
     function SWEP:Equip(owner)
-        if not owner:IsAdmin() then
+        if !owner:IsAdmin() then
             owner:StripWeapon("impulse_storageeditor")
         end
     end
@@ -73,7 +73,7 @@ function SWEP:PrimaryAttack()
     local tr = util.TraceLine(trace)
     local ent = tr.Entity
 
-    if not self.SelectedStorage and IsValid(ent) and ent:GetClass() == "impulse_storage" then
+    if !self.SelectedStorage and IsValid(ent) and ent:GetClass() == "impulse_storage" then
         if SERVER and !ent.impulseSaveEnt then
             self:GetOwner():Notify("You must mark the storage chest for saving first! Reset.")
             return

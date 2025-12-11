@@ -54,7 +54,7 @@ function PANEL:Init()
             surface.SetMaterial(k.Icon)
             surface.DrawTexturedRect(10, 10, 82, 84)
 
-            if not unlocked then
+            if !unlocked then
                 draw.RoundedBox(0, 0, 0, w, h, disabledCol)
             end
         end

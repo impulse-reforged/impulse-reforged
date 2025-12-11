@@ -52,11 +52,11 @@ end
 
 function PANEL:Think()
     if self.container then
-        if not IsValid(self.container) or self.container:GetPos():DistToSqr(LocalPlayer():GetPos()) > (120 ^ 2) then
+        if !IsValid(self.container) or self.container:GetPos():DistToSqr(LocalPlayer():GetPos()) > (120 ^ 2) then
             return self:Remove()
         end
 
-        if not LocalPlayer():Alive()  then
+        if !LocalPlayer():Alive()  then
             return self:Remove()
         end
 

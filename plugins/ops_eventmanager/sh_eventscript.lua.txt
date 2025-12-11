@@ -84,7 +84,7 @@ local parserWorkers = {
         print("str parser")
         local ender = find(word, LANG.STR)
 
-        if not ender then
+        if !ender then
             print("no str ender")
             return COMP_REPROCESS, {TERM = COMP_CURTERM}
         end
@@ -100,7 +100,7 @@ local parserWorkers = {
     end,
     ["Vector"] = function(word, no) -- aliases: Angle
         print("VEC IN: "..word)
-        if not PARSER.Opened then
+        if !PARSER.Opened then
             local opener = find(word, "(")
 
             if opener then
@@ -148,7 +148,7 @@ local parserWorkers = {
 
             local num = tonumber(scannable)
 
-            if not num then
+            if !num then
                 Ex(no, "Expected number inside Vector, got '"..word.."'")
                 return COMP_HALT
             end
@@ -287,7 +287,7 @@ local function DoInProps(word, no, data)
         end
     end
 
-    if not data.CURKEY then
+    if !data.CURKEY then
         print(pre.." LOOKING FOR KEY")
         local findEq = find(word, LANG.EQ)
         local s = word
@@ -312,12 +312,12 @@ end
 local function DoCall(word, no)
     CALL = CALL or {}
 
-    if not CALL.NAME then
+    if !CALL.NAME then
         local split = string.Split(word, LANG.UID_START)
         local splitx = string.Split(split[1], LANG.PROP_START)
         local x = split[1]
 
-        if not impulse.Ops.EventManager.Config.Events[x] then
+        if !impulse.Ops.EventManager.Config.Events[x] then
             Ex(no, "Can not find event matching '"..x.."'")
             return COMP_HALT
         end
@@ -327,7 +327,7 @@ local function DoCall(word, no)
 
         local found = find(word, LANG.UID_START)
 
-        if not found then
+        if !found then
             found = find(word, LANG.PROP_START)
         end
 
@@ -336,10 +336,10 @@ local function DoCall(word, no)
         end
     end
 
-    if not CALL.UID and string.StartWith(word, LANG.UID_START) then
+    if !CALL.UID and string.StartWith(word, LANG.UID_START) then
         local findEnd = find(word, LANG.UID_END)
 
-        if not findEnd then
+        if !findEnd then
             Ex(no, "Can not find UID bracket close '"..word.."'")
             return COMP_HALT
         end
@@ -357,7 +357,7 @@ local function DoCall(word, no)
 
     local findStart = string.StartWith(word, LANG.PROP_START)
 
-    if not CALL.PROP and (findStart or CALL.PROP_OPEN) then
+    if !CALL.PROP and (findStart or CALL.PROP_OPEN) then
         CALL.PROP_TMP = CALL.PROP_TMP or {}
 
         if findStart then
@@ -392,7 +392,7 @@ end
 LANG.TERMS = {
     macro = {
         Handler = function(word, no)
-            if not word then
+            if !word then
                 if MACRO then
                     Ex(no, "Nested macros are not supported")
                     return COMP_HALT
@@ -409,7 +409,7 @@ LANG.TERMS = {
             print("2nd stage macro")
 
             PrintTable(MACRO)
-            if not MACRO.NAME then
+            if !MACRO.NAME then
                 if word == "" then
                     Ex(no, "Can not find macro name")
                     return COMP_HALT
@@ -426,7 +426,7 @@ LANG.TERMS = {
                 return COMP_REPROCESS, {TERM = "macro"}
             end
 
-            if not MACRO.PROPS and (string.StartWith(word, LANG.PROP_START) or MACRO.PROP_OPEN) then
+            if !MACRO.PROPS and (string.StartWith(word, LANG.PROP_START) or MACRO.PROP_OPEN) then
                 MACRO.PROP_TMP = MACRO.PROP_TMP or ""
                 MACRO.PROP_OPEN = true
                 local split = find(word, LANG.PROP_END)
@@ -446,7 +446,7 @@ LANG.TERMS = {
             return COMP_SKIPLINE
         end,
         OnLineDone = function(no)
-            if not MACRO.NAME then
+            if !MACRO.NAME then
                 Ex(no, "Can not find macro name")
                 return COMP_HALT
             end
@@ -461,7 +461,7 @@ LANG.TERMS = {
     },
     ["end"] = {
         Handler = function(word, no)
-            if not MACRO then
+            if !MACRO then
                 Ex(no, "Can not find start of statment for end")
                 return COMP_HALT
             end
@@ -477,7 +477,7 @@ LANG.TERMS = {
     },
     call = {
         Handler = function(word, no)
-            if not word then
+            if !word then
                 MAKECALL = {}
                 return COMP_REPROCESS, {TERM = "call"}
             end
@@ -493,7 +493,7 @@ LANG.TERMS = {
             return COMP_SKIPLINE
         end,
         OnLineDone = function(no)
-            if not MAKECALL.HasCall then
+            if !MAKECALL.HasCall then
                 Ex(no, "Call was made but no arguments were provided")
                 return COMP_HALT
             end
@@ -504,7 +504,7 @@ LANG.TERMS = {
     },
     call_async = {
         Handler = function(word, no)
-            if not word then
+            if !word then
                 MAKECALL = {}
                 return COMP_REPROCESS, {TERM = "call_async"}
             end
@@ -515,7 +515,7 @@ LANG.TERMS = {
             return DoCall(word, no) or COMP_SKIPLINE
         end,
         OnLineDone = function(no)
-            if not MAKECALL.HasCall then
+            if !MAKECALL.HasCall then
                 Ex(no, "ASync Call was made but no arguments were provided")
                 return COMP_HALT
             end
@@ -523,14 +523,14 @@ LANG.TERMS = {
     },
     wait = {
         Handler = function(word, no)
-            if not word then
+            if !word then
                 MAKEWAIT = {}
                 return COMP_REPROCESS, {TERM = "wait"}
             end
 
             local n = tonumber(word)
 
-            if not n then
+            if !n then
                 Ex(no, "Wait value must be a valid number")
                 return COMP_HALT
             end
@@ -543,7 +543,7 @@ LANG.TERMS = {
             return COMP_SKIPLINE
         end,
         OnLineDone = function(no)
-            if not MAKEWAIT.HasWait then
+            if !MAKEWAIT.HasWait then
                 Ex(no, "Wait was made but no arguments were provided")
                 return COMP_HALT
             end
@@ -557,14 +557,14 @@ LANG.TERMS = {
     var = {
         Handler = function(word, no) 
             print("var call")
-            if not word then
+            if !word then
                 MAKEVAR = {}
                 MAKEVAR.NAME_START = true
                 print("make var")
                 return COMP_REPROCESS, {TERM = "var"}
             end
     
-            if not MAKEVAR.NAME and MAKEVAR.NAME_START then
+            if !MAKEVAR.NAME and MAKEVAR.NAME_START then
                 if word == "" then
                     Ex(no, "Can not find VAR name")
                     return COMP_HALT
@@ -605,7 +605,7 @@ LANG.TERMS = {
             return COMP_REPROCESS, {TERM = "var"}
         end,
         OnLineDone = function(no)
-            if not MAKEVAR.NAME then
+            if !MAKEVAR.NAME then
                 Ex(no, "Can not find VAR name")
                 return COMP_HALT
             end
@@ -756,12 +756,12 @@ local function DoLine(line, no)
     local function caller(word, no)
         local act, data = DoWord(word, no)
 
-        if not data or not data.TERM then
+        if !data or !data.TERM then
             print("COMP GOTOTERM SET TO NIL")
             COMP_GOTOTERM = nil
         end
 
-        if not data or not data.PARSER then
+        if !data or !data.PARSER then
             COMP_GOTOPARSER = nil
         end
 
@@ -868,12 +868,12 @@ function IES.Compile(script)
         end
     end
 
-    if not errored and MACRO then
+    if !errored and MACRO then
         Ex(MACRO.START_LINE - 1, "Can not find end for macro")
         return
     end
 
-    if not errored then
+    if !errored then
         local endTime = SysTime()
         local green = Color(76, 240, 61)
 

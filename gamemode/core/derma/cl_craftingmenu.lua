@@ -104,7 +104,7 @@ function PANEL:Think()
         return self:Remove()
     end
 
-    if not LocalPlayer():Alive() or LocalPlayer():IsCP() then
+    if !LocalPlayer():Alive() or LocalPlayer():IsCP() then
         return self:Remove()
     end
 
@@ -215,7 +215,7 @@ function PANEL:DoCraft(item, mix)
             ent:SetMaterial(item.Material)
         end
 
-        if not item.NoCenter then
+        if !item.NoCenter then
             self:SetLookAt(vector_origin)
         end
     end

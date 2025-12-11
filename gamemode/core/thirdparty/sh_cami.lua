@@ -101,7 +101,7 @@ end
 --- @param source any @Identifier for your own admin mod. Can be anything.
 --- @return boolean @Whether the unregistering succeeded.
 function CAMI.UnregisterUsergroup(usergroupName, source)
-    if not usergroups[usergroupName] then return false end
+    if !usergroups[usergroupName] then return false end
 
     local usergroup = usergroups[usergroupName]
     usergroups[usergroupName] = nil
@@ -158,7 +158,7 @@ end
 --- @param usergroupName string @The name of the usergroup
 --- @return "'user'" | "'admin'" | "'superadmin'" @The name of the root usergroup
 function CAMI.InheritanceRoot(usergroupName)
-    if not usergroups[usergroupName] then return end
+    if !usergroups[usergroupName] then return end
 
     local inherits = usergroups[usergroupName].Inherits
     while inherits != usergroups[usergroupName].Inherits do
@@ -189,7 +189,7 @@ end
 --- @param privilegeName string @The name of the privilege.
 --- @return boolean @Whether the unregistering succeeded.
 function CAMI.UnregisterPrivilege(privilegeName)
-    if not privileges[privilegeName] then return false end
+    if !privileges[privilegeName] then return false end
 
     local privilege = privileges[privilegeName]
     privileges[privilegeName] = nil
@@ -216,7 +216,7 @@ end
 local defaultAccessHandler = {["CAMI.PlayerHasAccess"] =
     function(_, actorPly, privilegeName, callback, targetPly, extraInfoTbl)
         -- The server always has access in the fallback
-        if not IsValid(actorPly) then return callback(true, "Fallback.") end
+        if !IsValid(actorPly) then return callback(true, "Fallback.") end
 
         local priv = privileges[privilegeName]
 
@@ -227,7 +227,7 @@ local defaultAccessHandler = {["CAMI.PlayerHasAccess"] =
             extraInfoTbl.Fallback == "superadmin" and actorPly:IsSuperAdmin())
 
 
-        if not priv then return callback(fallback, "Fallback.") end
+        if !priv then return callback(fallback, "Fallback.") end
 
         local hasAccess =
             priv.MinAccess == "user" or

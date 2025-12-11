@@ -28,7 +28,7 @@ function PANEL:SetItem(item, sellData)
             ent:SetMaterial(panel.Item.Material)
         end
 
-        if not item.NoCenter then
+        if !item.NoCenter then
             self:SetLookAt(vector_origin)
         end
 
@@ -59,7 +59,7 @@ function PANEL:Think()
     if self.ItemID then
         local inv = impulse.Inventory.Data[0][INVENTORY_PLAYER]
 
-        if not inv[self.ItemID] then
+        if !inv[self.ItemID] then
             self:Remove()
         end
     end

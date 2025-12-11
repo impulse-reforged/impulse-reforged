@@ -19,18 +19,18 @@ function PANEL:SetupVendor()
 
     local tr = util.TraceLine(trace)
 
-    if not tr.Entity or not IsValid(tr.Entity) or tr.Entity:GetClass() != "impulse_vendor" then
+    if !tr.Entity or !IsValid(tr.Entity) or tr.Entity:GetClass() != "impulse_vendor" then
         return self:Remove()
     end
 
     local npc = tr.Entity
     local vendorType = npc:GetVendor()
 
-    if not vendorType then
+    if !vendorType then
         logs:Warning("Vendor has no VendorType set!")
     end
 
-    if not impulse.Vendor.Data[vendorType] then
+    if !impulse.Vendor.Data[vendorType] then
         return logs:Error("VendorType " .. vendorType .. " is invalid!")
     end
 
@@ -86,17 +86,17 @@ function PANEL:SetupVendor()
     self.vendorScroll:SetSize(340, h - 83)
 
     for v, k in pairs(self.Vendor.Sell) do
-        if not k.CanBuy or k.CanBuy(LocalPlayer()) then
+        if !k.CanBuy or k.CanBuy(LocalPlayer()) then
             local itemid = impulse.Inventory:ClassToNetID(v)
 
-            if not itemid then
+            if !itemid then
                 logs:Error("" .. v .. " is invalid!")
                 continue
             end
 
             local item = impulse.Inventory.Items[itemid]
 
-            if not item then
+            if !item then
                 logs:Error("Failed to resolve ItemID " .. itemid .. "! (Class " .. v .. ")!")
                 continue
             end
@@ -114,14 +114,14 @@ function PANEL:SetupVendor()
         if k.CanBuy and !k.CanBuy(LocalPlayer()) then
             local itemid = impulse.Inventory:ClassToNetID(v)
 
-            if not itemid then
+            if !itemid then
                 logs:Error("" .. v .. " is invalid!")
                 continue
             end
 
             local item = impulse.Inventory.Items[itemid]
 
-            if not item then
+            if !item then
                 logs:Error("Failed to resolve ItemID " .. itemid .. "! (Class " .. v .. ")!")
                 continue
             end

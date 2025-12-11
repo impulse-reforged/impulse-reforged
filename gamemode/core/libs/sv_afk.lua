@@ -9,7 +9,7 @@ function PLAYER:MakeAFK()
     local maxcount = impulse.Config.UserSlots or game.MaxPlayers()
     local limit = impulse.Config.AFKKickRatio * maxcount
 
-    if playercount >= limit and (impulse.Ops.EventManager.GetEventMode() or not self:IsDonator()) then
+    if playercount >= limit and (impulse.Ops.EventManager.GetEventMode() or !self:IsDonator()) then
         if self:IsAdmin() then return end
 
         self:Kick("You have been kicked for inactivity on a busy server. See you again soon!")
@@ -18,7 +18,7 @@ function PLAYER:MakeAFK()
 
     self:Notify("Due to inactivity, you have been marked as AFK. You may be demoted from your current team.")
 
-    if not self:IsAdmin() and self:Team() != impulse.Config.DefaultTeam then
+    if !self:IsAdmin() and self:Team() != impulse.Config.DefaultTeam then
         self:SetTeam(impulse.Config.DefaultTeam, true)
     end
 end

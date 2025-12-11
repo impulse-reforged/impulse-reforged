@@ -213,7 +213,7 @@ function PANEL:SetupPlayer(panel, stats, sid)
 end
 
 function PANEL:PaintOver()
-    if not self.Stats then
+    if !self.Stats then
         draw.SimpleText("Grabbing data from Steam... (this gets stuck if Steam goes down)", "Impulse-Elements18-Shadow", 50, 50)
     end
 end

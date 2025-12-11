@@ -13,7 +13,7 @@ local function CalculateData(onDone)
 
     mysql:RawQuery("SELECT `id`, `mod`, UNIX_TIMESTAMP(`start`), `claimwait`, `closewait` FROM `impulse_reports`", function(result)
         for v, k in pairs(result) do
-            if not data.Mods[k.mod] then
+            if !data.Mods[k.mod] then
                 data.Mods[k.mod] = {}
                 data.Mods[k.mod].Total = 0
                 data.Mods[k.mod].TotalWait = 0

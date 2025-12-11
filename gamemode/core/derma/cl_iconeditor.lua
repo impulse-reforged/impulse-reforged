@@ -34,7 +34,7 @@ function PANEL:Init()
     function self.model:LayoutEntity(ent)
         ent:SetAngles(ang)
 
-        if not noCnt then
+        if !noCnt then
             self:SetLookAt(vector_origin)
         else
             local min, max = ent:GetRenderBounds()
@@ -71,7 +71,7 @@ function PANEL:Init()
     function self.modelBig:LayoutEntity(ent)
         ent:SetAngles(ang)
 
-        if not noCnt then
+        if !noCnt then
             self:SetLookAt(vector_origin)
         else
             local min, max = ent:GetRenderBounds()

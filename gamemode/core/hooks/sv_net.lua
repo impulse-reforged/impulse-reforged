@@ -107,8 +107,7 @@ net.Receive("impulseCharacterCreate", function(len, client)
     local charModel = net.ReadString()
     local charSkin = net.ReadUInt(8)
 
-    local plyID = client:SteamID64()
-    local plyGroup = client:GetUserGroup()
+    local clientSteamID64 = client:SteamID64()
     local timestamp = math.floor(os.time())
 
     local canUseName, filteredName = impulse.CanUseName(charName)
@@ -131,7 +130,7 @@ net.Receive("impulseCharacterCreate", function(len, client)
     end
 
     local query = mysql:Select("impulse_players")
-    query:Where("steamid", plyID)
+    query:Where("steamid", clientSteamID64)
     query:Callback(function(result)
         -- If we already have a rp name, we can't create a new character
         if istable(result) and #result > 0 and result[1].rpname and result[1].rpname != "" then
@@ -142,7 +141,7 @@ net.Receive("impulseCharacterCreate", function(len, client)
 
         local insertQuery = mysql:Update("impulse_players")
         insertQuery:Update("rpname", charName)
-        insertQuery:Update("steamid", plyID)
+        insertQuery:Update("steamid", clientSteamID64)
         insertQuery:Update("steamname", client:SteamName())
         insertQuery:Update("group", "user")
         insertQuery:Update("xp", 0)
@@ -158,13 +157,13 @@ net.Receive("impulseCharacterCreate", function(len, client)
         insertQuery:Update("rpgrouprank", "[]")
         insertQuery:Update("address", "[]")
         insertQuery:Update("playtime", 0)
-        insertQuery:Where("steamid", plyID)
+        insertQuery:Where("steamid", clientSteamID64)
         insertQuery:Callback(function(result, status, lastID)
             if IsValid(client) then
                 local setupData = {
                     id = lastID,
                     rpname = charName,
-                    steamid = plyID,
+                    steamid = clientSteamID64,
                     steamname = client:SteamName(),
                     group = "user",
                     xp = 0,
@@ -301,7 +300,7 @@ net.Receive("impulseTeamChange", function(len, client)
             if teamData.quiz then
                 local data = client:GetData("quiz")
 
-                if not data or not data[teamData.codeName] then
+                if !data or !data[teamData.codeName] then
                     if client.nextQuiz and client.nextQuiz > CurTime() then
                         client:Notify("Wait" .. string.NiceTime(math.ceil(CurTime() - client.nextQuiz)) .. " before attempting to retry the quiz.")
                         return

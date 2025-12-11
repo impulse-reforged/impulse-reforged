@@ -649,7 +649,7 @@ function mysql:OnConnectionFailed(errorText)
     hook.Run("DatabaseConnectionFailed", errorText)
 end
 
--- A function to check whether or not the module is connected to a database.
+-- A function to check whether or !the module is connected to a database.
 function mysql:IsConnected()
     return self.module == "mysqloo" and (self.connection and self.connection:ping()) or self.module == "sqlite"
 end

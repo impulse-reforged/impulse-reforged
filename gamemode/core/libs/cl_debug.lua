@@ -129,7 +129,7 @@ end)
 concommand.Add("impulse_debug_wtl", function(client)
     local entity = LocalPlayer():GetEyeTrace().Entity
 
-    if not entity or not IsValid(entity) then
+    if !entity or !IsValid(entity) then
         return chat.AddText("You must be looking at an entity.")
     end
 
@@ -178,7 +178,7 @@ concommand.Add("impulse_debug_dump", function(client, cmd, arg)
     for v, k in pairs(route) do
         c = (c or impulse)[k]
 
-        if not c or type(c) != "table" then
+        if !c or type(c) != "table" then
             return print("Memory target invalid. (must be a path in the impulse.X data structure)")
         end
     end

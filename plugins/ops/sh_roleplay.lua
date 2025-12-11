@@ -36,7 +36,7 @@ local setTeamCommand = {
         local teamID = arg[2]
         local plyTarget = impulse.Util:FindPlayer(name)
 
-        if not tonumber(teamID) then
+        if !tonumber(teamID) then
             return client:Notify("The team ID must be a number.")
         end
 
@@ -66,7 +66,7 @@ local forceUnlockCommand = {
     onRun = function(client, arg, rawText)
         local door = client:GetEyeTrace().Entity
 
-        if not door or not IsValid(door) or not door:IsDoor() then
+        if !door or !IsValid(door) or !door:IsDoor() then
             return client:Notify("You are not looking at a door.")
         end
 
@@ -84,7 +84,7 @@ local forceLockCommand = {
     onRun = function(client, arg, rawText)
         local door = client:GetEyeTrace().Entity
 
-        if not door or not IsValid(door) or not door:IsDoor() then
+        if !door or !IsValid(door) or !door:IsDoor() then
             return client:Notify("You are not looking at a door.")
         end
 
@@ -102,7 +102,7 @@ local removeDoorCommand = {
     onRun = function(client, arg, rawText)
         local door = client:GetEyeTrace().Entity
 
-        if not door or not IsValid(door) or (not door:IsDoor() and !door:IsPropDoor()) then
+        if !door or !IsValid(door) or (not door:IsDoor() and !door:IsPropDoor()) then
             return client:Notify("You are not looking at a door.")
         end
 
@@ -124,13 +124,13 @@ local sellDoorCommand = {
     onRun = function(client, arg, rawText)
         local door = client:GetEyeTrace().Entity
 
-        if not door or not IsValid(door) or not door:IsDoor() then
+        if !door or !IsValid(door) or !door:IsDoor() then
             return client:Notify("You are not looking at a door.")
         end
 
         local owners = door:GetRelay("doorOwners", nil)
 
-        if not owners then
+        if !owners then
             return client:Notify("No door owners to remove.")
         end
 

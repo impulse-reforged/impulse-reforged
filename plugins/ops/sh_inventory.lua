@@ -3,13 +3,13 @@ if ( SERVER ) then
     util.AddNetworkString("impulseOpsRemoveInv")
 
     net.Receive("impulseOpsRemoveInv", function(len, client)
-        if not client:IsAdmin() then return end
+        if !client:IsAdmin() then return end
 
         local targ = net.ReadUInt(8)
         local invSize = net.ReadUInt(16)
 
         targ = Entity(targ)
-        if not IsValid(targ) then return end
+        if !IsValid(targ) then return end
 
         for i = 1,invSize do
             local itemid = net.ReadUInt(16)
@@ -28,7 +28,7 @@ else
         local invSize = net.ReadUInt(16)
         local invCompiled = {}
 
-        if not IsValid(searchee) then return end
+        if !IsValid(searchee) then return end
 
         for i = 1,invSize do
             local itemnetid = net.ReadUInt(10)
@@ -55,7 +55,7 @@ local viewInvCommand = {
         local plyTarget = impulse.Util:FindPlayer(name)
 
         if plyTarget then
-            if not plyTarget.impulseBeenInventorySetup then return client:Notify("Target is loading still...") end
+            if !plyTarget.impulseBeenInventorySetup then return client:Notify("Target is loading still...") end
 
             local inv = plyTarget:GetInventory(1)
             net.Start("impulseOpsViewInv")

@@ -1,4 +1,4 @@
-if not E2Lib then
+if !E2Lib then
     return
 end
 
@@ -7,11 +7,11 @@ if ( SERVER ) then
     util.AddNetworkString("opsE2ViewerRemove")
 
     net.Receive("opsE2ViewerRemove", function(len, client)
-        if not client:IsAdmin() then return end
+        if !client:IsAdmin() then return end
 
         local chip = net.ReadEntity()
 
-        if not IsValid(chip) then return end
+        if !IsValid(chip) then return end
 
         if chip:GetClass() != "gmod_wire_expression2" then return end
 
@@ -32,7 +32,7 @@ local e2ViewerCommand = {
             local data = k:GetOverlayData()
             local owner = k:CPPIGetOwner()
 
-            if not owner or not data then return end
+            if !owner or !data then return end
 
             net.WriteEntity(k)
             net.WriteString(data.txt)

@@ -114,7 +114,7 @@ function PANEL:SetupItems(width, height)
     if localInv and table.Count(localInv) > 0 then
         for v, k in pairs(localInv) do
             local itemData = impulse.Inventory.Items[k.id]
-            if not itemData then continue end
+            if !itemData then continue end
 
             local otherItem = self.items[k.id]
             local itemX = itemData

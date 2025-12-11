@@ -41,7 +41,7 @@ SWEP.Secondary.Ammo = "none"
 
 if ( SERVER ) then
     function SWEP:Equip(owner)
-        if not owner:IsAdmin() then
+        if !owner:IsAdmin() then
             owner:StripWeapon("impulse_vendorplacer")
         end
     end
@@ -114,11 +114,11 @@ if ( SERVER ) then
     util.AddNetworkString("impulseVendorPlace")
 
     net.Receive("impulseVendorPlace", function(len, client)
-        if not client:IsSuperAdmin() then return end
+        if !client:IsSuperAdmin() then return end
 
         local uniqueID = net.ReadString()
 
-        if not impulse.Vendor.Data[uniqueID] then return end
+        if !impulse.Vendor.Data[uniqueID] then return end
 
         local trace = client:GetEyeTrace()
         local ang = client:EyeAngles()

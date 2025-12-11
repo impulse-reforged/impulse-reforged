@@ -21,7 +21,7 @@ function PANEL:Setup(client)
 end
 
 function PANEL:Paint(w, h)
-    if not IsValid(self.client) then return end
+    if !IsValid(self.client) then return end
     local vol = self.client:VoiceVolume()
     local col = team.GetColor(self.client:Team())
     draw.RoundedBox(4, 0, 0, w, h, Color(0, 0, 0, 235))
@@ -48,7 +48,7 @@ end
 
 derma.DefineControl("VoiceNotify", "", PANEL, "DPanel")
 function GM:PlayerStartVoice(client)
-    if not IsValid(g_VoicePanelList) then return end
+    if !IsValid(g_VoicePanelList) then return end
     -- There'd be an exta one if voice_loopback is on, so remove it.
     GAMEMODE:PlayerEndVoice(client)
     if IsValid(PlayerVoicePanels[client]) then
@@ -61,7 +61,7 @@ function GM:PlayerStartVoice(client)
         return
     end
 
-    if not IsValid(client) then return end
+    if !IsValid(client) then return end
     local pnl = g_VoicePanelList:Add("VoiceNotify")
     pnl:Setup(client)
     PlayerVoicePanels[client] = pnl
@@ -69,7 +69,7 @@ end
 
 local function VoiceClean()
     for k, v in pairs(PlayerVoicePanels) do
-        if not IsValid(k) then GAMEMODE:PlayerEndVoice(k) end
+        if !IsValid(k) then GAMEMODE:PlayerEndVoice(k) end
     end
 end
 

@@ -4,11 +4,11 @@ properties.Add( "ops_copysteamid", {
     MenuIcon = "icon16/shield.png", -- The icon to display next to the property
 
     Filter = function( self, ent, client ) -- A function that determines whether an entity is valid for this property
-        if not client:IsAdmin() then
+        if !client:IsAdmin() then
             return false
         end
 
-        if not ent:IsPlayer() then
+        if !ent:IsPlayer() then
             return false
         end
 
@@ -26,11 +26,11 @@ properties.Add( "ops_openplayercard", {
     MenuIcon = "icon16/shield.png", -- The icon to display next to the property
 
     Filter = function( self, ent, client ) -- A function that determines whether an entity is valid for this property
-        if not client:IsAdmin() then
+        if !client:IsAdmin() then
             return false
         end
 
-        if not ent:IsPlayer() then
+        if !ent:IsPlayer() then
             return false
         end
 
@@ -56,11 +56,11 @@ properties.Add( "ops_openplayercardprop", {
     MenuIcon = "icon16/shield.png", -- The icon to display next to the property
 
     Filter = function( self, ent, client ) -- A function that determines whether an entity is valid for this property
-        if not client:IsAdmin() then
+        if !client:IsAdmin() then
             return false
         end
 
-        if not ent.CPPIGetOwner or not IsValid(ent:CPPIGetOwner()) or not ent:CPPIGetOwner():IsPlayer() then
+        if !ent.CPPIGetOwner or !IsValid(ent:CPPIGetOwner()) or !ent:CPPIGetOwner():IsPlayer() then
             return false
         end
 

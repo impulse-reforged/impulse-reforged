@@ -107,7 +107,7 @@ function impulse.Ops.ReportClaim(client, arg, rawText)
             return client:AddChatText(newReportCol, "Report #" .. reportId .. " has already been claimed by " .. targetReport[3]:SteamName())
         end
 
-        if not IsValid(reporter) then
+        if !IsValid(reporter) then
             return client:AddChatText(newReportCol, "The player who submitted this report has left the game. Please close.")
         end
 
@@ -161,7 +161,7 @@ function impulse.Ops.ReportClose(client, arg, rawText)
         end
     end
 
-    if not reportId then
+    if !reportId then
         return client:AddChatText(newReportCol, "You must claim a report or specify a report ID before closing it.")
     end
 
@@ -173,7 +173,7 @@ function impulse.Ops.ReportClose(client, arg, rawText)
         local reportClaimant = targetReport[3]
         local isDc = false
 
-        if not IsValid(reporter) then
+        if !IsValid(reporter) then
             isDc = true
         end
 
@@ -199,7 +199,7 @@ function impulse.Ops.ReportClose(client, arg, rawText)
             end
         end
 
-        if not isDc then
+        if !isDc then
             net.Start("opsReportMessage")
             net.WriteUInt(reportId, 16)
             net.WriteUInt(4, 4)
@@ -207,7 +207,7 @@ function impulse.Ops.ReportClose(client, arg, rawText)
             net.Send(reporter)
         end
 
-        if not IsValid(client) or not client:IsPlayer() then return end
+        if !IsValid(client) or !client:IsPlayer() then return end
 
         print("[ops] REPORT CLOSED #" .. reportId .. " by " .. client:Name() .. " (" .. client:SteamID64() .. ")")
         opsSlackLog(":no_entry: *[REPORT CLOSED]* [#" .. reportId .. "] closed by " .. client:SteamName() .. " (" .. client:SteamID64() .. ")")
@@ -230,7 +230,7 @@ function impulse.Ops.ReportGoto(client, arg, rawText)
         end
     end
 
-    if not reportId then
+    if !reportId then
         return client:AddChatText(newReportCol, "You must claim a report to use this command.")
     end
 
@@ -239,7 +239,7 @@ function impulse.Ops.ReportGoto(client, arg, rawText)
     if targetReport then
         local reporter = targetReport[1]
 
-        if not IsValid(reporter) then
+        if !IsValid(reporter) then
             return client:AddChatText(newReportCol, "The player who submitted this report has left the game. Please close.")
         end
 
@@ -261,7 +261,7 @@ function impulse.Ops.ReportMsg(client, arg, rawText)
         end
     end
 
-    if not reportId then
+    if !reportId then
         return client:AddChatText(newReportCol, "You must claim a report to use this command.")
     end
 
@@ -269,7 +269,7 @@ function impulse.Ops.ReportMsg(client, arg, rawText)
     if targetReport then
         local reporter = targetReport[1]
 
-        if not IsValid(reporter) then
+        if !IsValid(reporter) then
             return client:AddChatText(newReportCol, "The player who submitted this report has left the game. Please close.")
         end
 
@@ -284,7 +284,7 @@ function impulse.Ops.ReportMsg(client, arg, rawText)
 end
 
 hook.Add("PostSetupPlayer", "impulseOpsReportSync", function(client)
-    if not client:IsAdmin() then return end
+    if !client:IsAdmin() then return end
 
     if table.Count(impulse.Ops.Reports) < 1 then return end
 
@@ -332,7 +332,7 @@ net.Receive("opsReportDaleClose", function(len, client)
 
     for id, data in pairs(impulse.Ops.Reports) do
         if data[1] == client then
-            if not data[6] then return end
+            if !data[6] then return end
 
             impulse.Ops.ReportClose(Entity(0), {id})
 

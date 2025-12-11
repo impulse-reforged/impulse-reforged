@@ -15,7 +15,7 @@ local hitgroups = {
 }
 
 hook.Add("HUDPaint", "impulseOpsHUD", function()
-    if not impulse.HUDEnabled then return end
+    if !impulse.HUDEnabled then return end
 
     if LocalPlayer():IsAdmin() and LocalPlayer():GetMoveType() == MOVETYPE_NOCLIP and !LocalPlayer():InVehicle() then
         local onDuty = impulse.Settings:Get("admin_onduty") or false
@@ -107,7 +107,7 @@ hook.Add("HUDPaint", "impulseOpsHUD", function()
 
                 draw.SimpleText(k.IsVictim and snapData.VictimNeatName or snapData.InflictorNeatName, "Impulse-Elements18-Shadow", pos.x, pos.y, col, TEXT_ALIGN_CENTER)
 
-                if not k.IsVictim then
+                if !k.IsVictim then
                     draw.SimpleText("WEP: " .. snapData.AttackerClass, "Impulse-Elements18-Shadow", pos.x, pos.y + 20, col, TEXT_ALIGN_CENTER)
                     draw.SimpleText("HP: " .. snapData.InflictorHealth, "Impulse-Elements18-Shadow", pos.x, pos.y + 40, col, TEXT_ALIGN_CENTER)
                 else

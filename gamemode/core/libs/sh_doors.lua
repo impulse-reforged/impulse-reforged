@@ -4,7 +4,7 @@ impulse.Doors.Data = impulse.Doors.Data or {}
 local PLAYER = FindMetaTable("Player")
 
 function PLAYER:CanLockUnlockDoor(doorOwners, doorGroup)
-    if not doorOwners and not doorGroup then 
+    if !doorOwners and not doorGroup then 
         if SERVER then print("[DOOR DEBUG] " .. self:Nick() .. " - No owners or group") end
         return false 
     end
@@ -19,10 +19,10 @@ function PLAYER:CanLockUnlockDoor(doorOwners, doorGroup)
     end
 
     -- Check door group access
-    if not doorGroup then return false end
+    if !doorGroup then return false end
 
     local t = impulse.Teams.Stored[self:Team()]
-    if not t then return false end
+    if !t then return false end
 
     -- Priority: rank > class > team
     local rank = self:GetTeamRank()
@@ -35,16 +35,16 @@ function PLAYER:CanLockUnlockDoor(doorOwners, doorGroup)
     end
 
     -- If no rank groups, check class door groups
-    if not teamDoorGroups and class and class != 0 and t.classes and t.classes[class] then
+    if !teamDoorGroups and class and class != 0 and t.classes and t.classes[class] then
         teamDoorGroups = t.classes[class].doorGroups or t.classes[class].doorGroup
     end
 
     -- If no class groups, use team door groups
-    if not teamDoorGroups then
+    if !teamDoorGroups then
         teamDoorGroups = t.doorGroups or t.doorGroup
     end
 
-    if not teamDoorGroups then return false end
+    if !teamDoorGroups then return false end
 
     return table.HasValue(teamDoorGroups, doorGroup)
 end

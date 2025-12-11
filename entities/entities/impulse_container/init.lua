@@ -86,7 +86,7 @@ function ENT:AddItem(class, amount, noUpdate)
 
     self.Inventory[class] = count + (amount or 1)
 
-    if not noUpdate then
+    if !noUpdate then
         self:UpdateUsers()
     end
 end
@@ -103,7 +103,7 @@ function ENT:TakeItem(class, amount, noUpdate)
         end
     end
 
-    if not noUpdate then
+    if !noUpdate then
         self:UpdateUsers()
     end
 end
@@ -186,7 +186,7 @@ function ENT:Use(activator, caller)
             return activator:Notify("You cannot access this container as this team.")
         end
 
-        if not self:GetLoot() and self.Code and !self.Authorised[activator] then
+        if !self:GetLoot() and self.Code and !self.Authorised[activator] then
             net.Start("impulseInvContainerCodeTry")
             net.Send(activator)
 

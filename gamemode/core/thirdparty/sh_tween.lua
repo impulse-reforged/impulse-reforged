@@ -289,7 +289,7 @@ local function getEasingFunction(easing)
   if isstring(easing) then
     local name = easing
     easing = tween.easing[name]
-    if not isfunction(easing) then
+    if !isfunction(easing) then
       error("The easing function name '" .. name .. "' is invalid")
     end
   end

@@ -6,7 +6,7 @@ function impulse.Ops.CleanupPlayer(client)
         local owner = k:CPPIGetOwner()
 
         if owner == client then
-            if not k.IsBuyable then
+            if !k.IsBuyable then
                 count = count + 1
                 k:Remove()
             end

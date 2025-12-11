@@ -43,7 +43,7 @@ if ( CLIENT ) then
 
         local cats = {}
         for v, k in pairs(items) do
-            if not cats[k.Category or "Unknown"] then
+            if !cats[k.Category or "Unknown"] then
                 local cat = scroll:Add("DCollapsibleCategory")
                 cat:Dock(TOP)
                 cat:SetLabel(k.Category or "Unknown")
@@ -66,7 +66,7 @@ if ( CLIENT ) then
             btn.ItemClass = k.UniqueID
 
             function btn:DoClick()
-                if not panel.Selected then
+                if !panel.Selected then
                     return LocalPlayer():Notify("No target selected.")
                 end
 
@@ -99,12 +99,12 @@ local giveItemCommand = {
     requiresArg = true,
     superAdminOnly = true,
     onRun = function(client, arg, rawText)
-        if not client:IsSuperAdmin() then return end
+        if !client:IsSuperAdmin() then return end
 
         local steamid = arg[1]
         local item = arg[2]
 
-        if not item then
+        if !item then
             return client:Notify("No item uniqueID supplied.")
         end
 
@@ -116,13 +116,13 @@ local giveItemCommand = {
         query:Select("id")
         query:Where("steamid", steamid)
         query:Callback(function(result)
-            if not IsValid(client) then return end
+            if !IsValid(client) then return end
 
-            if not result or #result < 1 then
+            if !result or #result < 1 then
                 return client:Notify("This Steam account has not joined the server yet or the SteamID64 is invalid.")
             end
 
-            if not impulse.Inventory.ItemsStored[item] then
+            if !impulse.Inventory.ItemsStored[item] then
                 return client:Notify("Item: " .. item .. " does not exist.")
             end
 
@@ -149,7 +149,7 @@ local itemSpawnerCommand = {
     description = "Opens the item spawner.",
     superAdminOnly = true,
     onRun = function(client, arg, rawText)
-        if not client:IsSuperAdmin() then return end
+        if !client:IsSuperAdmin() then return end
 
         net.Start("impulseOpsItemSpawner")
         net.Send(client)

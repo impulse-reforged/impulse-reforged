@@ -1,7 +1,7 @@
 function EFFECT:Init(data)
     self.Player = data:GetEntity()
 
-    if not IsValid(self.Player) then return end
+    if !IsValid(self.Player) then return end
 
     self.Length = CurTime() + 0.6
     self.Emitter = ParticleEmitter(self.Player:GetPos())
@@ -20,7 +20,7 @@ end
 
 
 function EFFECT:Think()
-    if not IsValid(self.Player) then return false end
+    if !IsValid(self.Player) then return false end
 
     local pos = self.Player:GetShootPos();
 

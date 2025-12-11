@@ -179,7 +179,7 @@ local quickTools = {
 function PANEL:Init()
     self:Hide()
     timer.Simple(0, function() -- Time to allow SetPlayer to catch up
-        if not IsValid(self) then return end
+        if !IsValid(self) then return end
 
         self:Show()
         self:SetSize(600, 400)
@@ -201,7 +201,7 @@ function PANEL:Init()
         end
 
         timer.Simple(0, function()
-            if not IsValid(self.characterPreview) then return end
+            if !IsValid(self.characterPreview) then return end
 
             local ent = self.characterPreview.Entity
 
@@ -270,7 +270,7 @@ function PANEL:Init()
         self.whitelistButton:SetPos(295, 105)
         self.whitelistButton:SetSize(90, 20)
         self.whitelistButton.DoClick = function()
-            if not IsValid(self.Player) then return end
+            if !IsValid(self.Player) then return end
 
             gui.OpenURL("https://impulse-community.com/api/getforumprofile.php?id=" .. self.Player:SteamID64())
         end
@@ -334,7 +334,7 @@ function PANEL:Init()
                 action.runFunc = k.onRun
                 local target = self.Player
                 function action:DoClick()
-                    if not IsValid(target) then return LocalPlayer():Notify("This player has disconnected.") end
+                    if !IsValid(target) then return LocalPlayer():Notify("This player has disconnected.") end
                     self.runFunc(target, target:SteamID64())
                 end
             end

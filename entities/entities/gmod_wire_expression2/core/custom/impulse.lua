@@ -1,4 +1,4 @@
-if not E2Lib then
+if !E2Lib then
     return
 end
 
@@ -11,15 +11,15 @@ end
 __e2setcost(35)
 
 e2function string impulseGetItemClass(entity ent)
-    if not IsValid(ent) then return end
-    if ent:GetClass() != "impulse_item" or not ent.Item then return end
+    if !IsValid(ent) then return end
+    if ent:GetClass() != "impulse_item" or !ent.Item then return end
 
     return ent.Item.UniqueID or "unknown"
 end
 
 e2function number impulseGetMoneyValue(entity ent)
-    if not IsValid(ent) then return 0 end
-    if ent:GetClass() != "impulse_money" or not ent.money then
+    if !IsValid(ent) then return 0 end
+    if ent:GetClass() != "impulse_money" or !ent.money then
         return 0
     end
 
@@ -27,8 +27,8 @@ e2function number impulseGetMoneyValue(entity ent)
 end
 
 e2function number impulseGetPlayerFirstJoinDate(entity ent)
-    if not IsValid(ent) then return end
-    if not ent:IsPlayer() or not ent.impulseFirstJoin then
+    if !IsValid(ent) then return end
+    if !ent:IsPlayer() or !ent.impulseFirstJoin then
         return 0
     end
 

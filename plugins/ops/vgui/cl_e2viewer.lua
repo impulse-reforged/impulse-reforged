@@ -22,7 +22,7 @@ function PANEL:SetupE2S(e2s)
     for v, k in pairs(e2s) do
         local owner = k.ent:CPPIGetOwner()
 
-        if not owner then return end
+        if !owner then return end
 
         local cpuTime = k.perf * 1000000
         if cpuTime < 0.01 then
@@ -40,7 +40,7 @@ function PANEL:SetupE2S(e2s)
             local m = DermaMenu()
 
             m:AddOption("Copy Owner SteamID64", function()
-                if not IsValid(row) then
+                if !IsValid(row) then
                     return
                 end
 
@@ -49,7 +49,7 @@ function PANEL:SetupE2S(e2s)
             end)
 
             m:AddOption("Remove E2", function()
-                if not IsValid(row) then
+                if !IsValid(row) then
                     return
                 end
 
@@ -66,10 +66,10 @@ function PANEL:SetupE2S(e2s)
 
     function self.list:Think()
         for v, k in pairs(self.lines) do
-            if not IsValid(k) or not IsValid(k.Ent) then return end
+            if !IsValid(k) or !IsValid(k.Ent) then return end
 
             local data = k.Ent:GetOverlayData()
-            if not data then return end
+            if !data then return end
 
             local cpuTime = data.timebench * 1000000
             if cpuTime < 0.01 then

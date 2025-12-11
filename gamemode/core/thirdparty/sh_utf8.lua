@@ -63,10 +63,10 @@ local function utf8charbytes (s, i)
         i = i or 1
 
         -- argument checking
-        if not isstring(s) then
+        if !isstring(s) then
                 error("bad argument #1 to 'utf8charbytes' (string expected, got " ..  type(s) .. ")")
         end
-        if not isnumber(i) then
+        if !isnumber(i) then
                 error("bad argument #2 to 'utf8charbytes' (number expected, got " ..  type(i) .. ")")
         end
 
@@ -82,7 +82,7 @@ local function utf8charbytes (s, i)
                 -- UTF8-2
                 local c2 = s:byte(i + 1)
 
-                if not c2 then
+                if !c2 then
                         error("UTF-8 string terminated early")
                 end
 
@@ -98,7 +98,7 @@ local function utf8charbytes (s, i)
                 local c2 = s:byte(i + 1)
                 local c3 = s:byte(i + 2)
 
-                if not c2 or not c3 then
+                if !c2 or !c3 then
                         error("UTF-8 string terminated early")
                 end
 
@@ -124,7 +124,7 @@ local function utf8charbytes (s, i)
                 local c3 = s:byte(i + 2)
                 local c4 = s:byte(i + 3)
 
-                if not c2 or not c3 or not c4 then
+                if !c2 or !c3 or !c4 then
                         error("UTF-8 string terminated early")
                 end
 
@@ -158,7 +158,7 @@ end
 -- returns the number of characters in a UTF-8 string
 local function utf8len (s)
         -- argument checking
-        if not isstring(s) then
+        if !isstring(s) then
                 error("bad argument #1 to 'utf8len' (string expected, got " ..  type(s) .. ")")
         end
 
@@ -175,12 +175,12 @@ local function utf8len (s)
 end
 
 -- install in the string library
-if not string.utf8bytes then
+if !string.utf8bytes then
         string.utf8bytes = utf8charbytes
 end
 
 -- install in the string library
-if not string.utf8len then
+if !string.utf8len then
         string.utf8len = utf8len
 end
 
@@ -192,13 +192,13 @@ local function utf8sub (s, i, j)
         j = j or -1
 
         -- argument checking
-        if not isstring(s) then
+        if !isstring(s) then
                 error("bad argument #1 to 'utf8sub' (string expected, got " ..  type(s) .. ")")
         end
-        if not isnumber(i) then
+        if !isnumber(i) then
                 error("bad argument #2 to 'utf8sub' (number expected, got " ..  type(i) .. ")")
         end
-        if not isnumber(j) then
+        if !isnumber(j) then
                 error("bad argument #3 to 'utf8sub' (number expected, got " ..  type(j) .. ")")
         end
 
@@ -238,7 +238,7 @@ local function utf8sub (s, i, j)
 end
 
 -- install in the string library
-if not string.utf8sub then
+if !string.utf8sub then
         string.utf8sub = utf8sub
 end
 
@@ -246,10 +246,10 @@ end
 -- replace UTF-8 characters based on a mapping table
 local function utf8replace (s, mapping)
         -- argument checking
-        if not isstring(s) then
+        if !isstring(s) then
                 error("bad argument #1 to 'utf8replace' (string expected, got " ..  type(s) .. ")")
         end
-        if not istable(mapping) then
+        if !istable(mapping) then
                 error("bad argument #2 to 'utf8replace' (table expected, got " ..  type(mapping) .. ")")
         end
 
@@ -277,7 +277,7 @@ local function utf8upper (s)
 end
 
 -- install in the string library
-if not string.utf8upper and utf8_lc_uc then
+if !string.utf8upper and utf8_lc_uc then
         string.utf8upper = utf8upper
 end
 
@@ -288,7 +288,7 @@ local function utf8lower (s)
 end
 
 -- install in the string library
-if not string.utf8lower and utf8_uc_lc then
+if !string.utf8lower and utf8_uc_lc then
         string.utf8lower = utf8lower
 end
 
@@ -296,7 +296,7 @@ end
 -- identical to string.reverse except that it supports UTF-8
 local function utf8reverse (s)
         -- argument checking
-        if not isstring(s) then
+        if !isstring(s) then
                 error("bad argument #1 to 'utf8reverse' (string expected, got " ..  type(s) .. ")")
         end
 
@@ -323,6 +323,6 @@ local function utf8reverse (s)
 end
 
 -- install in the string library
-if not string.utf8reverse then
+if !string.utf8reverse then
         string.utf8reverse = utf8reverse
 end

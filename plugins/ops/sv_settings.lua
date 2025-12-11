@@ -1,6 +1,6 @@
 util.AddNetworkString("impulseOpsObserverHide")
 net.Receive("impulseOpsObserverHide", function(len, client)
-    if not client:IsAdmin() then return end
+    if !client:IsAdmin() then return end
 
     local val = net.ReadBool()
 

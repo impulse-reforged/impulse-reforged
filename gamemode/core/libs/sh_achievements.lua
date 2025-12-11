@@ -20,7 +20,7 @@ if ( SERVER ) then
     -- @string class Achievement class
     -- @bool[opt = false] skipPoints Wether to skip calculating the points from this achievement
     function PLAYER:AchievementGive(class, skipPoints)
-        if not self.impulseData then return end
+        if !self.impulseData then return end
 
         self.impulseData.Achievements = self.impulseData.Achievements or {}
         if self.impulseData.Achievements[class] then return end
@@ -32,7 +32,7 @@ if ( SERVER ) then
         net.WriteString(class)
         net.Send(self)
 
-        if not skipPoints then
+        if !skipPoints then
             self:CalculateAchievementPoints()
         end
     end
@@ -41,7 +41,7 @@ if ( SERVER ) then
     -- @realm server
     -- @string class Achievement class
     function PLAYER:AchievementTake(class)
-        if not self.impulseData then return end
+        if !self.impulseData then return end
 
         self.impulseData.Achievements = self.impulseData.Achievements or {}
         self.impulseData.Achievements[class] = nil
@@ -53,7 +53,7 @@ if ( SERVER ) then
     -- @string class Achievement class
     -- @treturn bool Has achievement
     function PLAYER:AchievementHas(class)
-        if not self.impulseData then
+        if !self.impulseData then
             return false
         end
 
@@ -70,7 +70,7 @@ if ( SERVER ) then
     -- @realm server
     -- @string class Achievement class
     function PLAYER:AchievementCheck(class)
-        if not self.impulseData then return end
+        if !self.impulseData then return end
 
         self.impulseData.Achievements = self.impulseData.Achievements or {}
         local ach = impulse.Config.Achievements[class]
@@ -84,7 +84,7 @@ if ( SERVER ) then
     -- @realm server
     -- @treturn int Achievement points
     function PLAYER:CalculateAchievementPoints()
-        if not self.impulseData then
+        if !self.impulseData then
             return 0
         end
 

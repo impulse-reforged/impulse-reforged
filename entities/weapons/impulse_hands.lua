@@ -70,7 +70,7 @@ local IsValid = IsValid
 local CurTime = CurTime
 
 function SWEP:Deploy()
-    if not IsValid(self:GetOwner()) then return end
+    if !IsValid(self:GetOwner()) then return end
 
     if ( SERVER ) then
         self:GetOwner():DrawWorldModel(false)
@@ -86,7 +86,7 @@ function SWEP:OnRemove()
 end
 
 function SWEP:Holster()
-    if not IsValid(self:GetOwner()) then return end
+    if !IsValid(self:GetOwner()) then return end
 
     self:Reset()
 
@@ -94,7 +94,7 @@ function SWEP:Holster()
 end
 
 local function SetSubPhysMotionEnabled(ent, enabled)
-    if not IsValid(ent) then return end
+    if !IsValid(ent) then return end
 
     for i = 0, ent:GetPhysicsObjectCount() - 1 do
         local subPhys = ent:GetPhysicsObjectNum(i)
@@ -121,7 +121,7 @@ local function RemoveVelocity(ent, normalized)
 
         SetSubPhysMotionEnabled(ent, false)
         timer.Simple(0, function()
-            if not IsValid(ent) then return end
+            if !IsValid(ent) then return end
 
             SetSubPhysMotionEnabled(ent, true)
         end)
@@ -135,7 +135,7 @@ local function RemoveVelocity(ent, normalized)
 
         SetSubPhysMotionEnabled(ent, false)
         timer.Simple(0, function()
-            if not IsValid(ent) then return end
+            if !IsValid(ent) then return end
 
             SetSubPhysMotionEnabled(ent, true)
 
@@ -179,8 +179,8 @@ function SWEP:Reset(throw)
     end
 
     if IsValid(self.HoldingEntity) then
-        if not self.HoldingEntity:IsWeapon() then
-            if not IsValid(self.PreviousOwner) then
+        if !self.HoldingEntity:IsWeapon() then
+            if !IsValid(self.PreviousOwner) then
                 self.HoldingEntity:SetOwner(nil)
             else
                 self.HoldingEntity:SetOwner(self.PreviousOwner)
@@ -198,7 +198,7 @@ function SWEP:Reset(throw)
             phys:EnableMotion(true)
         end
 
-        if not throw then
+        if !throw then
             RemoveVelocity(self.HoldingEntity)
         else
             ThrowVelocity(self.HoldingEntity, self:GetOwner(), 300)
@@ -214,8 +214,8 @@ function SWEP:Reset(throw)
 end
 
 function SWEP:Drop(throw)
-    if not self:CheckValidity() then return end
-    if not self:AllowEntityDrop() then return end
+    if !self:CheckValidity() then return end
+    if !self:AllowEntityDrop() then return end
 
     if ( SERVER ) then
         self.Constr:Remove()
@@ -247,7 +247,7 @@ function SWEP:Drop(throw)
 end
 
 function SWEP:CheckValidity()
-    if not IsValid(self.HoldingEntity) or not IsValid(self.CarryHack) or not IsValid(self.Constr) then
+    if !IsValid(self.HoldingEntity) or !IsValid(self.CarryHack) or !IsValid(self.Constr) then
         if self.HoldingEntity or self.CarryHack or self.Constr then
             self:Reset()
         end
@@ -263,7 +263,7 @@ function SWEP:AllowEntityDrop()
     local client = self:GetOwner()
     local ent = self.CarryHack
 
-    if not IsValid(client) or not IsValid(ent) then return false end
+    if !IsValid(client) or !IsValid(ent) then return false end
 
     local ground = client:GetGroundEntity()
     if ground and (ground:IsWorld() or IsValid(ground)) then return true end
@@ -290,7 +290,7 @@ if ( SERVER ) then
     local stand_time = 0
 
     function SWEP:Think()
-        if not self:CheckValidity() then return end
+        if !self:CheckValidity() then return end
 
         local curTime = CurTime()
 
@@ -332,9 +332,9 @@ function SWEP:CanCarry(ent)
 
     if ent.NoCarry then return false end
 
-    if not IsValid(phys) then return false end
+    if !IsValid(phys) then return false end
 
-    if phys:GetMass() > 100 or not phys:IsMoveable() then return false end
+    if phys:GetMass() > 100 or !phys:IsMoveable() then return false end
 
     if IsValid(ent.carrier) or IsValid(self.heldEntity) then return false end
 
@@ -342,7 +342,7 @@ function SWEP:CanCarry(ent)
 end
 
 function SWEP:PrimaryAttack()
-    if not IsFirstTimePredicted() then return end
+    if !IsFirstTimePredicted() then return end
 
     self:SetNextPrimaryFire(CurTime() + 0.5)
 
@@ -377,7 +377,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-    if not IsFirstTimePredicted() then return end
+    if !IsFirstTimePredicted() then return end
     local client = self:GetOwner()
 
     local trace = {}
@@ -405,7 +405,7 @@ function SWEP:SecondaryAttack()
             end
         end
 
-        if not traceEnt:IsPlayer() and !traceEnt:IsNPC() then
+        if !traceEnt:IsPlayer() and !traceEnt:IsNPC() then
             self:DoPickup()
         elseif IsValid(self.HeldEntity) and !self.HeldEntity:IsPlayerHolding() then
             self.HeldEntity = nil
@@ -418,7 +418,7 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:DragObject(phys, targetPos, isRagdoll)
-    if not IsValid(phys) then return end
+    if !IsValid(phys) then return end
 
     local point = self:GetOwner():GetShootPos() + self:GetOwner():GetAimVector() * 50
     local physDirection = targetPos - point
@@ -473,7 +473,7 @@ function SWEP:DoPickup(throw)
         local ent = trace.Entity
         local phys = trace.Entity:GetPhysicsObject()
 
-        if not IsValid(phys) or not phys:IsMoveable() or phys:HasGameFlag(FVPHYSICS_PLAYER_HELD) or ent.NoCarry then return end
+        if !IsValid(phys) or !phys:IsMoveable() or phys:HasGameFlag(FVPHYSICS_PLAYER_HELD) or ent.NoCarry then return end
 
         -- if the client messes with phys desync will occur
         if ( SERVER ) then
@@ -544,7 +544,7 @@ function SWEP:Pickup()
 
             self.CarryHack:Spawn()
 
-            if not self.HoldingEntity:IsWeapon() then
+            if !self.HoldingEntity:IsWeapon() then
                 self.PreviousOwner = self.HoldingEntity:GetOwner()
                 self.HoldingEntity:SetOwner(client)
             end

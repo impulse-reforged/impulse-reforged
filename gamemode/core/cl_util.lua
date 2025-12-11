@@ -271,7 +271,7 @@ function impulse.Util:GetUniqueColour(hash)
         uColoursUsed[v] = true
     end
 
-    if not uColoursLive[hash] then
+    if !uColoursLive[hash] then
         uColoursUsed = {}
     end
 

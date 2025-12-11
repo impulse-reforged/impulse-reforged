@@ -95,7 +95,7 @@ function PANEL:NoGroup()
             return LocalPlayer():Notify("You need at least " .. impulse.Config.GroupXPRequirement .. "XP to make a group.")
         end
 
-        if not LocalPlayer():CanAfford(impulse.Config.GroupMakeCost) then
+        if !LocalPlayer():CanAfford(impulse.Config.GroupMakeCost) then
             return LocalPlayer():Notify("You can not afford to make a group.")
         end
 
@@ -128,7 +128,7 @@ function PANEL:ShowGroup()
 
     local group = impulse.Group.Groups[1]
 
-    if not group then
+    if !group then
         LocalPlayer():Notify("Failed to load group data!")
         return
     end
@@ -178,7 +178,7 @@ function PANEL:ShowGroup()
 
         local gname = LocalPlayer():GetRelay("groupName", nil)
 
-        if not gname then return end
+        if !gname then return end
 
         for v, k in player.Iterator() do
             if k:GetRelay("groupName", nil) then continue end
@@ -186,11 +186,11 @@ function PANEL:ShowGroup()
             if k:IsCP() then continue end
 
             m:AddOption(k:Nick(), function()
-                if not IsValid(panel) then
+                if !IsValid(panel) then
                     return
                 end
 
-                if not IsValid(k) then
+                if !IsValid(k) then
                     return
                 end
 
@@ -203,7 +203,7 @@ function PANEL:ShowGroup()
         m:Open()
     end
 
-    if not LocalPlayer():GroupHasPermission(3) then
+    if !LocalPlayer():GroupHasPermission(3) then
         inv:SetDisabled(true)
     end
 
@@ -256,7 +256,7 @@ function PANEL:ShowGroup()
                 end
 
                 sub:AddOption(a, function()
-                    if not IsValid(panel) then
+                    if !IsValid(panel) then
                         return
                     end
 
@@ -274,7 +274,7 @@ function PANEL:ShowGroup()
                     "impulse",
                     "Yes",
                     function()
-                        if not IsValid(panel) then
+                        if !IsValid(panel) then
                             return
                         end
 
@@ -313,7 +313,7 @@ local function addGroup(s, name)
 end
 
 function PANEL:Refresh()
-    if not IsValid(self.sheet) then
+    if !IsValid(self.sheet) then
         self:Remove()
 
         impulse.groupEditor = vgui.Create("impulseGroupEditor")
@@ -362,7 +362,7 @@ function PANEL:ShowInfo()
     msg:SetMultiline(true)
     msg:DockMargin(0, 5, 0, 0)
 
-    if not canEdit then return end
+    if !canEdit then return end
 
     local btn = vgui.Create("DButton", sheet)
     btn:SetText("Update text")
@@ -457,7 +457,7 @@ function PANEL:ShowRanks()
         del:DockMargin(0, 10, 0, 0)
         del:Dock(TOP)
 
-        if not removable then
+        if !removable then
             del:SetDisabled(true)
         end
 
@@ -466,7 +466,7 @@ function PANEL:ShowRanks()
                 "impulse",
                 "Remove",
                 function()
-                    if not IsValid(panel) then
+                    if !IsValid(panel) then
                         return
                     end
 

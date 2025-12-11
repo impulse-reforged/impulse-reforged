@@ -95,7 +95,7 @@ function PANEL:SetInv(invdata)
     function self.finish:DoClick()
         panel:Remove()
 
-        if not IsValid(panel.client) then
+        if !IsValid(panel.client) then
             LocalPlayer():Notify("Player left the server.")
         end
 

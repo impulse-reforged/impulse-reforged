@@ -130,7 +130,7 @@ function PANEL:SetupUI()
         hasLog = true
     end
 
-    if not hasLog then
+    if !hasLog then
         local darkText = Color(150, 150, 150, 210)
         local lbl = self.log:Add("DLabel")
         lbl:SetText("No report history here yet")
@@ -220,7 +220,7 @@ end
 vgui.Register("impulseUserReportMenu", PANEL, "DFrame")
 
 concommand.Add("impulse_userreportmenu", function()
-    if not impulse_userReportMenu or not IsValid(impulse_userReportMenu) then
+    if !impulse_userReportMenu or !IsValid(impulse_userReportMenu) then
         impulse_userReportMenu = vgui.Create("impulseUserReportMenu")
     end
 end)

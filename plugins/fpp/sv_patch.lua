@@ -11,7 +11,7 @@ if FPP then
     end
     
     local function CleanupDisconnected(client, cmd, args)
-        if not args[1] then FPP.Notify(client, "Invalid argument", false) return end
+        if !args[1] then FPP.Notify(client, "Invalid argument", false) return end
         if args[1] == "disconnected" then
             for _, v in ents.Iterator() do
                 local Owner = v:CPPIGetOwner()
@@ -21,7 +21,7 @@ if FPP then
             end
             FPP.NotifyAll(((client.Nick and client:Nick()) or "Console") .. " removed all disconnected players' props", true)
             return
-        elseif not tonumber(args[1]) or not IsValid(Player(tonumber(args[1]))) then
+        elseif not tonumber(args[1]) or !IsValid(Player(tonumber(args[1]))) then
             FPP.Notify(client, "Invalid player", false)
             return
         end

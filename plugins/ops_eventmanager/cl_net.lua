@@ -31,13 +31,13 @@ net.Receive("impulseOpsEMClientsideEvent", function()
     local len = net.ReadUInt(16)
     local prop = pon.decode(net.ReadData(len))
 
-    if not impulse.Ops.EventManager then return end
+    if !impulse.Ops.EventManager then return end
 
     local sequenceData = impulse.Ops.EventManager.Config.Events[event]
 
-    if not sequenceData then return end
+    if !sequenceData then return end
 
-    if not uid or uid == "" then
+    if !uid or uid == "" then
         uid = nil
     end
 
@@ -47,7 +47,7 @@ end)
 net.Receive("impulseOpsEMPlayScene", function()
     local scene = net.ReadString()
 
-    if not impulse.Ops.EventManager.Scenes[scene] then
+    if !impulse.Ops.EventManager.Scenes[scene] then
         return logs:Error("Can't find sceneset: " .. scene)
     end
 

@@ -30,7 +30,7 @@ function impulse.Refunds.Add(steamid, item)
     query:Execute()
 end
 
-if not timer.Exists("impulseRefundCleaner") then
+if !timer.Exists("impulseRefundCleaner") then
     timer.Create("impulseRefundCleaner", 120, 0, function()
         impulse.Refunds.Clean()
     end)

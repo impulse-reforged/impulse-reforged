@@ -130,7 +130,7 @@ function SKIN:PaintWindowCloseButton(panel, w, h)
     local tbl = self:GetTable(panel)
     tbl.HoverTime = tbl.HoverTime or 0
 
-    if not panel.m_bBackground then return end
+    if !panel.m_bBackground then return end
 
     if panel:GetDisabled() then return end
 

@@ -15,11 +15,11 @@ function PANEL:Think()
         self.ZoneDescription = hook.Run("GetZoneDescription", self.Zone) or LocalPlayer():GetZoneDescription()
     end
 
-    if not LocalPlayer():Alive() then
+    if !LocalPlayer():Alive() then
         return self:Remove()
     end
 
-    if not impulse.HUDEnabled then
+    if !impulse.HUDEnabled then
         return self:Remove()
     end
 

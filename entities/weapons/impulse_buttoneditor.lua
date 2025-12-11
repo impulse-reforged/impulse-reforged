@@ -40,7 +40,7 @@ SWEP.NextGo = 0
 
 if ( SERVER ) then
     function SWEP:Equip(owner)
-        if not owner:IsAdmin() then
+        if !owner:IsAdmin() then
             owner:StripWeapon("impulse_buttoneditor")
         end
     end
@@ -64,7 +64,7 @@ else
         local tr = util.TraceLine(trace)
         local button = tr.Entity
 
-        if not self.Selected and IsValid(button) and button:GetClass() == "class C_BaseEntity" then
+        if !self.Selected and IsValid(button) and button:GetClass() == "class C_BaseEntity" then
             self.Selected = button
             self.State = "Button " .. button:EntIndex() .. " registered, ready for export."
 

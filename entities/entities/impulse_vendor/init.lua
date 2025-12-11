@@ -82,7 +82,7 @@ function ENT:Use(activator, caller)
         return activator:Notify("You can not use this vendor.")    
     end
 
-    if activator:GetRelay("arrested", false) or not activator:Alive() then return end
+    if activator:GetRelay("arrested", false) or !activator:Alive() then return end
 
     if self.Vendor.DownloadTrades then
         local dBuy = pon.encode(self.Vendor.Buy)

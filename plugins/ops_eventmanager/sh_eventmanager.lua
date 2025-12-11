@@ -30,7 +30,7 @@ end
 
 if ( SERVER ) then
     concommand.Add("impulse_ops_eventmode", function(client, cmd, args)
-        if not IsValid(client) or client:IsSuperAdmin() then
+        if !IsValid(client) or client:IsSuperAdmin() then
             if args[1] == "1" then
                 impulse.Ops.EventManager.SetEventMode(true)
                 print("[ops-em] Event mode ON")

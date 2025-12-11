@@ -156,7 +156,7 @@ function PANEL:AddText(...)
         if LocalPlayer():IsAdmin() and IsValid(textElement.player) then
             local banPly = subMenu:AddOption("OOC timeout sender", function()
                 Derma_StringRequest("impulse", "Enter timeout length in minutes:", "15", function(x)
-                    if not IsValid(textElement.player) then
+                    if !IsValid(textElement.player) then
                         return
                     end
 
@@ -174,7 +174,7 @@ function PANEL:AddText(...)
     textElement:Dock(TOP)
     textElement:InvalidateParent(true)
 
-    if not self.BlockScroll then
+    if !self.BlockScroll then
         self:ScrollToChild(textElement)
     else
         self.BlockScroll = false

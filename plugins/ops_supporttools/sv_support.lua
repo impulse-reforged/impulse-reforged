@@ -35,7 +35,7 @@ net.Receive("impulseOpsSTDoGroupRemove", function(len, client)
     local name = net.ReadString()
     local groupData = impulse.Group.Groups[name]
 
-    if not groupData or not groupData.ID then
+    if !groupData or !groupData.ID then
         impulse.Group:RemoveByName(name)
         client:Notify("No loaded group was found, however, we have attempted to remove it from the database.")
         return

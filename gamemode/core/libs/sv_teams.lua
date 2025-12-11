@@ -537,7 +537,7 @@ function PLAYER:SetupWhitelists()
     self.Whitelists = {}
 
     impulse.Teams.GetAllWhitelistsPlayer(self:SteamID64(), function(result)
-        if !result or not IsValid(self) then return end
+        if !result or !IsValid(self) then return end
 
         for v, k in pairs(result) do
             local teamName = k.team
@@ -545,7 +545,7 @@ function PLAYER:SetupWhitelists()
             local realTeam = impulse.Teams.NameRef[teamName]
 
             --[[
-            if not realTeam then -- team does not exist
+            if !realTeam then -- team does not exist
                 continue
             end
             ]]

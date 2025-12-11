@@ -21,7 +21,7 @@ function PANEL:SetText(text)
 end
 
 function PANEL:Think()
-    if not self.EndTime then return end
+    if !self.EndTime then return end
     self.Progress = math.Clamp((self.StartTime - CurTime()) / (self.StartTime - self.EndTime), 0, 1)
 
     if self.Progress == 1 then

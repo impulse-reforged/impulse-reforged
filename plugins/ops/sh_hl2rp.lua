@@ -11,7 +11,7 @@ local combineBanCommand = {
         local time = arg[2]
         local plyTarget = impulse.Util:FindPlayer(name)
 
-        if not time or not tonumber(time) then
+        if !time or !tonumber(time) then
             return client:Notify("Please specific a valid time value in minutes.")
         end
 

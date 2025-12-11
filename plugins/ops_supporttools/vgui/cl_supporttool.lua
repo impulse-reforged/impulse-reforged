@@ -48,7 +48,7 @@ function PANEL:Init()
     local cats = {}
 
     for v, k in pairs(impulse.Inventory.Items) do
-        if not cats[k.Category or "Unknown"] then
+        if !cats[k.Category or "Unknown"] then
             local cat = scroll:Add("DCollapsibleCategory")
             cat:Dock(TOP)
             cat:SetLabel(k.Category or "Unknown")
@@ -71,7 +71,7 @@ function PANEL:Init()
 
         function btn:DoClick()
             Derma_StringRequest("impulse", "Amount of " .. k.Name .. " to refund", "1", function(val)
-                if not tonumber(val) then
+                if !tonumber(val) then
                     return LocalPlayer():Notify("The value entered is not a number.")
                 end
 
@@ -140,11 +140,11 @@ function PANEL:Init()
     function confirm:DoClick()
         local id = string.Trim(steamid64:GetValue(), " ")
 
-        if id == "" or not tonumber(id) then
+        if id == "" or !tonumber(id) then
             return LocalPlayer():Notify("The SteamID64 entered is invalid.")
         end
 
-        if not refund2 or table.Count(refund2) < 1 then
+        if !refund2 or table.Count(refund2) < 1 then
             return LocalPlayer():Notify("No refund items have been selected.")
         end
 

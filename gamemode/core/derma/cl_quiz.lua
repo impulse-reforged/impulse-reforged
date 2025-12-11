@@ -73,7 +73,7 @@ function PANEL:SetQuiz(team)
 
     function self.finish:Think()
         for v, k in pairs(selections) do
-            if not k[1] then return end
+            if !k[1] then return end
         end
 
         self:SetEnabled(true)
@@ -87,7 +87,7 @@ function PANEL:SetQuiz(team)
         for v, k in pairs(selections) do
             local isCorrect = k[2]
 
-            if not isCorrect then
+            if !isCorrect then
                 passed = false
                 break
             end

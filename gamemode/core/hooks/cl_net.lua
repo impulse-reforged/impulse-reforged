@@ -127,7 +127,7 @@ net.Receive("impulseInvGive", function()
     local strid = net.ReadUInt(4)
     local restricted = net.ReadBool()
 
-    if not impulse.Inventory.Data[0][strid] then
+    if !impulse.Inventory.Data[0][strid] then
         impulse.Inventory.Data[0][strid] = {}
     end
 
@@ -223,7 +223,7 @@ net.Receive("impulseInvDoSearch", function()
     local invSize = net.ReadUInt(16)
     local invCompiled = {}
 
-    if not IsValid(searchee) then return end
+    if !IsValid(searchee) then return end
 
     for i = 1,invSize do
         local itemnetid = net.ReadUInt(10)
@@ -234,7 +234,7 @@ net.Receive("impulseInvDoSearch", function()
 
 
     impulse.Util:MakeWorkbar(5, "Searching...", function()
-        if not IsValid(searchee) then return end
+        if !IsValid(searchee) then return end
 
         local searchMenu = vgui.Create("impulseSearchMenu")
         searchMenu:SetInv(invCompiled)
@@ -299,7 +299,7 @@ net.Receive("impulseConfiscateCheck", function()
             "Cancel")
 
         function request:Think()
-            if not item or not IsValid(item) then
+            if !item or !IsValid(item) then
                 self:Remove()
             end
         end
@@ -311,7 +311,7 @@ net.Receive("impulseSkillUpdate", function()
     local xp = net.ReadUInt(16)
     local name = table.KeyFromValue(impulse.Skills.Skills, skillid)
 
-    if not impulse_IsReady then -- in setup
+    if !impulse_IsReady then -- in setup
         impulse.Skills.Data[name] = xp
         return
     end
@@ -361,7 +361,7 @@ end)
 net.Receive("impulseViewWhitelists", function()
     local targ = impulse_WhitelistReqTarg
 
-    if not targ or not IsValid(targ) then return end
+    if !targ or !IsValid(targ) then return end
 
     local count = net.ReadUInt(4)
     local top = targ:SteamName() .. "'s whitelist(s):\n\n"
@@ -371,14 +371,14 @@ net.Receive("impulseViewWhitelists", function()
         local teamid = net.ReadUInt(8)
         local level = net.ReadUInt(8)
         local teamname = team.GetName(teamid)
-        mid = mid..teamname .. "   Level: " .. level .. "\n"
+        mid = mid .. teamname .. "   Level: " .. level .. "\n"
     end
 
     if mid == "" then
         mid = "None"
     end
 
-    Derma_Message(top..mid, targ:SteamName() .. "'s whitelist(s)", "Close")
+    Derma_Message(top .. mid, targ:SteamName() .. "'s whitelist(s)", "Close")
 end)
 
 net.Receive("impulseInvContainerCodeTry", function()
@@ -445,7 +445,7 @@ net.Receive("impulseInvContainerSetCode", function()
     Derma_StringRequest("impulse",
         "Enter new container passcode:",
         nil, function(text)
-            if not tonumber(text) then
+            if !tonumber(text) then
                 return LocalPlayer():Notify("Passcode must be a number.")
             end
 
@@ -465,7 +465,7 @@ end)
 net.Receive("impulseAchievementGet", function()
     local achievementCode = net.ReadString()
 
-    if not impulse.Achievements then return end
+    if !impulse.Achievements then return end
 
     local get = vgui.Create("impulseAchievementNotify")
     get:SetAchivement(achievementCode)
@@ -494,14 +494,14 @@ net.Receive("impulseGetRefund", function()
 
     for i = 1, count do
         local name = net.ReadString()
-        local amount = net.ReadUInt(8)
+        local itemAmount = net.ReadUInt(8)
 
-        details = details .. "\n" .. amount .. "x" .. " " .. name
+        details = details .. "\n" .. itemAmount .. "x" .. " " .. name
     end
 
-    details = details .. "\nTOTAL REFUND: " .. impulse.Config.CurrencyPrefix..amount
+    details = details .. "\nTOTAL REFUND: " .. impulse.Config.CurrencyPrefix .. amount
 
-    REFUND_MSG = messageTop..details
+    REFUND_MSG = messageTop .. details
 end)
 
 net.Receive("impulseGroupMember", function()
@@ -538,11 +538,11 @@ net.Receive("impulseGroupRank", function()
 
     if name then return end
 
-    if not impulse.Group.Groups[1] then
+    if !impulse.Group.Groups[1] then
         impulse.Group.Groups[1] = {}
     end
 
-    if not impulse.Group.Groups[1].Ranks then
+    if !impulse.Group.Groups[1].Ranks then
         impulse.Group.Groups[1].Ranks = {}
     end
 

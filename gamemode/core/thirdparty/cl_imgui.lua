@@ -76,7 +76,7 @@ local function isObstructed(eyePos, hitPos, ignoredEntity)
 end
 
 function imgui.Start3D2D(pos, angles, scale, distanceHide, distanceFadeStart)
-    if not IsValid(localPlayer) then
+    if !IsValid(localPlayer) then
         localPlayer = LocalPlayer()
     end
 
@@ -136,7 +136,7 @@ function imgui.Start3D2D(pos, angles, scale, distanceHide, distanceFadeStart)
     cam.Start3D2D(pos, angles, scale)
 
     -- calculate mousepos
-    if not vgui.CursorVisible() or vgui.IsHoveringWorld() then
+    if !vgui.CursorVisible() or vgui.IsHoveringWorld() then
         local tr = localPlayer:GetEyeTrace()
         local eyepos = tr.StartPos
         local eyenormal
@@ -188,7 +188,7 @@ end
 function imgui.Entity3D2D(ent, lpos, lang, scale, ...)
     gState.entity = ent
     local ret = imgui.Start3D2D(ent:LocalToWorld(lpos), ent:LocalToWorldAngles(lang), scale, ...)
-    if not ret then
+    if !ret then
         gState.entity = nil
     end
     return ret
@@ -393,14 +393,14 @@ function imgui.xFont(font, defaultSize)
         local name, size = font:match("!([^@]+)@(.+)")
         if size then size = tonumber(size) end
 
-        if not size and defaultSize then
+        if !size and defaultSize then
             name = font:match("^!([^@]+)$")
             size = defaultSize
         end
 
         local fontName = string.format("IMGUI_%s_%d", name, size)
         _imguiFontToGmodFont[font] = fontName
-        if not _createdFonts[fontName] then
+        if !_createdFonts[fontName] then
             surface.CreateFont(fontName, {
                 font = name,
                 size = size
@@ -441,7 +441,7 @@ function imgui.xCursor(x, y, w, h)
     local fgColor = imgui.IsPressing() and imgui.skin.foregroundPress or imgui.skin.foreground
     local mx, my = gState.mx, gState.my
 
-    if not mx or not my then return end
+    if !mx or !my then return end
 
     if x and w and (mx < x or mx > x + w) then return end
     if y and h and (my < y or my > y + h) then return end
@@ -455,7 +455,7 @@ end
 function imgui.xCursorPaint(x, y, w, h, paint)
     local mx, my = gState.mx, gState.my
 
-    if not mx or not my then return end
+    if !mx or !my then return end
 
     if x and w and (mx < x or mx > x + w) then return end
     if y and h and (my < y or my > y + h) then return end

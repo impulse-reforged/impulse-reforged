@@ -99,7 +99,7 @@ function PANEL:GameOver(win)
 
     self.go = true
 
-    if not win then
+    if !win then
         MINIGAME_MUSIC:FadeOut(1)
     else
         surface.PlaySound("npc/metropolice/die1.wav")
@@ -129,7 +129,7 @@ function PANEL:GameOver(win)
 
     startScreen:AddItem(title)
 
-    if not win then
+    if !win then
         surface.PlaySound("buttons/button8.wav")
         surface.PlaySound("music/stingers/HL1_stinger_song8.mp3")
 
@@ -243,7 +243,7 @@ function PANEL:Paint(w,h)
 end
 
 function PANEL:OnFocusChanged(state)
-    if not state then
+    if !state then
         self:Remove()
     end
 end

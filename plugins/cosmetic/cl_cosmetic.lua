@@ -65,11 +65,11 @@ local lastHat = -1
 local lastChest = -1
 
 hook.Add("PostPlayerDraw", "impulseCosmeticDraw", function(k)
-    if not k:Alive() then return end
+    if !k:Alive() then return end
 
     if k.Cosmetics then
         for a,b in pairs(k.Cosmetics) do
-            if not IsValid(b) then continue end
+            if !IsValid(b) then continue end
             local bone
             local attach
             local matrix
@@ -90,13 +90,13 @@ hook.Add("PostPlayerDraw", "impulseCosmeticDraw", function(k)
             else
                 bone = k:LookupBone(b.bone)
 
-                if not bone then
+                if !bone then
                     return
                 end
                 
                 matrix = k:GetBoneMatrix(bone)
 
-                if not matrix then
+                if !matrix then
                     return
                 end
 
@@ -191,7 +191,7 @@ hook.Add("SetupInventoryModel", "impulseDrawCosmetics", function(panel)
     function panel:PostDrawModel(k)
         if k.Cosmetics then
             for a,b in pairs(k.Cosmetics) do
-                if not IsValid(b) then continue end
+                if !IsValid(b) then continue end
 
                 local bone
                 local attach
@@ -213,13 +213,13 @@ hook.Add("SetupInventoryModel", "impulseDrawCosmetics", function(panel)
                 else
                     bone = k:LookupBone(b.bone)
 
-                    if not bone then
+                    if !bone then
                         return
                     end
                     
                     matrix = k:GetBoneMatrix(bone)
 
-                    if not matrix then
+                    if !matrix then
                         return
                     end
 
