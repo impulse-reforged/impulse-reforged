@@ -27,82 +27,87 @@ function GM:OnSchemaLoaded()
     end
 end
 
-if engine.ActiveGamemode() == "impulse-reforged" then -- debug fallback
+-- debug fallback
+if ( engine.ActiveGamemode() == "impulse-reforged" ) then
     impulse.SplashScreen = vgui.Create("impulseSplash")
+end
+
+function GM:CheckMenuInput()
+    local client = LocalPlayer()
+    if ( input.IsKeyDown(KEY_F1) ) then
+        impulse.MainMenu = vgui.Create("impulseMainMenu")
+        impulse.MainMenu:SetAlpha(0)
+        impulse.MainMenu:AlphaTo(255, 0.2, 0)
+        impulse.MainMenu.popup = true
+
+        hook.Run("DisplayMenuMessages", impulse.MainMenu)
+    elseif ( input.IsKeyDown(KEY_F2) and client:Alive() ) then
+        local trace = {}
+        trace.start = client:EyePos()
+        trace.endpos = trace.start + client:GetAimVector() * 96
+        trace.filter = client
+        local traceEnt = util.TraceLine(trace).Entity
+
+        if ( ( !impulse.entityMenu or !IsValid(impulse.entityMenu) ) and IsValid(traceEnt) ) then
+            if ( traceEnt:IsDoor() or traceEnt:IsPropDoor() ) then
+                impulse.entityMenu = vgui.Create("impulseEntityMenu")
+                impulse.entityMenu:SetDoor(traceEnt)
+            elseif ( traceEnt:IsPlayer() ) then
+                impulse.entityMenu = vgui.Create("impulseEntityMenu")
+                impulse.entityMenu:SetRangeEnt(traceEnt)
+                impulse.entityMenu:SetPlayer(traceEnt)
+            elseif ( traceEnt:GetClass() == "impulse_container" ) then
+                impulse.entityMenu = vgui.Create("impulseEntityMenu")
+                impulse.entityMenu:SetRangeEnt(traceEnt)
+                impulse.entityMenu:SetContainer(traceEnt)
+            elseif ( traceEnt:GetClass() == "prop_ragdoll" ) then
+                impulse.entityMenu = vgui.Create("impulseEntityMenu")
+                impulse.entityMenu:SetRangeEnt(traceEnt)
+                impulse.entityMenu:SetBody(traceEnt)
+            end
+        end
+    elseif ( input.IsKeyDown(KEY_F4) and !IsValid(impulse.playerMenu) and client:Alive() ) then
+        impulse.playerMenu = vgui.Create("impulsePlayerMenu")
+    elseif ( input.IsKeyDown(KEY_F6) and !IsValid(groupEditor) and hook.Run("CanOpenGroupEditor") != false ) then
+        impulse.groupEditor = vgui.Create("impulseGroupEditor")
+    end
 end
 
 local lastServerData1
 local lastServerData2
 local nextCrashThink = 0
-local nextCrashAnalysis
+local nextCrashAnalysis = 0
 local crashAnalysisAttempts = 0
-
 function GM:Think()
-    if ( LocalPlayer():Team() != 0 and !vgui.CursorVisible() and !impulse_ActiveWorkbar ) then
-        if ( !IsValid(impulse.MainMenu) ) then
-            if ( input.IsKeyDown(KEY_F1) ) then
-                impulse.MainMenu = vgui.Create("impulseMainMenu")
-                impulse.MainMenu:SetAlpha(0)
-                impulse.MainMenu:AlphaTo(255, 0.2, 0)
-                impulse.MainMenu.popup = true
+    if ( !lastServerData1 ) then lastServerData1 = 0 end
+    if ( !lastServerData2 ) then lastServerData2 = 0 end
+    if ( !nextCrashAnalysis ) then nextCrashAnalysis = 0 end
 
-                hook.Run("DisplayMenuMessages", impulse.MainMenu)
-            elseif input.IsKeyDown(KEY_F4) and !IsValid(impulse.playerMenu) and LocalPlayer():Alive() then
-                impulse.playerMenu = vgui.Create("impulsePlayerMenu")
-            elseif input.IsKeyDown(KEY_F2) and LocalPlayer():Alive() then
-                local trace = {}
-                trace.start = LocalPlayer():EyePos()
-                trace.endpos = trace.start + LocalPlayer():GetAimVector() * 85
-                trace.filter = LocalPlayer()
+    if ( IMPULSE_SERVER_DOWN == nil ) then IMPULSE_SERVER_DOWN = false end
 
-                local traceEnt = util.TraceLine(trace).Entity
-
-                if ( ( !impulse.entityMenu or !IsValid(impulse.entityMenu) ) and IsValid(traceEnt) ) then
-                    if ( traceEnt:IsDoor() or traceEnt:IsPropDoor() ) then
-                        impulse.entityMenu = vgui.Create("impulseEntityMenu")
-                        impulse.entityMenu:SetDoor(traceEnt)
-                    elseif ( traceEnt:IsPlayer() ) then
-                        impulse.entityMenu = vgui.Create("impulseEntityMenu")
-                        impulse.entityMenu:SetRangeEnt(traceEnt)
-                        impulse.entityMenu:SetPlayer(traceEnt)
-                    elseif ( traceEnt:GetClass() == "impulse_container" ) then
-                        impulse.entityMenu = vgui.Create("impulseEntityMenu")
-                        impulse.entityMenu:SetRangeEnt(traceEnt)
-                        impulse.entityMenu:SetContainer(traceEnt)
-                    elseif ( traceEnt:GetClass() == "prop_ragdoll" ) then
-                        impulse.entityMenu = vgui.Create("impulseEntityMenu")
-                        impulse.entityMenu:SetRangeEnt(traceEnt)
-                        impulse.entityMenu:SetBody(traceEnt)
-                    end
-                end
-            elseif ( input.IsKeyDown(KEY_F6) and !IsValid(groupEditor) and hook.Run("CanOpenGroupEditor") != false ) then
-                impulse.groupEditor = vgui.Create("impulseGroupEditor")
-            end
-
-            hook.Run("CheckMenuInput")
-        end
+    local client = LocalPlayer()
+    if ( client:Team() != 0 and !vgui.CursorVisible() and !impulse_ActiveWorkbar and !IsValid(impulse.MainMenu) ) then
+        hook.Run("CheckMenuInput")
     end
 
-    if (nextLoopThink or 0) < CurTime() then
-        for v, k in player.Iterator() do
-            local isArrested = k:GetRelay("arrested", false)
-
-            if isArrested != (k.BoneArrested or false) then
-                k:SetHandsBehindBack(isArrested)
-                k.BoneArrested = isArrested
+    if ( nextLoopThink < CurTime() ) then
+        for _, v in player.Iterator() do
+            local isArrested = v:GetRelay("arrested", false)
+            if ( isArrested != ( v.BoneArrested or false ) ) then
+                v:SetHandsBehindBack(isArrested)
+                v.BoneArrested = isArrested
             end
         end
 
-        nextLoopThink = CurTime() + 0.5
+        nextLoopThink = CurTime() + 0.33
     end
 
-    if !SERVER_DOWN and nextCrashAnalysis and nextCrashAnalysis < CurTime() then
+    if ( !IMPULSE_SERVER_DOWN and nextCrashAnalysis and nextCrashAnalysis < CurTime() ) then
         nextCrashAnalysis = CurTime() + 0.05
 
         local a, b = engine.ServerFrameTime()
-
-        if crashAnalysisAttempts <= 15 then
-            if a != (lastServerData1 or 0) or b != (lastServerData2 or 0) then
+        if ( crashAnalysisAttempts <= 15 ) then
+            if ( a != lastServerData1 or b != lastServerData2 ) then
                 nextCrashAnalysis = nil
                 crashAnalysisAttempts = 0
                 return
@@ -110,10 +115,10 @@ function GM:Think()
 
             crashAnalysisAttempts = crashAnalysisAttempts + 1
 
-            if crashAnalysisAttempts == 15 then
+            if ( crashAnalysisAttempts == 15 ) then
                 nextCrashAnalysis = nil
                 crashAnalysisAttempts = 0
-                SERVER_DOWN = true
+                IMPULSE_SERVER_DOWN = true
             end
         else
             nextCrashAnalysis = nil
