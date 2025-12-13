@@ -142,13 +142,13 @@ function GM:Think()
 end
 
 function GM:ScoreboardShow()
-    if LocalPlayer():Team() == 0 then return end -- players who have not been loaded yet
+    if ( LocalPlayer():Team() == 0 ) then return end -- players who have not been loaded yet
 
     impulse_scoreboard = vgui.Create("impulseScoreboard")
 end
 
 function GM:ScoreboardHide()
-    if LocalPlayer():Team() == 0 then return end -- players who have not been loaded yet
+    if ( LocalPlayer():Team() == 0 ) then return end -- players who have not been loaded yet
 
     impulse_scoreboard:Remove()
 end
@@ -187,7 +187,6 @@ impulse.Settings:Define("chat_oocenabled", {name = "OOC enabled", category = "Ch
 impulse.Settings:Define("chat_pmpings", {name = "PM and tag sound enabled", category = "Chatbox", type = "tickbox", default = true})
 
 local loweredAngles = Angle(30, -30, -25)
-
 function GM:CalcViewModelView(weapon, viewmodel, oldEyePos, oldEyeAng, eyePos, eyeAngles)
     if ( !IsValid(weapon) ) then return end
 
@@ -211,14 +210,14 @@ function GM:CalcViewModelView(weapon, viewmodel, oldEyePos, oldEyeAng, eyePos, e
 
     local func = weapon.GetViewModelPosition
     if ( func ) then
-        local pos, ang = func( weapon, eyePos*1, eyeAngles*1 )
+        local pos, ang = func(weapon, eyePos * 1, eyeAngles * 1)
         vm_origin = pos or vm_origin
         vm_angles = ang or vm_angles
     end
 
     func = weapon.CalcViewModelView
     if ( func ) then
-        local pos, ang = func( weapon, viewModel, oldEyePos*1, oldEyeAng*1, eyePos*1, eyeAngles*1 )
+        local pos, ang = func(weapon, viewmodel, oldEyePos * 1, oldEyeAng * 1, eyePos * 1, eyeAngles * 1)
         vm_origin = pos or vm_origin
         vm_angles = ang or vm_angles
     end
@@ -227,7 +226,7 @@ function GM:CalcViewModelView(weapon, viewmodel, oldEyePos, oldEyeAng, eyePos, e
 end
 
 function GM:ShouldDrawLocalPlayer()
-    if ( "falloverRagdoll" ) then
+    if ( LocalPlayer():GetRelay("falloverRagdoll", 0) ) then
         local entity = Entity(LocalPlayer():GetRelay("falloverRagdoll", 0))
         if ( IsValid(entity) ) then
             return false
@@ -298,21 +297,10 @@ function GM:CalcView(client, origin, angles, fov)
     end
 
     if ( impulse.Settings:Get("view_thirdperson") and client:GetViewEntity() == client ) then
-        if ( !thirdperson_smooth_origin ) then
-            thirdperson_smooth_origin = origin
-        end
-
-        if ( !thirdperson_smooth_angles ) then
-            thirdperson_smooth_angles = angles
-        end
-
-        if ( firstperson_smooth_origin ) then
-            firstperson_smooth_origin = nil
-        end
-
-        if ( firstperson_smooth_angles ) then
-            firstperson_smooth_angles = nil
-        end
+        if ( !thirdperson_smooth_origin ) then thirdperson_smooth_origin = origin end
+        if ( !thirdperson_smooth_angles ) then thirdperson_smooth_angles = angles end
+        if ( firstperson_smooth_origin ) then firstperson_smooth_origin = nil end
+        if ( firstperson_smooth_angles ) then firstperson_smooth_angles = nil end
 
         local angles = client:GetAimVector():Angle()
         local targetpos = Vector(0, 0, 60)
@@ -393,21 +381,10 @@ function GM:CalcView(client, origin, angles, fov)
             fov = fov
         }
     else
-        if ( thirdperson_smooth_origin ) then
-            thirdperson_smooth_origin = nil
-        end
-
-        if ( thirdperson_smooth_angles ) then
-            thirdperson_smooth_angles = nil
-        end
-
-        if ( !firstperson_smooth_origin ) then
-            firstperson_smooth_origin = origin
-        end
-
-        if ( !firstperson_smooth_angles ) then
-            firstperson_smooth_angles = angles
-        end
+        if ( thirdperson_smooth_origin ) then thirdperson_smooth_origin = nil end
+        if ( thirdperson_smooth_angles ) then thirdperson_smooth_angles = nil end
+        if ( !firstperson_smooth_origin ) then firstperson_smooth_origin = origin end
+        if ( !firstperson_smooth_angles ) then firstperson_smooth_angles = angles end
 
         if ( impulse.Settings:Get("view_firstperson_smooth_origin") ) then
             firstperson_smooth_origin = LerpVector(FrameTime() * 10, firstperson_smooth_origin, origin)
@@ -446,9 +423,9 @@ local blackandwhite = {
 }
 
 function GM:RenderScreenspaceEffects()
-    if impulse.HUDEnabled == false or (IsValid(impulse.MainMenu) and impulse.MainMenu:IsVisible()) then return end
+    if ( impulse.HUDEnabled == false or ( IsValid(impulse.MainMenu) and impulse.MainMenu:IsVisible() ) ) then return end
 
-    if LocalPlayer():Health() < 20 then
+    if ( LocalPlayer():Health() < 20 ) then
         DrawColorModify(blackandwhite)
     end
 end
@@ -609,12 +586,11 @@ end
 gameevent.Listen("player_spawn")
 hook.Add("player_spawn", "impulsePlayerSpawn", function(data)
     local client = Player(data.userid)
-
-    if client == LocalPlayer() then
+    if ( client == LocalPlayer() ) then
         hook.Run("PostReloadToolsMenu")
     end
 end)
 
 concommand.Add("impulse_togglethirdperson", function() -- ease of use command for binds
-    impulse.Settings:Set("view_thirdperson", (!impulse.Settings:Get("view_thirdperson")))
+    impulse.Settings:Set("view_thirdperson", !impulse.Settings:Get("view_thirdperson"))
 end)
