@@ -851,7 +851,7 @@ function GM:PlayerDeathThink(client)
     nextDeathThink = curTime + 0.5
 
     local clientTable = client:GetTable()
-    if ( !clientTable.impulseRespawnWait or clientTable.impulseRespawnWait < CurTime() ) then
+    if ( !clientTable.impulseRespawnWait or clientTable.impulseRespawnWait < curTime ) then
         client:Spawn()
     end
 
