@@ -1,4 +1,4 @@
-impulse.impulseCosmetics = impulse.impulseCosmetics or {}
+impulse.Cosmetics = impulse.Cosmetics or {}
 
 function MakeCosmetic(client, id, bone, data, slot)
     if !data then return end
@@ -156,7 +156,7 @@ hook.Add("PostPlayerDraw", "impulseCosmeticDraw", function(k)
 
     if faceCos then
         if faceCos != (k.lastFace or -1) then
-            MakeCosmetic(k, faceCos, "ValveBiped.Bip01_Head1", impulse.impulseCosmetics[faceCos], 1)
+            MakeCosmetic(k, faceCos, "ValveBiped.Bip01_Head1", impulse.Cosmetics[faceCos], 1)
             k.lastFace = faceCos
         end  
     elseif k.impulseCosmetics and k.impulseCosmetics[1] and IsValid(k.impulseCosmetics[1]) then -- cosmetic removed
@@ -166,7 +166,7 @@ hook.Add("PostPlayerDraw", "impulseCosmeticDraw", function(k)
 
     if hatCos then
         if hatCos != (k.lastHat or -1) then
-            MakeCosmetic(k, hatCos, "ValveBiped.Bip01_Head1", impulse.impulseCosmetics[hatCos], 2)
+            MakeCosmetic(k, hatCos, "ValveBiped.Bip01_Head1", impulse.Cosmetics[hatCos], 2)
             k.lastHat = hatCos
         end  
     elseif k.impulseCosmetics and k.impulseCosmetics[2] and IsValid(k.impulseCosmetics[2]) then -- cosmetic removed
@@ -176,7 +176,7 @@ hook.Add("PostPlayerDraw", "impulseCosmeticDraw", function(k)
 
     if chestCos then
         if chestCos != (k.lastChest or -1) then
-            MakeCosmetic(k, chestCos, "ValveBiped.Bip01_Spine2", impulse.impulseCosmetics[chestCos], 3)
+            MakeCosmetic(k, chestCos, "ValveBiped.Bip01_Spine2", impulse.Cosmetics[chestCos], 3)
             k.lastChest = hatCos
         end  
     elseif k.impulseCosmetics and k.impulseCosmetics[3] and IsValid(k.impulseCosmetics[3]) then -- cosmetic removed
@@ -268,7 +268,7 @@ hook.Add("SetupInventoryModel", "impulseDrawCosmetics", function(panel)
 
         if faceCos then
             if faceCos != self.lastFaceI then
-                MakeCosmetic(k, faceCos, "ValveBiped.Bip01_Head1", impulse.impulseCosmetics[faceCos], 1)
+                MakeCosmetic(k, faceCos, "ValveBiped.Bip01_Head1", impulse.Cosmetics[faceCos], 1)
                 self.lastFaceI = faceCos
             end  
         elseif k.impulseCosmetics and k.impulseCosmetics[1] and IsValid(k.impulseCosmetics[1]) then -- cosmetic removed
@@ -278,7 +278,7 @@ hook.Add("SetupInventoryModel", "impulseDrawCosmetics", function(panel)
 
         if hatCos then
             if hatCos != self.lastHatI then
-                MakeCosmetic(k, hatCos, "ValveBiped.Bip01_Head1", impulse.impulseCosmetics[hatCos], 2)
+                MakeCosmetic(k, hatCos, "ValveBiped.Bip01_Head1", impulse.Cosmetics[hatCos], 2)
                 self.lastHatI = hatCos
             end  
         elseif k.impulseCosmetics and k.impulseCosmetics[2] and IsValid(k.impulseCosmetics[2]) then -- cosmetic removed
@@ -288,7 +288,7 @@ hook.Add("SetupInventoryModel", "impulseDrawCosmetics", function(panel)
 
         if chestCos then
             if chestCos != self.lastChestI then
-                MakeCosmetic(k, chestCos, "ValveBiped.Bip01_Spine2", impulse.impulseCosmetics[chestCos], 3)
+                MakeCosmetic(k, chestCos, "ValveBiped.Bip01_Spine2", impulse.Cosmetics[chestCos], 3)
                 self.lastChestI = hatCos
             end  
         elseif k.impulseCosmetics and k.impulseCosmetics[3] and IsValid(k.impulseCosmetics[3]) then -- cosmetic removed
