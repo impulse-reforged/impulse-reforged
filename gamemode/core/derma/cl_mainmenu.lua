@@ -258,9 +258,11 @@ function PANEL:Init()
     copyrightLabel:SetPos(ScrW() - copyrightLabel:GetWide(), ScrH() - copyrightLabel:GetTall() - 5)
 
     if ( impulse.Config.WordPressURL != "" or !table.IsEmpty(impulse.Config.SchemaChangelogs) ) then
+        local newsW, newsH = 1920, 1080
+        newsW, newsH = newsW / 4, newsH / 4 + 100
         local newsContainer = vgui.Create("DPanel", self.core)
-        newsContainer:SetPos(self:GetWide() - 600, 0)
-        newsContainer:SetSize(500, 350)
+        newsContainer:SetPos(self:GetWide() - newsW - 50, 0)
+        newsContainer:SetSize(newsW, newsH)
         newsContainer.Paint = function(this, width, height)
             surface.SetDrawColor(bodyCol)
             surface.DrawRect(0, 0, width, 80)
