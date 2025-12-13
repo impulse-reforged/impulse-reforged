@@ -1484,7 +1484,7 @@ function GM:PlayerSpray()
 end
 
 function GM:PlayerShouldTakeDamage(client, attacker)
-    if client:Team() == 0 then return false end
+    if ( client:Team() == 0 ) then return false end
 
     local clientTable = client:GetTable()
     if clientTable.SpawnProtection and attacker:IsPlayer() then return false end
