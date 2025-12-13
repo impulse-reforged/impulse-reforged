@@ -446,18 +446,18 @@ function GM:FinishChat()
 end
 
 function GM:OnContextMenuOpen()
-    if LocalPlayer():Team() == 0 or !LocalPlayer():Alive() or impulse_ActiveWorkbar then return end
-    if LocalPlayer():GetRelay("arrested", false) then return end
+    local client = LocalPlayer()
+    if ( client:Team() == 0 or !client:Alive() or impulse_ActiveWorkbar ) then return end
+    if ( client:GetRelay("arrested", false) ) then return end
 
-    local canUse = hook.Run("CanUseInventory", LocalPlayer())
+    local canUse = hook.Run("CanUseInventory", client)
+    if ( canUse != nil and canUse == false ) then return end
 
-    if canUse != nil and canUse == false then return end
-
-    if !input.IsKeyDown(KEY_LALT) then
+    if ( !input.IsKeyDown(KEY_LALT) ) then
         impulse_inventory = vgui.Create("impulseInventory")
         gui.EnableScreenClicker(true)
     else
-        if IsValid(g_ContextMenu) and !g_ContextMenu:IsVisible() then
+        if ( IsValid(g_ContextMenu) and !g_ContextMenu:IsVisible() ) then
             g_ContextMenu:Open()
             menubar.ParentTo(g_ContextMenu)
 
@@ -467,12 +467,12 @@ function GM:OnContextMenuOpen()
 end
 
 function GM:OnContextMenuClose()
-    if IsValid(g_ContextMenu) then
+    if ( IsValid(g_ContextMenu) ) then
         g_ContextMenu:Close()
         hook.Call("ContextMenuClosed", self)
     end
 
-    if IsValid(impulse_inventory) then
+    if ( IsValid(impulse_inventory) ) then
         impulse_inventory:Remove()
         gui.EnableScreenClicker(false)
     end
@@ -486,8 +486,10 @@ local blockedTabs = {
 
 local blockNormalTabs = {
     ["#spawnmenu.category.entities"] = true,
+    ["#spawnmenu.category.npcs"] = true,
     ["#spawnmenu.category.weapons"] = true,
-    ["#spawnmenu.category.npcs"] = true
+    ["VJ Base"] = true,
+    ["ZBase"] = true
 }
 
 function GM:PostReloadToolsMenu()
@@ -495,35 +497,34 @@ function GM:PostReloadToolsMenu()
     if ( !IsValid(client) or client:Team() == 0 ) then return end
 
     local spawnMenu = g_SpawnMenu
-
-    if spawnMenu then
+    if ( spawnMenu ) then
         local tabs = spawnMenu.CreateMenu
         local closeMe = {}
 
-        for v, k in pairs(tabs:GetItems()) do
-            if blockedTabs[k.Name] then
-                table.insert(closeMe, k.Tab)
+        for _, v in pairs(tabs:GetItems()) do
+            if ( blockedTabs[v.Name] ) then
+                table.insert(closeMe, v.Tab)
             end
 
-            if client and client.IsAdmin and client.IsDonator then -- when u first load client doesnt exist
-                if blockNormalTabs[k.Name] and !client:IsAdmin() then
-                    table.insert(closeMe, k.Tab)
+            if ( client and client.IsAdmin and client.IsDonator ) then -- when u first load client doesnt exist
+                if ( blockNormalTabs[v.Name] and !client:IsAdmin() ) then
+                    table.insert(closeMe, v.Tab)
                 end
 
-                if k.Name == "#spawnmenu.category.vehicles" and !client:IsDonator() then
-                    table.insert(closeMe, k.Tab)
+                if ( v.Name == "#spawnmenu.category.vehicles" and !client:IsDonator() ) then
+                    table.insert(closeMe, v.Tab)
                 end
             end
         end
 
-        for v, k in pairs(closeMe) do
-            tabs:CloseTab(k, true)
+        for _, v in pairs(closeMe) do
+            tabs:CloseTab(v, true)
         end
     end
 end
 
 function GM:SpawnMenuOpen()
-    if LocalPlayer():Team() == 0 or !LocalPlayer():Alive() then
+    if ( LocalPlayer():Team() == 0 or !LocalPlayer():Alive() ) then
         return false
     else
         return true
