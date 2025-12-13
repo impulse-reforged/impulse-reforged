@@ -345,7 +345,7 @@ end
 
 function PANEL:OnMousePressed()
     -- Click outside to close
-    local x, y = self:CursorPos()
+    local x, _ = self:CursorPos()
     if ( x < self.targetX ) then
         self:Close()
     end
