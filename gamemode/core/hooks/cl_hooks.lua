@@ -5,21 +5,20 @@ function GM:ForceDermaSkin()
 end
 
 function GM:OnSchemaLoaded()
-    if !impulse.MainMenu and !IsValid(impulse.MainMenu) then
+    if ( !impulse.MainMenu and !IsValid(impulse.MainMenu) ) then
         impulse.SplashScreen = vgui.Create("impulseSplash")
 
-        if system.IsWindows() then
+        if ( system.IsWindows() ) then
             system.FlashWindow()
         end
     end
 
     local dir = "impulse-reforged/menumsgs/"
-    for v, k in ipairs(file.Find(dir .. "*.json", "DATA")) do
-        local f = file.Read(dir..k, "DATA")
+    for _, v in ipairs(file.Find(dir .. "*.json", "DATA")) do
+        local f = file.Read(dir .. v, "DATA")
         local data = util.JSONToTable(f)
-
-        if !data then
-            logs:Error("Error loading menu message " .. k .. "!")
+        if ( !data ) then
+            logs:Error("Error loading menu message " .. v .. "!")
             continue
         end
 
@@ -534,25 +533,25 @@ end
 function GM:DisplayMenuMessages(menu)
     menu.Messages = menu.Messages or {}
 
-    for v, k in pairs(menu.Messages) do
-        k:Remove()
+    for _, v in pairs(menu.Messages) do
+        v:Remove()
     end
 
     hook.Run("CreateMenuMessages")
 
     local time = os.time()
 
-    for v, k in pairs(impulse.MenuMessage.Stored) do
-        if k.expiry and k.expiry < time then
-            impulse.MenuMessage:Remove(v)
+    for k, v in pairs(impulse.MenuMessage.Stored) do
+        if ( v.expiry and v.expiry < time ) then
+            impulse.MenuMessage:Remove(k)
             continue
         end
 
         menu.AddingMsgs = true
+
         local msg = vgui.Create("impulseMenuMessage", menu)
         local w = menu:GetWide() - 1100
-
-        if w < 300 then
+        if ( w < 300 ) then
             msg:SetSize(520, 180)
             msg:SetPos(menu:GetWide() - 540, 390)
         else
@@ -560,12 +559,12 @@ function GM:DisplayMenuMessages(menu)
             msg:SetPos(520, 30)
         end
 
-        msg:SetMessage(v)
+        msg:SetMessage(k)
 
         msg.OnClosed = function()
-            impulse.MenuMessage:Remove(v)
+            impulse.MenuMessage:Remove(k)
 
-            if IsValid(menu) then
+            if ( IsValid(menu) ) then
                 hook.Run("DisplayMenuMessages", menu)
             end
 
