@@ -242,13 +242,25 @@ function GM:ShouldDrawLocalPlayer()
     end
 end
 
+local camera_fov = CreateConVar("impulse_camera_fov", "90", {FCVAR_ARCHIVE, FCVAR_REPLICATED}, "Set the camera FOV when using a view entity.")
 local thirdperson_smooth_origin
 local thirdperson_smooth_angles
 local firstperson_smooth_origin
 local firstperson_smooth_angles
 function GM:CalcView(client, origin, angles, fov)
-    local view
+    local viewEntity = client:GetViewEntity()
+    if ( IsValid(viewEntity) and viewEntity != client and viewEntity:GetClass() != "gmod_camera" ) then
+        local pos = viewEntity:GetPos()
+        local ang = viewEntity:GetAngles()
 
+        return {
+            origin = pos,
+            angles = ang,
+            fov = camera_fov:GetFloat()
+        }
+    end
+
+    local view
     if ( IsValid(impulse.SplashScreen) or ( IsValid(impulse.MainMenu) and impulse.MainMenu:IsVisible() and !impulse.MainMenu.popup ) ) then
         view = {
             origin = impulse.Config.MenuCamPos,
