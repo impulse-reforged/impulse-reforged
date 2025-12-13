@@ -42,8 +42,8 @@ function impulse.Plugins:LoadEntities(path)
                 _G[variable].ClassName = v
 
                 if ( IncludeFiles(path2, clientOnly) and !client ) then
-                    if (clientOnly) then
-                        if (CLIENT) then
+                    if ( clientOnly ) then
+                        if ( CLIENT ) then
                             register(_G[variable], v)
                         end
                     else
