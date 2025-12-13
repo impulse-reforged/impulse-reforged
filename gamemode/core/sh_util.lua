@@ -45,6 +45,11 @@ function impulse.Util:Include(fileName, realm)
 
     --MsgC(Color(83, 143, 239), "[impulse-reforged] [util] Including file \"" .. fileName .. "\" .. .\n")
 
+    if ( !string.EndsWith(fileName, ".lua") ) then
+        MsgC(Color(255, 255, 0), "[impulse-reforged] [util] File \"" .. fileName .. "\" is missing .lua extension, skipping include.\n")
+        return
+    end
+
     -- Only include server-side if we're on the server.
     if ( ( realm == "server" or fileName:find("sv_") ) and SERVER ) then
         return include(fileName)
