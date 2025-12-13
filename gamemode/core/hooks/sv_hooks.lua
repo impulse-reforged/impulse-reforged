@@ -61,6 +61,8 @@ function GM:PlayerInitialSpawn(client)
                 net.WriteTable({Color(150, 150, 200), client:SteamName() .. " has connected to the server."})
             net.Broadcast()
 
+            logs:Info("Player connected: " .. client:SteamName() .. " (" .. client:SteamID64() .. ")")
+
             if ( isNew ) then
                 net.Start("impulseJoinData")
                     net.WriteBool(isNew)
@@ -646,6 +648,8 @@ function GM:PlayerSay(client, text, teamChat, newChat)
 
             table.remove(args, 1)
             command.onRun(client, args, text)
+
+            logs:Info("[CMD] " .. client:SteamName() .. " ran command: " .. text)
         else
             client:Notify("The " .. args[1] .. " command does not exist.")
         end
@@ -660,6 +664,8 @@ function GM:PlayerSay(client, text, teamChat, newChat)
         end
 
         hook.Run("PostChatClassMessageSend", 1, text, client)
+
+        logs:Info("[IC] " .. client:SteamName() .. ": " .. text)
     end
 
     return ""
@@ -1386,6 +1392,8 @@ function GM:CanTool(client, tr, tool)
         end
     end
 
+    logs:Info("[TOOL] " .. client:SteamName() .. " used tool: " .. tool)
+
     return true
 end
 
@@ -1454,11 +1462,15 @@ function GM:CanPlayerEnterVehicle(client, veh)
     local clientTable = client:GetTable()
     if ( client:GetRelay("arrested", false) ) or clientTable.impulseArrestedDragging then return false end
 
+    logs:Info("[VEHICLE] " .. client:SteamName() .. " entered vehicle: " .. veh:GetClass())
+
     return true
 end
 
 function GM:CanExitVehicle(veh, client)
     if ( client:GetRelay("arrested", false) ) then return false end
+
+    logs:Info("[VEHICLE] " .. client:SteamName() .. " exited vehicle: " .. veh:GetClass())
 
     return true
 end
