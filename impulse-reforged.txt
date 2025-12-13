@@ -1,18 +1,10 @@
 "impulse-reforged"
 {
-    "base"         "sandbox"
-    "title"        "impulse"
-    "author"       "vin, Riggs"
-    "category"     "rp"
-}
+    "base"        "sandbox"
+    "title"       "impulse: reforged"
+    "category"    "rp"
 
-"impulse-reforged"
-{
-	"base"        "sandbox"
-	"title"       "impulse: reforged"
-	"category"    "rp"
-
-	"maps"        "^rp_"
-	"menusystem"  "1"
-	"workshopid"  "3354257069"
+    "maps"        "^rp_"
+    "menusystem"  "0"
+    "workshopid"  "3354257069"
 }
