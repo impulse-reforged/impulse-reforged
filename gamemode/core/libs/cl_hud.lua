@@ -198,7 +198,7 @@ function GM:HUDPaint()
 
     local seeColIcons = impulse.Settings:Get("hud_iconcolours")
     local aboveHUDUsed = false
-    if ( SERVER_DOWN and CRASHSCREEN_ALLOW ) then
+    if ( IMPULSE_SERVER_DOWN and CRASHSCREEN_ALLOW ) then
         if ( !IsValid(CRASH_SCREEN) ) then
             CRASH_SCREEN = vgui.Create("impulseCrashScreen")
         end

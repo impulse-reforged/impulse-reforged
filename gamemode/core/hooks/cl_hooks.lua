@@ -129,15 +129,14 @@ function GM:Think()
         lastServerData2 = b
     end
 
-    if (nextCrashThink or 0) < CurTime() then
+    if ( nextCrashThink < CurTime() ) then
         nextCrashThink = CurTime() + 0.66
 
         local a, b = engine.ServerFrameTime()
-
-        if a == (lastServerData1 or 0) and b == (lastServerData2 or 0) then
+        if ( a == lastServerData1 and b == lastServerData2 ) then
             nextCrashAnalysis = CurTime()
         else
-            SERVER_DOWN = false
+            IMPULSE_SERVER_DOWN = false
             nextCrashAnalysis = nil
         end
 
