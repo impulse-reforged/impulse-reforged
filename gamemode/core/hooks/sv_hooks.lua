@@ -605,8 +605,6 @@ function GM:ShowHelp()
     return
 end
 
-local talkCol = Color(255, 255, 100)
-local infoCol = Color(135, 206, 250)
 local strTrim = string.Trim
 function GM:PlayerSay(client, text, teamChat, newChat)
     local clientTable = client:GetTable()
