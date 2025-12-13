@@ -1,0 +1,7 @@
+"UnlitGeneric"
+{
+	"$basetexture" "zerochain/particles/zck_snowflake01"
+	"$additive" "1"
+	"$vertexcolor" "1"
+	"$vertexalpha" "1"
+}

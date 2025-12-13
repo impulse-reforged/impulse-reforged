@@ -1,0 +1,14 @@
+"LightmappedGeneric"
+{
+	"$basetexture" "decals/decal_snow_002"
+	"$translucent" 1
+$vertexcolor 1
+$vertexalpha 1
+
+$translucent 1
+
+$decal 1
+$decalscale .13
+	"$envmap" 			"env_cubemap"
+	"$envmaptint" 			"[0.7 0.7 0.9]"
+}
