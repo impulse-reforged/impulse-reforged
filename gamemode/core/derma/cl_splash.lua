@@ -58,7 +58,7 @@ function PANEL:OnKeyCodeReleased(keyCode)
                 sad:SetImage("impulse-reforged/impulse-logo-white.png")
                 sad:SetAlpha(100)
 
-                local sad = vgui.Create("DImage", self)
+                sad = vgui.Create("DImage", self)
                 sad:SetPos(x, y)
                 sad:SetSize(180, 180)
                 sad:SetImage("impulse-reforged/icons/sad.png")

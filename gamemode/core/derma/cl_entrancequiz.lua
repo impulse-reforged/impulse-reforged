@@ -3,7 +3,6 @@
 
 local PANEL = {}
 
-local bodyCol = Color(30, 30, 30, 190)
 local highlightCol = Color(51, 153, 255)
 
 function PANEL:Init()
