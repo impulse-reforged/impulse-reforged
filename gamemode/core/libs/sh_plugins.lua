@@ -8,7 +8,7 @@ function impulse.Plugins:LoadEntities(path)
 
     local function IncludeFiles(path2, clientOnly)
         if ( SERVER and file.Exists(path2 .. "init.lua", "LUA") or CLIENT ) then
-            if (clientOnly and CLIENT) or SERVER then
+            if ( ( clientOnly and CLIENT ) or SERVER ) then
                 include(path2 .. "init.lua")
             end
 

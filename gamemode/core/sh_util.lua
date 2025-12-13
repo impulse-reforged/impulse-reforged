@@ -43,8 +43,6 @@ function impulse.Util:Include(fileName, realm)
         error("[impulse] No file name specified for including.")
     end
 
-    --MsgC(Color(83, 143, 239), "[impulse-reforged] [util] Including file \"" .. fileName .. "\" .. .\n")
-
     if ( !string.EndsWith(fileName, ".lua") ) then
         MsgC(Color(255, 255, 0), "[impulse-reforged] [util] File \"" .. fileName .. "\" is missing .lua extension, skipping include.\n")
         return
@@ -62,7 +60,7 @@ function impulse.Util:Include(fileName, realm)
 
         return include(fileName)
     -- File is sent to client, included on client.
-    elseif (realm == "client" or fileName:find("cl_")) then
+    elseif ( realm == "client" or fileName:find("cl_") ) then
         if ( SERVER ) then
             AddCSLuaFile(fileName)
         else
