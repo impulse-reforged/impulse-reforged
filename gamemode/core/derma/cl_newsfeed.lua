@@ -228,6 +228,7 @@ function PANEL:Setup()
 end
 
 function PANEL:SetupNews(data)
+    -- TODO: Implement newsfeed setup for wordpress posts
 end
 
 function PANEL:SetupChangelogs(changelog)
@@ -235,48 +236,7 @@ function PANEL:SetupChangelogs(changelog)
 
     self.text:SetMouseInputEnabled(true)
     self.text.OnMousePressed = function()
-        -- Provide a detailed changelog popup with full changes list
-        local changelogPopup = vgui.Create("DFrame")
-        changelogPopup:SetTitle("Changelog - " .. (changelog.Title or "Changelog"))
-        changelogPopup:SetSize(ScrW() / 3, ScrH() / 3)
-        changelogPopup:Center()
-        changelogPopup:MakePopup()
-        changelogPopup.OnFocusChanged = function(this, gained)
-            if ( !gained ) then
-                changelogPopup:Close()
-            end
-        end
-
-        local scroll = changelogPopup:Add("DScrollPanel")
-        scroll:Dock(FILL)
-
-        local changelogTitle = scroll:Add("DLabel")
-        changelogTitle:Dock(TOP)
-        changelogTitle:DockMargin(0, 5, 10, 0)
-        changelogTitle:SetFont("Impulse-Elements32")
-        changelogTitle:SetText(changelog.Title or "Changelog")
-        changelogTitle:SizeToContents()
-        changelogTitle:SetContentAlignment(5)
-
-        local changelogDescriptionWrapped = impulse.Util:WrapText(changelog.Description or "No description available.", changelogPopup:GetWide() / 1.5, "Impulse-Elements24")
-        for _, line in pairs(changelogDescriptionWrapped) do
-            local descriptionLine = scroll:Add("DLabel")
-            descriptionLine:Dock(TOP)
-            descriptionLine:DockMargin(10, 0, 10, 0)
-            descriptionLine:SetFont("Impulse-Elements24")
-            descriptionLine:SetText(line)
-            descriptionLine:SizeToContents()
-            descriptionLine:SetContentAlignment(5)
-        end
-
-        for _, change in pairs(changelog.Changes or {}) do
-            local changeLabel = scroll:Add("DLabel")
-            changeLabel:Dock(TOP)
-            changeLabel:DockMargin(10, 5, 10, 0)
-            changeLabel:SetFont("Impulse-Elements14")
-            changeLabel:SetText("• " .. change)
-            changeLabel:SizeToContents()
-        end
+        self:DoClick(changelog)
     end
 
     local parent = self:GetParent()
@@ -323,6 +283,9 @@ function PANEL:SetupChangelogs(changelog)
                 <img src = "]] .. self.image .. [[" style = "width:100%;height:100%;">]])
         end)
     end
+end
+
+function PANEL:DoClick()
 end
 
 function PANEL:Paint(width, height)

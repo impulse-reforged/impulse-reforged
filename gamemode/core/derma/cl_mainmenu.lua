@@ -261,7 +261,7 @@ function PANEL:Init()
         local newsW, newsH = 1920, 1080
         newsW, newsH = newsW / 4, newsH / 4 + 100
         local newsContainer = vgui.Create("DPanel", self.core)
-        newsContainer:SetPos(self:GetWide() - newsW - 50, 0)
+        newsContainer:SetPos(self:GetWide() - newsW - 100, 0)
         newsContainer:SetSize(newsW, newsH)
         newsContainer.Paint = function(this, width, height)
             surface.SetDrawColor(bodyCol)
@@ -277,6 +277,9 @@ function PANEL:Init()
 
         local newsFeed = vgui.Create("impulseNewsfeed", newsContainer)
         newsFeed:Dock(FILL)
+        newsFeed.DoClick = function(this, data)
+            vgui.Create("impulseChangelogViewer", self):SetChangelogData(data)
+        end
     end
 
     local testMessage = function()
