@@ -644,12 +644,12 @@ function GM:PlayerSay(client, text, teamChat, newChat)
             if ( command.requiresArg and ( !args[2] or string.Trim(args[2]) == "" ) ) then return "" end
             if ( command.requiresAlive and !client:Alive() ) then return "" end
 
+            logs:Info("[CMD] " .. client:SteamName() .. ": " .. text)
+
             text = string.sub(text, string.len(args[1]) + 2)
 
             table.remove(args, 1)
             command.onRun(client, args, text)
-
-            logs:Info("[CMD] " .. client:SteamName() .. " ran command: " .. text)
         else
             client:Notify("The " .. args[1] .. " command does not exist.")
         end
