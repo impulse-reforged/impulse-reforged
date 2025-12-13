@@ -54,6 +54,11 @@ function impulse.Plugins:LoadEntities(path)
         end
 
         for k, v in ipairs(files) do
+            if ( !string.EndsWith(v, ".lua") ) then
+                MsgC(Color(255, 255, 0), "[impulse-reforged] [plugins] File \"" .. v .. "\" is missing .lua extension, skipping include.\n")
+                return
+            end
+
             local niceName = string.StripExtension(v)
 
             _G[variable] = table.Copy(default)
