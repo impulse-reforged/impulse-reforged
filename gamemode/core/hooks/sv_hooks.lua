@@ -1247,15 +1247,15 @@ function GM:PlayerSpawnVehicle(client, model)
         local count = 0
         clientTable.SpawnedVehicles = clientTable.SpawnedVehicles or {}
 
-        for v, k in pairs(clientTable.SpawnedVehicles) do
-            if k and IsValid(k) then
+        for k, v in pairs(clientTable.SpawnedVehicles) do
+            if ( IsValid(v) ) then
                 count = count + 1
             else
-                clientTable.SpawnedVehicles[v] = nil
+                clientTable.SpawnedVehicles[k] = nil
             end
         end
 
-        if count >= impulse.Config.ChairsLimit then
+        if ( count >= impulse.Config.ChairsLimit ) then
             client:Notify("You have spawned the maximum amount of chairs.")
             return false
         end
@@ -1278,23 +1278,22 @@ function GM:CanDrive()
 end
 
 local whitelistProp = {
+    ["bodygroups"] = true,
     ["collision"] = true,
-    ["remover"] = true
+    ["remover"] = true,
+    ["skin"] = true
 }
 
 local adminProp = {
-    ["bodygroups"] = true,
     ["extinguish"] = true,
     ["ignite"] = true,
-    ["skin"] = true
 }
 
 function GM:CanProperty(client, prop)
     if ( whitelistProp[prop] ) then return true end
-
     if ( client:IsAdmin() and adminProp[prop] ) then return true end
 
-    return false
+    return client:IsSuperAdmin()
 end
 
 local bannedTools = {
@@ -1360,29 +1359,28 @@ function GM:CanTool(client, tr, tool)
 
     local ent = tr.Entity
     if ( IsValid(ent) ) then
-        if ent.onlyremover then
-            if tool == "remover" then
+        if ( ent.onlyremover ) then
+            if ( tool == "remover" ) then
                 return client:IsAdmin() or client:IsSuperAdmin()
             else
                 return false
             end
         end
 
-        if ent.nodupe and dupeBannedTools[tool] then
+        if ( ent.nodupe and dupeBannedTools[tool] ) then
             return false
         end
 
-        if tool == "remover" and client:IsAdmin() and !client:IsSuperAdmin() then
+        if ( tool == "remover" and client:IsAdmin() and !client:IsSuperAdmin() ) then
             local owner = ent:CPPIGetOwner()
-
-            if !owner and !adminWorldRemoveWhitelist[ent:GetClass()] then
+            if ( !owner and !adminWorldRemoveWhitelist[ent:GetClass()] ) then
                 client:Notify("You can not remove this entity.")
                 return false
             end
         end
 
-        if string.sub(ent:GetClass(), 1, 8) == "impulse_" then
-            if tool != "remover" and !client:IsSuperAdmin() then
+        if ( string.StartsWith(ent:GetClass(), "impulse_") ) then
+            if ( tool != "remover" and !client:IsSuperAdmin() ) then
                 return false
             end
         end
