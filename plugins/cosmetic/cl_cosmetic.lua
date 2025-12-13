@@ -1,26 +1,28 @@
-impulse.Cosmetics = impulse.Cosmetics or {}
+impulse.impulseCosmetics = impulse.impulseCosmetics or {}
 
 function MakeCosmetic(client, id, bone, data, slot)
-    client.Cosmetics = client.Cosmetics or {}
+    if !data then return end
 
-    SafeRemoveEntity(client.Cosmetics[slot])
+    client.impulseCosmetics = client.impulseCosmetics or {}
 
-    client.Cosmetics[slot] = ClientsideModel(data.model, RENDERGROUP_BOTH)
-    client.Cosmetics[slot]:SetNoDraw(true)
+    SafeRemoveEntity(client.impulseCosmetics[slot])
+
+    client.impulseCosmetics[slot] = ClientsideModel(data.model, RENDERGROUP_BOTH)
+    client.impulseCosmetics[slot]:SetNoDraw(true)
 
     if data.bodygroups then
-        client.Cosmetics[slot]:SetBodyGroups(data.bodygroups)
+        client.impulseCosmetics[slot]:SetBodyGroups(data.bodygroups)
     end
 
     if data.skin then
-        client.Cosmetics[slot]:SetSkin(data.skin)
+        client.impulseCosmetics[slot]:SetSkin(data.skin)
     end
 
     if data.onEntLoad then
         if client:GetClass() == "class C_BaseFlex" then -- ui support
-            data.onEntLoad(LocalPlayer(), client.Cosmetics[slot])
+            data.onEntLoad(LocalPlayer(), client.impulseCosmetics[slot])
         else
-            data.onEntLoad(client, client.Cosmetics[slot])
+            data.onEntLoad(client, client.impulseCosmetics[slot])
         end
     end
 
@@ -31,32 +33,32 @@ function MakeCosmetic(client, id, bone, data, slot)
     end
 
     if data.teamCustomScale and data.teamCustomScale[t] then
-        client.Cosmetics[slot]:SetModelScale(client.Cosmetics[slot]:GetModelScale() * data.teamCustomScale[t])
+        client.impulseCosmetics[slot]:SetModelScale(client.impulseCosmetics[slot]:GetModelScale() * data.teamCustomScale[t])
     elseif client:IsFemale() and data.femaleScale then
-        client.Cosmetics[slot]:SetModelScale(client.Cosmetics[slot]:GetModelScale() * data.femaleScale)
+        client.impulseCosmetics[slot]:SetModelScale(client.impulseCosmetics[slot]:GetModelScale() * data.femaleScale)
     else
-        client.Cosmetics[slot]:SetModelScale(client.Cosmetics[slot]:GetModelScale() * data.scale)
+        client.impulseCosmetics[slot]:SetModelScale(client.impulseCosmetics[slot]:GetModelScale() * data.scale)
     end
 
     if data.matrixScale then
         local mat = Matrix()
         mat:Scale(data.matrixScale)
-        client.Cosmetics[slot]:EnableMatrix("RenderMultiply", mat)
+        client.impulseCosmetics[slot]:EnableMatrix("RenderMultiply", mat)
     end
 
     if data.subMaterials then
         for v, k in pairs(data.subMaterials) do
-            client.Cosmetics[slot]:SetSubMaterial(v, k)
+            client.impulseCosmetics[slot]:SetSubMaterial(v, k)
         end
     end
 
-    client.Cosmetics[slot].drawdata = data
-    client.Cosmetics[slot].bone = bone
-    client.Cosmetics[slot].owner = client
+    client.impulseCosmetics[slot].drawdata = data
+    client.impulseCosmetics[slot].bone = bone
+    client.impulseCosmetics[slot].owner = client
 end
 
 function RemoveCosmetic(client, ent, slot)
-    client.Cosmetics[slot] = nil
+    client.impulseCosmetics[slot] = nil
     SafeRemoveEntity(ent)
 end
 
@@ -67,8 +69,8 @@ local lastChest = -1
 hook.Add("PostPlayerDraw", "impulseCosmeticDraw", function(k)
     if !k:Alive() then return end
 
-    if k.Cosmetics then
-        for a,b in pairs(k.Cosmetics) do
+    if k.impulseCosmetics then
+        for a,b in pairs(k.impulseCosmetics) do
             if !IsValid(b) then continue end
             local bone
             local attach
@@ -154,31 +156,31 @@ hook.Add("PostPlayerDraw", "impulseCosmeticDraw", function(k)
 
     if faceCos then
         if faceCos != (k.lastFace or -1) then
-            MakeCosmetic(k, faceCos, "ValveBiped.Bip01_Head1", impulse.Cosmetics[faceCos], 1)
+            MakeCosmetic(k, faceCos, "ValveBiped.Bip01_Head1", impulse.impulseCosmetics[faceCos], 1)
             k.lastFace = faceCos
         end  
-    elseif k.Cosmetics and k.Cosmetics[1] and IsValid(k.Cosmetics[1]) then -- cosmetic removed
-        RemoveCosmetic(k, k.Cosmetics[1], 1)
+    elseif k.impulseCosmetics and k.impulseCosmetics[1] and IsValid(k.impulseCosmetics[1]) then -- cosmetic removed
+        RemoveCosmetic(k, k.impulseCosmetics[1], 1)
         k.lastFace = -1
     end
 
     if hatCos then
         if hatCos != (k.lastHat or -1) then
-            MakeCosmetic(k, hatCos, "ValveBiped.Bip01_Head1", impulse.Cosmetics[hatCos], 2)
+            MakeCosmetic(k, hatCos, "ValveBiped.Bip01_Head1", impulse.impulseCosmetics[hatCos], 2)
             k.lastHat = hatCos
         end  
-    elseif k.Cosmetics and k.Cosmetics[2] and IsValid(k.Cosmetics[2]) then -- cosmetic removed
-        RemoveCosmetic(k, k.Cosmetics[2], 2)
+    elseif k.impulseCosmetics and k.impulseCosmetics[2] and IsValid(k.impulseCosmetics[2]) then -- cosmetic removed
+        RemoveCosmetic(k, k.impulseCosmetics[2], 2)
         k.lastHat = -1
     end
 
     if chestCos then
         if chestCos != (k.lastChest or -1) then
-            MakeCosmetic(k, chestCos, "ValveBiped.Bip01_Spine2", impulse.Cosmetics[chestCos], 3)
+            MakeCosmetic(k, chestCos, "ValveBiped.Bip01_Spine2", impulse.impulseCosmetics[chestCos], 3)
             k.lastChest = hatCos
         end  
-    elseif k.Cosmetics and k.Cosmetics[3] and IsValid(k.Cosmetics[3]) then -- cosmetic removed
-        RemoveCosmetic(k, k.Cosmetics[3], 3)
+    elseif k.impulseCosmetics and k.impulseCosmetics[3] and IsValid(k.impulseCosmetics[3]) then -- cosmetic removed
+        RemoveCosmetic(k, k.impulseCosmetics[3], 3)
         k.lastChest = -1
     end
 end)
@@ -189,8 +191,8 @@ hook.Add("SetupInventoryModel", "impulseDrawCosmetics", function(panel)
     panel.lastChestI = -1
 
     function panel:PostDrawModel(k)
-        if k.Cosmetics then
-            for a,b in pairs(k.Cosmetics) do
+        if k.impulseCosmetics then
+            for a,b in pairs(k.impulseCosmetics) do
                 if !IsValid(b) then continue end
 
                 local bone
@@ -266,31 +268,31 @@ hook.Add("SetupInventoryModel", "impulseDrawCosmetics", function(panel)
 
         if faceCos then
             if faceCos != self.lastFaceI then
-                MakeCosmetic(k, faceCos, "ValveBiped.Bip01_Head1", impulse.Cosmetics[faceCos], 1)
+                MakeCosmetic(k, faceCos, "ValveBiped.Bip01_Head1", impulse.impulseCosmetics[faceCos], 1)
                 self.lastFaceI = faceCos
             end  
-        elseif k.Cosmetics and k.Cosmetics[1] and IsValid(k.Cosmetics[1]) then -- cosmetic removed
-            RemoveCosmetic(k, k.Cosmetics[1], 1)
+        elseif k.impulseCosmetics and k.impulseCosmetics[1] and IsValid(k.impulseCosmetics[1]) then -- cosmetic removed
+            RemoveCosmetic(k, k.impulseCosmetics[1], 1)
             self.lastFaceI = -1
         end
 
         if hatCos then
             if hatCos != self.lastHatI then
-                MakeCosmetic(k, hatCos, "ValveBiped.Bip01_Head1", impulse.Cosmetics[hatCos], 2)
+                MakeCosmetic(k, hatCos, "ValveBiped.Bip01_Head1", impulse.impulseCosmetics[hatCos], 2)
                 self.lastHatI = hatCos
             end  
-        elseif k.Cosmetics and k.Cosmetics[2] and IsValid(k.Cosmetics[2]) then -- cosmetic removed
-            RemoveCosmetic(k, k.Cosmetics[2], 2)
+        elseif k.impulseCosmetics and k.impulseCosmetics[2] and IsValid(k.impulseCosmetics[2]) then -- cosmetic removed
+            RemoveCosmetic(k, k.impulseCosmetics[2], 2)
             self.lastHatI = -1
         end
 
         if chestCos then
             if chestCos != self.lastChestI then
-                MakeCosmetic(k, chestCos, "ValveBiped.Bip01_Spine2", impulse.Cosmetics[chestCos], 3)
+                MakeCosmetic(k, chestCos, "ValveBiped.Bip01_Spine2", impulse.impulseCosmetics[chestCos], 3)
                 self.lastChestI = hatCos
             end  
-        elseif k.Cosmetics and k.Cosmetics[3] and IsValid(k.Cosmetics[3]) then -- cosmetic removed
-            RemoveCosmetic(k, k.Cosmetics[3], 3)
+        elseif k.impulseCosmetics and k.impulseCosmetics[3] and IsValid(k.impulseCosmetics[3]) then -- cosmetic removed
+            RemoveCosmetic(k, k.impulseCosmetics[3], 3)
             self.lastChestI = -1
         end
     end
