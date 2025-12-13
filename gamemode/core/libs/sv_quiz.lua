@@ -21,7 +21,7 @@ end
 -- @player client The player to check
 -- @treturn bool Whether player has passed
 function impulse.Quiz:HasPassed(client)
-    if !self:IsEnabled() then
+    if ( !self:IsEnabled() ) then
         return true -- If quiz disabled, consider everyone passed
     end
 
@@ -33,6 +33,7 @@ end
 -- @player client The player to mark
 function impulse.Quiz:MarkPassed(client)
     client:SetData("quizPassed", true)
+    client:SaveData()
 
     local name = client:Nick()
     local steamID = client:SteamID()

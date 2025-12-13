@@ -76,7 +76,7 @@ function PLAYER:LoadData(callback)
 end
 
 function PLAYER:SaveData()
-    if (self:IsBot()) then return end
+    if ( self:IsBot() ) then return end
 
     local name = self:SteamName()
     local steamID64 = self:SteamID64()
@@ -95,7 +95,7 @@ function PLAYER:SetData(key, value, bNoNetworking)
     self.impulseData = self.impulseData or {}
     self.impulseData[key] = value
 
-    if (!bNoNetworking) then
+    if ( !bNoNetworking ) then
         net.Start("impulseData")
             net.WriteString(key)
             net.WriteType(value)

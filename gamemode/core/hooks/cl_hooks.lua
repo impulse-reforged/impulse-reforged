@@ -74,6 +74,7 @@ end
 
 local lastServerData1
 local lastServerData2
+local nextLoopThink = 0
 local nextCrashThink = 0
 local nextCrashAnalysis = 0
 local crashAnalysisAttempts = 0
