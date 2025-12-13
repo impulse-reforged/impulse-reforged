@@ -251,12 +251,20 @@ function PLAYER:SetTeamClass(classID, skipLoadout)
         end
     end
 
+    if ( classData and classData.health ) then
+        self:SetHealth(classData.health)
+        self:SetMaxHealth(classData.health)
+    else
+        self:SetHealth(100)
+        self:SetMaxHealth(100)
+    end
+
     if ( classData and classData.armour ) then
         self:SetArmor(classData.armour)
-        self.MaxArmour = classData.armour
+        self:SetMaxArmor(classData.armour)
     else
         self:SetArmor(0)
-        self.MaxArmour = nil
+        self:SetMaxArmor(0)
     end
 
     if ( classData.onBecome ) then
@@ -440,6 +448,28 @@ function PLAYER:SetTeamRank(rankID)
                 self:GiveItem(cls, 1, true)
             end
         end
+    end
+
+    if ( rankData and rankData.health ) then
+        self:SetHealth(rankData.health)
+        self:SetMaxHealth(rankData.health)
+    elseif ( classData and classData.health ) then
+        self:SetHealth(classData.health)
+        self:SetMaxHealth(classData.health)
+    else
+        self:SetHealth(100)
+        self:SetMaxHealth(100)
+    end
+
+    if ( rankData and rankData.armour ) then
+        self:SetArmor(rankData.armour)
+        self:SetMaxArmor(rankData.armour)
+    elseif ( classData and classData.armour ) then
+        self:SetArmor(classData.armour)
+        self:SetMaxArmor(classData.armour)
+    else
+        self:SetArmor(0)
+        self:SetMaxArmor(0)
     end
 
     if ( rankData and rankData.onBecome ) then
