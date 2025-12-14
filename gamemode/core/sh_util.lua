@@ -193,7 +193,7 @@ function impulse.Util:GetRandomAmbientVO(gender)
         return "vo/npc/male01/" .. idleVO[math.random(#idleVO)]
     elseif gender == "fisherman" then
         return "lostcoast/vo/fisherman/" .. idleFishVO[math.random(#idleFishVO)]
-    elseif gender == "cp" then
+    elseif gender == "police" then
         return "npc/metropolice/vo/" .. idleCPVO[math.random(#idleCPVO)]
     elseif gender == "zombie" then
         return idleZombVO[math.random(#idleZombVO)]

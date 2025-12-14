@@ -165,7 +165,7 @@ function PANEL:SetDoor(door)
 end
 
 function PANEL:SetPlayer(client)
-    if LocalPlayer():IsCP() and LocalPlayer():CanArrest(client) and client:GetRelay("arrested", false) then
+    if LocalPlayer():IsPolice() and LocalPlayer():CanArrest(client) and client:GetRelay("arrested", false) then
         self:AddAction("impulse-reforged/icons/search-3-256.png", "Search Inventory", function()
             LocalPlayer():ConCommand("say /invsearch")
 
@@ -187,7 +187,7 @@ end
 
 function PANEL:SetContainer(ent)
     if ent:GetClass() == "impulse_container" and !ent:GetLoot() then
-        if LocalPlayer():IsCP() then
+        if LocalPlayer():IsPolice() then
             self:AddAction("impulse-reforged/icons/padlock-2-256.png", "Remove Padlock", function()
                 impulse.Util:MakeWorkbar(15, "Breaking padlock...", function()
                     if !IsValid(ent) then return end

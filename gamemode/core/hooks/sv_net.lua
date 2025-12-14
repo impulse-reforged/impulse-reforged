@@ -717,7 +717,7 @@ net.Receive("impulseInvDoUse", function(len, client)
 end)
 
 net.Receive("impulseInvDoSearchConfiscate", function(len, client)
-    if !client:IsCP() then return end
+    if !client:IsPolice() then return end
     if (client.nextInvConf or 0) > CurTime() then return end
     client.nextInfConf = CurTime() + 0.1
 
@@ -756,7 +756,7 @@ net.Receive("impulseInvDoMove", function(len, client)
 
     if !client.currentStorage or !IsValid(client.currentStorage) then return end
     if client.currentStorage:GetPos():DistToSqr(client:GetPos()) > (100 ^ 2) then return end
-    if client:IsCP() then return end
+    if client:IsPolice() then return end
     if client:GetRelay("arrested", false) or !client:Alive() then return end
 
     local canUse = hook.Run("CanUseInventory", client)
@@ -819,7 +819,7 @@ net.Receive("impulseInvDoMoveMass", function(len, client)
 
     if !client.currentStorage or !IsValid(client.currentStorage) then return end
     if client.currentStorage:GetPos():DistToSqr(client:GetPos()) > (100 ^ 2) then return end
-    if client:IsCP() then return end
+    if client:IsPolice() then return end
     if client:GetRelay("arrested", false) or !client:Alive() then return end
 
     local canUse = hook.Run("CanUseInventory", client)
@@ -1004,7 +1004,7 @@ end)
 
 net.Receive("impulseDoConfiscate", function(len, client)
     if (client.nextDoConfiscate or 0) > CurTime() then return end
-    if !client:IsCP() then return end
+    if !client:IsPolice() then return end
 
     local item = client.ConfiscatingItem
 
@@ -1036,9 +1036,9 @@ net.Receive("impulseMixTry", function(len, client)
         return -- ded or arrested
     end
 
-    if client:IsCP() then
+    if client:IsPolice() then
         client:Notify("You cannot craft items as a Police Officer!")
-        return -- is cp
+        return -- is police
     end
 
     local bench = client.currentBench
@@ -1141,7 +1141,7 @@ net.Receive("impulseMixTry", function(len, client)
 
             if client.CraftFail then return end
 
-            if client:GetRelay("arrested", false) or client:IsCP() then return end
+            if client:GetRelay("arrested", false) or client:IsPolice() then return end
 
             if startTeam != client:Team() then return end
 
@@ -1455,7 +1455,7 @@ net.Receive("impulseInvContainerDoMove", function(len, client)
 
     local isLoot = container.GetLoot and container:GetLoot() or false
     if isLoot then
-        if client:IsCP() then return end
+        if client:IsPolice() then return end
     elseif container.Code and !container.Authorised[client] then return end
 
     if client:GetRelay("arrested", false) or !client:Alive() then return end
@@ -1486,7 +1486,7 @@ net.Receive("impulseInvContainerDoMove", function(len, client)
             return client:Notify("Item is too heavy to hold.")
         end
 
-        if item.Illegal and client:IsCP() then
+        if item.Illegal and client:IsPolice() then
             container:TakeItem(class)
             return client:Notify(item.Name .. " (illegal item) destroyed.")
         end
@@ -1516,7 +1516,7 @@ net.Receive("impulseInvContainerRemovePadlock", function(len, client)
     if (client.nextPadlockBreak or 0) > CurTime() then return end
     client.nextPadlockBreak = CurTime() + 6
 
-    if !client:IsCP() then return end
+    if !client:IsPolice() then return end
 
     local trace = {}
     trace.start = client:EyePos()
@@ -1562,7 +1562,7 @@ net.Receive("impulseGroupDoRankAdd", function(len, client)
     if (client.nextRPGroupRankEdit or 0) > CurTime() then return end
     client.nextRPGroupRankEdit = CurTime() + 0.1
 
-    if client:IsCP() then return end
+    if client:IsPolice() then return end
 
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
@@ -1671,7 +1671,7 @@ net.Receive("impulseGroupDoInvite", function(len, client)
     if (client.nextRPGroupRankInv or 0) > CurTime() then return end
     client.nextRPGroupRankInv = CurTime() + 0.1
 
-    if client:IsCP() then return end
+    if client:IsPolice() then return end
 
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
@@ -1724,7 +1724,7 @@ net.Receive("impulseGroupDoInviteAccept", function(len, client)
     if (client.nextRPGroupRankAccept or 0) > CurTime() then return end
     client.nextRPGroupRankAccept = CurTime() + 6
 
-    if client:IsCP() then return end
+    if client:IsPolice() then return end
 
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
@@ -1753,7 +1753,7 @@ net.Receive("impulseGroupDoRankRemove", function(len, client)
     if (client.nextRPGroupRankEdit or 0) > CurTime() then return end
     client.nextRPGroupRankEdit = CurTime() + 0.1
 
-    if client:IsCP() then return end
+    if client:IsPolice() then return end
 
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
@@ -1783,7 +1783,7 @@ net.Receive("impulseGroupDoSetRank", function(len, client)
     if (client.nextRPGroupRankSet or 0) > CurTime() then return end
     client.nextRPGroupRankSet = CurTime() + 0.1
 
-    if client:IsCP() then return end
+    if client:IsPolice() then return end
 
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
@@ -1837,7 +1837,7 @@ net.Receive("impulseGroupDoRemove", function(len, client)
     if (client.nextRPGroupRankSet or 0) > CurTime() then return end
     client.nextRPGroupRankSet = CurTime() + 0.1
 
-    if client:IsCP() then return end
+    if client:IsPolice() then return end
 
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
@@ -1886,7 +1886,7 @@ net.Receive("impulseGroupDoCreate", function(len, client)
 
     if !client.impulseID then return end
 
-    if client:IsCP() then return end
+    if client:IsPolice() then return end
 
     if client:GetXP() < impulse.Config.GroupXPRequirement then return end
 
@@ -1931,7 +1931,7 @@ net.Receive("impulseGroupDoDelete", function(len, client)
     if (client.nextRPGroupDelete or 0) > CurTime() then return end
     client.nextRPGroupDelete = CurTime() + 3
 
-    if client:IsCP() then return end
+    if client:IsPolice() then return end
 
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
@@ -1965,7 +1965,7 @@ net.Receive("impulseGroupDoLeave", function(len, client)
     if (client.nextRPGroupDelete or 0) > CurTime() then return end
     client.nextRPGroupDelete = CurTime() + 3
 
-    if client:IsCP() then return end
+    if client:IsPolice() then return end
 
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
@@ -1986,7 +1986,7 @@ net.Receive("impulseGroupDoSetColor", function(len, client)
     if (client.nextRPGroupDataSet or 0) > CurTime() then return end
     client.nextRPGroupDataSet = CurTime() + 0.1
 
-    if client:IsCP() then return end
+    if client:IsPolice() then return end
 
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)
@@ -2015,7 +2015,7 @@ net.Receive("impulseGroupDoSetInfo", function(len, client)
     if (client.nextRPGroupDataSet or 0) > CurTime() then return end
     client.nextRPGroupDataSet = CurTime() + 3
 
-    if client:IsCP() then return end
+    if client:IsPolice() then return end
 
     local name = client:GetRelay("groupName", nil)
     local rank = client:GetRelay("groupRank", nil)

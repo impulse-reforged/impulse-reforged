@@ -18,7 +18,7 @@ function PLUGIN:PlayerDeath(victim, inflictor, attacker)
     
     if attacker:IsNPC() then return end
 
-    if (attacker:Team() == victim:Team()) or (victim:IsCP() and attacker:IsCP()) then
+    if (attacker:Team() == victim:Team()) or (victim:IsPolice() and attacker:IsPolice()) then
         attacker.AutoModRisk = (attacker.AutoModRisk or 0) + 4.5
         attacker:AutoModLogAdd("User killed teammate " .. victim:Nick())
     else

@@ -80,7 +80,7 @@ function PLAYER:SetTeam(teamID)
         self:FixLegs()
     end
 
-    if ( self:IsCP() or teamData.cp ) then
+    if ( self:IsPolice() or teamData.police ) then
         self:StripAmmo()
     end
 

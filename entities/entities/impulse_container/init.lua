@@ -182,7 +182,7 @@ function ENT:Use(activator, caller)
             return activator:Notify("You cannot access a container when detained.") 
         end
 
-        if activator:IsCP() and self:GetLoot() then
+        if activator:IsPolice() and self:GetLoot() then
             return activator:Notify("You cannot access this container as this team.")
         end
 

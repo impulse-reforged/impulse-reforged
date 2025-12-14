@@ -118,7 +118,7 @@ function PLAYER:CanBecomeTeam(teamID, notify)
         return false
     end
 
-    if ( SERVER and teamData.cp and self:HasIllegalInventoryItem() ) then
+    if ( SERVER and teamData.police and self:HasIllegalInventoryItem() ) then
         if ( notify ) then
             self:Notify("You cannot join this team while carrying illegal items in your inventory.")
         end
@@ -337,10 +337,10 @@ function PLAYER:GetTeamRankData()
     return teamData.ranks[rankID]
 end
 
-function PLAYER:IsCP()
+function PLAYER:IsPolice()
     local teamData = impulse.Teams:FindTeam(self:Team())
     if ( teamData ) then
-        return teamData.cp or false
+        return teamData.police or false
     end
 end
 

@@ -46,9 +46,9 @@ end
 -- @realm shared
 -- @entity target The target who would be arrested
 function PLAYER:CanArrest(arrested)
-    if !self:IsCP() then return false end
+    if !self:IsPolice() then return false end
 
-    if arrested:IsCP() then return false end
+    if arrested:IsPolice() then return false end
 
     return true
 end

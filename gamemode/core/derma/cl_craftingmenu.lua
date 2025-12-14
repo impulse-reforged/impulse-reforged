@@ -104,7 +104,7 @@ function PANEL:Think()
         return self:Remove()
     end
 
-    if !LocalPlayer():Alive() or LocalPlayer():IsCP() then
+    if !LocalPlayer():Alive() or LocalPlayer():IsPolice() then
         return self:Remove()
     end
 

@@ -26,7 +26,7 @@ local combineBanCommand = {
             plyTarget.impulseData.CombineBan = endT
             plyTarget:SaveData()
 
-            if plyTarget:IsCP() then
+            if plyTarget:IsPolice() then
                 plyTarget:SetTeam(impulse.Config.DefaultTeam)
             end
 

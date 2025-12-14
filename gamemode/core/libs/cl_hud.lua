@@ -77,7 +77,7 @@ local function DrawPlayerInfo(target, alpha)
     local rank = target:GetRelay("groupRank", nil)
     local col = ColorAlpha(team.GetColor(target:Team()), alpha)
 
-    if myGroup and !LocalPlayer():IsCP() and !target:IsCP() and group and rank and group == myGroup then
+    if myGroup and !LocalPlayer():IsPolice() and !target:IsPolice() and group and rank and group == myGroup then
         draw.DrawText(group .. " - " .. rank, "Impulse-Elements16-Shadow", pos.x, pos.y - 15, ColorAlpha(hotPink, alpha), 1)
     end
 

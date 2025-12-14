@@ -32,7 +32,7 @@ function ENT:Use(activator, caller)
             return activator:Notify("You cannot access your storage when detained.") 
         end
 
-        if activator:IsCP() then
+        if activator:IsPolice() then
             return activator:Notify("You cannot access your storage as this team.")
         end
         

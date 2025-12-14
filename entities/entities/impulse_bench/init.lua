@@ -54,7 +54,7 @@ function ENT:Use(activator, caller)
             return activator:Notify("You cannot access this when detained.")
         end
 
-        if self.Bench.Illegal and activator:IsCP() then
+        if self.Bench.Illegal and activator:IsPolice() then
             return activator:Notify("You cannot access this due to your team.")
         end
 

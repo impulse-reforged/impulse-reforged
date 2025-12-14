@@ -54,7 +54,7 @@ if ( SERVER ) then
         if self.UseDelay > CurTime() then return end
 
         if activator:IsPlayer() then
-            if self.Item.Illegal and activator:IsCP() then
+            if self.Item.Illegal and activator:IsPolice() then
                 activator.ConfiscatingItem = self
                 net.Start("impulseConfiscateCheck")
                 net.WriteEntity(self)

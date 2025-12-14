@@ -201,9 +201,9 @@ local radioCommand = {
     onRun = function(client, arg, rawText)
         rawText = hook.Run("ChatClassMessageSend", 8, rawText, client) or rawText
 
-        if client:IsCP() then
+        if client:IsPolice() then
             for v, k in player.Iterator() do
-                if k:IsCP() then
+                if k:IsPolice() then
                     k:SendChatClassMessage(8, rawText, client)
                 end
             end
@@ -379,7 +379,7 @@ local searchCommand = {
     requiresArg = false,
     requiresAlive = true,
     onRun = function(client, args, text)
-        if !client:IsCP() then return end
+        if !client:IsPolice() then return end
         if client.impulseInventorySearching and IsValid(client.impulseInventorySearching) then return end
 
         local trace = {}
@@ -448,7 +448,7 @@ local groupChatCommand = {
             return client:Notify("You must be a member of a group to use this command.")
         end
 
-        if ( client:IsCP() ) then
+        if ( client:IsPolice() ) then
             return client:Notify("You cannot use this command while on this team.")
         end
 
@@ -457,7 +457,7 @@ local groupChatCommand = {
         end
 
         for _, v in player.Iterator() do
-            if ( v:GetRelay("groupName", "") == group and !v:IsCP() ) then
+            if ( v:GetRelay("groupName", "") == group and !v:IsPolice() ) then
                 v:SendChatClassMessage(15, rawText, client)
             end
         end

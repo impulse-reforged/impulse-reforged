@@ -232,7 +232,7 @@ end
 function ProcessOOCMessage()
 end
 
---- Called when a player tries to use /r or /radio, but is not a CP
+--- Called when a player tries to use /r or /radio, but is not a police officer
 -- @realm server
 -- @entity client The player
 -- @string message The message

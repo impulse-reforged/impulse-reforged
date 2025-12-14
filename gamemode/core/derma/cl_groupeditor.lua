@@ -183,7 +183,7 @@ function PANEL:ShowGroup()
         for v, k in player.Iterator() do
             if k:GetRelay("groupName", nil) then continue end
 
-            if k:IsCP() then continue end
+            if k:IsPolice() then continue end
 
             m:AddOption(k:Nick(), function()
                 if !IsValid(panel) then

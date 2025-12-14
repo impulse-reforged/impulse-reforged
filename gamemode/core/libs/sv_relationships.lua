@@ -24,7 +24,7 @@ Relationships use the following disposition values:<br/>
     loadout = {"impulse_hands", "weapon_physgun", "gmod_tool"},
     salary = 100,
     xp = 0,
-    cp = false,
+    police = false,
     relationships = {
         ["npc_combine_s"] = D_HT, -- Combine soldiers are hostile to citizens
         ["npc_citizen"] = D_LI -- Citizens are friendly to each other

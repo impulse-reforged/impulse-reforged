@@ -567,7 +567,7 @@ function GM:PlayerDisconnected(client)
     if ( clientTable.impulseID ) then
         impulse.Inventory.Data[clientTable.impulseID] = nil
 
-        if ( !client:IsCP() ) then
+        if ( !client:IsPolice() ) then
             local query = mysql:Update("impulse_players")
             query:Update("ammo", util.TableToJSON(client:GetAmmo()))
             query:Where("steamid", steamID)

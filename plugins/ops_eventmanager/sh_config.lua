@@ -546,7 +546,7 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = false,
         Clientside = true,
         Do = function(prop, uid)
-            if prop["cponly"] and !LocalPlayer():IsCP() then return end
+            if prop["cponly"] and !LocalPlayer():IsPolice() then return end
 
             LocalPlayer():EmitSound(prop["sound"], prop["level"], nil, prop["volume"])
         end
@@ -1328,7 +1328,7 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = false,
         Clientside = true,
         Do = function(prop, uid)
-            if LocalPlayer():IsCP() then
+            if LocalPlayer():IsPolice() then
                 impulse.AddCombineWaypoint(prop["message"], Vector(prop["pos"].x, prop["pos"].y, prop["pos"].z), prop["duration"], prop["iconid"], prop["colid"], prop["textcolid"])
             end
         end
@@ -1343,7 +1343,7 @@ impulse.Ops.EventManager.Config.Events = {
         NeedUID = false,
         Clientside = true,
         Do = function(prop, uid)
-            if LocalPlayer():IsCP() then
+            if LocalPlayer():IsPolice() then
                 impulse.AddCombineMessage(prop["message"], prop["col"], prop["nosound"])
             end
         end
