@@ -3,12 +3,12 @@ impulse.chatCommands = impulse.chatCommands or {}
 impulse.chatClasses = impulse.chatClasses or {}
 
 function impulse.RegisterChatCommand(name, cmdData)
-    if !cmdData.adminOnly then cmdData.adminOnly = false end
-    if !cmdData.leadAdminOnly then cmdData.leadAdminOnly = false end
-    if !cmdData.superAdminOnly then cmdData.superAdminOnly = false end
-    if !cmdData.description then cmdData.description = "" end
-    if !cmdData.requiresArg then cmdData.requiresArg = false end
-    if !cmdData.requiresAlive then cmdData.requiresAlive = false end
+    if ( !cmdData.adminOnly ) then cmdData.adminOnly = false end
+    if ( !cmdData.leadAdminOnly ) then cmdData.leadAdminOnly = false end
+    if ( !cmdData.superAdminOnly ) then cmdData.superAdminOnly = false end
+    if ( !cmdData.description ) then cmdData.description = "" end
+    if ( !cmdData.requiresArg ) then cmdData.requiresArg = false end
+    if ( !cmdData.requiresAlive ) then cmdData.requiresAlive = false end
 
     impulse.chatCommands[name] = cmdData
 end
@@ -32,14 +32,20 @@ else
     end
 end
 
+local acCol = Color(0, 235, 0, 255)
+local advertCol = Color(255, 174, 66)
+local eventCol = Color(255, 69, 0)
+local fallbackRankCol = Color(211, 211, 211)
+local groupCol = Color(148, 0, 211)
+local infoCol = Color(135, 206, 250)
 local oocCol = color_white
 local oocTagCol = Color(200, 0, 0)
-local yellCol = Color(255, 140, 0)
-local whisperCol = Color(65, 105, 225)
-local infoCol = Color(135, 206, 250)
-local talkCol = Color(255, 255, 100)
-local radioCol = Color(55, 146, 21)
 local pmCol = Color(45, 154, 6)
+local radioCol = Color(65, 120, 200)
+local rankCols = impulse.Config.RankColours or {}
+local talkCol = Color(255, 255, 100)
+local whisperCol = Color(65, 105, 225)
+local yellCol = Color(255, 140, 0)
 
 local oocCommand = {
     description = "Talk out of character globally.",
@@ -68,8 +74,8 @@ local oocCommand = {
         client.OOCLimit = client.OOCLimit - 1
 
         net.Start("impulseUpdateOOCLimit")
-        net.WriteUInt(timeLeft, 16)
-        net.WriteBool(false)
+            net.WriteUInt(timeLeft, 16)
+            net.WriteBool(false)
         net.Send(client)
 
         hook.Run("ProcessOOCMessage", rawText)
@@ -438,22 +444,21 @@ local groupChatCommand = {
     requiresArg = true,
     onRun = function(client, arg, rawText)
         local group = client:GetRelay("groupName", nil)
-
-        if !group then
+        if ( !group ) then
             return client:Notify("You must be a member of a group to use this command.")
         end
 
-        if client:IsCP() then
+        if ( client:IsCP() ) then
             return client:Notify("You cannot use this command while on this team.")
         end
 
-        if !client:GroupHasPermission(2) then
+        if ( !client:GroupHasPermission(2) ) then
             return client:Notify("Your group rank does not have permission to use this command.")
         end
 
-        for v, k in player.Iterator() do
-            if k:GetRelay("groupName", "") == group and !k:IsCP() then
-                k:SendChatClassMessage(15, rawText, client)
+        for _, v in player.Iterator() do
+            if ( v:GetRelay("groupName", "") == group and !v:IsCP() ) then
+                v:SendChatClassMessage(15, rawText, client)
             end
         end
     end
@@ -463,23 +468,6 @@ impulse.RegisterChatCommand("/group", groupChatCommand)
 impulse.RegisterChatCommand("/g", groupChatCommand)
 
 if ( CLIENT ) then
-    local talkCol = Color(255, 255, 100)
-    local infoCol = Color(135, 206, 250)
-    local oocCol = color_white
-    local oocTagCol = Color(200, 0, 0)
-    local yellCol = Color(255, 140, 0)
-    local whisperCol = Color(65, 105, 225)
-    local infoCol = Color(135, 206, 250)
-    local talkCol = Color(255, 255, 100)
-    local radioCol = Color(65, 120, 200)
-    local pmCol = Color(45, 154, 6)
-    local advertCol = Color(255, 174, 66)
-    local acCol = Color(0, 235, 0, 255)
-    local eventCol = Color(255, 69, 0)
-    local fallbackRankCol = Color(211, 211, 211)
-    local groupCol = Color(148, 0, 211)
-    local rankCols = impulse.Config.RankColours or {}
-
     impulse.RegisterChatClass(1, function(message, speaker)
         message = hook.Run("ProcessICChatMessage", speaker, message) or message
 
@@ -488,48 +476,48 @@ if ( CLIENT ) then
 
     local strFind = string.find
     impulse.RegisterChatClass(2, function(message, speaker)
-        if !impulse.Settings:Get("chat_oocenabled", true) then
+        if ( !impulse.Settings:Get("chat_oocenabled", true) ) then
             return print("(OOC DISABLED) [OOC] " .. speaker:SteamName() .. ": " .. message)
         end
 
         impulse.customChatPlayer = speaker
 
-        if LocalPlayer and IsValid(LocalPlayer()) then
+        if ( LocalPlayer and IsValid(LocalPlayer()) ) then
             local tag = "@" .. LocalPlayer():SteamName()
             local findStart, findEnd = strFind(string.lower(message), string.lower(tag), 1, true)
 
-            if findStart then
+            if ( findStart ) then
                 local pre = string.sub(message, 1, findStart - 1)
                 local post = string.sub(message, findEnd + 1)
 
-                if impulse.Settings:Get("chat_pmpings") then
+                if ( impulse.Settings:Get("chat_pmpings") ) then
                     surface.PlaySound("buttons/blip1.wav")
                 end
 
-                chat.AddText(oocTagCol, "[OOC] ", (rankCols[speaker:IsIncognito() and "user" or speaker:GetUserGroup()] or fallbackRankCol), speaker:SteamName(), oocCol, ": ", pre, infoCol, tag, oocCol, post)
+                chat.AddText(oocTagCol, "[OOC] ", rankCols[speaker:IsIncognito() and "user" or speaker:GetUserGroup()] or fallbackRankCol, speaker:SteamName(), oocCol, ": ", pre, infoCol, tag, oocCol, post)
                 return
             end
         end
 
-        chat.AddText(oocTagCol, "[OOC] ", (rankCols[speaker:IsIncognito() and "user" or speaker:GetUserGroup()] or fallbackRankCol), speaker:SteamName(), oocCol, ": ", message)
+        chat.AddText(oocTagCol, "[OOC] ", rankCols[speaker:IsIncognito() and "user" or speaker:GetUserGroup()] or fallbackRankCol, speaker:SteamName(), oocCol, ": ", message)
     end)
 
     impulse.RegisterChatClass(3, function(message, speaker)
         impulse.customChatPlayer = speaker
-        chat.AddText(oocTagCol, "[LOOC] ", (rankCols[speaker:IsIncognito() and "user" or speaker:GetUserGroup()] or fallbackRankCol), speaker:SteamName(), (team.GetColor(speaker:Team())), " (", speaker:Name(), ")", oocCol, ": ",  message)
+        chat.AddText(oocTagCol, "[LOOC] ", rankCols[speaker:IsIncognito() and "user" or speaker:GetUserGroup()] or fallbackRankCol, speaker:SteamName(), team.GetColor(speaker:Team()), " (", speaker:Name(), ")", oocCol, ": ",  message)
     end)
 
     impulse.RegisterChatClass(4, function(message, speaker)
-        if impulse.Settings:Get("chat_pmpings") then
+        if ( impulse.Settings:Get("chat_pmpings") ) then
             surface.PlaySound("buttons/blip1.wav")
         end
 
-        chat.AddText(pmCol, "[PM] ", speaker:SteamName(), (team.GetColor(speaker:Team())), " (", speaker:Name(), ")", pmCol, ": ", message)
+        chat.AddText(pmCol, "[PM] ", speaker:SteamName(), team.GetColor(speaker:Team()), " (", speaker:Name(), ")", pmCol, ": ", message)
     end)
 
     impulse.RegisterChatClass(5, function(message, speaker)
         surface.PlaySound("buttons/blip1.wav")
-        chat.AddText(pmCol, "[PM SENT] ", speaker:SteamName(), (team.GetColor(speaker:Team())), " (", speaker:Name(), ")", pmCol, ": ", message)
+        chat.AddText(pmCol, "[PM SENT] ", speaker:SteamName(), team.GetColor(speaker:Team()), " (", speaker:Name(), ")", pmCol, ": ", message)
     end)
 
     impulse.RegisterChatClass(6, function(message, speaker)
@@ -578,14 +566,12 @@ if ( CLIENT ) then
     impulse.RegisterChatClass(15, function(message, speaker)
         local groupName = LocalPlayer():GetRelay("groupName", nil)
         local groupRank = speaker:GetRelay("groupRank", nil)
-
-        if !groupName or !groupRank then return end
+        if ( !groupName or !groupRank ) then return end
 
         local myGroup = impulse.Group.Groups[1]
+        if ( !myGroup ) then return end
 
-        if !myGroup then return end
-
-        if myGroup.Color then
+        if ( myGroup.Color ) then
             chat.AddText(myGroup.Color, "[" .. groupName .. "] (" .. groupRank .. ") ", speaker:Nick(), ": ", message)
         else
             chat.AddText(groupCol, "[" .. groupName .. "] (" .. groupRank .. ") ", speaker:Nick(), ": ", message)
