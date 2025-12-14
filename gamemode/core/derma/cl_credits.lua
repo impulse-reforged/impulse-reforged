@@ -13,94 +13,93 @@ function PANEL:Init()
     self:SetSize(600, ScrH())
     self:Center()
 
-    self.killTime = CurTime() + 39
+    self.killTime = CurTime() + 40
     self.killing = false
 
     self.mainCredits = markup.Parse([[
-        <font=Impulse-Elements32>
-        Framework creator
-        <font=Impulse-Elements23>vin</font>
+<font=Impulse-Elements32>
+Framework creator</font><font=Impulse-Elements23>
+vin</font>
 
-        Framework maintainer
-        <font=Impulse-Elements23>Riggs</font>
+<font=Impulse-Elements32>
+Framework maintainer</font><font=Impulse-Elements23>
+Riggs</font>
 
-        Framework contributor(s)
-        <font=Impulse-Elements23>aLoneWitness</font>
+<font=Impulse-Elements32>
+Framework contributor(s)</font><font=Impulse-Elements23>
+aLoneWitness</font>
 
-        Third-party contrbutors
-        <font=Impulse-Elements23>Alex Grist - mysql wrapper
-        FredyH - mysqloo
-        thelastpenguin - pon
-        Kyle Smith - UTF-8 module
-        rebel1234 and Chessnut - animations base
-        wyozi - medialib
-        Dominic Letz - yaml parser
-        Falco - CPPI
-        vin - impulse markup language
-        kikito - tween.lua</font>
+<font=Impulse-Elements32>
+Third-party contrbutors</font><font=Impulse-Elements23>
+Alex Grist — mysql wrapper
+FredyH — mysqloo
+thelastpenguin — pon
+Kyle Smith — UTF-8 module
+rebel1234 and Chessnut — animations base
+wyozi — medialib
+Dominic Letz — yaml parser
+Falco — CPPI
+vin — impulse markup language
+kikito — tween.lua</font>
 
-        Powered by
-        <font=Impulse-Elements23>Discord - Discord API
-        Osyris - RbxDiscordProxy
-        Wordpress - Wordpress API</font>
+<font=Impulse-Elements32>
+Powered by</font><font=Impulse-Elements23>
+Discord — Discord API
+Osyris — RbxDiscordProxy
+Wordpress — Wordpress API</font>
 
-        Inspired by
-        <font=Impulse-Elements23>Aerolite, Apex-Roleplay and Cookie-Network</font>
+<font=Impulse-Elements32>
+Inspired by</font><font=Impulse-Elements23>
+Aerolite, Apex-Roleplay and Cookie-Network</font>
 
-        Testing team
-        <font=Impulse-Elements23>Aquaman
-        Baker
-        Bee
-        Bwah
-        confuseth
-        Solo_D
-        Desxon
-        EnigmaFusion
-        Bobby
-        Shadow
-        Ho
-        greasy breads
-        Jamsu
-        KTG
-        Angrycrumpet
-        Mats
-        Lukyn150
-        Law
-        Lefton
-        Morgan
-        psycho
-        Ramtin
-        StrangerThanYou
-        ThePersonWhoPlaysGames
-        Twatted
-        Y Tho</font>
+<font=Impulse-Elements32>
+Testing team</font><font=Impulse-Elements23>
+Angrycrumpet
+Aquaman
+Baker
+Bee
+Bobby
+Bwah
+Desxon
+EnigmaFusion
+Ho
+Jamsu
+KTG
+Law
+Lefton
+Lukyn150
+Mats
+Morgan
+Ramtin
+Shadow
+Solo_D
+StrangerThanYou
+ThePersonWhoPlaysGames
+Twatted
+Y Tho
+confuseth
+greasy breads
+psycho</font>
 
-        Special thanks
-        <font=Impulse-Elements23>StrangerThanYou (mapping)
-        aLoneWitness (framework coding and feedback)
-        oscar holmes (early feedback)
-        Law (mod)
-        Bwah (mod)
-        Bee (mod)
-        Lefton (mod)
-        Y Tho (mod and early feedback)
-        morgan (mod and early feedback)</font>
-        </font>
-        ]]..[[
-        <font=Impulse-Elements32>
+<font=Impulse-Elements32>
+Special thanks</font><font=Impulse-Elements23>
+Bee — Moderator
+Bwah — Moderator
+Law — Moderator
+Lefton — Moderator
+StrangerThanYou — Map development
+Y Tho — Moderator & Early feedback
+aLoneWitness — Framework development
+morgan — Moderator & Early feedback
+oscar holmes — Early feedback</font>
 
-        ]]..impulse.Config.SchemaName..[[
-
-
-        ]]..string.Replace(impulse.Config.SchemaCredits, "\n", "\n        ")..[[
-        </font>
-
-
+<font=Impulse-Elements32>
+]] .. impulse.Config.SchemaName .. [[
+]] .. impulse.Config.SchemaCredits .. [[</font>
 
 
-        <font=Impulse-Elements23>
-        Copyright Minerva Servers ]] .. year .. [[
-        </font>]], 550)
+<font=Impulse-Elements32>
+Copyright Minerva Servers ]] .. year .. [[</font>]], 550)
 
     self.scrollY = ScrH() + 160
 
@@ -124,7 +123,7 @@ function PANEL:Paint(w,h)
     self.scrollY = self.scrollY - (FrameTime() * 88)
 
     impulse.Util:DrawLogo((w / 2) - 160, self.scrollY, 340, 140)
-    self.mainCredits:Draw(0, self.scrollY + 190, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
+    self.mainCredits:Draw(100, self.scrollY + 190, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP)
 end
 
 function PANEL:OnRemove()
