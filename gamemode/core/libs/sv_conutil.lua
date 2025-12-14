@@ -43,7 +43,7 @@ concommand.Add("impulse_set_group", function(client, cmd, args)
         elseif IsSteamID64(find) then
             steamid = find
         end
-        
+
         if !steamid then
             logs:Error("Target not found, and '" .. find .. "' is not a valid SteamID64.")
             return
