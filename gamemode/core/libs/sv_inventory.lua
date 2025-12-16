@@ -329,6 +329,11 @@ function PLAYER:GiveItem(class, storageType, restricted, isLoaded, moving, clip)
     local weight = impulse.Inventory.Items[itemNet].Weight or 0
     local impulseID = self.impulseID
 
+    if ( !impulse.Inventory.Data[impulseID] or !impulse.Inventory.Data[impulseID][storageType] ) then
+        self:Notify("Something went wrong when giving you an item. If this persists, please contact a developer and relog.")
+        return
+    end
+
     local inv = impulse.Inventory.Data[impulseID][storageType]
     local itemID
 
