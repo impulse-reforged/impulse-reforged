@@ -115,7 +115,7 @@ function PANEL:Init()
             timer.Simple(1, function()
                 LocalPlayer():ScreenFade(SCREENFADE.IN, color_black, 4, 0.5)
                 impulse.HUDEnabled = true
-                FORCE_FADESPAWN = true
+                IMPULSE_FORCE_FADESPAWN = true
             end)
         end
 
