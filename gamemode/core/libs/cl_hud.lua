@@ -11,56 +11,49 @@ hidden["CHudDeathNotice"] = true
 hidden["CHudDamageIndicator"] = true
 
 function GM:HUDShouldDraw(element)
-    if (hidden[element]) then return false end
+    if ( hidden[element] ) then return false end
 
     return true
 end
 
-local vignette = Material("impulse-reforged/vignette.png")
-local vig_alpha_normal = Color(10,10,10,190)
-local lasthealth
-local time = 0
-local zoneLbl
-local gradient = Material("vgui/gradient-l")
-local watermark = Material("impulse-reforged/impulse-reforged-title-white.png")
-local watermarkCol = Color(255,255,255,120)
-local fde = 0
-local hudBlackGrad = Color(40,40,40,180)
-local hudBlack = Color(20,20,20,140)
-local darkCol = Color(30, 30, 30, 190)
-local whiteCol = color_white
-local iconsWhiteCol = Color(255, 255, 255, 220)
+local bleedFlash = false
 local bleedFlashCol = Color(230, 0, 0, 220)
-local painCol = Color(255,10,10,80)
+local bleedingIcon = Material("impulse-reforged/icons/droplet-256.png")
 local crosshairGap = 5
 local crosshairLength = crosshairGap + 5
-local healthIcon = Material("impulse-reforged/icons/heart-128.png")
-local healthCol = Color(210, 0, 0, 255)
-local armourIcon = Material("impulse-reforged/icons/shield-128.png")
-local armourCol = Color(205, 190, 0, 255)
-local hungerIcon = Material("impulse-reforged/icons/bread-128.png")
-local hungerCol = Color(205, 133, 63, 255)
-local moneyIcon = Material("impulse-reforged/icons/banknotes-128.png")
-local moneyCol = Color(133, 227, 91, 255)
-local timeIcon = Material("impulse-reforged/icons/clock-128.png")
-local xpIcon = Material("impulse-reforged/icons/star-128.png")
-local warningIcon = Material("impulse-reforged/icons/warning-128.png")
-local infoIcon = Material("impulse-reforged/icons/info-128.png")
-local announcementIcon = Material("impulse-reforged/icons/megaphone-128.png")
+local darkCol = Color(30, 30, 30, 190)
+local deathEnding
+local deathEndingFade
+local deathRegistered = false
+local deathWait = 0
 local exitIcon = Material("impulse-reforged/icons/exit-128.png")
-local bleedingIcon = Material("impulse-reforged/icons/droplet-256.png")
-
+local fde = 0
+local gradient = Material("vgui/gradient-l")
+local healthCol = Color(210, 0, 0, 255)
+local healthIcon = Material("impulse-reforged/icons/heart-128.png")
+local hotPink = Color(148, 0, 211)
+local hungerCol = Color(205, 133, 63, 255)
+local hungerIcon = Material("impulse-reforged/icons/bread-128.png")
+local iconLoaded = false
+local iconsWhiteCol = Color(255, 255, 255, 220)
+local lastBodygroups = {}
 local lastModel = ""
 local lastSkin = ""
-local lastTeam = 99
-local lastBodygroups = {}
-local iconLoaded = false
-
-local painFt
+local lasthealth
+local moneyCol = Color(133, 227, 91, 255)
+local moneyIcon = Material("impulse-reforged/icons/banknotes-128.png")
+local nextBleedFlash = 0
+local nextBodygroupChangeCheck = 0
+local painCol = Color(255,10,10,80)
 local painFde = 1
-
-local bleedFlash = false
-local hotPink = Color(148, 0, 211)
+local painFt
+local vig_alpha_normal = Color(10,10,10,190)
+local vignette = Material("impulse-reforged/vignette.png")
+local warningIcon = Material("impulse-reforged/icons/warning-128.png")
+local watermark = Material("impulse-reforged/impulse-reforged-title-white.png")
+local watermarkCol = Color(255,255,255,120)
+local xpIcon = Material("impulse-reforged/icons/star-128.png")
+local zoneLbl
 
 local function DrawPlayerInfo(target, alpha)
     local preDrawPlayerInfo = hook.Run("PreDrawPlayerInfo", target, alpha)
@@ -72,20 +65,21 @@ local function DrawPlayerInfo(target, alpha)
     pos = pos:ToScreen()
     pos.y = pos.y - 50
 
-    local myGroup = LocalPlayer():GetRelay("groupName", nil)
+    local client = LocalPlayer()
+    local myGroup = client:GetRelay("groupName", nil)
     local group = target:GetRelay("groupName", nil)
     local rank = target:GetRelay("groupRank", nil)
     local col = ColorAlpha(team.GetColor(target:Team()), alpha)
 
-    if myGroup and !LocalPlayer():IsPolice() and !target:IsPolice() and group and rank and group == myGroup then
+    if ( myGroup and !client:IsPolice() and !target:IsPolice() and group and rank and group == myGroup ) then
         draw.DrawText(group .. " - " .. rank, "Impulse-Elements16-Shadow", pos.x, pos.y - 15, ColorAlpha(hotPink, alpha), 1)
     end
 
     draw.DrawText(target:KnownName(), "Impulse-Elements18-Shadow", pos.x, pos.y, col, 1)
 
-    if target:GetRelay("typing", false) then
+    if ( target:GetRelay("typing", false) ) then
         draw.DrawText("Typing...", "Impulse-Elements16-Shadow", pos.x, pos.y + 15, ColorAlpha(color_white, alpha), 1)
-    elseif target:GetRelay("arrested", false) and LocalPlayer():CanArrest(target) then
+    elseif ( target:GetRelay("arrested", false) and client:CanArrest(target) ) then
         draw.DrawText("(F2 to unrestrain | E to drag)", "Impulse-Elements16-Shadow", pos.x, pos.y + 15, ColorAlpha(color_white, alpha), 1)
     end
 
@@ -103,29 +97,30 @@ local function DrawDoorInfo(target, alpha)
     local doorBuyable = target:GetRelay("doorBuyable", true)
     local col = ColorAlpha(impulse.Config.MainColour, alpha)
 
-    if doorName then
+    if ( doorName ) then
         draw.DrawText(doorName, "Impulse-Elements18-Shadow", pos.x, pos.y, col, 1)
-    elseif doorGroup and doorGroup != 0 then
+    elseif ( doorGroup and doorGroup != 0 ) then
         draw.DrawText(impulse.Config.DoorGroups[doorGroup], "Impulse-Elements18-Shadow", pos.x, pos.y, col, 1)
-    elseif doorOwners then
+    elseif ( doorOwners ) then
         local ownedBy
-        if #doorOwners > 1 then
+        if ( #doorOwners > 1 ) then
             ownedBy = "Owners:"
         else
             ownedBy = "Owner:"
         end
 
-        for v, k in pairs(doorOwners) do
-            local owner = Entity(k)
-
-            if IsValid(owner) and owner:IsPlayer() then
+        for _, v in pairs(doorOwners) do
+            local owner = Entity(v)
+            if ( IsValid(owner) and owner:IsPlayer() ) then
                 ownedBy = ownedBy .. "\n" .. owner:Name()
             end
         end
+
         draw.DrawText(ownedBy, "Impulse-Elements18-Shadow", pos.x, pos.y, col, 1)
     end
 
-    if LocalPlayer():CanBuyDoor(doorOwners, doorBuyable) then
+    local client = LocalPlayer()
+    if ( client:CanBuyDoor(doorOwners, doorBuyable) ) then
         draw.DrawText("Ownable door (F2)", "Impulse-Elements18-Shadow", pos.x, pos.y, col, 1)
     end
 
@@ -136,16 +131,14 @@ local function DrawEntInfo(target, alpha)
     local preDrawEntInfo = hook.Run("PreDrawEntInfo", target, alpha)
     if ( preDrawEntInfo == false ) then return end
 
-    local pos = target.LocalToWorld(target, target:OBBCenter()):ToScreen()
-    local scrW = ScrW()
-    local scrH = ScrH()
+    local pos = target:LocalToWorld(target:OBBCenter()):ToScreen()
     local hudName = target.HUDName
     local hudDesc = target.HUDDesc
     local hudCol = target.HUDColour or impulse.Config.InteractColour
 
     draw.DrawText(hudName, "Impulse-Elements19-Shadow", pos.x, pos.y, ColorAlpha(hudCol, alpha), 1)
 
-    if hudDesc then
+    if ( hudDesc ) then
         draw.DrawText(hudDesc, "Impulse-Elements16-Shadow", pos.x, pos.y + 20, ColorAlpha(color_white, alpha), 1)
     end
 
@@ -157,8 +150,6 @@ local function DrawButtonInfo(target, alpha)
     if ( preDrawButtonInfo == false ) then return end
 
     local pos = target:LocalToWorld(target:OBBCenter()):ToScreen()
-    local scrW = ScrW()
-    local scrH = ScrH()
     local buttonId = impulse_ActiveButtons[target:EntIndex()]
     local hudCol = impulse.Config.InteractColour
     local buttonData = impulse.Config.Buttons[buttonId]
@@ -184,36 +175,33 @@ local function DrawCrosshair(x, y)
     hook.Run("PostDrawCrosshair")
 end
 
-local deathEndingFade
-local deathEnding
 function GM:HUDPaint()
     local client = LocalPlayer()
-    local health = client:Health()
     local clientTeam = client:Team()
     if ( clientTeam == 0 ) then return end
 
-    local scrW, scrH = ScrW(), ScrH()
+    local aboveHUDUsed = false
+    local ft = FrameTime()
+    local health = client:Health()
     local hudWidth, hudHeight = 300, 178
+    local scrW, scrH = ScrW(), ScrH()
+    local seeColIcons = impulse.Settings:Get("hud_iconcolours")
     local x, y
 
-    local seeColIcons = impulse.Settings:Get("hud_iconcolours")
-    local aboveHUDUsed = false
     if ( IMPULSE_SERVER_DOWN and CRASHSCREEN_ALLOW ) then
-        if ( !IsValid(CRASH_SCREEN) ) then
-            CRASH_SCREEN = vgui.Create("impulseCrashScreen")
+        if ( !IsValid(IMPULSE_CRASH_SCREEN) ) then
+            IMPULSE_CRASH_SCREEN = vgui.Create("impulseCrashScreen")
         end
-    elseif ( IsValid(CRASH_SCREEN) and !CRASH_SCREEN.fadin ) then
-        CRASH_SCREEN.fadin = true
-        CRASH_SCREEN:AlphaTo(0, 1.2, nil, function()
-            if ( IsValid(CRASH_SCREEN) ) then
-                CRASH_SCREEN:Remove()
+    elseif ( IsValid(IMPULSE_CRASH_SCREEN) and !IMPULSE_CRASH_SCREEN.fadin ) then
+        IMPULSE_CRASH_SCREEN.fadin = true
+        IMPULSE_CRASH_SCREEN:AlphaTo(0, 1.2, nil, function()
+            if ( IsValid(IMPULSE_CRASH_SCREEN) ) then
+                IMPULSE_CRASH_SCREEN:Remove()
             end
         end)
     end
 
     if ( !client:Alive() and !SCENES_PLAYING ) then
-        local ft = FrameTime()
-
         if ( !deathRegistered ) then
             local deathSound = hook.Run("GetDeathSound") or "impulse-reforged/death.mp3"
             surface.PlaySound(deathSound)
@@ -251,17 +239,14 @@ function GM:HUDPaint()
 
         return
     else
-        if FORCE_FADESPAWN or deathEnding then
+        if ( IMPULSE_FORCE_FADESPAWN or deathEnding ) then
             deathEnding = true
-            FORCE_FADESPAWN = nil
+            IMPULSE_FORCE_FADESPAWN = nil
 
-            local ft = FrameTime()
             deathEndingFade = math.Clamp((deathEndingFade or 0) + ft * .15, 0, 1)
 
-            local val = 255 - math.ceil(deathEndingFade * 255)
-
-            if deathEndingFade != 1 then
-                surface.SetDrawColor(ColorAlpha(color_black, val))
+            if ( deathEndingFade != 1 ) then
+                surface.SetDrawColor(ColorAlpha(color_black, 255 - math.ceil(deathEndingFade * 255)))
                 surface.DrawRect(0, 0, ScrW(), ScrH())
             else
                 deathEnding = false
@@ -271,15 +256,15 @@ function GM:HUDPaint()
 
         fde = 0
 
-        if deathRegistered then
+        if ( deathRegistered ) then
             deathRegistered = false
         end
 
         client.Ragdoll = nil
     end
 
-    if impulse.HUDEnabled == false or (impulse.CinematicIntro and client:Alive()) or (IsValid(impulse.MainMenu) and impulse.MainMenu:IsVisible()) or hook.Run("ShouldDrawHUDBox") == false then
-        if IsValid(PlayerIcon) then
+    if ( impulse.HUDEnabled == false or (impulse.CinematicIntro and client:Alive()) or (IsValid(impulse.MainMenu) and impulse.MainMenu:IsVisible()) or hook.Run("ShouldDrawHUDBox") == false ) then
+        if ( IsValid(PlayerIcon) ) then
             PlayerIcon:Remove()
         end
 
@@ -287,7 +272,7 @@ function GM:HUDPaint()
     end
 
     -- Draw any HUD stuff under this comment
-    if lasthealth and health < lasthealth then
+    if ( lasthealth and health < lasthealth ) then
         painFde = 0
     end
 
@@ -319,7 +304,6 @@ function GM:HUDPaint()
     end
 
     -- HUD
-
     local shouldDraw = hook.Run("ShouldDrawHUD")
     if ( shouldDraw != false ) then
         local teamName = team.GetName(clientTeam)
@@ -350,10 +334,10 @@ function GM:HUDPaint()
         surface.SetTextColor(color_white)
         surface.SetDrawColor(color_white)
         surface.SetTextPos(30, y + 10)
-        surface.DrawText(LocalPlayer():Name())
+        surface.DrawText(client:Name())
 
         local hookReplaceTeamName = hook.Run("GetHUDTeamName", clientTeam, displayTeamName)
-        if hookReplaceTeamName then
+        if ( hookReplaceTeamName ) then
             displayTeamName = hookReplaceTeamName
         end
 
@@ -367,26 +351,26 @@ function GM:HUDPaint()
         surface.SetFont("Impulse-Elements19")
 
         surface.SetTextPos(136, y + 64 + yAdd)
-        surface.DrawText("Health: " .. LocalPlayer():Health())
-        if seeColIcons == true then surface.SetDrawColor(healthCol) end
+        surface.DrawText("Health: " .. client:Health())
+        if ( seeColIcons == true ) then surface.SetDrawColor(healthCol) end
         surface.SetMaterial(healthIcon)
         surface.DrawTexturedRect(110, y + 66 + yAdd, 18, 16)
 
         surface.SetTextPos(136, y + 86 + yAdd)
-        surface.DrawText("Hunger: " .. LocalPlayer():GetHunger())
-        if seeColIcons == true then surface.SetDrawColor(hungerCol) end
+        surface.DrawText("Hunger: " .. client:GetHunger())
+        if ( seeColIcons == true ) then surface.SetDrawColor(hungerCol) end
         surface.SetMaterial(hungerIcon)
         surface.DrawTexturedRect(110, y + 87 + yAdd, 18, 18)
 
         surface.SetTextPos(136, y + 108 + yAdd)
-        surface.DrawText("Money: " .. impulse.Config.CurrencyPrefix .. LocalPlayer():GetMoney())
-        if seeColIcons == true then surface.SetDrawColor(moneyCol) end
+        surface.DrawText("Money: " .. impulse.Config.CurrencyPrefix .. client:GetMoney())
+        if ( seeColIcons == true ) then surface.SetDrawColor(moneyCol) end
         surface.SetMaterial(moneyIcon)
         surface.DrawTexturedRect(110, y + 107 + yAdd, 18, 18)
 
         surface.SetDrawColor(color_white)
 
-        if client:GetRelay("arrested", false) == true and impulse_JailTimeEnd and impulse_JailTimeEnd > CurTime() then
+        if ( client:GetRelay("arrested", false) == true and impulse_JailTimeEnd and impulse_JailTimeEnd > CurTime() ) then
             local timeLeft = math.ceil(impulse_JailTimeEnd - CurTime())
 
             surface.SetMaterial(exitIcon)
@@ -402,7 +386,7 @@ function GM:HUDPaint()
         local iconsX = 315
         local bleedIconCol
         if ( client:GetRelay(SYNC_BLEEDING, false) ) then
-            if ( ( nextBleedFlash or 0 ) < CurTime() ) then
+            if ( nextBleedFlash < CurTime() ) then
                 bleedFlash = !bleedFlash
                 nextBleedFlash = CurTime() + 1
             end
@@ -462,33 +446,33 @@ function GM:HUDPaint()
             PlayerIcon = vgui.Create("impulseSpawnIcon")
             PlayerIcon:SetPos(30, y + 60)
             PlayerIcon:SetSize(64, 64)
-            PlayerIcon:SetModel(LocalPlayer():GetModel(), LocalPlayer():GetSkin())
+            PlayerIcon:SetModel(client:GetModel(), client:GetSkin())
 
             timer.Simple(0, function()
                 if ( !IsValid(PlayerIcon) ) then return end
 
                 local ent = PlayerIcon.Entity
                 if ( IsValid(ent) ) then
-                    for v, k in pairs(LocalPlayer():GetBodyGroups()) do
-                        ent:SetBodygroup(k.id, LocalPlayer():GetBodygroup(k.id))
+                    for v, k in pairs(client:GetBodyGroups()) do
+                        ent:SetBodygroup(k.id, client:GetBodygroup(k.id))
                     end
                 end
             end)
         end
 
         local bodygroupChange = false
-        if ( ( nextBodygroupChangeCheck or 0 ) < CurTime() and IsValid(PlayerIcon) ) then
+        if ( nextBodygroupChangeCheck < CurTime() and IsValid(PlayerIcon) ) then
             local curBodygroups = client:GetBodyGroups()
             local ent = PlayerIcon.Entity
 
-            for v, k in pairs(lastBodygroups) do
-                if ( !curBodygroups[v] or ent:GetBodygroup(k.id) != LocalPlayer():GetBodygroup(curBodygroups[v].id) ) then
+            for k, v in pairs(lastBodygroups) do
+                if ( !curBodygroups[k] or ent:GetBodygroup(v.id) != client:GetBodygroup(curBodygroups[k].id) ) then
                     bodygroupChange = true
                     break
                 end
             end
 
-            nextBodygroupChangeCheck = CurTime() + 0.5
+            nextBodygroupChangeCheck = CurTime() + 1
         end
 
         -- input is super hacking fix for SpawnIcon issue
