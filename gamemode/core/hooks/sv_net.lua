@@ -391,7 +391,14 @@ net.Receive("impulseBuyItem", function(len, client)
         client:TakeMoney(buyable.price)
 
         if item then
-            client:GiveItem(item)
+            local newItemID = client:GiveItem(item)
+            if ( !newItemID ) then
+                -- Failed to give item (likely unregistered/missing class); refund and inform player
+                client:AddMoney(buyable.price)
+                client:Notify("Something internally went wrong with your purchase, please contact a developer.")
+                logs:Warning("Refunded purchase for '" .. tostring(buyableName) .. "' due to missing item class '" .. tostring(item) .. "' for player " .. tostring(client))
+                return
+            end
         else
             local trace = {}
             trace.start = client:EyePos()
@@ -2059,6 +2066,7 @@ net.Receive("impulseInvRequestSync", function(len, client)
                     net.WriteUInt(itemID, 16)
                     net.WriteUInt(storageType, 4)
                     net.WriteBool(itemData.restricted or false)
+                    net.WriteString(itemData.class) -- Send class so client can store and resolve items
                 net.Send(client)
             end
         end

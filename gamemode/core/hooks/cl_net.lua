@@ -126,6 +126,7 @@ net.Receive("impulseInvGive", function()
     local itemID = net.ReadUInt(16)
     local strid = net.ReadUInt(4)
     local restricted = net.ReadBool()
+    local class = net.ReadString() -- Receive class name for proper item lookups
 
     if !impulse.Inventory.Data[0][strid] then
         impulse.Inventory.Data[0][strid] = {}
@@ -134,7 +135,8 @@ net.Receive("impulseInvGive", function()
     impulse.Inventory.Data[0][strid][itemID] = {
         equipped = false,
         restricted = restricted,
-        id = netid
+        id = netid,
+        class = class -- Store class so UI can resolve item definitions
     }
 
     if impulse_inventory and IsValid(impulse_inventory) then

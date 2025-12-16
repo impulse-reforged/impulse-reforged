@@ -34,10 +34,12 @@ function PANEL:Init()
 end
 
 function PANEL:SetItem(itemNet, wide)
-    local direct = self.ContainerType
-    local item = impulse.Inventory.Items[(direct and itemNet) or itemNet.id]
+    local item = impulse.Inventory.Items[itemNet.id]
+    if ( !item ) then return end
+
     self.Item = item
 
+    local direct = self.ContainerType
     if ( !direct ) then
         self.IsEquipped = itemNet.equipped or false
         self.IsRestricted = itemNet.restricted or false

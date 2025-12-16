@@ -325,14 +325,45 @@ function PLAYER:GiveItem(class, storageType, restricted, isLoaded, moving, clip)
     storageType = storageType or INVENTORY_PLAYER
     restricted = restricted or false
 
+    -- Validate that the item class exists and is registered
     local itemNet = impulse.Inventory:ClassToNetID(class)
+    if ( !itemNet or !impulse.Inventory.Items[itemNet] ) then
+        logs:Error("Attempted to give unknown item class '" .. tostring(class) .. "' to player " .. tostring(self) .. " (" .. tostring(self.impulseID) .. ")")
+        -- Return nil so callers can gracefully handle failure (e.g., refund purchases)
+        return
+    end
+
     local weight = impulse.Inventory.Items[itemNet].Weight or 0
     local impulseID = self.impulseID
 
     if ( !impulse.Inventory.Data[impulseID] or !impulse.Inventory.Data[impulseID][storageType] ) then
-        self:Notify("Something went wrong when giving you an item. If this persists, please contact a developer and relog.")
-        impulse.Logs:Error("Attempted to give item to player with uninitialized inventory. Player: " .. tostring(self) .. " (" .. tostring(impulseID) .. "), Item Class: " .. tostring(class))
-        return
+        -- Attempt to auto-initialize missing inventory for this player
+        impulse.Inventory.Data[impulseID] = impulse.Inventory.Data[impulseID] or {}
+        impulse.Inventory.Data[impulseID][INVENTORY_PLAYER] = impulse.Inventory.Data[impulseID][INVENTORY_PLAYER] or {}
+        impulse.Inventory.Data[impulseID][INVENTORY_STORAGE] = impulse.Inventory.Data[impulseID][INVENTORY_STORAGE] or {}
+
+        -- Ensure local caches exist
+        self.InventoryRegister = self.InventoryRegister or {}
+        self.InventoryStorageRegister = self.InventoryStorageRegister or {}
+        self.InventoryEquipGroups = self.InventoryEquipGroups or {}
+
+        -- Ensure weights exist
+        self.InventoryWeight = self.InventoryWeight or 0
+        self.InventoryWeightStorage = self.InventoryWeightStorage or 0
+
+        -- Mark that inventory has been set up to avoid re-entrancy issues
+        self.impulseBeenInventorySetup = self.impulseBeenInventorySetup or true
+
+        -- Inform logs that we recovered from an uninitialized state (no user-facing error)
+        logs:Warning("Recovered missing inventory for player " .. tostring(self) .. " (" .. tostring(impulseID) .. ") while giving item '" .. tostring(class) .. "'.")
+
+        -- Continue with give flow after initializing structures
+    end
+
+    -- If it still doesn't exist, abort
+    if ( !impulse.Inventory.Data[impulseID] or !impulse.Inventory.Data[impulseID][storageType] ) then
+        self:Notify("An error occurred while giving you an item. Please contact a developer, if this persists please relog.")
+        return logs:Error("Failed to initialize missing inventory for player " .. tostring(self) .. " (" .. tostring(impulseID) .. ") while giving item '" .. tostring(class) .. "'.")
     end
 
     local inv = impulse.Inventory.Data[impulseID][storageType]
@@ -372,6 +403,7 @@ function PLAYER:GiveItem(class, storageType, restricted, isLoaded, moving, clip)
             net.WriteUInt(itemID, 16)
             net.WriteUInt(storageType, 4)
             net.WriteBool(restricted or false)
+            net.WriteString(class) -- Send class so client can store and resolve items
         net.Send(self)
     end
 
