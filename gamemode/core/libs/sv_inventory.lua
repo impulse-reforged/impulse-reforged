@@ -331,6 +331,7 @@ function PLAYER:GiveItem(class, storageType, restricted, isLoaded, moving, clip)
 
     if ( !impulse.Inventory.Data[impulseID] or !impulse.Inventory.Data[impulseID][storageType] ) then
         self:Notify("Something went wrong when giving you an item. If this persists, please contact a developer and relog.")
+        impulse.Logs:Error("Attempted to give item to player with uninitialized inventory. Player: " .. tostring(self) .. " (" .. tostring(impulseID) .. "), Item Class: " .. tostring(class))
         return
     end
 
