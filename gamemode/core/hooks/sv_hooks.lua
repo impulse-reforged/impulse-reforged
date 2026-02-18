@@ -655,8 +655,9 @@ function GM:PlayerSay(client, text, teamChat, newChat)
         text = hook.Run("ProcessICChatMessage", client, text) or text
         text = hook.Run("ChatClassMessageSend", 1, text, client) or text
 
+        local talkDistance = tonumber(impulse.Config.TalkDistance) or 280
         for k, v in player.Iterator() do
-            if ( client:GetPos() - v:GetPos() ):LengthSqr() <= ( impulse.Config.TalkDistance ^ 2 ) then
+            if ( client:GetPos() - v:GetPos() ):LengthSqr() <= ( talkDistance ^ 2 ) then
                 v:SendChatClassMessage(1, text, client)
             end
         end
@@ -674,7 +675,7 @@ local function CalcPlayerCanHearPlayersVoice(listener)
     if ( !IsValid(listener) ) then return end
 
     if ( !voiceDistance ) then
-        voiceDistance = impulse.Config.VoiceDistance ^ 2
+        voiceDistance = ( tonumber(impulse.Config.VoiceDistance) or 900 ) ^ 2
     end
 
     listener.impulseVoiceHear = listener.impulseVoiceHear or {}
@@ -1098,13 +1099,17 @@ function GM:PlayerThink(client)
     local curTime = CurTime()
     if ( !IsValid(client) or client:Team() == 0 ) then return end
 
+    local hungerTime = tonumber(impulse.Config.HungerTime) or 120
+    local hungerHealTime = tonumber(impulse.Config.HungerHealTime) or 10
+    local brokenLegsHealTime = tonumber(impulse.Config.BrokenLegsHealTime) or 90
+
     local clientTable = client:GetTable()
     if ( !clientTable.impulseNextHunger ) then
-        clientTable.impulseNextHunger = curTime + impulse.Config.HungerTime
+        clientTable.impulseNextHunger = curTime + hungerTime
     end
 
     if ( !clientTable.impulseNextHeal ) then
-        clientTable.impulseNextHeal = curTime + impulse.Config.HungerHealTime
+        clientTable.impulseNextHeal = curTime + hungerHealTime
     end
 
     if ( client:Alive() ) then
@@ -1121,7 +1126,7 @@ function GM:PlayerThink(client)
 
                 clientTable.impulseNextHunger = curTime + 1
             else
-                clientTable.impulseNextHunger = curTime + impulse.Config.HungerTime
+                clientTable.impulseNextHunger = curTime + hungerTime
             end
         end
 
@@ -1129,7 +1134,7 @@ function GM:PlayerThink(client)
             local hunger = client:GetHunger()
             if ( hunger >= 90 and client:Health() < 75 ) then
                 client:SetHealth(math.Clamp(client:Health() + 1, 0, 75))
-                clientTable.impulseNextHeal = curTime + impulse.Config.HungerHealTime
+                clientTable.impulseNextHeal = curTime + hungerHealTime
             else
                 clientTable.impulseNextHeal = curTime + 2
             end
@@ -1150,7 +1155,7 @@ function GM:PlayerThink(client)
 
         clientTable.impulseLastPos = client:GetPos()
 
-        if ( client:HasBrokenLegs() and client:GetBrokenLegsStartTime() + impulse.Config.BrokenLegsHealTime < curTime ) then
+        if ( client:HasBrokenLegs() and client:GetBrokenLegsStartTime() + brokenLegsHealTime < curTime ) then
             client:FixLegs()
             client:Notify("Your broken legs have healed naturally.")
         end

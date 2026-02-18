@@ -626,7 +626,17 @@ function PANEL:AddSheet(name, icon, pnl, loadFunc)
 
     tab.Button.Paint = function(this, width, height)
         if ( panel.tabSheet.ActiveButton == this ) then
-            surface.SetDrawColor(impulse.Config.MainColour)
+            local mainColour = impulse.Config.MainColour
+            if ( IsColor(mainColour) or istable(mainColour) ) then
+                surface.SetDrawColor(
+                    tonumber(mainColour.r or mainColour[1]) or 255,
+                    tonumber(mainColour.g or mainColour[2]) or 255,
+                    tonumber(mainColour.b or mainColour[3]) or 255,
+                    tonumber(mainColour.a or mainColour[4]) or 255
+                )
+            else
+                surface.SetDrawColor(255, 255, 255, 255)
+            end
         else
             surface.SetDrawColor(color_white)
         end

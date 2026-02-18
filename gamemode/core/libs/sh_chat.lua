@@ -47,6 +47,15 @@ local talkCol = Color(255, 255, 100)
 local whisperCol = Color(65, 105, 225)
 local yellCol = Color(255, 140, 0)
 
+local function GetConfigNumber(key, fallback)
+    local value = tonumber(impulse.Config[key])
+    if ( !value ) then
+        return fallback
+    end
+
+    return value
+end
+
 local oocCommand = {
     description = "Talk out of character globally.",
     requiresArg = true,
@@ -60,7 +69,7 @@ local oocCommand = {
             return client:Notify("You have an active OOC timeout that will expire in " .. string.NiceTime(timeout - CurTime()) .. ".")
         end
 
-        client.OOCLimit = client.OOCLimit or ((client:IsDonator() and impulse.Config.OOCLimitVIP) or impulse.Config.OOCLimit)
+        client.OOCLimit = client.OOCLimit or ((client:IsDonator() and GetConfigNumber("OOCLimitVIP", 30)) or GetConfigNumber("OOCLimit", 15))
         local timeLeft = timer.TimeLeft(client:UserID() .. "impulseOOCLimit") or 0
 
         if client.OOCLimit < 1 and !client:IsAdmin() then
@@ -94,7 +103,7 @@ local loocCommand = {
         end
 
         for v, k in player.Iterator() do
-            if (client:GetPos() - k:GetPos()):LengthSqr() <= (impulse.Config.TalkDistance ^ 2) then
+            if (client:GetPos() - k:GetPos()):LengthSqr() <= (GetConfigNumber("TalkDistance", 280) ^ 2) then
                 k:SendChatClassMessage(3, rawText, client)
             end
         end
@@ -168,7 +177,7 @@ local yellCommand = {
         rawText = hook.Run("ChatClassMessageSend", 6, rawText, client) or rawText
 
         for v, k in player.Iterator() do
-            if (client:GetPos() - k:GetPos()):LengthSqr() <= (impulse.Config.YellDistance ^ 2) then
+            if (client:GetPos() - k:GetPos()):LengthSqr() <= (GetConfigNumber("YellDistance", 560) ^ 2) then
                 k:SendChatClassMessage(6, rawText, client)
             end
         end
@@ -185,7 +194,7 @@ local whisperCommand = {
         rawText = hook.Run("ChatClassMessageSend", 7, rawText, client) or rawText
 
         for v, k in player.Iterator() do
-            if (client:GetPos() - k:GetPos()):LengthSqr() <= (impulse.Config.WhisperDistance ^ 2) then
+            if (client:GetPos() - k:GetPos()):LengthSqr() <= (GetConfigNumber("WhisperDistance", 100) ^ 2) then
                 k:SendChatClassMessage(7, rawText, client)
             end
         end
@@ -222,7 +231,7 @@ local meCommand = {
     requiresAlive = true,
     onRun = function(client, arg, rawText)
         for v, k in player.Iterator() do
-            if (client:GetPos() - k:GetPos()):LengthSqr() <= (impulse.Config.TalkDistance ^ 2) then
+            if (client:GetPos() - k:GetPos()):LengthSqr() <= (GetConfigNumber("TalkDistance", 280) ^ 2) then
                 k:SendChatClassMessage(9, rawText, client)
             end
         end
@@ -237,7 +246,7 @@ local itCommand = {
     requiresAlive = true,
     onRun = function(client, arg, rawText)
         for v, k in player.Iterator() do
-            if (client:GetPos() - k:GetPos()):LengthSqr() <= (impulse.Config.TalkDistance ^ 2) then
+            if (client:GetPos() - k:GetPos()):LengthSqr() <= (GetConfigNumber("TalkDistance", 280) ^ 2) then
                 k:SendChatClassMessage(10, rawText, client)
             end
         end
@@ -279,7 +288,7 @@ local rollCommand = {
         local rollResult = (tostring(math.random(1,100)))
 
         for v, k in player.Iterator() do
-            if (client:GetPos() - k:GetPos()):LengthSqr() <= (impulse.Config.TalkDistance ^ 2) then
+            if (client:GetPos() - k:GetPos()):LengthSqr() <= (GetConfigNumber("TalkDistance", 280) ^ 2) then
                 k:SendChatClassMessage(11, rollResult, client)
             end
         end
@@ -306,14 +315,15 @@ local dropMoneyCommand = {
                 local tr = util.TraceLine(trace)
                 local note = impulse.Currency:SpawnMoney(tr.HitPos, value, client)
 
-                client.DroppedMoneyC = math.Clamp((client.DroppedMoneyC and client.DroppedMoneyC + 1) or 1, 0, impulse.Config.DroppedMoneyLimit)
+                local droppedMoneyLimit = GetConfigNumber("DroppedMoneyLimit", 5)
+                client.DroppedMoneyC = math.Clamp((client.DroppedMoneyC and client.DroppedMoneyC + 1) or 1, 0, droppedMoneyLimit)
                 client.DroppedMoney = client.DroppedMoney or {}
                 client.DroppedMoneyCA = (client.DroppedMoneyCA and client.DroppedMoneyCA + 1) or 1
 
                 client.DroppedMoney[client.DroppedMoneyCA] = note
                 note.DropKey = client.DroppedMoneyCA
 
-                if client.DroppedMoneyC == impulse.Config.DroppedMoneyLimit then
+                if client.DroppedMoneyC == droppedMoneyLimit then
                     for v, k in pairs(client.DroppedMoney) do
                         if k and IsValid(k) then
                             k:Remove()
@@ -340,7 +350,8 @@ local writeCommand = {
     requiresArg = true,
     requiresAlive = true,
     onRun = function(client, args, text)
-        if client.letterCount and client.letterCount > impulse.Config.MaxLetters then
+        local maxLetters = GetConfigNumber("MaxLetters", 10)
+        if client.letterCount and client.letterCount > maxLetters then
             client:Notify("You have reached the maximum amount of letters allowed.")
             return
         end

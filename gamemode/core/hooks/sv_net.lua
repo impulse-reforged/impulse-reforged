@@ -281,10 +281,10 @@ net.Receive("impulseTeamChange", function(len, client)
     if (client.lastTeamTry or 0) > CurTime() then return end
     client.lastTeamTry = CurTime() + 0.1
 
-    local teamChangeTime = impulse.Config.TeamChangeTime
+    local teamChangeTime = tonumber(impulse.Config.TeamChangeTime) or 15
 
     if client:IsDonator() or client:IsAdmin() then
-        teamChangeTime = impulse.Config.TeamChangeTimeDonator
+        teamChangeTime = tonumber(impulse.Config.TeamChangeTimeDonator) or teamChangeTime
     end
 
     if client.lastTeamChange and client.lastTeamChange + teamChangeTime > CurTime() then
@@ -328,7 +328,7 @@ net.Receive("impulseClassChange",function(len, client)
 
     if client:GetRelay("arrested", false) then return end
 
-    local classChangeTime = impulse.Config.ClassChangeTime
+    local classChangeTime = tonumber(impulse.Config.ClassChangeTime) or 15
 
     if client:IsAdmin() then
         classChangeTime = 5
