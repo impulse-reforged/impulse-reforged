@@ -1,12 +1,8 @@
 local managerCommand = {
     description = "Opens the support tool.",
-    leadAdminOnly = true,
+    cami = "impulse: Handle Support Tool",
     onRun = function(client)
-        if client:GetUserGroup() == "communitymanager" or client:GetUserGroup() == "superadmin" then
-            impulse.Ops.ST.Open(client)
-        else
-            client:Notify("You do not have permission to use the support tool.")
-        end
+        impulse.Ops.ST.Open(client)
     end
 }
 

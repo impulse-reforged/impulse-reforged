@@ -59,7 +59,7 @@ local addWhitelistCommand = {
 
         -- Log to admins
         for k, v in player.Iterator() do
-            if v:IsLeadAdmin() then
+            if CAMI.PlayerHasAccess(v, "impulse: View Whitelists") then
                 v:AddChatText(Color(135, 206, 235), "[ops] " .. client:SteamName() .. " (" .. client:SteamID64() .. ") added whitelist level " .. level .. " for " .. target:Nick() .. " (" .. target:SteamID64() .. ") on team " .. teamData.name .. " (ID: " .. teamID .. ") | Current Team: " .. team.GetName(target:Team()) .. " | Pos: " .. tostring(target:GetPos()))
             end
         end
@@ -110,7 +110,7 @@ local removeWhitelistCommand = {
         -- Log to admins
         local oldLevel = target.Whitelists and target.Whitelists[teamID] or "None"
         for k, v in player.Iterator() do
-            if v:IsLeadAdmin() then
+            if CAMI.PlayerHasAccess(v, "impulse: View Whitelists") then
                 v:AddChatText(Color(135, 206, 235), "[ops] " .. client:SteamName() .. " (" .. client:SteamID64() .. ") removed whitelist for " .. target:Nick() .. " (" .. target:SteamID64() .. ") on team " .. teamData.name .. " (ID: " .. teamID .. ") | Old Level: " .. tostring(oldLevel) .. " | Current Team: " .. team.GetName(target:Team()) .. " | Pos: " .. tostring(target:GetPos()))
             end
         end
@@ -267,7 +267,7 @@ impulse.RegisterChatCommand("/teamsinfo", teamInfoCommand)
 if SERVER then
     -- impulse_whitelists_add <steamid64> <team> <level>
     concommand.Add("impulse_whitelists_add", function(client, cmd, args)
-        if IsValid(client) and not client:IsAdmin() then
+        if IsValid(client) and not CAMI.PlayerHasAccess(client, "impulse: Grant Whitelists") then
             return client:Notify("You must be an admin to use this command.")
         end
 
@@ -337,7 +337,7 @@ if SERVER then
 
     -- impulse_whitelists_remove <steamid64> <team>
     concommand.Add("impulse_whitelists_remove", function(client, cmd, args)
-        if IsValid(client) and not client:IsAdmin() then
+        if IsValid(client) and not CAMI.PlayerHasAccess(client, "impulse: Revoke Whitelists") then
             return client:Notify("You must be an admin to use this command.")
         end
 
@@ -401,7 +401,7 @@ if SERVER then
 
     -- impulse_whitelists_list <team>
     concommand.Add("impulse_whitelists_list", function(client, cmd, args)
-        if IsValid(client) and not client:IsAdmin() then
+        if IsValid(client) and not CAMI.PlayerHasAccess(client, "impulse: View Whitelists") then
             return client:Notify("You must be an admin to use this command.")
         end
 
@@ -463,7 +463,7 @@ if SERVER then
 
     -- impulse_listteams - List all teams with IDs
     concommand.Add("impulse_listteams", function(client, cmd, args)
-        if IsValid(client) and not client:IsAdmin() then
+        if IsValid(client) and not CAMI.PlayerHasAccess(client, "impulse: View Whitelists") then
             return client:Notify("You must be an admin to use this command.")
         end
 

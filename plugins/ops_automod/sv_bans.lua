@@ -6,7 +6,7 @@ function impulse.Ops.AutoMod.Ban(client, reason, risk, details)
     local steamid = client:SteamID64()
 
     for v, k in player.Iterator() do
-        if k:IsAdmin() then
+        if CAMI.PlayerHasAccess(k, "impulse: Bypass AutoMod") then
             k:AddChatText(Color(0, 163, 118), "[AutoMod] " .. steamid .. " issued ban for suspected " .. reason .. " (risk score " .. risk .. ")")
         end
     end

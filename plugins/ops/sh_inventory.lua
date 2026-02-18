@@ -3,7 +3,7 @@ if ( SERVER ) then
     util.AddNetworkString("impulseOpsRemoveInv")
 
     net.Receive("impulseOpsRemoveInv", function(len, client)
-        if !client:IsAdmin() then return end
+        if !CAMI.PlayerHasAccess(client, "impulse: Remove Items") then return end
 
         local targ = net.ReadUInt(8)
         local invSize = net.ReadUInt(16)
@@ -101,7 +101,7 @@ local restoreInvCommand = {
                 client:Notify("You have restored " .. plyTarget:Nick() .. "'s inventory to the last state.")
 
                 for v, k in player.Iterator() do
-                    if k:IsLeadAdmin() then
+                    if CAMI.PlayerHasAccess(k, "impulse: Ban Players") then
                         k:AddChatText(Color(135, 206, 235), "[ops] Moderator " .. client:SteamName() .. " restored " .. plyTarget:SteamName() .. "'s inventory.")
                     end
                 end

@@ -1,10 +1,10 @@
 local function UpdateEventAdmins(eventid)
-    for v, k in player.Iterator() do
-        if k:IsEventAdmin() then
-            net.Start("impulseOpsEMUpdateEvent")
+    for _, client in player.Iterator() do
+        if ( !CAMI.PlayerHasAccess(client, "impulse: Manage Events") ) then continue end
+
+        net.Start("impulseOpsEMUpdateEvent")
             net.WriteUInt(eventid, 10)
-            net.Send(k)
-        end
+        net.Send(client)
     end
 end
 

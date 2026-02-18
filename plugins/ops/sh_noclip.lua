@@ -35,7 +35,7 @@ hook.Add("PlayerNoClip", "opsNoclip", function(client, state)
 end)
 
 hook.Add("CanPlayerEnterObserver", "opsNoclip", function(client)
-    return client:IsAdmin()
+    return client:HasPrivilege("impulse: Noclip")
 end)
 
 hook.Add("ShouldHidePlayerObserver", "opsNoclip", function(client)

@@ -3,8 +3,8 @@ impulse.chatCommands = impulse.chatCommands or {}
 impulse.chatClasses = impulse.chatClasses or {}
 
 function impulse.RegisterChatCommand(name, cmdData)
+    if ( !cmdData.cami ) then cmdData.cami = nil end
     if ( !cmdData.adminOnly ) then cmdData.adminOnly = false end
-    if ( !cmdData.leadAdminOnly ) then cmdData.leadAdminOnly = false end
     if ( !cmdData.superAdminOnly ) then cmdData.superAdminOnly = false end
     if ( !cmdData.description ) then cmdData.description = "" end
     if ( !cmdData.requiresArg ) then cmdData.requiresArg = false end
@@ -437,11 +437,9 @@ impulse.RegisterChatCommand("/invsearch", searchCommand)
 
 local eventCommand = {
     description = "Sends a global chat message to all players. Only for use in events.",
-    leadAdminOnly = true,
+    cami = "impulse: Handle Events",
     requiresArg = true,
     onRun = function(client, arg, rawText)
-        if client:GetUserGroup() == "leadadmin" then return end
-
         for v, k in player.Iterator() do
             k:SendChatClassMessage(14, rawText, client)
         end

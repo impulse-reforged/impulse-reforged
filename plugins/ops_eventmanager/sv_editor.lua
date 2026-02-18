@@ -1,5 +1,5 @@
 concommand.Add("impulse_ops_eventmanager", function(client)
-    if !client:IsEventAdmin() then return end
+    if !CAMI.PlayerHasAccess(client, "impulse: Manage Events") then return end
 
     local c = table.Count(impulse.Ops.EventManager.Sequences)
 

@@ -515,11 +515,14 @@ function GM:PostReloadToolsMenu()
         local closeMe = {}
 
         for _, v in pairs(tabs:GetItems()) do
+            print("Processing tab:")
+            PrintTable(v, 1)
+
             if ( blockedTabs[v.Name] ) then
                 table.insert(closeMe, v.Tab)
             end
 
-            if ( client and client.IsAdmin and client.IsDonator ) then -- when u first load client doesnt exist
+            if ( client and client.HasPrivilege and client.IsDonator ) then -- when u first load client doesnt exist
                 if ( blockNormalTabs[v.Name] and !client:IsAdmin() ) then
                     table.insert(closeMe, v.Tab)
                 end
@@ -537,7 +540,8 @@ function GM:PostReloadToolsMenu()
 end
 
 function GM:SpawnMenuOpen()
-    if ( LocalPlayer():Team() == 0 or !LocalPlayer():Alive() ) then
+    local client = LocalPlayer()
+    if ( client:Team() == 0 or !client:Alive() ) then
         return false
     else
         return true

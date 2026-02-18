@@ -4,7 +4,7 @@ properties.Add( "ops_copysteamid", {
     MenuIcon = "icon16/shield.png", -- The icon to display next to the property
 
     Filter = function( self, ent, client ) -- A function that determines whether an entity is valid for this property
-        if !client:IsAdmin() then
+        if !CAMI.PlayerHasAccess(client, "impulse: View Steam IDs") then
             return false
         end
 
@@ -26,7 +26,7 @@ properties.Add( "ops_openplayercard", {
     MenuIcon = "icon16/shield.png", -- The icon to display next to the property
 
     Filter = function( self, ent, client ) -- A function that determines whether an entity is valid for this property
-        if !client:IsAdmin() then
+        if !CAMI.PlayerHasAccess(client, "impulse: View Player Info") then
             return false
         end
 
@@ -56,7 +56,7 @@ properties.Add( "ops_openplayercardprop", {
     MenuIcon = "icon16/shield.png", -- The icon to display next to the property
 
     Filter = function( self, ent, client ) -- A function that determines whether an entity is valid for this property
-        if !client:IsAdmin() then
+        if !CAMI.PlayerHasAccess(client, "impulse: Context - Entity Owner") then
             return false
         end
 

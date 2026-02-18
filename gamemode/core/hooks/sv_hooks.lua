@@ -618,19 +618,27 @@ function GM:PlayerSay(client, text, teamChat, newChat)
         local args = string.Explode(" ", text)
         local command = impulse.chatCommands[string.lower(args[1])]
         if ( command ) then
-            if ( command.cooldown and command.lastRan ) then
+            if ( command.cooldown ) then
+                command.lastRan = command.lastRan or 0
+
                 if ( command.lastRan + command.cooldown > CurTime() ) then
+                    client:Notify("You must wait " .. string.NiceTime((command.lastRan + command.cooldown) - CurTime()) .. " before running this command again!")
                     return ""
                 end
             end
 
-            if ( command.adminOnly and !client:IsAdmin() ) then
-                client:Notify("You must be an admin to use this command.")
+            if ( command.cami and !client:HasPermission(command.cami) ) then
+                client:Notify("You do not have permission to use this command.")
                 return ""
             end
 
-            if ( command.leadAdminOnly and !client:IsLeadAdmin() ) then
-                client:Notify("You must be a lead admin to use this command.")
+            if ( command.donatorOnly and !client:IsDonator() ) then
+                client:Notify("You must be a donator to use this command.")
+                return ""
+            end
+
+            if ( command.adminOnly and !client:IsAdmin() ) then
+                client:Notify("You must be an admin to use this command.")
                 return ""
             end
 
@@ -648,6 +656,10 @@ function GM:PlayerSay(client, text, teamChat, newChat)
 
             table.remove(args, 1)
             command.onRun(client, args, text)
+
+            if ( command.cooldown ) then
+                command.lastRan = CurTime()
+            end
         else
             client:Notify("The " .. args[1] .. " command does not exist.")
         end
@@ -1186,34 +1198,34 @@ local exploitRagBlock = {
 function GM:PlayerSpawnRagdoll(client, model)
     if ( exploitRagBlock[model] ) then return false end
 
-    return client:IsLeadAdmin()
+    return CAMI.PlayerHasAccess(client, "impulse: Spawn Props")
 end
 
 function GM:PlayerSpawnSENT(client)
-    return client:IsSuperAdmin()
+    return CAMI.PlayerHasAccess(client, "impulse: Spawn Props")
 end
 
 function GM:PlayerSpawnSWEP(client)
-    return client:IsSuperAdmin()
+    return CAMI.PlayerHasAccess(client, "impulse: Spawn Props")
 end
 
 function GM:PlayerGiveSWEP(client)
-    return client:IsSuperAdmin()
+    return CAMI.PlayerHasAccess(client, "impulse: Spawn Props")
 end
 
 function GM:PlayerSpawnEffect(client)
-    return client:IsAdmin()
+    return CAMI.PlayerHasAccess(client, "impulse: Spawn Props")
 end
 
 function GM:PlayerSpawnNPC(client)
-    return client:IsSuperAdmin() or ( client:IsAdmin() and impulse.Ops.EventManager.GetEventMode() )
+    return CAMI.PlayerHasAccess(client, "impulse: Spawn Props") or CAMI.PlayerHasAccess(client, "impulse: Admin Chat Commands")
 end
 
 function GM:PlayerSpawnProp(client, model)
     local clientTable = client:GetTable()
     if ( !client:Alive() or !clientTable.impulseBeenSetup or client:GetRelay("arrested", false) ) then return false end
 
-    if ( client:IsAdmin() ) then return true end
+    if ( CAMI.PlayerHasAccess(client, "impulse: Spawn Props") ) then return true end
 
     local limit
     local price
@@ -1271,7 +1283,7 @@ function GM:PlayerSpawnVehicle(client, model)
 
         return true
     else
-        return client:IsSuperAdmin()
+        return CAMI.PlayerHasAccess(client, "impulse: Spawn Props")
     end
 end
 
@@ -1300,9 +1312,9 @@ local adminProp = {
 
 function GM:CanProperty(client, prop)
     if ( whitelistProp[prop] ) then return true end
-    if ( client:IsAdmin() and adminProp[prop] ) then return true end
+    if ( CAMI.PlayerHasAccess(client, "impulse: Spawn Props") and adminProp[prop] ) then return true end
 
-    return client:IsSuperAdmin()
+    return CAMI.PlayerHasAccess(client, "impulse: Spawn Props")
 end
 
 local bannedTools = {
@@ -1357,7 +1369,7 @@ local adminWorldRemoveWhitelist = {
 }
 
 function GM:CanTool(client, tr, tool)
-    if ( !client:IsAdmin() and tool == "spawner" ) then return false end
+    if ( !CAMI.PlayerHasAccess(client, "impulse: Toolgun") and tool == "spawner" ) then return false end
 
     if ( bannedTools[tool] ) then return false end
 
@@ -1370,7 +1382,7 @@ function GM:CanTool(client, tr, tool)
     if ( IsValid(ent) ) then
         if ( ent.onlyremover ) then
             if ( tool == "remover" ) then
-                return client:IsAdmin() or client:IsSuperAdmin()
+                return CAMI.PlayerHasAccess(client, "impulse: Remove Entities")
             else
                 return false
             end
@@ -1380,7 +1392,7 @@ function GM:CanTool(client, tr, tool)
             return false
         end
 
-        if ( tool == "remover" and client:IsAdmin() and !client:IsSuperAdmin() ) then
+        if ( tool == "remover" and CAMI.PlayerHasAccess(client, "impulse: Remove Entities") and !CAMI.PlayerHasAccess(client, "impulse: Remove Map Entities") ) then
             local owner = ent:CPPIGetOwner()
             if ( !owner and !adminWorldRemoveWhitelist[ent:GetClass()] ) then
                 client:Notify("You can not remove this entity.")
@@ -1389,7 +1401,7 @@ function GM:CanTool(client, tr, tool)
         end
 
         if ( string.StartsWith(ent:GetClass(), "impulse_") ) then
-            if ( tool != "remover" and !client:IsSuperAdmin() ) then
+            if ( tool != "remover" and !CAMI.PlayerHasAccess(client, "impulse: Remove Map Entities") ) then
                 return false
             end
         end

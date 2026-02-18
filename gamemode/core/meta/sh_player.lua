@@ -9,6 +9,9 @@ See the [Garry's Mod Wiki](https://wiki.garrysmod.com/page/Category:Player) for 
 
 local PLAYER = FindMetaTable("Entity")
 
+PLAYER.IsAdminInternal = PLAYER.IsAdminInternal or PLAYER.IsAdmin
+PLAYER.IsSuperAdminInternal = PLAYER.IsSuperAdminInternal or PLAYER.IsSuperAdmin
+
 --- Sends a chat message to the player
 -- @realm shared
 -- @tab package Chat message package
@@ -46,59 +49,50 @@ function PLAYER:IsDeveloper()
     return hook.Run("PlayerIsDeveloper", self)
 end
 
+--- Check if a player has a specific CAMI privilege
+-- @realm shared
+-- @tparam string privilege The privilege name
+-- @tparam Player target Optional target player for the privilege check
+-- @treturn bool Has privilege
+function PLAYER:HasPrivilege(privilege, target)
+    if ( !CAMI ) then
+        -- Fallback if CAMI is not loaded (shouldn't happen)
+        return self:IsSuperAdmin()
+    end
+
+    local hasAccess = false
+    CAMI.PlayerHasAccess(self, privilege, function(result, reason)
+        hasAccess = result
+    end, target)
+
+    return hasAccess
+end
+
 --- Returns if a player has donator status
 -- @realm shared
 -- @treturn bool Is donator
 function PLAYER:IsDonator()
-    return ( self:IsUserGroup("donator") or self:IsAdmin() ) or hook.Run("PlayerIsDonator", self)
+    if ( hook.Run("PlayerIsDonator", self) ) then return true end
+
+    return self:HasPrivilege("impulse: Donator")
 end
 
-local adminGroups = {
-    ["admin"] = true,
-    ["leadadmin"] = true,
-    ["communitymanager"] = true
-}
-
---- Returns if a player is an admin
+--- Returns if a player is an admin (DEPRECATED: Use HasPrivilege instead)
 -- @realm shared
 -- @treturn bool Is admin
 function PLAYER:IsAdmin()
     if ( hook.Run("PlayerIsAdmin", self) ) then return true end
 
-    if ( self:IsSuperAdmin() ) then return true end
-
-    if ( adminGroups[self:GetUserGroup()] ) then return true end
-
-    return false
+    return self:IsAdminInternal()
 end
 
-local leadAdminGroups = {
-    ["leadadmin"] = true,
-    ["communitymanager"] = true
-}
-
---- Returns if a player is a lead admin
--- @realm shared
--- @treturn bool Is lead admin
-function PLAYER:IsLeadAdmin()
-    if ( hook.Run("PlayerIsLeadAdmin", self) ) then return true end
-
-    if ( self:IsSuperAdmin() ) then return true end
-
-    if ( leadAdminGroups[self:GetUserGroup()] ) then return true end
-
-    return false
-end
-
---- Returns if a player is a super admin
+--- Returns if a player is a super admin (DEPRECATED: Use HasPrivilege instead)
 -- @realm shared
 -- @treturn bool Is super admin
 function PLAYER:IsSuperAdmin()
     if ( hook.Run("PlayerIsSuperAdmin", self) ) then return true end
 
-    if ( self.GetUserGroup and self:GetUserGroup() == "superadmin" ) then return true end
-
-    return false
+    return self:IsSuperAdminInternal()
 end
 
 --- Returns if a player is in the spawn zone

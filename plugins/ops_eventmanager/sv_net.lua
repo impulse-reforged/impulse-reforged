@@ -12,7 +12,7 @@ net.Receive("impulseOpsEMPushSequence", function(len, client)
     if (client.nextOpsEMPush or 0) > CurTime() then return end
     client.nextOpsEMPush = CurTime() + 1
 
-    if !client:IsEventAdmin() then return end
+    if !CAMI.PlayerHasAccess(client, "impulse: Manage Events") then return end
 
     local seqName = net.ReadString()
     local seqEventCount = net.ReadUInt(16)
@@ -41,7 +41,7 @@ net.Receive("impulseOpsEMPlaySequence", function(len, client)
     if (client.nextOpsEMPlay or 0) > CurTime() then return end
     client.nextOpsEMPlay = CurTime() + 1
 
-    if !client:IsEventAdmin() then return end
+    if !CAMI.PlayerHasAccess(client, "impulse: Manage Events") then return end
 
     local seqName = net.ReadString()
 
@@ -63,7 +63,7 @@ net.Receive("impulseOpsEMStopSequence", function(len, client)
     if (client.nextOpsEMStop or 0) > CurTime() then return end
     client.nextOpsEMStop = CurTime() + 1
 
-    if !client:IsEventAdmin() then return end
+    if !CAMI.PlayerHasAccess(client, "impulse: Manage Events") then return end
 
     local seqName = net.ReadString()
 
@@ -82,7 +82,7 @@ net.Receive("impulseOpsEMStopSequence", function(len, client)
 end)
 
 net.Receive("impulseOpsEMIntroCookie", function(len, client)
-    if client.usedIntroCookie or !impulse.Ops.EventManager.GetEventMode() then return end
+    if client.usedIntroCookie then return end
 
     client.usedIntroCookie = true
 

@@ -3,7 +3,6 @@ function GM:PlayerCheckLimit(client, limitName, current, defaultMax)
         return true
     end
 end
-
 local KEY_BLACKLIST = IN_ATTACK + IN_ATTACK2
 function GM:StartCommand(client, cmd)
     if ( !client:IsWeaponRaised() ) then

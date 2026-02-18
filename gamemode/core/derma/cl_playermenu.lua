@@ -183,14 +183,14 @@ function PANEL:QuickActions()
                     surface.SetDrawColor(borderColor)
                     surface.DrawOutlinedRect(0, 0, width, height, 2)
 
-                    draw.SimpleText(btnText, "Impulse-Elements20-Shadow", 10, 10, color_white)
+                    draw.DrawText(btnText, "Impulse-Elements20-Shadow", 10, 10, color_white)
 
                     if classData.description then
-                        draw.SimpleText(classData.description, "Impulse-Elements14-Shadow", 10, 30, Color(200, 200, 200))
+                        draw.DrawText(classData.description, "Impulse-Elements14-Shadow", 10, 30, Color(200, 200, 200))
                     end
 
                     if reqText != "" then
-                        draw.SimpleText(reqText, "Impulse-Elements14-Shadow", width - 10, height - 10, Color(100, 200, 255), TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM)
+                        draw.DrawText(reqText, "Impulse-Elements14-Shadow", width - 10, height - 10, Color(100, 200, 255), TEXT_ALIGN_RIGHT)
                     end
                 end
 
@@ -428,6 +428,12 @@ function PANEL:Info()
     for v, k in pairs(impulse.chatCommands) do
         local color = impulse.Config.MainColour
 
+        if k.cami and k.cami != "" and !impulse.CAMI:PlayerHasAccess(LocalPlayer(), k.cami) then
+            continue
+        elseif k.cami and k.cami != "" then
+            color = Color(128, 0, 128)
+        end
+
         if k.adminOnly == true and LocalPlayer():IsAdmin() == false then
             continue
         elseif k.adminOnly == true then
@@ -448,8 +454,8 @@ function PANEL:Info()
         command.color = color
 
         command.Paint = function(this, width, height)
-            draw.SimpleText(this.name, "Impulse-Elements22-Shadow", 5, 0, this.color)
-            draw.SimpleText(this.desc, "Impulse-Elements18-Shadow", 5, 20, color_white)
+            draw.DrawText(this.name, "Impulse-Elements22-Shadow", 5, 0, this.color)
+            draw.DrawText(this.desc, "Impulse-Elements18-Shadow", 5, 20, color_white)
             return true
         end
     end
@@ -522,10 +528,10 @@ function PANEL:PopulateClassesRanks(parent)
                     surface.SetDrawColor(50, 50, 50, 180)
                     surface.DrawRect(0, 0, width, height)
 
-                    draw.SimpleText(classData.name, "Impulse-Elements18-Shadow", 5, 5, color_white)
+                    draw.DrawText(classData.name, "Impulse-Elements18-Shadow", 5, 5, color_white)
 
                     if classData.description then
-                        draw.SimpleText(classData.description, "Impulse-Elements14-Shadow", 5, 25, Color(200, 200, 200))
+                        draw.DrawText(classData.description, "Impulse-Elements14-Shadow", 5, 25, Color(200, 200, 200))
                     end
                 end
 
@@ -571,10 +577,10 @@ function PANEL:PopulateClassesRanks(parent)
                     surface.SetDrawColor(50, 50, 50, 180)
                     surface.DrawRect(0, 0, width, height)
 
-                    draw.SimpleText(rankData.name, "Impulse-Elements18-Shadow", 5, 5, color_white)
+                    draw.DrawText(rankData.name, "Impulse-Elements18-Shadow", 5, 5, color_white)
 
                     if rankData.description then
-                        draw.SimpleText(rankData.description, "Impulse-Elements14-Shadow", 5, 25, Color(200, 200, 200))
+                        draw.DrawText(rankData.description, "Impulse-Elements14-Shadow", 5, 25, Color(200, 200, 200))
                     end
                 end
 

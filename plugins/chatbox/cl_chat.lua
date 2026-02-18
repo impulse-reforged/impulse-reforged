@@ -1,8 +1,4 @@
--- impulse's chatbox is based uponimpulse.chatBox by Exho
--- Author: vin, Exho (obviously), Tomelyr, LuaTenshi
--- Version: 4/12/15
-
-if impulse.chatBox and IsValid(impulse.chatBox.frame) then
+if ( impulse.chatBox and IsValid(impulse.chatBox.frame) ) then
     impulse.chatBox.frame:Remove()
 end
 
@@ -13,102 +9,95 @@ impulse.Settings:Define("chat_fontsize", {name = "Chatbox font size", category =
 
 -- Builds the chatbox but doesn't display it
 function impulse.chatBox.buildBox()
-    local x, y = hook.Run("ChatBoxPos") or 10, (ScrH() - ScrH()*0.35) - 200
+    local x, y = hook.Run("ChatBoxPos") or 10, (ScrH() - ScrH() * 0.35) - 200
 
     impulse.chatBox.frame = vgui.Create("DFrame")
-    impulse.chatBox.frame:SetSize( ScrW()*0.375, ScrH()*0.35 )
+    impulse.chatBox.frame:SetSize(ScrW() * 0.375, ScrH() * 0.35)
     impulse.chatBox.frame:SetTitle("Chat")
-    impulse.chatBox.frame:ShowCloseButton( false )
-    impulse.chatBox.frame:SetDraggable( true )
-    impulse.chatBox.frame:SetSizable( true )
-    impulse.chatBox.frame:SetPos( x, y )
-    impulse.chatBox.frame:SetMinWidth( 300 )
-    impulse.chatBox.frame:SetMinHeight( 100 )
+    impulse.chatBox.frame:ShowCloseButton(false)
+    impulse.chatBox.frame:SetDraggable(true)
+    impulse.chatBox.frame:SetSizable(true)
+    impulse.chatBox.frame:SetPos(x, y)
+    impulse.chatBox.frame:SetMinWidth(300)
+    impulse.chatBox.frame:SetMinHeight(100)
     impulse.chatBox.frame:SetPopupStayAtBack(true)
-    impulse.chatBox.frame.Paint = function( self, w, h )
-        derma.SkinHook( "Paint", "Frame", self, w, h )
+    impulse.chatBox.frame.Paint = function(this, width, height)
+        derma.SkinHook("Paint", "Frame", this, width, height)
     end
-    impulse.chatBox.oldPaint = impulse.chatBox.frame.Paint
-    impulse.chatBox.frame.OnKeyCodePressed = function( self, code )
-        if code == KEY_ESCAPE then
+    impulse.chatBox.PaintInternal = impulse.chatBox.frame.Paint
+    impulse.chatBox.frame.OnKeyCodePressed = function(this, code)
+        if ( code == KEY_ESCAPE ) then
             impulse.chatBox.hideBox()
         end
     end
 
     impulse.chatBox.entry = vgui.Create("DTextEntry", impulse.chatBox.frame)
-    impulse.chatBox.entry:SetSize( impulse.chatBox.frame:GetWide() - 50, 20 )
-    impulse.chatBox.entry:SetTextColor( color_white )
+    impulse.chatBox.entry:SetSize(impulse.chatBox.frame:GetWide() - 50, 20)
+    impulse.chatBox.entry:SetTextColor(color_white)
     impulse.chatBox.entry:SetFont("Impulse-ChatSmall")
-    impulse.chatBox.entry:SetDrawBorder( false )
-    impulse.chatBox.entry:SetDrawBackground( false )
-    impulse.chatBox.entry:SetCursorColor( color_white )
-    impulse.chatBox.entry:SetHighlightColor( Color(52, 152, 219) )
-    impulse.chatBox.entry:SetPos( 45, impulse.chatBox.frame:GetTall() - impulse.chatBox.entry:GetTall() - 5 )
-    impulse.chatBox.entry.Paint = function( self, w, h )
-        draw.RoundedBox( 0, 0, 0, w, h, Color( 30, 30, 30, 100 ) )
-        derma.SkinHook( "Paint", "TextEntry", self, w, h )
+    impulse.chatBox.entry:SetDrawBorder(false)
+    impulse.chatBox.entry:SetPaintBackground(false)
+    impulse.chatBox.entry:SetCursorColor(color_white)
+    impulse.chatBox.entry:SetHighlightColor(Color(52, 152, 219))
+    impulse.chatBox.entry:SetPos(45, impulse.chatBox.frame:GetTall() - impulse.chatBox.entry:GetTall() - 5)
+    impulse.chatBox.entry.Paint = function(this, width, height)
+        draw.RoundedBox(0, 0, 0, width, height, Color(30, 30, 30, 100))
+        derma.SkinHook("Paint", "TextEntry", this, width, height)
     end
 
-    impulse.chatBox.entry.OnTextChanged = function( self )
-        if self and self.GetText then
-            gamemode.Call( "ChatTextChanged", self:GetText() or "" )
+    impulse.chatBox.entry.OnTextChanged = function(this)
+        if ( this.GetText ) then
+            gamemode.Call("ChatTextChanged", this:GetText() or "")
         end
     end
 
-    impulse.chatBox.entry.OnKeyCodeTyped = function( self, code )
+    impulse.chatBox.entry.OnKeyCodeTyped = function(this, code)
         local types = {"", "radio"}
-
-        if code == KEY_ESCAPE then
-
+        if ( code == KEY_ESCAPE ) then
             impulse.chatBox.hideBox()
             gui.HideGameUI()
-
-        elseif code == KEY_TAB then
-
+        elseif ( code == KEY_TAB ) then
             impulse.chatBox.TypeSelector = (impulse.chatBox.TypeSelector and impulse.chatBox.TypeSelector + 1) or 1
 
-            if impulse.chatBox.TypeSelector > 2 then impulse.chatBox.TypeSelector = 1 end
-            if impulse.chatBox.TypeSelector < 1 then impulse.chatBox.TypeSelector = 2 end
+            if ( impulse.chatBox.TypeSelector > 2 ) then impulse.chatBox.TypeSelector = 1 end
+            if ( impulse.chatBox.TypeSelector < 1 ) then impulse.chatBox.TypeSelector = 2 end
 
             impulse.chatBox.ChatType = types[impulse.chatBox.TypeSelector]
 
             timer.Simple(0.001, function() impulse.chatBox.entry:RequestFocus() end)
-
-        elseif code == KEY_UP then
-            if self.LastMessage then
-                self:SetText(self.LastMessage)
-                self:SetCaretPos(self.LastMessage:len())
+        elseif ( code == KEY_UP ) then
+            if ( this.LastMessage ) then
+                this:SetText(this.LastMessage)
+                this:SetCaretPos(this.LastMessage:len())
             end
-        elseif code == KEY_ENTER then
-            -- Replicate the client pressing enter
-
-            if string.Trim(self:GetText()) != "" then
-                if impulse.chatBox.ChatType == types[2] then
+        elseif ( code == KEY_ENTER ) then
+            if ( string.Trim(this:GetText()) != "" ) then
+                if ( impulse.chatBox.ChatType == types[2] ) then
                     net.Start("impulseChatMessage")
-                    net.WriteString("/r " .. self:GetText())
+                    net.WriteString("/r " .. this:GetText())
                     net.SendToServer()
 
-                    self.LastMessage = "/r " .. self:GetText()
+                    this.LastMessage = "/r " .. this:GetText()
                 else
-                    if !impulse.Settings:Get("chat_oocenabled", true) then
+                    if ( !impulse.Settings:Get("chat_oocenabled", true) ) then
                         local text = string.Explode(" ", impulse.chatBox.entry:GetValue())
                         text = text[1] or ""
 
-                        if text == "//" or text == "/ooc" then
+                        if ( text == "//" or text == "/ooc" ) then
                             LocalPlayer():Notify("You have disabled OOC chat. You can re-enable it by pressing F1 > Settings > Chatbox.")
                         else
                             net.Start("impulseChatMessage")
-                            net.WriteString(self:GetText())
+                            net.WriteString(this:GetText())
                             net.SendToServer()
 
-                            self.LastMessage = self:GetText()
+                            this.LastMessage = this:GetText()
                         end
                     else
                         net.Start("impulseChatMessage")
-                        net.WriteString(self:GetText())
+                        net.WriteString(this:GetText())
                         net.SendToServer()
 
-                        self.LastMessage = self:GetText()
+                        this.LastMessage = this:GetText()
                     end
                 end
             end
@@ -122,109 +111,94 @@ function impulse.chatBox.buildBox()
     impulse.chatBox.chatLog:SetPos(5, 30)
     impulse.chatBox.chatLog:SetSize(impulse.chatBox.frame:GetWide() - 10, impulse.chatBox.frame:GetTall() - 70)
     local strFind = string.find
-    impulse.chatBox.chatLog.PaintOver = function(self, w, h)
+    impulse.chatBox.chatLog.PaintOver = function(this, width, height)
         local entry = impulse.chatBox.entry
+        if ( !impulse.chatBox.frame:IsActive() or !IsValid(entry) ) then return end
 
-        if (impulse.chatBox.frame:IsActive() and IsValid(entry)) then
-            local text = string.Explode(" ", entry:GetValue())
-            text = text[1] or ""
+        local text = string.Explode(" ", entry:GetValue())
+        text = text[1] or ""
 
-            if (text:sub(1, 1) == "/") then
-                local command = string.PatternSafe(string.lower(text))
+        if ( !string.StartsWith(text, "/") ) then return end
 
-                impulse.Util:DrawBlur(self)
+        local command = string.PatternSafe(string.lower(text))
 
-                surface.SetDrawColor(ColorAlpha(color_black, 200))
-                surface.DrawRect(0, 0, w, h)
+        impulse.Util:DrawBlur(this)
 
-                if text == "//" or text == "/ooc" then
-                    local limit = LocalPlayer().OOCLimit
+        surface.SetDrawColor(ColorAlpha(color_black, 200))
+        surface.DrawRect(0, 0, width, height)
 
-                    if !limit then
-                        if LocalPlayer():IsDonator() then
-                            LocalPlayer().OOCLimit = impulse.Config.OOCLimitVIP
-                        else
-                            LocalPlayer().OOCLimit = impulse.Config.OOCLimit
-                        end
-                    end
-
-
-
-                    draw.DrawText("(you have " .. LocalPlayer().OOCLimit .. " OOC messages left)", "Impulse-Elements18-Shadow", 5, h - 24)
-                    self:GetParent().TypingInOOC = true
+        if ( text == "//" or text == "/ooc" ) then
+            local limit = LocalPlayer().OOCLimit
+            if ( !limit ) then
+                if ( LocalPlayer():IsDonator() ) then
+                    LocalPlayer().OOCLimit = impulse.Config.OOCLimitVIP
                 else
-                    self:GetParent().TypingInOOC = false
+                    LocalPlayer().OOCLimit = impulse.Config.OOCLimit
+                end
+            end
+
+            draw.DrawText("(you have " .. LocalPlayer().OOCLimit .. " OOC messages left)", "Impulse-Elements18-Shadow", 5, height - 24)
+            this:GetParent().TypingInOOC = true
+        else
+            this:GetParent().TypingInOOC = false
+        end
+
+        local i = 0
+        local showing = 0
+        local isAdmin = LocalPlayer():IsAdmin()
+        local isSuperAdmin = LocalPlayer():IsSuperAdmin()
+        for k, v in pairs(impulse.chatCommands) do
+            local newCommand = impulse.Util:RemoveSpecialCharacters(command:lower())
+            if ( strFind(k:lower(), newCommand) ) then
+                local c = impulse.Config.MainColour
+                if ( v.superAdminOnly ) then
+                    if ( !isSuperAdmin ) then continue end
+
+                    c = Color(255, 0, 0, 255)
+                elseif ( v.adminOnly ) then
+                    if ( !isAdmin ) then continue end
+
+                    c = impulse.Config.InteractColour
+                elseif ( v.cami and v.cami != "" ) then
+                    if ( !impulse.CAMI:PlayerHasAccess(LocalPlayer(), v.cami) ) then continue end
+
+                    c = Color(128, 0, 128)
                 end
 
-                local i = 0
-                local showing = 0
-                local isAdmin = LocalPlayer():IsAdmin()
-                local isLeadAdmin = LocalPlayer():IsLeadAdmin()
-                local isSuperAdmin = LocalPlayer():IsSuperAdmin()
+                draw.DrawText(k .. " - " .. v.description, "Impulse-ChatMedium", 10, 10 + i, c, TEXT_ALIGN_LEFT)
+                i = i + 15
+                showing = showing + 1
 
-                for k, v in pairs(impulse.chatCommands) do
-                    local newCommand = impulse.Util:RemoveSpecialCharacters(command:lower())
-                    if (strFind(k:lower(), newCommand)) then
-                        local c = impulse.Config.MainColour
-
-                        if v.adminOnly then
-                            if isAdmin then
-                                c = impulse.Config.InteractColour
-                            else
-                                continue
-                            end
-                        end
-
-                        if v.leadAdminOnly then
-                            if isLeadAdmin or isSuperAdmin then
-                                c = Color(128, 0, 128)
-                            else
-                                continue
-                            end
-                        end
-
-                        if v.superAdminOnly then
-                            if isSuperAdmin then
-                                c = Color(255, 0, 0, 255)
-                            else
-                                continue
-                            end
-                        end
-
-                        draw.DrawText(k .. " - " .. v.description, "Impulse-ChatMedium", 10, 10 + i, c, TEXT_ALIGN_LEFT)
-                        i = i + 15
-                        showing = showing + 1
-
-                        if showing > 24 then
-                            break
-                        end
-                    end
+                if ( showing > 24 ) then
+                    break
                 end
             end
         end
     end
-    impulse.chatBox.chatLog.Think = function( self )
-        self:SetSize( impulse.chatBox.frame:GetWide() - 10, impulse.chatBox.frame:GetTall() - impulse.chatBox.entry:GetTall() - 40 )
+    impulse.chatBox.chatLog.Think = function(this)
+        this:SetSize(impulse.chatBox.frame:GetWide() - 10, impulse.chatBox.frame:GetTall() - impulse.chatBox.entry:GetTall() - 40)
     end
 
     local text = "Say:"
 
     local say = vgui.Create("DLabel", impulse.chatBox.frame)
     say:SetText("")
-    surface.SetFont( "Impulse-ChatSmall")
-    local w, h = surface.GetTextSize( text )
-    say:SetSize( w + 5, 20 )
-    say:SetPos( 5, impulse.chatBox.frame:GetTall() - impulse.chatBox.entry:GetTall() - 5 )
 
-    say.Paint = function( self, w, h )
-        draw.DrawText( text, "Impulse-ChatSmall", 2, 1, color_white )
+    surface.SetFont("Impulse-ChatSmall")
+    local textWidth, _ = surface.GetTextSize(text)
+
+    say:SetSize(textWidth + 5, 20)
+    say:SetPos(5, impulse.chatBox.frame:GetTall() - impulse.chatBox.entry:GetTall() - 5)
+
+    say.Paint = function(this, width, height)
+        draw.DrawText(text, "Impulse-ChatSmall", 2, 1, color_white)
     end
 
-    say.Think = function( self )
+    say.Think = function(this)
         local types = {"", "radio", "console"}
         local s = {}
 
-        if impulse.chatBox.ChatType == types[2] then
+        if ( impulse.chatBox.ChatType == types[2] ) then
             text = "Radio:"
         else
             text = "Say:"
@@ -232,17 +206,17 @@ function impulse.chatBox.buildBox()
             s.sw = impulse.chatBox.frame:GetWide() - 50
         end
 
-        if s then
-            if !s.pw then s.pw = self:GetWide() + 10 end
-            if !s.sw then s.sw = impulse.chatBox.frame:GetWide() - self:GetWide() - 15 end
+        if ( s ) then
+            if ( !s.pw ) then s.pw = this:GetWide() + 10 end
+            if ( !s.sw ) then s.sw = impulse.chatBox.frame:GetWide() - this:GetWide() - 15 end
         end
 
-        local w, h = surface.GetTextSize( text )
-        self:SetSize( w + 5, 20 )
-        self:SetPos( 5, impulse.chatBox.frame:GetTall() - impulse.chatBox.entry:GetTall() - 5 )
+        textWidth, _ = surface.GetTextSize(text)
+        this:SetSize(textWidth + 5, 20)
+        this:SetPos(5, impulse.chatBox.frame:GetTall() - impulse.chatBox.entry:GetTall() - 5)
 
-        impulse.chatBox.entry:SetSize( s.sw, 20 )
-        impulse.chatBox.entry:SetPos( s.pw, impulse.chatBox.frame:GetTall() - impulse.chatBox.entry:GetTall() - 5 )
+        impulse.chatBox.entry:SetSize(s.sw, 20)
+        impulse.chatBox.entry:SetPos(s.pw, impulse.chatBox.frame:GetTall() - impulse.chatBox.entry:GetTall() - 5)
     end
 
     impulse.chatBox.hideBox()
@@ -254,41 +228,40 @@ function impulse.chatBox.hideBox()
     impulse.chatBox.chatLog:SetScrollBarVisible(false)
     impulse.chatBox.chatLog.active = false
 
-    if impulse.chatBox.chatLog.lastChildMessage then
+    if ( impulse.chatBox.chatLog.lastChildMessage ) then
         impulse.chatBox.chatLog:ScrollToChild(impulse.chatBox.chatLog.lastChildMessage)
     end
-
-    --impulse.chatBox.chatLog:GotoTextEnd()
 
     impulse.chatBox.lastMessage = impulse.chatBox.lastMessage or CurTime() - impulse.Settings:Get("chat_fadetime")
 
     -- Hide the chatbox except the log
     local children = impulse.chatBox.frame:GetChildren()
-    for _, pnl in pairs( children ) do
-        if pnl == impulse.chatBox.frame.btnMaxim or pnl == impulse.chatBox.frame.btnClose or pnl == impulse.chatBox.frame.btnMinim then continue end
+    for _, pnl in pairs(children) do
+        if ( pnl == impulse.chatBox.frame.btnMaxim or pnl == impulse.chatBox.frame.btnClose or pnl == impulse.chatBox.frame.btnMinim ) then continue end
 
-        if pnl != impulse.chatBox.chatLog then
-            pnl:SetVisible( false )
+        if ( pnl != impulse.chatBox.chatLog ) then
+            pnl:SetVisible(false)
         end
     end
 
     -- Give the player control again
-    impulse.chatBox.frame:SetMouseInputEnabled( false )
-    impulse.chatBox.frame:SetKeyboardInputEnabled( false )
-    gui.EnableScreenClicker( false )
+    impulse.chatBox.frame:SetMouseInputEnabled(false)
+    impulse.chatBox.frame:SetKeyboardInputEnabled(false)
+    gui.EnableScreenClicker(false)
 
     -- We are done chatting
     hook.Run("FinishChat")
 
     -- Clear the text entry
-    impulse.chatBox.entry:SetText( "" )
-    hook.Run( "ChatTextChanged", "" )
+    impulse.chatBox.entry:SetText("")
+
+    hook.Run("ChatTextChanged", "")
 end
 
 -- Shows the chat box
 function impulse.chatBox.showBox()
     -- Draw the chat box again
-    impulse.chatBox.frame.Paint = impulse.chatBox.oldPaint
+    impulse.chatBox.frame.Paint = impulse.chatBox.PaintInternal
 
     impulse.chatBox.chatLog:SetScrollBarVisible(true)
     impulse.chatBox.chatLog.active = true
@@ -297,10 +270,10 @@ function impulse.chatBox.showBox()
 
     -- Show any hidden children
     local children = impulse.chatBox.frame:GetChildren()
-    for _, pnl in pairs( children ) do
-        if pnl == impulse.chatBox.frame.btnMaxim or pnl == impulse.chatBox.frame.btnClose or pnl == impulse.chatBox.frame.btnMinim then continue end
+    for _, pnl in pairs(children) do
+        if ( pnl == impulse.chatBox.frame.btnMaxim or pnl == impulse.chatBox.frame.btnClose or pnl == impulse.chatBox.frame.btnMinim ) then continue end
 
-        pnl:SetVisible( true )
+        pnl:SetVisible(true)
     end
 
     -- MakePopup calls the input functions so we don't need to call those
@@ -311,22 +284,21 @@ function impulse.chatBox.showBox()
     hook.Run("StartChat")
 end
 
-chat.oldAddText = chat.oldAddText or chat.AddText
+chat.AddTextInternal = chat.AddTextInternal or chat.AddText
 
 -- Overwrite chat.AddText to detour it into my chatbox
 function chat.AddText(...)
-    if !impulse.chatBox.chatLog then
+    if ( !impulse.chatBox.chatLog ) then
         impulse.chatBox.buildBox()
     end
 
-    if impulse.chatBox.chatLog.active and !impulse.chatBox.entry:IsEditing() then
+    if ( impulse.chatBox.chatLog.active and !impulse.chatBox.entry:IsEditing() ) then
         impulse.chatBox.chatLog.BlockScroll = true
     end
 
     impulse.chatBox.chatLog:AddText(...)
-    --chat.oldAddText(...)
 
-    if impulse.HUDEnabled then
+    if ( impulse.HUDEnabled ) then
         chat.PlaySound()
     end
 end
@@ -334,31 +306,30 @@ end
 -- Stops the default chat box from being opened
 hook.Remove("PlayerBindPress", "impulse.chatBox_hijackbind")
 hook.Add("PlayerBindPress", "impulse.chatBox_hijackbind", function(client, bind, pressed)
-    if string.sub( bind, 1, 11 ) == "messagemode" then
-        if client:InVehicle() then -- piano compatablity kill me
+    if ( string.sub(bind, 1, 11) == "messagemode" ) then
+        if ( client:InVehicle() ) then -- piano compatablity kill me
             local p1 = client:GetVehicle():GetParent()
-
-            if p1 and IsValid(p1) then
+            if ( p1 and IsValid(p1) ) then
                 local p2 = p1:GetParent()
-
-                if p2 and IsValid(p2) and p2:GetClass() == "gmt_instrument_piano" then
+                if ( p2 and IsValid(p2) and p2:GetClass() == "gmt_instrument_piano" ) then
                     return true
                 end
             end
         end
 
-        if bind == "messagemode2" then
+        if ( bind == "messagemode2" ) then
             impulse.chatBox.ChatType = "radio"
         else
             impulse.chatBox.ChatType = ""
         end
 
-        if IsValid( impulse.chatBox.frame ) then
+        if ( IsValid(impulse.chatBox.frame) ) then
             impulse.chatBox.showBox()
         else
             impulse.chatBox.buildBox()
             impulse.chatBox.showBox()
         end
+
         return true
     end
 end)
@@ -366,11 +337,13 @@ end)
 -- Hide the default chat too in case that pops up
 hook.Remove("HUDShouldDraw", "impulse.chatBox_hidedefault")
 hook.Add("HUDShouldDraw", "impulse.chatBox_hidedefault", function( name )
-    if name == "CHudChat" then return false end
+    if ( name == "CHudChat" ) then return false end
 end)
 
 -- Modify the Chatbox for align.
-local oldGetChatBoxPos = chat.GetChatBoxPos
+chat.GetChatBoxPosInternal = chat.GetChatBoxPosInternal or chat.GetChatBoxPos
+chat.GetChatBoxSizeInternal = chat.GetChatBoxSizeInternal or chat.GetChatBoxSize
+
 function chat.GetChatBoxPos()
     return impulse.chatBox.frame:GetPos()
 end
@@ -381,7 +354,7 @@ end
 
 chat.Open = impulse.chatBox.showBox
 function chat.Close(...)
-    if IsValid( impulse.chatBox.frame ) then
+    if ( IsValid(impulse.chatBox.frame) ) then
         impulse.chatBox.hideBox(...)
     else
         impulse.chatBox.buildBox()

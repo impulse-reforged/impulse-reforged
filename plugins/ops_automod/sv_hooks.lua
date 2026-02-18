@@ -33,7 +33,7 @@ function PLUGIN:PlayerDeath(victim, inflictor, attacker)
 
     local adminCount = 0
     for v, k in player.Iterator() do
-        if k:IsAdmin() then
+        if CAMI.PlayerHasAccess(k, "impulse: Bypass AutoMod") then
             adminCount = adminCount + 1
         end
     end
@@ -46,7 +46,7 @@ function PLUGIN:PlayerDeath(victim, inflictor, attacker)
         risk = risk * 1.2
     end
 
-    if attacker:IsAdmin() then
+    if CAMI.PlayerHasAccess(attacker, "impulse: Bypass AutoMod") then
         risk = 0
     end
 

@@ -1,5 +1,5 @@
 hook.Add("PhysgunPickup", "opsPhysgunPickup", function(client, ent)
-    if client:IsAdmin() and ent:IsPlayer() then
+    if CAMI.PlayerHasAccess(client, "impulse: Physgun") and ent:IsPlayer() then
         print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") physgunned player " .. ent:Name() .. " (" .. ent:SteamID64() .. ")") 
         ent:SetMoveType(MOVETYPE_NONE)
         return true
@@ -20,7 +20,7 @@ local adminChatCommand = {
     onRun = function(client, arg, rawText)
         print("[ops] [ADMIN CHAT] " .. client:Name() .. " (" .. client:SteamID64() .. "): " .. rawText)
         for v, k in player.Iterator() do
-            if k:IsAdmin() then
+            if CAMI.PlayerHasAccess(k, "impulse: Admin Chat Commands") then
                 k:SendChatClassMessage(13, rawText, client)
             end
         end

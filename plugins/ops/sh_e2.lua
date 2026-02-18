@@ -7,7 +7,7 @@ if ( SERVER ) then
     util.AddNetworkString("opsE2ViewerRemove")
 
     net.Receive("opsE2ViewerRemove", function(len, client)
-        if !client:IsAdmin() then return end
+        if !CAMI.PlayerHasAccess(client, "impulse: Manage E2 Bans") then return end
 
         local chip = net.ReadEntity()
 

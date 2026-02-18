@@ -17,7 +17,6 @@ local setHealthCommand = {
             amount = math.Clamp(amount, 1, 100)
         end
 
-
         if ( IsValid(target) ) then
             print("[ops] " .. client:Name() .. " (" .. client:SteamID64() .. ") set " .. target:Name() .. "'s (" .. target:SteamID64() .. ") health to " .. amount)
             target:SetHealth(amount)

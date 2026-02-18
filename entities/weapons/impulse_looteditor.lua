@@ -41,7 +41,7 @@ SWEP.Secondary.Ammo = "none"
 
 if ( SERVER ) then
     function SWEP:Equip(owner)
-        if !owner:IsAdmin() then
+        if !owner:HasPrivilege("impulse: Editor - Loot") then
             owner:StripWeapon("impulse_looteditor")
         end
     end

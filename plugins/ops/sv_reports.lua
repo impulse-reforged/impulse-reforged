@@ -41,7 +41,7 @@ function impulse.Ops.ReportNew(client, arg, rawText)
         reportId = nil
 
         for v, k in player.Iterator() do
-            if k:IsAdmin() then
+            if k:HasPrivilege("impulse: Handle Reports") then
                 reportId = reportId or table.insert(impulse.Ops.Reports, {client, rawText, nil, CurTime()})
 
                 net.Start("opsNewReport")
@@ -72,7 +72,7 @@ function impulse.Ops.ReportNew(client, arg, rawText)
         local reportClaimant = impulse.Ops.Reports[reportId][3]
 
         for v, k in player.Iterator() do
-            if k:IsAdmin() then
+            if k:HasPrivilege("impulse: Handle Reports") then
                 net.Start("opsReportUpdate")
                 net.WriteEntity(client)
                 net.WriteUInt(reportId, 16)
@@ -128,7 +128,7 @@ function impulse.Ops.ReportClaim(client, arg, rawText)
 
         print("[ops] REPORT CLAIMED #" .. reportId .. " by " .. client:Name() .. " (" .. client:SteamID64() .. ")")
         for v, k in player.Iterator() do
-            if k:IsAdmin() then
+            if k:HasPrivilege("impulse: Handle Reports") then
                 net.Start("opsReportClaimed")
                 net.WriteEntity(client)
                 net.WriteUInt(reportId, 16)
@@ -191,7 +191,7 @@ function impulse.Ops.ReportClose(client, arg, rawText)
         impulse.Ops.Reports[reportId] = nil
 
         for v, k in player.Iterator() do
-            if k:IsAdmin() then
+            if k:HasPrivilege("impulse: Handle Reports") then
                 net.Start("opsReportClosed")
                 net.WriteEntity(client)
                 net.WriteUInt(reportId, 16)
@@ -217,6 +217,8 @@ function impulse.Ops.ReportClose(client, arg, rawText)
 end
 
 function impulse.Ops.ReportGoto(client, arg, rawText)
+    if !client:HasPrivilege("impulse: Teleport to Reports") then return end
+    
     local reportId = arg[1]
 
     if reportId then
@@ -284,7 +286,7 @@ function impulse.Ops.ReportMsg(client, arg, rawText)
 end
 
 hook.Add("PostSetupPlayer", "impulseOpsReportSync", function(client)
-    if !client:IsAdmin() then return end
+    if !client:HasPrivilege("impulse: Handle Reports") then return end
 
     if table.Count(impulse.Ops.Reports) < 1 then return end
 
@@ -313,7 +315,7 @@ net.Receive("opsReportDaleRepliedDo", function(len, client)
 
             impulse.Ops.Reports[id][6] = true
             for v, k in player.Iterator() do
-                if k:IsAdmin() then
+                if k:HasPrivilege("impulse: Handle Reports") then
                     net.Start("opsReportDaleReplied")
                     net.WriteUInt(id, 8)
                     net.Send(k)

@@ -40,7 +40,7 @@ SWEP.NextGo = 0
 
 if ( SERVER ) then
     function SWEP:Equip(owner)
-        if !owner:IsAdmin() then
+        if !owner:HasPrivilege("impulse: Editor - Storage") then
             owner:StripWeapon("impulse_storageeditor")
         end
     end

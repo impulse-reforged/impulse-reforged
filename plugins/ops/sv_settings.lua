@@ -1,6 +1,6 @@
 util.AddNetworkString("impulseOpsObserverHide")
 net.Receive("impulseOpsObserverHide", function(len, client)
-    if !client:IsAdmin() then return end
+    if !CAMI.PlayerHasAccess(client, "impulse: Admin Settings") then return end
 
     local val = net.ReadBool()
 

@@ -34,8 +34,12 @@ function PANEL:Init()
 end
 
 function PANEL:SetItem(itemNet, wide)
-    local item = impulse.Inventory.Items[itemNet.id]
-    if ( !item ) then return end
+    local item = itemNet.class and impulse.Inventory.Items[impulse.Inventory:ClassToNetID(itemNet.class)] or impulse.Inventory.Items[itemNet.id]
+    if ( !item ) then
+        impulse.Logs:Error("Tried to set invalid inventory item with net ID " .. tostring(itemNet.id) .. " in inventory panel.")
+        self:Remove()
+        return
+    end
 
     self.Item = item
 
@@ -48,7 +52,6 @@ function PANEL:SetItem(itemNet, wide)
     self.Weight = item.Weight or 0
     self.Count = 1
 
-    local panel = self
     self.itemModel:SetModel(item.Model)
     self.itemModel:SetFOV(item.FOV or 35)
 
@@ -92,35 +95,38 @@ function PANEL:SetItem(itemNet, wide)
 
     self.count = vgui.Create("DLabel", self)
 
-    if ( self.IsRestricted or self.Item.Illegal ) then
-        self.count:SetPos(42, 28)
-    else
-        self.count:SetPos(42, 38)
-    end
-
     self.count:SetText("")
     self.count:SetTextColor(impulse.Config.MainColour)
     self.count:SetFont("Impulse-Elements19-Shadow")
-    self.count:SetSize(36, 20)
 
-    function self.count:Think()
-        if panel.Count > 1 and panel.Count != self.lastCount then
-            self:SetText("x" .. panel.Count)
-            self.lastCount = panel.Count
-            panel.Weight = panel.Count * panel.Item.Weight
+    local nextThink = 0
+    self.count.Think = function(this)
+        if ( CurTime() < nextThink ) then return end
+        nextThink = CurTime() + 0.1
+
+        if ( self.Count > 1 and self.Count != this.lastCount ) then
+            this:SetText("x" .. self.Count)
+            this:SizeToContents()
+            this.lastCount = self.Count
+            self.Weight = self.Count * self.Item.Weight
 
             local wShift = 0
-
-            if panel.Count > 99 then
+            if ( self.Count > 99 ) then
                 wShift = -16
-            elseif panel.Count > 9 then
+            elseif ( self.Count > 9 ) then
                 wShift = -8
             end
 
-            if panel.IsRestricted or panel.Item.Illegal then
-                self:SetPos(42 + wShift, 28)
+            if ( self.IsRestricted or self.Item.Illegal ) then
+                this:SetPos(self.itemModel:GetWide() - this:GetWide() - 2 + wShift, self.itemModel:GetTall() - this:GetTall() - 18)
             else
-                self:SetPos(42 + wShift, 38)
+                this:SetPos(self.itemModel:GetWide() - this:GetWide() - 2 + wShift, self.itemModel:GetTall() - this:GetTall() - 2)
+            end
+        else
+            if ( self.IsRestricted or self.Item.Illegal ) then
+                this:SetPos(self.itemModel:GetWide() - this:GetWide() - 2, self.itemModel:GetTall() - this:GetTall() - 18)
+            else
+                this:SetPos(self.itemModel:GetWide() - this:GetWide() - 2, self.itemModel:GetTall() - this:GetTall() - 2)
             end
         end
     end

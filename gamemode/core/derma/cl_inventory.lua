@@ -113,7 +113,8 @@ function PANEL:SetupItems(width, height)
     local localInv = table.Copy(impulse.Inventory.Data[0][INVENTORY_PLAYER]) or {}
     if localInv and table.Count(localInv) > 0 then
         for v, k in pairs(localInv) do
-            local itemData = impulse.Inventory.Items[k.id]
+            -- Use class if available, fallback to netid lookup for compatibility
+            local itemData = k.class and impulse.Inventory.Items[impulse.Inventory:ClassToNetID(k.class)] or impulse.Inventory.Items[k.id]
             if !itemData then continue end
 
             local otherItem = self.items[k.id]

@@ -116,7 +116,7 @@ hook.Add("HUDPaint", "impulseOpsHUD", function()
             end
         end
 
-        if impulse.Ops.EventManager and impulse.Ops.EventManager.GetEventMode() and impulse.Ops.EventManager.GetSequence() then
+        if impulse.Ops.EventManager and impulse.Ops.EventManager.GetSequence() then
             local symb = "•"
 
             if dotToggleTime < CurTime() then

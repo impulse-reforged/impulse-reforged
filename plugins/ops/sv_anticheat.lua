@@ -3,7 +3,7 @@ util.AddNetworkString("opsUnderInvestigation")
 hook.Add("iac.CheaterConvicted", "iacCheaterLog", function(steamid, code, caseInfo)
     print("[ops] [IAC CONVICTION] SteamID: " .. steamid .. " | Code: " .. code .. " | Detector: " .. (caseInfo.detector or "Generic"))
     for v, k in player.Iterator() do
-        if k:IsAdmin() then
+        if CAMI.PlayerHasAccess(k, "impulse: Bypass AntiCheat") then
             k:AddChatText(Color(255, 0, 0), "[IAC CONVICTION] " .. steamid .. " code: " .. code)
         end
     end
