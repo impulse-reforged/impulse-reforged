@@ -254,6 +254,10 @@ function PANEL:Teams()
     function self.availibleTeams:Paint()
         self:SetBGColor(colInv)
     end
+    self.availibleTeamsContent = vgui.Create("DPanel", self.availibleTeams)
+    self.availibleTeamsContent:Dock(FILL)
+    self.availibleTeamsContent:SetPaintBackground(false)
+    self.availibleTeams:SetContents(self.availibleTeamsContent)
 
     self.unavailibleTeams = vgui.Create("DCollapsibleCategory", self.teamsInner)
     self.unavailibleTeams:SetLabel("Unavailable teams")
@@ -261,14 +265,21 @@ function PANEL:Teams()
     function self.unavailibleTeams:Paint()
         self:SetBGColor(colInv)
     end
+    self.unavailibleTeamsContent = vgui.Create("DPanel", self.unavailibleTeams)
+    self.unavailibleTeamsContent:Dock(FILL)
+    self.unavailibleTeamsContent:SetPaintBackground(false)
+    self.unavailibleTeams:SetContents(self.unavailibleTeamsContent)
 
     for k, v in SortedPairsByMemberValue(impulse.Teams.Stored, "name") do
-        local selectedList
+        if ( !istable(v) ) then continue end
 
-        if (v.xp > LocalPlayer():GetXP()) or (v.donatorOnly and v.donatorOnly == true and LocalPlayer():IsDonator() == false) then
-            selectedList = self.unavailibleTeams
+        local selectedList
+        local teamXP = tonumber(v.xp) or 0
+
+        if ( teamXP > ( LocalPlayer():GetXP() or 0 ) ) or (v.donatorOnly and v.donatorOnly == true and LocalPlayer():IsDonator() == false) then
+            selectedList = self.unavailibleTeamsContent
         else
-            selectedList = self.availibleTeams
+            selectedList = self.availibleTeamsContent
         end
 
         local teamCard = vgui.Create("impulseTeamCard", selectedList)
@@ -299,7 +310,7 @@ function PANEL:Teams()
                 end
             end
 
-            realSelf.descLblT:SetText(teamData.description)
+            realSelf.descLblT:SetText(teamData.description or "")
             realSelf.descLblT:SetWrap(true)
             realSelf.descLblT:SizeToContents()
             realSelf.descLblT:SetContentAlignment(7)
