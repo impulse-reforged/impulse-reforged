@@ -1116,11 +1116,7 @@ function GM:KeyPress(client, key)
     end
 end
 
-function GM:PlayerUse(client, entity)
-    local clientTable = client:GetTable()
-    if ( ( clientTable.useNext or 0)  > CurTime() ) then return false end
-    clientTable.useNext = CurTime() + 0.3
-
+local function ButtonCheck(client, entity)
     local buttons = impulse.Config.Buttons
     if ( !buttons or table.Count(buttons) < 1 ) then return end
 
@@ -1130,19 +1126,79 @@ function GM:PlayerUse(client, entity)
     local btnData = impulse.Config.Buttons[btnKey]
     if ( !btnData ) then return end
 
+    local clientTable = client:GetTable()
     if ( btnData.customCheck and !btnData.customCheck(client, entity) ) then
-        clientTable.useNext = CurTime() + 1
+        clientTable.impulseNextUse = CurTime() + 1
         return false
     end
 
     if ( btnData.doorgroup ) then
         local teamDoorGroups = clientTable.DoorGroups
         if ( !teamDoorGroups or !table.HasValue(teamDoorGroups, btnData.doorgroup) ) then
-            clientTable.useNext = CurTime() + 1
+            clientTable.impulseNextUse = CurTime() + 1
             client:Notify("You don't have access to use this button.")
             return false
         end
     end
+
+    if ( btnData.team and client:Team() != btnData.team ) then
+        clientTable.impulseNextUse = CurTime() + 1
+        client:Notify("Your team cannot use this button.")
+        return false
+    end
+
+    if ( btnData.adminOnly and !client:IsAdmin() ) then
+        clientTable.impulseNextUse = CurTime() + 1
+        client:Notify("You must be an admin to use this button.")
+        return false
+    end
+
+    if ( btnData.leadAdminOnly and !client:IsLeadAdmin() ) then
+        clientTable.impulseNextUse = CurTime() + 1
+        client:Notify("You must be a lead admin to use this button.")
+        return false
+    end
+
+    if ( btnData.superAdminOnly and !client:IsSuperAdmin() ) then
+        clientTable.impulseNextUse = CurTime() + 1
+        client:Notify("You must be a super admin to use this button.")
+        return false
+    end
+
+    if ( btnData.canUse and !btnData.canUse(client, entity) ) then
+        clientTable.impulseNextUse = CurTime() + 1
+        return false
+    end
+
+    if ( btnData.onUse ) then
+        btnData.onUse(client, entity)
+    end
+
+    return true
+end
+
+local function RagdollCheck(client, entity)
+    if ( entity:IsRagdoll() and entity:GetRelay("ragdoll.items") ) then
+        entity.impulseNextUse = CurTime() + 1
+
+        if ( client:GetRelay("arrested", false) ) then
+            client:Notify("You cannot access a container when detained.")
+            return false
+        end
+
+        entity:AddUser(client)
+
+        return true
+    end
+end
+
+function GM:PlayerUse(client, entity)
+    local clientTable = client:GetTable()
+    if ( ( clientTable.impulseNextUse or 0 ) > CurTime() ) then return false end
+    clientTable.impulseNextUse = CurTime() + 1 / 3
+
+    if ( ButtonCheck(client, entity) == false ) then return false end
+    if ( RagdollCheck(client, entity) == false ) then return false end
 end
 
 function GM:KeyRelease(client, key)
