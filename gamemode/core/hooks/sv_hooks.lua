@@ -47,12 +47,57 @@ function GM:PlayerInitialSpawn(client)
             if ( !IsValid(client) ) then return end
 
             if ( !result or !result[1] ) then
+                if ( client:IsBot() ) then
+                    client:Freeze(false)
+                    hook.Run("PlayerSetup", client, {
+                        id = -client:UserID(),
+                        rpname = client:Name(),
+                        xp = 0,
+                        money = 0,
+                        bankmoney = 0,
+                        data = "{}",
+                        skills = "{}",
+                        ammo = "{}",
+                        model = client:GetModel(),
+                        skin = 0,
+                        rpgroup = 0,
+                        rpgrouprank = ""
+                    })
+
+                    return
+                end
+
                 ErrorNoHalt("[impulse] Failed to load player data for " .. client:SteamName() .. " (" .. client:SteamID64() .. ")\n")
                 client:Kick("Failed to load character data from database.")
                 return
             end
 
             local db = result[1]
+
+            if ( client:IsBot() ) then
+                local defaultModel = client:GetModel()
+                if ( !defaultModel or defaultModel == "" or defaultModel == "player/default.mdl" ) then
+                    defaultModel = "models/player/group01/male_02.mdl"
+                end
+
+                client:Freeze(false)
+                hook.Run("PlayerSetup", client, {
+                    id = tonumber(db.id) or -client:UserID(),
+                    rpname = (db.rpname and db.rpname != "" and db.rpname) or client:Name(),
+                    xp = tonumber(db.xp) or 0,
+                    money = tonumber(db.money) or 0,
+                    bankmoney = tonumber(db.bankmoney) or 0,
+                    data = db.data or "{}",
+                    skills = db.skills or "{}",
+                    ammo = db.ammo or "{}",
+                    model = (db.model and db.model != "" and db.model) or defaultModel,
+                    skin = tonumber(db.skin) or 0,
+                    rpgroup = tonumber(db.rpgroup) or 0,
+                    rpgrouprank = db.rpgrouprank or ""
+                })
+
+                return
+            end
 
             -- Set the isNew flag to false if the player has already joined the server.
             isNew = db.rpname == nil or db.rpname == ""
@@ -201,7 +246,7 @@ function GM:PlayerSetup(client, data)
     end
 
     local userCount = playerCount - donatorCount
-    if ( !client:IsDonator() and userCount >= ( impulse.Config.UserSlots or 9999 ) ) then
+    if ( !client:IsBot() and !client:IsDonator() and userCount >= ( impulse.Config.UserSlots or 9999 ) ) then
         local donateURL = impulse.Config.DonateURL
         local message = "The server is currently at full user capacity. Please try again later."
         if ( donateURL and donateURL != "" ) then
@@ -227,6 +272,11 @@ function GM:PlayerSetup(client, data)
 
     clientTable.impulseData = jsonData
     clientTable.impulseID = tonumber(data.id)
+
+    if ( client:IsBot() ) then
+        -- Keep bot inventories session-local and isolated from SQL-backed player IDs.
+        clientTable.impulseID = -client:UserID()
+    end
 
     if ( clientTable.impulseData and clientTable.impulseData.Achievements ) then
         local count = table.Count(clientTable.impulseData.Achievements)
@@ -293,37 +343,42 @@ function GM:PlayerSetup(client, data)
 
     hook.Run("PreEarlyInventorySetup", client)
 
-    local query = mysql:Select("impulse_inventory")
-    query:Select("id")
-    query:Select("uniqueid")
-    query:Select("ownerid")
-    query:Select("storagetype")
-    query:Where("ownerid", data.id)
-    query:Callback(function(result)
-        if ( IsValid(client) and type(result) == "table" and #result > 0 ) then
-            local userid = clientTable.impulseID
-            local userInv = impulse.Inventory.Data[userid]
+    if ( client:IsBot() ) then
+        clientTable.impulseBeenInventorySetup = true
+        hook.Run("PostInventorySetup", client)
+    else
+        local query = mysql:Select("impulse_inventory")
+        query:Select("id")
+        query:Select("uniqueid")
+        query:Select("ownerid")
+        query:Select("storagetype")
+        query:Where("ownerid", id)
+        query:Callback(function(result)
+            if ( IsValid(client) and type(result) == "table" and #result > 0 ) then
+                local userid = clientTable.impulseID
+                local userInv = impulse.Inventory.Data[userid]
 
-            for k, v in pairs(result) do
-                local netid = impulse.Inventory:ClassToNetID(v.uniqueid)
-                if ( !netid ) then continue end -- when items are removed from a live server we will remove them manually in the db, if an item is broken auto doing this would break peoples items
+                for k, v in pairs(result) do
+                    local netid = impulse.Inventory:ClassToNetID(v.uniqueid)
+                    if ( !netid ) then continue end -- when items are removed from a live server we will remove them manually in the db, if an item is broken auto doing this would break peoples items
 
-                local storagetype = tonumber(v.storagetype)
-                if ( !userInv[storagetype] ) then
-                    userInv[storagetype] = {}
+                    local storagetype = tonumber(v.storagetype)
+                    if ( !userInv[storagetype] ) then
+                        userInv[storagetype] = {}
+                    end
+
+                    client:GiveItem(v.uniqueid, storagetype, false, true)
                 end
-
-                client:GiveItem(v.uniqueid, storagetype, false, true)
             end
-        end
 
-        if ( IsValid(client) ) then
-            clientTable.impulseBeenInventorySetup = true
-            hook.Run("PostInventorySetup", client)
-        end
-    end)
+            if ( IsValid(client) ) then
+                clientTable.impulseBeenInventorySetup = true
+                hook.Run("PostInventorySetup", client)
+            end
+        end)
 
-    query:Execute()
+        query:Execute()
+    end
 
     client:SetupWhitelists()
 
@@ -402,7 +457,7 @@ function GM:PostSetupPlayer(client)
     local clientTable = client:GetTable()
     clientTable.impulseData.Achievements = clientTable.impulseData.Achievements or {}
 
-    for k, v in pairs(impulse.Config.Achievements) do
+    for k, v in pairs(impulse.Config.Achievements or {}) do
         client:AchievementCheck(k)
     end
 
@@ -444,6 +499,10 @@ end
 function GM:PlayerSpawn(client)
     local clientTable = client:GetTable()
     local cellID = clientTable.InJail
+
+    if ( client:IsBot() and client:Team() != impulse.Config.DefaultTeam ) then
+        client:SetTeam(impulse.Config.DefaultTeam)
+    end
 
     if ( clientTable.InJail ) then
         local pos = impulse.Config.PrisonCells[cellID]
