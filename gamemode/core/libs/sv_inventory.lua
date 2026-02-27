@@ -152,6 +152,10 @@ end
 
 local PLAYER = FindMetaTable("Player")
 
+local function ShouldPersistInventory(client)
+    return IsValid(client) and !client:IsBot()
+end
+
 --- Gets a players inventory table
 -- @realm server
 -- @int[opt = 1] storageType Storage type (1 is player inventory, 2 is storage)
@@ -167,6 +171,14 @@ function PLAYER:GetInventory(storageType)
 
     data[storageType] = data[storageType] or {}
     return data[storageType]
+end
+
+--- Returns a copy of a players inventory table
+-- @realm server
+-- @int[opt = 1] storageType Storage type (1 is player inventory, 2 is storage)
+-- @treturn table Inventory table
+function PLAYER:GetInventoryCopy(storageType)
+    return table.Copy(self:GetInventory(storageType))
 end
 
 --- Returns if a player can hold an item in their local inventory
@@ -385,7 +397,7 @@ function PLAYER:GiveItem(class, storageType, restricted, isLoaded, moving, clip)
         end
     end
 
-    if ( !restricted and !isLoaded and !moving ) then
+    if ( !restricted and !isLoaded and !moving and ShouldPersistInventory(self) ) then
         impulse.Inventory:AddItem(impulseID, class, storageType)
     end
 
@@ -430,7 +442,7 @@ function PLAYER:TakeInventoryItem(itemID, storageType, moving, amount)
     local itemNet = impulse.Inventory:ClassToNetID(itemData.class)
     local weight = (impulse.Inventory.Items[itemNet].Weight or 0) * amount
 
-    if ( !moving ) then
+    if ( !moving and ShouldPersistInventory(self) ) then
         impulse.Inventory:RemoveItem(self.impulseID, itemData.class, storageType, 1)
     end
 
@@ -491,7 +503,9 @@ function PLAYER:ClearInventory(storageType)
         self:TakeInventoryItem(v, storageType, true)
     end
 
-    impulse.Inventory:ClearInventory(self.impulseID, storageType)
+    if ( ShouldPersistInventory(self) ) then
+        impulse.Inventory:ClearInventory(self.impulseID, storageType)
+    end
 
     net.Start("impulseInvClear")
         net.WriteUInt(storageType, 4)
@@ -736,7 +750,9 @@ function PLAYER:MoveInventoryItem(itemID, from, to)
 
     local itemclip = self:TakeInventoryItem(itemID, from, true)
 
-    impulse.Inventory:UpdateStorageType(self.impulseID, class, 1, from, to)
+    if ( ShouldPersistInventory(self) ) then
+        impulse.Inventory:UpdateStorageType(self.impulseID, class, 1, from, to)
+    end
     local newitemID = self:GiveItem(class, to, false, nil, true, itemclip or nil)
 
     net.Start("impulseInvMove")
@@ -754,7 +770,9 @@ end
 -- @int to New storage type
 -- @int amount Amount to move
 function PLAYER:MoveInventoryItemMass(class, from, to, amount)
-    impulse.Inventory:UpdateStorageType(self.impulseID, class, amount, from, to)
+    if ( ShouldPersistInventory(self) ) then
+        impulse.Inventory:UpdateStorageType(self.impulseID, class, amount, from, to)
+    end
 
     local takes = 0
     for k, v in pairs(self:GetInventory(from)) do
