@@ -152,12 +152,16 @@ net.Receive("impulseInvMove", function()
     local netid
 
     local take = impulse.Inventory.Data[0][from][itemID]
+    if !take then return end
 
     netid = take.id
 
     impulse.Inventory.Data[0][from][itemID] = nil
     impulse.Inventory.Data[0][to][newitemID] = {
-        id = netid
+        id = netid,
+        class = take.class,
+        restricted = take.restricted or false,
+        equipped = false
     }
 
     if impulse_storage and IsValid(impulse_storage) then
@@ -408,10 +412,12 @@ net.Receive("impulseInvContainerOpen", function()
     local containerInv = {}
 
     for i = 1,count do
-        local itemid = net.ReadUInt(10)
+        local itemClass = net.ReadString()
         local amount = net.ReadUInt(8)
 
-        containerInv[itemid] = {amount = amount}
+        if ( itemClass and itemClass != "" ) then
+            containerInv[itemClass] = {amount = amount}
+        end
     end
 
     if impulse_container and IsValid(impulse_container) then
@@ -428,10 +434,12 @@ net.Receive("impulseInvContainerUpdate", function()
     local containerInv = {}
 
     for i = 1,count do
-        local itemid = net.ReadUInt(10)
+        local itemClass = net.ReadString()
         local amount = net.ReadUInt(8)
 
-        containerInv[itemid] = {amount = amount}
+        if ( itemClass and itemClass != "" ) then
+            containerInv[itemClass] = {amount = amount}
+        end
     end
 
     if impulse_container and IsValid(impulse_container) then
