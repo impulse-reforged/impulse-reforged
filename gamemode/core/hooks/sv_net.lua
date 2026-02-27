@@ -1485,21 +1485,49 @@ net.Receive("impulseInvContainerDoMove", function(len, client)
         local item = impulse.Inventory.Items[itemid]
         if !item then return end
 
-        local class = impulse.Inventory.Items[itemid].UniqueID
+        local class = item.UniqueID
+        if !class then return end
+        local containerClass = class
 
-        if !container.Inventory[class] then return end
+        if !container.Inventory or table.Count(container.Inventory) < 1 then return end
+
+        if !container.Inventory[containerClass] then
+            -- Compatibility for containers that may store keys by net ID.
+            if container.Inventory[itemid] then
+                containerClass = itemid
+            else
+                for k, v in pairs(container.Inventory) do
+                    if ( isnumber(k) and k == itemid ) then
+                        containerClass = k
+                        break
+                    end
+                end
+            end
+        end
+
+        if !container.Inventory[containerClass] then
+            return client:Notify("That item is no longer in this container.")
+        end
 
         if !client:CanHoldItem(class) then
             return client:Notify("Item is too heavy to hold.")
         end
 
         if item.Illegal and client:IsPolice() then
-            container:TakeItem(class)
+            container:TakeItem(containerClass)
             return client:Notify(item.Name .. " (illegal item) destroyed.")
         end
 
-        container:TakeItem(class, 1, true)
-        client:GiveItem(class)
+        container:TakeItem(containerClass, 1, true)
+
+        local newItemID = client:GiveItem(class)
+        if ( !newItemID ) then
+            -- Revert if the item could not be inserted into the player's inventory.
+            container:AddItem(containerClass, 1, true)
+            container:UpdateUsers()
+            return client:Notify("Unable to move item into your inventory.")
+        end
+
         container:UpdateUsers()
     elseif from == 1 then
         local hasItem, item = client:HasInventoryItemSpecific(itemid, 1)
