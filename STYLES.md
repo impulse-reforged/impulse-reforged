@@ -147,7 +147,7 @@ end
 Prefer early returns to reduce nesting and improve readability:
 ```lua
 function ProcessPlayer(client)
-    if ( !IsValid(client) ) then return end
+    if ( type(client) != "Player" ) then return end
     if ( client:IsBot() ) then return end
     if ( !client:IsAdmin() ) then return end
 
@@ -158,7 +158,7 @@ end
 **Not:**
 ```lua
 function ProcessPlayer(client)
-    if IsValid(client) then
+    if type(client) == "Player" then
         if !client:IsBot() then
             if client:IsAdmin() then
                 -- main logic here

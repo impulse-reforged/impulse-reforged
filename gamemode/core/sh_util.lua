@@ -415,7 +415,7 @@ end
 -- print(impulse.Util:FindInCrosshair(Entity(1), Entity(2), 0.1))
 -- > false
 function impulse.Util:FindInCrosshair(client, target, range)
-    if ( !IsValid(client) and !IsValid(target) ) then return end
+    if ( type(client) != "Player" and !IsValid(target) ) then return end
 
     if ( !IsValid(target) ) then return end
 

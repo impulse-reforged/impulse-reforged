@@ -207,7 +207,7 @@ function impulse.Ops.ReportClose(client, arg, rawText)
             net.Send(reporter)
         end
 
-        if !IsValid(client) or !client:IsPlayer() then return end
+        if type(client) != "Player" or !client:IsPlayer() then return end
 
         print("[ops] REPORT CLOSED #" .. reportId .. " by " .. client:Name() .. " (" .. client:SteamID64() .. ")")
         opsSlackLog(":no_entry: *[REPORT CLOSED]* [#" .. reportId .. "] closed by " .. client:SteamName() .. " (" .. client:SteamID64() .. ")")

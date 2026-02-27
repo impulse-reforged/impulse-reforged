@@ -41,7 +41,7 @@ function impulse.Inventory:RegisterItem(item)
     if ( class ) then
         function item:OnEquip(client, data, uid, sec)
             local weapon = client:Give(class)
-            if ( IsValid(weapon) ) then
+            if ( type(weapon) == "Weapon" ) then
                 weapon:SetClip1(item.WeaponOverrideClip or self.clip or 0)
 
                 if ( item.WeaponOverrideClip ) then
@@ -52,7 +52,7 @@ function impulse.Inventory:RegisterItem(item)
 
         function item:UnEquip(client)
             local weapon = client:GetWeapon(class)
-            if ( IsValid(weapon) ) then
+            if ( type(weapon) == "Weapon" ) then
                 self.clip = weapon:Clip1()
                 client:StripWeapon(class)
             end

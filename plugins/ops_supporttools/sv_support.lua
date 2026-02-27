@@ -85,7 +85,7 @@ net.Receive("impulseOpsSTDoRefund", function(len, client)
     query:Select("id")
     query:Where("steamid", steamid64)
     query:Callback(function(result)
-        if ( !IsValid(client) ) then return end
+        if ( type(client) != "Player" ) then return end
 
         if ( type(result) != "table" or #result == 0 ) then
             return client:Notify("This Steam account has not joined the server yet, or the SteamID64 is invalid.")
@@ -117,7 +117,7 @@ end
 function PLUGIN:PostInventorySetup(client)
     local refundData = file.Read("impulse-reforged/support-refunds/" .. client:SteamID64() .. ".txt", "DATA")
     if ( refundData ) then
-        if ( !IsValid(client) ) then return end
+        if ( type(client) != "Player" ) then return end
         
         for k, v in pairs(refundData) do
             if ( !impulse.Inventory.ItemsStored[k] ) then continue end

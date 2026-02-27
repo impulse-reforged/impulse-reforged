@@ -217,7 +217,7 @@ function impulse.Group:RankShift(name, from, to)
 
             impulse.Group.Groups[name].Members[v].Rank = to
 
-            if IsValid(client) then
+            if type(client) == "Player" then
                 client:GroupAdd(name, to, true)
             else
                 impulse.Group:NetworkMemberToOnline(name, v)

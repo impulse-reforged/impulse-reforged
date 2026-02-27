@@ -30,7 +30,7 @@ function GM:PlayerInitialSpawn(client)
     client:SetCanZoom(false)
 
     client:LoadData(function(data)
-        if ( !IsValid(client) ) then return end
+        if ( type(client) != "Player" ) then return end
 
         local address = impulse.Util:GetAddress()
         local bNoCache = client:GetData("lastIP", address) != address
@@ -44,7 +44,7 @@ function GM:PlayerInitialSpawn(client)
         local query = mysql:Select("impulse_players")
         query:Where("steamid", client:SteamID64())
         query:Callback(function(result)
-            if ( !IsValid(client) ) then return end
+            if ( type(client) != "Player" ) then return end
 
             if ( !result or !result[1] ) then
                 if ( client:IsBot() ) then
@@ -153,7 +153,7 @@ function GM:PlayerInitialSpawn(client)
 
     local xpTimerName = "impulseXP." .. client:UserID()
     timer.Create(xpTimerName, impulse.Config.XPTime, 0, function()
-        if ( !IsValid(client) ) then
+        if ( type(client) != "Player" ) then
             timer.Remove(xpTimerName)
             return
         end
@@ -165,7 +165,7 @@ function GM:PlayerInitialSpawn(client)
 
     local payTimerName = "impulsePayDay." .. client:UserID()
     timer.Create(payTimerName, impulse.Config.PayDayTime or 600, 0, function()
-        if ( !IsValid(client) ) then
+        if ( type(client) != "Player" ) then
             timer.Remove(payTimerName)
             return
         end
@@ -201,7 +201,7 @@ function GM:PlayerInitialSpawn(client)
 
     local oocTimerName = "impulseOOCLimit." .. client:UserID()
     timer.Create(oocTimerName, 1800, 0, function()
-        if ( !IsValid(client) ) then
+        if ( type(client) != "Player" ) then
             timer.Remove(oocTimerName)
             return
         end
@@ -220,7 +220,7 @@ function GM:PlayerInitialSpawn(client)
 
     local loadTimerName = "impulseFullLoad." .. client:UserID()
     timer.Create(loadTimerName, 0.5, 0, function()
-        if ( !IsValid(client) ) then
+        if ( type(client) != "Player" ) then
             timer.Remove(loadTimerName)
             return
         end
@@ -354,7 +354,7 @@ function GM:PlayerSetup(client, data)
         query:Select("storagetype")
         query:Where("ownerid", id)
         query:Callback(function(result)
-            if ( IsValid(client) and type(result) == "table" and #result > 0 ) then
+            if ( type(client) == "Player" and type(result) == "table" and #result > 0 ) then
                 local userid = clientTable.impulseID
                 local userInv = impulse.Inventory.Data[userid]
 
@@ -371,7 +371,7 @@ function GM:PlayerSetup(client, data)
                 end
             end
 
-            if ( IsValid(client) ) then
+            if ( type(client) == "Player" ) then
                 clientTable.impulseBeenInventorySetup = true
                 hook.Run("PostInventorySetup", client)
             end
@@ -391,7 +391,7 @@ function GM:PlayerSetup(client, data)
     query:Select("item")
     query:Where("steamid", client:SteamID64())
     query:Callback(function(result)
-        if ( IsValid(client) and type(result) == "table" and #result > 0 ) then
+        if ( type(client) == "Player" and type(result) == "table" and #result > 0 ) then
             local sid = client:SteamID64()
             local money = 0
             local names = {}
@@ -573,7 +573,7 @@ function GM:PlayerSpawn(client)
     client:SetJumpPower(impulse.Config.JumpPower or 160)
 
     timer.Simple(10, function()
-        if ( !IsValid(client) ) then return end
+        if ( type(client) != "Player" ) then return end
 
         clientTable.SpawnProtection = false
     end)
@@ -775,7 +775,7 @@ function GM:DoPlayerDeath(client, attacker, dmginfo)
 
     if ( IsValid(attacker) and attacker:IsPlayer() ) then
         local weapon = attacker:GetActiveWeapon()
-        if ( IsValid(weapon) ) then
+        if ( type(weapon) == "Weapon" ) then
             ragdoll.DmgWep = weapon:GetClass()
         end
     end
@@ -826,7 +826,7 @@ function GM:DoPlayerDeath(client, attacker, dmginfo)
     end)
 
     timer.Simple(0.1, function()
-        if ( !IsValid(ragdoll) or !IsValid(client) ) then return end
+        if ( !IsValid(ragdoll) or type(client) != "Player" ) then return end
 
         net.Start("impulseRagdollLink")
             net.WriteEntity(ragdoll)
@@ -877,7 +877,7 @@ function GM:PlayerSilentDeath(client)
     clientTable.TempAmmo = client:GetAmmo()
 
     local weapon = client:GetActiveWeapon()
-    if ( IsValid(weapon) ) then
+    if ( type(weapon) == "Weapon" ) then
         clientTable.TempSelected = weapon:GetClass()
         clientTable.TempSelectedRaised = client:IsWeaponRaised()
     end
@@ -937,7 +937,7 @@ function GM:KeyPress(client, key)
 
     if ( key == IN_RELOAD ) then
         timer.Create("impulseRaiseWait" .. client:SteamID64(), impulse.Config.WeaponRaiseTime or 0.3, 1, function()
-            if ( IsValid(client) ) then
+            if ( type(client) == "Player" ) then
                 client:ToggleWeaponRaised()
             end
         end)
@@ -1172,7 +1172,7 @@ end
 local nextAFK = 0
 function GM:PlayerThink(client)
     local curTime = CurTime()
-    if ( !IsValid(client) or client:Team() == 0 ) then return end
+    if ( type(client) != "Player" or client:Team() == 0 ) then return end
 
     local hungerTime = tonumber(impulse.Config.HungerTime) or 120
     local hungerHealTime = tonumber(impulse.Config.HungerHealTime) or 10

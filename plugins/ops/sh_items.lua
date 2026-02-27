@@ -347,7 +347,7 @@ local giveItemCommand = {
         query:Select("id")
         query:Where("steamid", steamid)
         query:Callback(function(result)
-            if !IsValid(client) then return end
+            if type(client) != "Player" then return end
 
             if !result or #result < 1 then
                 return client:Notify("This Steam account has not joined the server yet or the SteamID64 is invalid.")

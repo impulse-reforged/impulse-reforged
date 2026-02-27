@@ -405,7 +405,7 @@ function GM:HUDPaint()
         surface.SetDrawColor(color_white)
 
         local weapon = client:GetActiveWeapon()
-        if ( IsValid(weapon) ) then
+        if ( type(weapon) == "Weapon" ) then
             if ( weapon:GetMaxClip1() != -1 ) then
                 surface.SetDrawColor(darkCol)
                 surface.DrawRect(scrW-70, scrH-45, 70, 30)

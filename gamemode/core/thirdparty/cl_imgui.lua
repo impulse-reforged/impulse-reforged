@@ -15,7 +15,7 @@ imgui.skin = {
 
 local devCvar = GetConVar("developer")
 function imgui.IsDeveloperMode()
-    return not imgui.DisableDeveloperMode and devCvar:GetInt() > 0
+    return !imgui.DisableDeveloperMode and devCvar:GetInt() > 0
 end
 
 local _devMode = false -- cached local variable updated once in a while
@@ -32,7 +32,7 @@ local function shouldAcceptInput()
     -- don't process input during non-main renderpass
     if render.GetRenderTarget() != nil then return false end
 
-    -- don't process input if we're doing VGUI stuff (and not in context menu)
+    -- don't process input if we're doing VGUI stuff (and !in context menu)
     if vgui.CursorVisible() and vgui.GetHoveredPanel() != g_ContextMenu then return false end
 
     return true
@@ -42,19 +42,18 @@ imgui.Hook("PreRender", "Input", function()
     -- calculate mouse state
     if shouldAcceptInput() then
         local useBind = input.LookupBinding("+use", true)
-        local attackBind = input.LookupBinding("+attack", true)
         local USE = useBind and input.GetKeyCode(useBind)
-        local ATTACK = attackBind and input.GetKeyCode(attackBind)
 
         local wasPressing = gState.pressing
         gState.pressing = USE and input.IsButtonDown(USE)
-        gState.pressed = not wasPressing and gState.pressing
+        gState.pressed = !wasPressing and gState.pressing
     end
 end)
 
 hook.Add("NotifyShouldTransmit", "IMGUI / ClearRenderBounds", function(ent, shouldTransmit)
-    if shouldTransmit and ent._imguiRBExpansion then
-        ent._imguiRBExpansion = nil
+    local entTable = ent and ent:GetTable() or nil
+    if shouldTransmit and entTable and entTable._imguiRBExpansion then
+        entTable._imguiRBExpansion = nil
     end
 end)
 
@@ -171,13 +170,13 @@ function imgui.Start3D2D(pos, angles, scale, distanceHide, distanceFadeStart)
             gState.mx = nil
             gState.my = nil
 
-            if _devMode then gState._devInputBlocker = "not looking at plane" end
+            if _devMode then gState._devInputBlocker = "!looking at plane" end
         end
     else
         gState.mx = nil
         gState.my = nil
 
-        if _devMode then gState._devInputBlocker = "not hovering world" end
+        if _devMode then gState._devInputBlocker = "!hovering world" end
     end
 
     if _devMode then gState._renderStarted = SysTime() end
@@ -217,7 +216,7 @@ end
 function imgui.ExpandRenderBoundsFromRect(x, y, w, h)
     local ent = gState.entity
     if IsValid(ent) then
-        -- make sure we're not applying same expansion twice
+        -- make sure we're !applying same expansion twice
         local expansion = ent._imguiRBExpansion
         if expansion then
             local ex, ey, ew, eh = unpack(expansion)
@@ -234,7 +233,7 @@ function imgui.ExpandRenderBoundsFromRect(x, y, w, h)
         ent._imguiRBExpansion = {x, y, w, h}
     else
         if _devMode then
-            print("[IMGUI] Attempted to update renderbounds when entity is not valid!! ", debug.traceback())
+            print("[IMGUI] Attempted to update renderbounds when entity is !valid!! ", debug.traceback())
         end
     end
 end
@@ -389,7 +388,7 @@ function imgui.xFont(font, defaultSize)
             return existingGFont
         end
 
-        -- Font not cached; parse the font
+        -- Font !cached; parse the font
         local name, size = font:match("!([^@]+)@(.+)")
         if size then size = tonumber(size) end
 

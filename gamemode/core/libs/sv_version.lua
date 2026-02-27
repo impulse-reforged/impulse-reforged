@@ -52,7 +52,7 @@ end)
 
 -- When a player joins, send them the current version
 hook.Add("PlayerInitialSpawn", "impulse.Version", function(client)
-    if ( !IsValid(client) ) then return end
+    if ( type(client) != "Player" ) then return end
 
     BroadcastVersion(impulse.Version, client)
 end)

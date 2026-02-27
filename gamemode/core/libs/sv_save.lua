@@ -72,7 +72,7 @@ function impulse.Save:Load()
 end
 
 concommand.Add("impulse_save_all", function(client, cmd, args)
-    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+    if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
     local savedEnts = {}
 
@@ -123,7 +123,7 @@ concommand.Add("impulse_save_all", function(client, cmd, args)
 end, nil, "Saves all marked entities.", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
 concommand.Add("impulse_save_reload", function(client)
-    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+    if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
     for k, v in ents.Iterator() do
         if ( v.impulseSaveEnt ) then
@@ -137,7 +137,7 @@ concommand.Add("impulse_save_reload", function(client)
 end, nil, "Reloads all saved entities.", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
 concommand.Add("impulse_save_mark", function(client)
-    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+    if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
     local ent = client:GetEyeTrace().Entity
     if ( !IsValid(ent) ) then
@@ -149,7 +149,7 @@ concommand.Add("impulse_save_mark", function(client)
 end, nil, "Marks an entity for saving.", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
 concommand.Add("impulse_save_unmark", function(client)
-    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+    if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
     local ent = client:GetEyeTrace().Entity
     if ( !IsValid(ent) ) then
@@ -161,7 +161,7 @@ concommand.Add("impulse_save_unmark", function(client)
 end, nil, "Unmarks an entity for saving.", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
 concommand.Add("impulse_save_set_keyvalue", function(client, cmd, args)
-    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+    if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
     local ent = client:GetEyeTrace().Entity
     if ( !IsValid(ent) ) then
@@ -192,7 +192,7 @@ concommand.Add("impulse_save_set_keyvalue", function(client, cmd, args)
 end, nil, "Sets a keyvalue on a save marked entity.", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
 concommand.Add("impulse_save_print_keyvalues", function(client)
-    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+    if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
     local ent = client:GetEyeTrace().Entity
     if ( !IsValid(ent) ) then
@@ -224,7 +224,7 @@ impulse_save_wipe - Wipes the save file for the current map.
 If you need further help, please contact a developer.]]
 
 concommand.Add("impulse_save_help", function(client)
-    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+    if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
     for k, v in pairs(string.Explode("\n", help)) do
         client:AddChatText(v)
@@ -233,7 +233,7 @@ concommand.Add("impulse_save_help", function(client)
 end, nil, "Shows save system help.", FCVAR_CLIENTCMD_CAN_EXECUTE)
 
 concommand.Add("impulse_save_wipe", function(client)
-    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+    if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
     local map = string.lower(game.GetMap())
     file.Delete("impulse-reforged/saves/" .. map .. ".json")

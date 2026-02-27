@@ -61,7 +61,7 @@ function GM:PlayerStartVoice(client)
         return
     end
 
-    if !IsValid(client) then return end
+    if type(client) != "Player" then return end
     local pnl = g_VoicePanelList:Add("VoiceNotify")
     pnl:Setup(client)
     PlayerVoicePanels[client] = pnl

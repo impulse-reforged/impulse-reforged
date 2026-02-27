@@ -46,7 +46,7 @@ function impulse.Ops.AutoMod.Ban(client, reason, risk, details)
         }
     }
 
-    if IsValid(client) then
+    if type(client) == "Player" then
         client:Kick("Automatic punishment issued")
     end
 

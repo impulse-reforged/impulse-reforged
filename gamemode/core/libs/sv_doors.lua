@@ -200,7 +200,7 @@ function PLAYER:RemoveDoorUser(door)
 end
 
 concommand.Add("impulse_door_buyable_set", function(client, cmd, args)
-    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+    if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
     local trace = {}
     trace.start = client:EyePos()
@@ -228,7 +228,7 @@ concommand.Add("impulse_door_buyable_set", function(client, cmd, args)
 end)
 
 concommand.Add("impulse_door_buyable_toggle", function(client, cmd, args)
-    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+    if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
     local trace = {}
     trace.start = client:EyePos()
@@ -252,7 +252,7 @@ concommand.Add("impulse_door_buyable_toggle", function(client, cmd, args)
 end)
 
 concommand.Add("impulse_door_buyable_set_all", function(client, cmd, args)
-    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+    if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
     local buyable = tostring(args[1] or "1") == "1"
     local affected = 0
@@ -268,7 +268,7 @@ concommand.Add("impulse_door_buyable_set_all", function(client, cmd, args)
         end
     end
 
-    if ( IsValid(client) ) then
+    if ( type(client) == "Player" ) then
         client:Notify(string.format("You have set all doors to be %s (%d were affected).", buyable and "buyable" or "not buyable", affected))
     end
 
@@ -276,7 +276,7 @@ concommand.Add("impulse_door_buyable_set_all", function(client, cmd, args)
 end)
 
 concommand.Add("impulse_door_group_set", function(client, cmd, args)
-    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+    if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
     local trace = {}
     trace.start = client:EyePos()
@@ -299,7 +299,7 @@ concommand.Add("impulse_door_group_set", function(client, cmd, args)
 end)
 
 concommand.Add("impulse_door_group_set_all", function(client, cmd, args)
-    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+    if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
     local groupID = tonumber(args[1] or "0")
     local affected = 0
@@ -315,7 +315,7 @@ concommand.Add("impulse_door_group_set_all", function(client, cmd, args)
         end
     end
 
-    if ( IsValid(client) ) then
+    if ( type(client) == "Player" ) then
         client:Notify(string.format("You have set all doors to group %s (%d were affected).", tostring(groupID), affected))
     end
 
@@ -323,7 +323,7 @@ concommand.Add("impulse_door_group_set_all", function(client, cmd, args)
 end)
 
 concommand.Add("impulse_door_name_set", function(client, cmd, args)
-    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+    if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
     local trace = {}
     trace.start = client:EyePos()
@@ -345,7 +345,7 @@ concommand.Add("impulse_door_name_set", function(client, cmd, args)
 end)
 
 concommand.Add("impulse_door_name_set_all", function(client, cmd, args)
-    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+    if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
     local name = tostring(args[1] or "")
     local affected = 0
@@ -360,7 +360,7 @@ concommand.Add("impulse_door_name_set_all", function(client, cmd, args)
         end
     end
 
-    if ( IsValid(client) ) then
+    if ( type(client) == "Player" ) then
         client:Notify(string.format("You have set all doors name to '%s' (%d were affected).", name, affected))
     end
 
@@ -368,7 +368,7 @@ concommand.Add("impulse_door_name_set_all", function(client, cmd, args)
 end)
 
 concommand.Add("impulse_door_reset_all", function(client, cmd, args)
-    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+    if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
     local affected = 0
 
@@ -383,7 +383,7 @@ concommand.Add("impulse_door_reset_all", function(client, cmd, args)
         end
     end
 
-    if ( IsValid(client) ) then
+    if ( type(client) == "Player" ) then
         client:Notify(string.format("You have reset all doors (%d were affected).", affected))
     end
 
@@ -391,21 +391,21 @@ concommand.Add("impulse_door_reset_all", function(client, cmd, args)
 end)
 
 concommand.Add("impulse_door_save", function(client, cmd, args)
-    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+    if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
     impulse.Doors:Save()
 
-    if ( IsValid(client) ) then
+    if ( type(client) == "Player" ) then
         client:Notify("Door data saved.")
     end
 end)
 
 concommand.Add("impulse_door_load", function(client, cmd, args)
-    if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+    if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
     impulse.Doors:Load()
 
-    if ( IsValid(client) ) then
+    if ( type(client) == "Player" ) then
         client:Notify("Door data loaded.")
     end
 end)

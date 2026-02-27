@@ -268,7 +268,7 @@ local advertCommand = {
 
 
         timer.Simple(15, function()
-            if IsValid(client) and client:IsPlayer() then
+            if type(client) == "Player" and client:IsPlayer() then
                 for v, k in player.Iterator() do
                     k:SendChatClassMessage(12, rawText, client)
                 end

@@ -443,8 +443,8 @@ function GM:TranslateActivity(client, act)
     local weapon = client.GetActiveWeapon(client)
 
     if class == "player" then
-        if IsValid(weapon) and !client.IsWeaponRaised(client) and client.OnGround(client) then
-            local holdType = IsValid(weapon) and (weapon.HoldType or weapon.GetHoldType(weapon)) or "normal"
+        if type(weapon) == "Weapon" and !client.IsWeaponRaised(client) and client.OnGround(client) then
+            local holdType = type(weapon) == "Weapon" and (weapon.HoldType or weapon.GetHoldType(weapon)) or "normal"
             if !client.IsWeaponRaised(client) and client.OnGround(client) then
                 holdType = PLAYER_HOLDTYPE_TRANSLATOR[holdType] or "passive"
 
@@ -501,7 +501,7 @@ function GM:TranslateActivity(client, act)
         elseif client.OnGround(client) then
             client.ManipulateBonePosition(client, 0, vector_origin)
 
-            if IsValid(weapon) then
+            if type(weapon) == "Weapon" then
                 subClass = weapon.HoldType or weapon.GetHoldType(weapon)
                 subClass = HOLDTYPE_TRANSLATOR[subClass] or subClass
             end
@@ -550,7 +550,7 @@ function GM:DoAnimationEvent(client, event, data)
     else
         local weapon = client:GetActiveWeapon()
 
-        if IsValid(weapon) then
+        if type(weapon) == "Weapon" then
             local holdType = weapon.HoldType or weapon:GetHoldType()
             holdType = HOLDTYPE_TRANSLATOR[holdType] or holdType
 
@@ -653,7 +653,7 @@ end
 
 function PLAYER:IsWeaponRaised()
     local weapon = self:GetActiveWeapon()
-    if ( IsValid(weapon) ) then
+    if ( type(weapon) == "Weapon" ) then
         if ( weapon.IsAlwaysRaised or ALWAYS_RAISED[weapon.GetClass(weapon)] ) then
             return true
         elseif ( weapon.IsAlwaysLowered ) then
@@ -671,7 +671,7 @@ if ( SERVER ) then
         self:SetRelay("weaponRaised", state)
 
         local weapon = self:GetActiveWeapon()
-        if ( IsValid(weapon) ) then
+        if ( type(weapon) == "Weapon" ) then
             weapon:SetNextPrimaryFire(CurTime() + 1)
             weapon:SetNextSecondaryFire(CurTime() + 1)
 

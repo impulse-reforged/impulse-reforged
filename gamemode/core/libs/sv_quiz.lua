@@ -178,7 +178,7 @@ function impulse.Quiz:ApplyFailureAction(client, score, total)
             client:Kick(reason)
         end
 
-        if ( IsValid(client) ) then
+        if ( type(client) == "Player" ) then
             client:Kick(reason)
         end
 
@@ -233,7 +233,7 @@ net.Receive("impulseQuizEntrySubmit", function(len, client)
     else
         -- Apply failure action
         timer.Simple(3, function()
-            if IsValid(client) then
+            if type(client) == "Player" then
                 impulse.Quiz:ApplyFailureAction(client, score, total)
             end
         end)
@@ -247,7 +247,7 @@ hook.Add("PlayerInitialSpawn", "impulseQuizCheck", function(client)
     -- Data will be loaded by the framework's existing systems
     -- We just need to wait for it
     timer.Simple(1, function()
-        if !IsValid(client) then return end
+        if type(client) != "Player" then return end
 
         if !impulse.Quiz:HasPassed(client) then
             print("[Quiz] " .. client:Nick() .. " needs to complete the quiz")

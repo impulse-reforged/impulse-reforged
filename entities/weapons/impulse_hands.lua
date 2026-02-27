@@ -263,7 +263,7 @@ function SWEP:AllowEntityDrop()
     local client = self:GetOwner()
     local ent = self.CarryHack
 
-    if !IsValid(client) or !IsValid(ent) then return false end
+    if type(client) != "Player" or !IsValid(ent) then return false end
 
     local ground = client:GetGroundEntity()
     if ground and (ground:IsWorld() or IsValid(ground)) then return true end
@@ -442,10 +442,10 @@ function SWEP:AllowPickup(target)
     local phys = target:GetPhysicsObject()
     local client = self:GetOwner()
 
-    if IsValid(phys) and IsValid(client) and target:GetClass() == "func_physbox" then return false end
+    if IsValid(phys) and type(client) == "Player" and target:GetClass() == "func_physbox" then return false end
 
     return (
-            IsValid(phys) and IsValid(client) and
+            IsValid(phys) and type(client) == "Player" and
             (not phys:HasGameFlag(FVPHYSICS_NO_PLAYER_PICKUP)) and
             phys:GetMass() <= CARRY_WEIGHT_LIMIT and
             (not IsPlayerStandsOn(target)) and

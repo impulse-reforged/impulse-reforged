@@ -32,7 +32,7 @@ net.Receive("impulseOpsEMPushSequence", function(len, client)
 
     print("[ops-em] Finished pull of " .. seqName .. ". Ready to play sequence!")
 
-    if IsValid(client) then
+    if type(client) == "Player" then
         client:Notify("Sequence push has been completed successfully.")
     end
 end)
@@ -89,7 +89,7 @@ net.Receive("impulseOpsEMIntroCookie", function(len, client)
     client:AllowScenePVSControl(true)
 
     timer.Simple(900, function()
-        if IsValid(client) then
+        if type(client) == "Player" then
             client:AllowScenePVSControl(false)
         end
     end)

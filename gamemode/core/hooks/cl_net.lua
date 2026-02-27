@@ -624,7 +624,7 @@ end)
 
 net.Receive("impulsePlayGesture", function()
     local client = net.ReadPlayer()
-    if ( !IsValid(client) ) then return end
+    if ( type(client) != "Player" ) then return end
 
     local gesture = net.ReadString()
     local slot = net.ReadInt(16)

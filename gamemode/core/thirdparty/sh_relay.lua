@@ -47,7 +47,7 @@ function ENTITY:SetRelay(name, value, bNoNetworking, recipients)
     end
 
     local index = tostring(self:EntIndex())
-    if ( self:IsPlayer() ) then
+    if ( type(self) == "Player" ) then
         index = self:SteamID64()
     end
 
@@ -79,7 +79,7 @@ function ENTITY:GetRelay(name, fallback)
     if ( !isstring(name) ) then return fallback end
 
     local index = tostring(self:EntIndex())
-    if ( self:IsPlayer() ) then
+    if ( type(self) == "Player" ) then
         index = self:SteamID64()
     end
 
@@ -99,7 +99,7 @@ end
 -- @usage local data = entity:GetAllRelayData()
 function ENTITY:GetAllRelayData()
     local index = tostring(self:EntIndex())
-    if ( self:IsPlayer() ) then
+    if ( type(self) == "Player" ) then
         index = self:SteamID64()
     end
 
@@ -160,14 +160,11 @@ function GetRelay(name, fallback)
     return fallback
 end
 
--- Clean up existing hook to prevent duplicates on reload
-hook.Remove("EntityRemoved", "impulse.Relay.CleanUp")
-
 hook.Add("EntityRemoved", "impulse.Relay.CleanUp", function(ent, fullUpdate)
     if ( fullUpdate ) then return end
 
     local index = tostring(ent:EntIndex())
-    if ( ent:IsPlayer() ) then
+    if ( type(ent) == "Player" ) then
         index = ent:SteamID64()
     end
 
@@ -181,7 +178,7 @@ end)
 
 hook.Add("PlayerInitialSpawn", "impulse.Relay.SyncData", function(client)
     timer.Simple(5, function()
-        if ( !IsValid(client) ) then return end
+        if ( type(client) != "Player" ) then return end
         impulse.Relay:Sync(client)
     end)
 end)

@@ -188,7 +188,7 @@ end
 
 function impulse.Util:PlayGesture(client, gesture, slot)
     if ( !client ) then client = LocalPlayer() end
-    if ( !IsValid(client) ) then return end
+    if ( type(client) != "Player" ) then return end
 
     if ( !slot ) then slot = GESTURE_SLOT_CUSTOM end
 

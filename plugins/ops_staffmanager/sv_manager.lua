@@ -59,7 +59,7 @@ local CACHED_DATA = CACHED_DATA or {}
 function impulse.Ops.SM.Open(client)
     if NEXT_CHECK < CurTime() then
         CalculateData(function(data)
-            if IsValid(client) then
+            if type(client) == "Player" then
                 local data = pon.encode(data)
                 CACHED_DATA = data
 

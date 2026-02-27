@@ -4,7 +4,7 @@ properties.Add("impulse_save_mark", {
     MenuIcon = "icon16/arrow_up.png",
     Filter = function(self, ent, client)
         if ( !IsValid(ent) ) then return false end
-        if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+        if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
         return true
     end,
@@ -29,7 +29,7 @@ properties.Add("impulse_save_unmark", {
     MenuIcon = "icon16/arrow_down.png",
     Filter = function(self, ent, client)
         if ( !IsValid(ent) ) then return false end
-        if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+        if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
         return true
     end,
@@ -54,7 +54,7 @@ properties.Add("impulse_save_keyvalue", {
     MenuIcon = "icon16/tag_blue_add.png",
     Filter = function(self, ent, client)
         if ( !IsValid(ent) ) then return false end
-        if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+        if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
         return true
     end,
@@ -116,7 +116,7 @@ properties.Add("impulse_save_printkeyvalues", {
     MenuIcon = "icon16/tag_blue.png",
     Filter = function(self, ent, client)
         if ( !IsValid(ent) ) then return false end
-        if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+        if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
         return true
     end,
@@ -148,7 +148,7 @@ properties.Add("impulse_save_all", {
     MenuIcon = "icon16/disk.png",
     Filter = function(self, ent, client)
         if ( !IsValid(ent) ) then return false end
-        if ( IsValid(client) and !client:IsSuperAdmin() ) then return end
+        if ( type(client) == "Player" and !client:IsSuperAdmin() ) then return end
 
         return true
     end,

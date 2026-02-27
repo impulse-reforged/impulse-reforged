@@ -244,7 +244,7 @@ function impulse.Database:PrintAllPlayers()
 end
 
 concommand.Add("impulse_players_printall", function(client)
-    if ( !IsValid(client) or !client:IsSuperAdmin() ) then return end
+    if ( type(client) != "Player" or !client:IsSuperAdmin() ) then return end
 
     impulse.Database:PrintAllPlayers()
 end)
@@ -258,7 +258,7 @@ local resetCalled = 0
 
 concommand.Add("impulse_database_reset", function(client, cmd, arguments)
     -- can only be ran through the server's console
-    if ( !IsValid(client) or client:IsListenServerHost() ) then
+    if ( type(client) != "Player" or client:IsListenServerHost() ) then
         if ( resetCalled < RealTime() ) then
             resetCalled = RealTime() + 3
 

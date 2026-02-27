@@ -194,7 +194,7 @@ end
 
 -- Get badges for a specific player (returns sorted by priority)
 function impulse.GetPlayerBadges(client)
-    if !IsValid(client) then return {} end
+    if type(client) != "Player" then return {} end
 
     local badges = {}
 
@@ -219,7 +219,7 @@ end
 
 -- Check if a player has a specific badge
 function impulse.PlayerHasBadge(client, badgeID)
-    if !IsValid(client) or !impulse.Badges[badgeID] then
+    if type(client) != "Player" or !impulse.Badges[badgeID] then
         return false
     end
 

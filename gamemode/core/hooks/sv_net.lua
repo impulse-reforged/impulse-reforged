@@ -159,7 +159,7 @@ net.Receive("impulseCharacterCreate", function(len, client)
         insertQuery:Update("playtime", 0)
         insertQuery:Where("steamid", clientSteamID64)
         insertQuery:Callback(function(result, status, lastID)
-            if IsValid(client) then
+            if type(client) == "Player" then
                 local setupData = {
                     id = lastID,
                     rpname = charName,
@@ -212,7 +212,7 @@ net.Receive("impulseScenePVS", function(len, client)
         end
 
         timer.Simple(1.33, function()
-            if !IsValid(client) then return end
+            if type(client) != "Player" then return end
 
             if last == 1 then
                 client.extraPVS2 = nil
@@ -1110,8 +1110,8 @@ net.Receive("impulseMixTry", function(len, client)
 
     for v, k in pairs(sounds) do
         timer.Simple(k[1], function()
-            if !IsValid(client) or !IsValid(benchEnt) or !client:Alive() or client:GetRelay("arrested", false) or client.CraftFail or benchEnt:GetPos():DistToSqr(client:GetPos()) > (120 ^ 2) then
-                if IsValid(client) then
+            if type(client) != "Player" or !IsValid(benchEnt) or !client:Alive() or client:GetRelay("arrested", false) or client.CraftFail or benchEnt:GetPos():DistToSqr(client:GetPos()) > (120 ^ 2) then
+                if type(client) == "Player" then
                     client.CraftFail = true
                 end
 
@@ -1137,7 +1137,7 @@ net.Receive("impulseMixTry", function(len, client)
         end
 
         local can, reason = client:CanMakeMix(mixClass)
-        if IsValid(client) and client:Alive() and IsValid(benchEnt) then
+        if type(client) == "Player" and client:Alive() and IsValid(benchEnt) then
             if !can then
                 client.CraftFail = true
                 if reason then
@@ -1930,7 +1930,7 @@ net.Receive("impulseGroupDoCreate", function(len, client)
     local slots = client:IsDonator() and impulse.Config.GroupMaxMembersVIP or impulse.Config.GroupMaxMembers
 
     impulse.Group:Create(name, client.impulseID, slots, 30, nil, function(groupid)
-        if !IsValid(client) then return end
+        if type(client) != "Player" then return end
 
         if !groupid then
             return client:Notify("This group name is already in use.")
@@ -1939,7 +1939,7 @@ net.Receive("impulseGroupDoCreate", function(len, client)
         client:TakeMoney(impulse.Config.GroupMakeCost)
 
         impulse.Group:AddPlayer(client:SteamID64(), groupid, "Owner", function()
-            if !IsValid(client) then return end
+            if type(client) != "Player" then return end
 
             client:GroupLoad(groupid, "Owner")
             client:Notify("You have created a new group called " .. name .. ".")

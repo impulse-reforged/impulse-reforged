@@ -192,7 +192,7 @@ impulse.Settings:Define("chat_pmpings", {name = "PM and tag sound enabled", cate
 
 local loweredAngles = Angle(30, -30, -25)
 function GM:CalcViewModelView(weapon, viewmodel, oldEyePos, oldEyeAng, eyePos, eyeAngles)
-    if ( !IsValid(weapon) ) then return end
+    if ( type(weapon) != "Weapon" ) then return end
 
     local vm_origin, vm_angles = eyePos, eyeAngles
 
@@ -507,7 +507,7 @@ local blockNormalTabs = {
 
 function GM:PostReloadToolsMenu()
     local client = LocalPlayer()
-    if ( !IsValid(client) or client:Team() == 0 ) then return end
+    if ( type(client) != "Player" or client:Team() == 0 ) then return end
 
     local spawnMenu = g_SpawnMenu
     if ( spawnMenu ) then

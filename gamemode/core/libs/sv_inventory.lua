@@ -63,7 +63,7 @@ function impulse.Inventory:PrintAll()
 end
 
 concommand.Add("impulse_inventory_printall", function(client)
-    if ( !IsValid(client) or !client:IsSuperAdmin() ) then return end
+    if ( type(client) != "Player" or !client:IsSuperAdmin() ) then return end
 
     impulse.Inventory:PrintAll()
 end)
@@ -302,7 +302,7 @@ end
 -- @entity container Container entity
 -- @player client User
 function impulse.Inventory:ContainerAddUser(container, client)
-    if ( !IsValid(client) ) then return end
+    if ( type(client) != "Player" ) then return end
 
     container.Users = container.Users or {}
     container.Users[client] = true
@@ -321,7 +321,7 @@ function impulse.Inventory:ContainerRemoveUser(container, client)
         container.Users[client] = nil
     end
 
-    if ( IsValid(client) ) then
+    if ( type(client) == "Player" ) then
         client.currentContainer = nil
     end
 end
@@ -388,7 +388,7 @@ end
 -- @player client Dead player
 -- @entity ragdoll Player ragdoll
 function impulse.Inventory:CreateRagdollContainer(client, ragdoll)
-    if ( !IsValid(client) or !IsValid(ragdoll) ) then return end
+    if ( type(client) != "Player" or !IsValid(ragdoll) ) then return end
 
     self:AttachContainerMethods(ragdoll)
 
@@ -421,7 +421,7 @@ end
 -- @player client Dead player
 -- @entity killer Killer entity
 function impulse.Inventory:DropDeathItems(client, killer)
-    if ( !IsValid(client) ) then return end
+    if ( type(client) != "Player" ) then return end
 
     local inv = client:GetInventory()
     local restorePoint = {}
@@ -460,7 +460,7 @@ end
 -- @player client Dead player
 -- @entity ragdoll Player ragdoll
 function impulse.Inventory:HandlePlayerDeathItems(client, ragdoll)
-    if ( !IsValid(client) or !IsValid(ragdoll) ) then return end
+    if ( type(client) != "Player" or !IsValid(ragdoll) ) then return end
 
     local clientTable = client:GetTable()
     if ( !clientTable.impulseBeenInventorySetup ) then return end
@@ -494,7 +494,7 @@ end
 -- @entity entity Candidate ragdoll
 -- @treturn bool|nil True when opened, false when blocked, nil when not a ragdoll container
 function impulse.Inventory:TryOpenRagdollContainer(client, entity)
-    if ( !IsValid(client) or !self:IsRagdollContainer(entity) ) then
+    if ( type(client) != "Player" or !self:IsRagdollContainer(entity) ) then
         return nil
     end
 
@@ -520,7 +520,7 @@ function PLAYER:HandleDeathItems(ragdoll)
 end
 
 local function ShouldPersistInventory(client)
-    return IsValid(client) and !client:IsBot()
+    return type(client) == "Player" and !client:IsBot()
 end
 
 --- Gets a players inventory table
