@@ -58,13 +58,25 @@ function PANEL:SetupItems(invscroll, storescroll)
     local invertSort = true
 
     for v, k in pairs(localInv) do -- fix for fucking table.sort desyncing client/server itemids!!!!!!!
+        if !istable(k) then
+            localInv[v] = nil
+            continue
+        end
+
+        local itemData, itemNetID = impulse.Inventory:ResolveItem(k)
+        if !itemData or !itemNetID then
+            localInv[v] = nil
+            continue
+        end
+
+        k._itemNetID = itemNetID
         k.realKey = v
 
         if sortMethod == "Always" or sortMethod == "Containers only" then
-            reccurTemp[k.id] = (reccurTemp[k.id] or 0) + (impulse.Inventory.Items[k.id].Weight or 0)
-            k.sortWeight = reccurTemp[k.id]
+            reccurTemp[itemNetID] = (reccurTemp[itemNetID] or 0) + (itemData.Weight or 0)
+            k.sortWeight = reccurTemp[itemNetID]
         else
-            k.sortWeight = impulse.Inventory.Items[k.id].Name
+            k.sortWeight = itemData.Name or ""
             invertSort = false
         end
     end
@@ -72,23 +84,37 @@ function PANEL:SetupItems(invscroll, storescroll)
     local reccurTemp = {}
 
     for v, k in pairs(localInvStorage) do
+        if !istable(k) then
+            localInvStorage[v] = nil
+            continue
+        end
+
+        local itemData, itemNetID = impulse.Inventory:ResolveItem(k)
+        if !itemData or !itemNetID then
+            localInvStorage[v] = nil
+            continue
+        end
+
+        k._itemNetID = itemNetID
         k.realKey = v
 
         if sortMethod == "Always" or sortMethod == "Containers only" then
-            reccurTemp[k.id] = (reccurTemp[k.id] or 0) + (impulse.Inventory.Items[k.id].Weight or 0)
-            k.sortWeight = reccurTemp[k.id]
+            reccurTemp[itemNetID] = (reccurTemp[itemNetID] or 0) + (itemData.Weight or 0)
+            k.sortWeight = reccurTemp[itemNetID]
         else
-            k.sortWeight = impulse.Inventory.Items[k.id].Name
+            k.sortWeight = itemData.Name or ""
             invertSort = false
         end
     end
 
     if localInv and table.Count(localInv) > 0 then
         for v, k in SortedPairsByMemberValue(localInv, "sortWeight", invertSort) do
-            local otherItem = self.items[k.id]
-            local itemX = impulse.Inventory.Items[k.id]
+            local itemNetID = k._itemNetID or impulse.Inventory:ResolveItemNetID(k)
+            local otherItem = itemNetID and self.items[itemNetID]
+            local itemX = itemNetID and impulse.Inventory.Items[itemNetID]
+            if !itemX or !itemNetID then continue end
 
-            if itemX.CanStack and otherItem then
+            if impulse.Inventory:ShouldStackItem(itemX) and otherItem then
                 otherItem.Count = (otherItem.Count or 1) + 1
             else
                 local item = self.invScroll:Add("impulseInventoryItem")
@@ -99,7 +125,7 @@ function PANEL:SetupItems(invscroll, storescroll)
                 item:SetItem(k, w)
                 item.InvID = k.realKey
                 item.InvPanel = self
-                self.items[k.id] = item
+                self.items[itemNetID] = item
             end
 
             invWeight = invWeight + (itemX.Weight or 0)
@@ -114,10 +140,12 @@ function PANEL:SetupItems(invscroll, storescroll)
 
     if localInvStorage and table.Count(localInvStorage) > 0 then
         for v, k in SortedPairsByMemberValue(localInvStorage, "sortWeight", invertSort) do
-            local otherItem = self.itemsStorage[k.id]
-            local itemX = impulse.Inventory.Items[k.id]
+            local itemNetID = k._itemNetID or impulse.Inventory:ResolveItemNetID(k)
+            local otherItem = itemNetID and self.itemsStorage[itemNetID]
+            local itemX = itemNetID and impulse.Inventory.Items[itemNetID]
+            if !itemX or !itemNetID then continue end
 
-            if itemX.CanStack and otherItem then
+            if impulse.Inventory:ShouldStackItem(itemX) and otherItem then
                 otherItem.Count = (otherItem.Count or 1) + 1
             else
                 local item = self.invStorageScroll:Add("impulseInventoryItem")
@@ -128,7 +156,7 @@ function PANEL:SetupItems(invscroll, storescroll)
                 item:SetItem(k, w)
                 item.InvID = k.realKey
                 item.InvPanel = self
-                self.itemsStorage[k.id] = item
+                self.itemsStorage[itemNetID] = item
             end
 
             storageWeight = storageWeight + (itemX.Weight or 0)

@@ -113,13 +113,13 @@ function PANEL:SetupItems(width, height)
     local localInv = table.Copy(impulse.Inventory.Data[0][INVENTORY_PLAYER]) or {}
     if localInv and table.Count(localInv) > 0 then
         for v, k in pairs(localInv) do
-            local itemData = impulse.Inventory.Items[k.id]
+            local itemData, itemNetID = impulse.Inventory:ResolveItem(k)
             if !itemData then continue end
 
-            local otherItem = self.items[k.id]
+            local otherItem = self.items[itemNetID]
             local itemX = itemData
 
-            if itemX.CanStack and otherItem then
+            if impulse.Inventory:ShouldStackItem(itemX) and otherItem then
                 otherItem.Count = (otherItem.Count or 1) + 1
             else
                 local item = self.invScroll:Add("impulseInventoryItem")
@@ -128,7 +128,7 @@ function PANEL:SetupItems(width, height)
                 item:SetItem(k, width)
                 item.InvID = v
                 item.InvPanel = self
-                self.items[k.id] = item
+                self.items[itemNetID] = item
                 self.itemsPanels[v] = item
             end
 

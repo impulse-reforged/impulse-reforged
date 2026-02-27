@@ -35,12 +35,9 @@ end
 
 function PANEL:SetItem(itemNet, wide)
     local itemData = itemNet
-    local itemID
+    local itemID = impulse.Inventory:ResolveItemNetID(itemData)
 
-    if ( istable(itemData) ) then
-        itemID = itemData.id
-    elseif ( isnumber(itemData) ) then
-        itemID = itemData
+    if ( !istable(itemData) ) then
         itemData = {id = itemID}
     end
 
@@ -159,17 +156,14 @@ function PANEL:OnMousePressed(keycode)
     if ( self.Disabled ) then return end
 
     if ( self.ContainerType or self.ContainerInv ) then
-        local itemid
-
-        if ( self.Type == 1 ) then
-            itemid = self.InvID
-        else
-            itemid = impulse.Inventory:ClassToNetID(self.Item.UniqueID)
-        end
-
         net.Start("impulseInvContainerDoMove")
-            net.WriteUInt(itemid, 16)
             net.WriteUInt(self.Type, 4)
+
+            if ( self.Type == 1 ) then
+                net.WriteUInt(self.InvID, 16)
+            else
+                net.WriteString(self.InvClass or self.Item.UniqueID)
+            end
         net.SendToServer()
 
         return
@@ -195,7 +189,7 @@ function PANEL:OnMousePressed(keycode)
                 end
 
                 net.Start("impulseInvDoMoveMass")
-                    net.WriteUInt(impulse.Inventory:ClassToNetID(self.Item.UniqueID), 10)
+                    net.WriteString(self.Item.UniqueID)
                     net.WriteUInt(amount, 8)
                     net.WriteUInt(self.Type, 4)
                 net.SendToServer()
