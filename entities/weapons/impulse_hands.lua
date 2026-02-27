@@ -16,7 +16,7 @@ SWEP.ViewModelFOV = 0
 SWEP.ViewModelFlip = false
 SWEP.HoldType = "normal"
 
-SWEP.Spawnable = false
+SWEP.Spawnable = true
 SWEP.AdminSpawnable = true
 SWEP.Primary.ClipSize = -1
 SWEP.Primary.DefaultClip = -1
@@ -330,7 +330,7 @@ end
 function SWEP:CanCarry(ent)
     local phys = ent:GetPhysicsObject()
 
-    if ent.NoCarry then return false end
+    if ent.impulseNoCarry then return false end
 
     if !IsValid(phys) then return false end
 
@@ -473,7 +473,7 @@ function SWEP:DoPickup(throw)
         local ent = trace.Entity
         local phys = trace.Entity:GetPhysicsObject()
 
-        if !IsValid(phys) or !phys:IsMoveable() or phys:HasGameFlag(FVPHYSICS_PLAYER_HELD) or ent.NoCarry then return end
+        if !IsValid(phys) or !phys:IsMoveable() or phys:HasGameFlag(FVPHYSICS_PLAYER_HELD) or ent.impulseNoCarry then return end
 
         -- if the client messes with phys desync will occur
         if ( SERVER ) then
