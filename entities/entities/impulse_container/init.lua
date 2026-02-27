@@ -78,52 +78,19 @@ function ENT:SetCode(code)
 end
 
 function ENT:AddItem(class, amount, noUpdate)
-    local count = 0
-
-    if self.Inventory[class] then
-        count = self.Inventory[class]
-    end
-
-    self.Inventory[class] = count + (amount or 1)
-
-    if !noUpdate then
-        self:UpdateUsers()
-    end
+    return impulse.Inventory:ContainerAddItem(self, class, amount, noUpdate)
 end
 
 function ENT:TakeItem(class, amount, noUpdate)
-    local itemCount = self.Inventory[class]
-    if itemCount then
-        local newCount = itemCount - (amount or 1)
-
-        if newCount < 1 then
-            self.Inventory[class] = nil
-        else
-            self.Inventory[class] = newCount
-        end
-    end
-
-    if !noUpdate then
-        self:UpdateUsers()
-    end
+    return impulse.Inventory:ContainerTakeItem(self, class, amount, noUpdate)
 end
 
 function ENT:GetStorageWeight()
-    local weight = 0
-
-    for k, v in pairs(self.Inventory) do
-        local item = impulse.Inventory.Items[impulse.Inventory:ClassToNetID(k)]
-        weight = weight + ((item.Weight or 0) * v)
-    end
-
-    return weight
+    return impulse.Inventory:ContainerGetWeight(self)
 end
 
-function ENT:CanHoldItem(class)
-    local item = impulse.Inventory.Items[impulse.Inventory:ClassToNetID(class)]
-    local weight = (item.Weight or 0) * (amount or 1)
-
-    return self:GetStorageWeight() + weight <= self:GetCapacity()
+function ENT:CanHoldItem(class, amount)
+    return impulse.Inventory:ContainerCanHoldItem(self, class, amount)
 end
 
 function ENT:AddAuthorised(client)
@@ -131,49 +98,15 @@ function ENT:AddAuthorised(client)
 end
 
 function ENT:AddUser(client)
-    self.Users[client] = true
-
-    net.Start("impulseInvContainerOpen")
-    net.WriteUInt(table.Count(self.Inventory), 8)
-
-    for k, v in pairs(self.Inventory) do
-        local netid = impulse.Inventory:ClassToNetID(k)
-        local amount = v
-
-        net.WriteUInt(netid, 10)
-        net.WriteUInt(amount, 8)
-    end
-
-    net.Send(client)
-
-    client.currentContainer = self
+    return impulse.Inventory:ContainerAddUser(self, client)
 end
 
 function ENT:RemoveUser(client)
-    self.Users[client] = nil
-    client.currentContainer = nil
+    return impulse.Inventory:ContainerRemoveUser(self, client)
 end
 
 function ENT:UpdateUsers()
-    local pos = self:GetPos()
-
-    for k, v in pairs(self.Users) do
-        if IsValid(k) and pos:DistToSqr(k:GetPos()) < (230 ^ 2) then
-            net.Start("impulseInvContainerUpdate")
-            net.WriteUInt(table.Count(self.Inventory), 8)
-
-            for k2,v2 in pairs(self.Inventory) do
-                local netid = impulse.Inventory:ClassToNetID(k2)
-                local amount = v2
-
-                net.WriteUInt(netid, 10)
-                net.WriteUInt(amount, 8)
-            end
-            net.Send(k)
-        else
-            self.Users[k] = nil
-        end
-    end
+    return impulse.Inventory:ContainerUpdateUsers(self)
 end
 
 function ENT:Use(activator, caller)
