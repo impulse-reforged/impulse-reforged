@@ -156,6 +156,70 @@ function impulse.Inventory:ClassToNetID(class)
     return impulse.Inventory.ItemsStored[class]
 end
 
+--- Resolves an item reference to a local item net id.
+-- @realm shared
+-- @param ref Item reference (item table, class string, or net id)
+-- @treturn int|nil Item net id
+function impulse.Inventory:ResolveItemNetID(ref)
+    if ( istable(ref) ) then
+        if ( ref.class ) then
+            local classID = self:ClassToNetID(ref.class)
+            if ( classID and self.Items[classID] ) then
+                return classID
+            end
+        end
+
+        if ( ref.id and self.Items[ref.id] ) then
+            return ref.id
+        end
+
+        return nil
+    end
+
+    if ( isstring(ref) ) then
+        local classID = self:ClassToNetID(ref)
+        if ( classID and self.Items[classID] ) then
+            return classID
+        end
+
+        return nil
+    end
+
+    if ( isnumber(ref) and self.Items[ref] ) then
+        return ref
+    end
+
+    return nil
+end
+
+--- Resolves an item reference to item data and local net id.
+-- @realm shared
+-- @param ref Item reference (item table, class string, or net id)
+-- @treturn table|nil Item data
+-- @treturn int|nil Item net id
+function impulse.Inventory:ResolveItem(ref)
+    local itemID = self:ResolveItemNetID(ref)
+    if ( !itemID ) then
+        return nil, nil
+    end
+
+    return self.Items[itemID], itemID
+end
+
+--- Returns whether an item should visually stack in inventory panels.
+-- @realm shared
+-- @param ref Item reference (item table, class string, or net id)
+-- @treturn bool Should stack
+function impulse.Inventory:ShouldStackItem(ref)
+    local itemData = ref
+
+    if ( !istable(itemData) or !itemData.UniqueID ) then
+        itemData = self:ResolveItem(ref)
+    end
+
+    return ( itemData and itemData.CanStack == true ) or false
+end
+
 --- Used to get the crafting time and the sounds to play
 -- @realm shared
 -- @string class Item class name
