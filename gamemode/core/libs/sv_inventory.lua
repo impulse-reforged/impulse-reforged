@@ -150,7 +150,374 @@ function impulse.Inventory:SpawnBench(class, pos, ang)
     return bench
 end
 
+local CONTAINER_UPDATE_DISTANCE_SQR = (230 ^ 2)
+
+local function ResolveContainerItem(class)
+    local itemID = class
+
+    if ( !isnumber(itemID) ) then
+        itemID = impulse.Inventory:ClassToNetID(class)
+    end
+
+    if ( !itemID ) then
+        return nil, nil
+    end
+
+    return impulse.Inventory.Items[itemID], itemID
+end
+
+--- Builds a validated network payload for a container inventory.
+-- @realm server
+-- @entity container Container entity with `Inventory` table
+-- @treturn table Payload entries
+function impulse.Inventory:BuildContainerPayload(container)
+    local payload = {}
+    local inv = container and container.Inventory
+
+    if ( !istable(inv) ) then
+        return payload
+    end
+
+    for class, amount in pairs(inv) do
+        local itemData, itemID = ResolveContainerItem(class)
+        if ( !itemData or !itemID ) then continue end
+
+        local itemAmount = math.floor(tonumber(amount) or 1)
+        if ( itemAmount < 1 ) then continue end
+
+        payload[#payload + 1] = {
+            id = itemID,
+            amount = itemAmount
+        }
+    end
+
+    return payload
+end
+
+--- Sends a single container inventory snapshot over net.
+-- @realm server
+-- @entity container Container entity
+-- @player target Recipient
+-- @string[opt=impulseInvContainerUpdate] netMsg Message name
+function impulse.Inventory:SendContainerSnapshot(container, target, netMsg)
+    if ( !IsValid(target) ) then return end
+
+    local payload = self:BuildContainerPayload(container)
+
+    net.Start(netMsg or "impulseInvContainerUpdate")
+    net.WriteUInt(#payload, 8)
+
+    for _, entry in ipairs(payload) do
+        net.WriteUInt(entry.id, 10)
+        net.WriteUInt(math.min(entry.amount, 255), 8)
+    end
+
+    net.Send(target)
+end
+
+--- Adds an item to a container table and updates listeners.
+-- @realm server
+-- @entity container Container entity
+-- @string class Item class
+-- @int[opt=1] amount Amount
+-- @bool[opt=false] noUpdate Skip update
+function impulse.Inventory:ContainerAddItem(container, class, amount, noUpdate)
+    container.Inventory = container.Inventory or {}
+    local addAmount = tonumber(amount) or 1
+
+    local count = container.Inventory[class] or 0
+    container.Inventory[class] = count + addAmount
+
+    if ( !noUpdate ) then
+        self:ContainerUpdateUsers(container)
+    end
+end
+
+--- Removes an item from a container table and updates listeners.
+-- @realm server
+-- @entity container Container entity
+-- @string class Item class
+-- @int[opt=1] amount Amount
+-- @bool[opt=false] noUpdate Skip update
+function impulse.Inventory:ContainerTakeItem(container, class, amount, noUpdate)
+    container.Inventory = container.Inventory or {}
+    local takeAmount = tonumber(amount) or 1
+
+    local itemCount = container.Inventory[class]
+    if ( itemCount ) then
+        local newCount = itemCount - takeAmount
+
+        if ( newCount < 1 ) then
+            container.Inventory[class] = nil
+        else
+            container.Inventory[class] = newCount
+        end
+    end
+
+    if ( !noUpdate ) then
+        self:ContainerUpdateUsers(container)
+    end
+end
+
+--- Returns total container weight.
+-- @realm server
+-- @entity container Container entity
+-- @treturn number Weight in kg
+function impulse.Inventory:ContainerGetWeight(container)
+    local weight = 0
+
+    for class, amount in pairs(container.Inventory or {}) do
+        local itemData = ResolveContainerItem(class)
+        if ( !itemData ) then continue end
+
+        weight = weight + ((itemData.Weight or 0) * amount)
+    end
+
+    return weight
+end
+
+--- Checks if a container can hold the specified item amount.
+-- @realm server
+-- @entity container Container entity
+-- @string class Item class
+-- @int[opt=1] amount Amount
+-- @treturn bool Can hold
+function impulse.Inventory:ContainerCanHoldItem(container, class, amount)
+    local itemData = ResolveContainerItem(class)
+    if ( !itemData ) then
+        return false
+    end
+
+    local capacity = impulse.Config.InventoryMaxWeight
+    if ( container.GetCapacity ) then
+        capacity = container:GetCapacity()
+    end
+
+    local weight = (itemData.Weight or 0) * (tonumber(amount) or 1)
+    return self:ContainerGetWeight(container) + weight <= capacity
+end
+
+--- Adds a user to a container and sends full snapshot.
+-- @realm server
+-- @entity container Container entity
+-- @player client User
+function impulse.Inventory:ContainerAddUser(container, client)
+    if ( !IsValid(client) ) then return end
+
+    container.Users = container.Users or {}
+    container.Users[client] = true
+
+    self:SendContainerSnapshot(container, client, "impulseInvContainerOpen")
+
+    client.currentContainer = container
+end
+
+--- Removes a user from a container.
+-- @realm server
+-- @entity container Container entity
+-- @player client User
+function impulse.Inventory:ContainerRemoveUser(container, client)
+    if ( istable(container.Users) ) then
+        container.Users[client] = nil
+    end
+
+    if ( IsValid(client) ) then
+        client.currentContainer = nil
+    end
+end
+
+--- Updates all container listeners in range.
+-- @realm server
+-- @entity container Container entity
+function impulse.Inventory:ContainerUpdateUsers(container)
+    if ( !IsValid(container) ) then return end
+
+    container.Users = container.Users or {}
+
+    local pos = container:GetPos()
+
+    for user, _ in pairs(container.Users) do
+        if ( IsValid(user) and pos:DistToSqr(user:GetPos()) < CONTAINER_UPDATE_DISTANCE_SQR ) then
+            self:SendContainerSnapshot(container, user, "impulseInvContainerUpdate")
+        else
+            self:ContainerRemoveUser(container, user)
+        end
+    end
+end
+
+--- Attaches shared container behavior methods to an entity.
+-- @realm server
+-- @entity container Container entity
+function impulse.Inventory:AttachContainerMethods(container)
+    if ( !IsValid(container) ) then return end
+
+    container.Users = container.Users or {}
+    container.Inventory = container.Inventory or {}
+
+    container.AddItem = function(this, class, amount, noUpdate)
+        return impulse.Inventory:ContainerAddItem(this, class, amount, noUpdate)
+    end
+
+    container.TakeItem = function(this, class, amount, noUpdate)
+        return impulse.Inventory:ContainerTakeItem(this, class, amount, noUpdate)
+    end
+
+    container.GetStorageWeight = function(this)
+        return impulse.Inventory:ContainerGetWeight(this)
+    end
+
+    container.CanHoldItem = function(this, class, amount)
+        return impulse.Inventory:ContainerCanHoldItem(this, class, amount)
+    end
+
+    container.AddUser = function(this, user)
+        return impulse.Inventory:ContainerAddUser(this, user)
+    end
+
+    container.RemoveUser = function(this, user)
+        return impulse.Inventory:ContainerRemoveUser(this, user)
+    end
+
+    container.UpdateUsers = function(this)
+        return impulse.Inventory:ContainerUpdateUsers(this)
+    end
+end
+
+--- Stores player inventory as a container on their ragdoll.
+-- @realm server
+-- @player client Dead player
+-- @entity ragdoll Player ragdoll
+function impulse.Inventory:CreateRagdollContainer(client, ragdoll)
+    if ( !IsValid(client) or !IsValid(ragdoll) ) then return end
+
+    self:AttachContainerMethods(ragdoll)
+
+    ragdoll.GetCapacity = function(this)
+        return this:GetRelay("ragdoll.capacity", impulse.Config.InventoryMaxWeight)
+    end
+
+    local inventory = client:GetInventory()
+    local items = {}
+
+    for _, item in pairs(inventory) do
+        local itemID = self:ClassToNetID(item.class)
+        if ( !itemID ) then continue end
+
+        local itemData = self.Items[itemID]
+        if ( !itemData ) then continue end
+
+        table.insert(items, item.class)
+
+        ragdoll:AddItem(item.class, item.amount, true)
+    end
+
+    ragdoll:SetRelay("ragdoll.items", items)
+    ragdoll:SetRelay("ragdoll.capacity", impulse.Config.InventoryMaxWeight)
+    ragdoll:SetRelay("ragdoll.name", client:Name())
+end
+
+--- Drops death items onto the ground and saves restore metadata.
+-- @realm server
+-- @player client Dead player
+-- @entity killer Killer entity
+function impulse.Inventory:DropDeathItems(client, killer)
+    if ( !IsValid(client) ) then return end
+
+    local inv = client:GetInventory()
+    local restorePoint = {}
+    local pos = client:LocalToWorld(client:OBBCenter())
+    local dropped = 0
+
+    for _, itemData in pairs(inv) do
+        local itemID = self:ClassToNetID(itemData.class)
+        local item = itemID and self.Items[itemID]
+
+        if ( !itemData.restricted ) then
+            table.insert(restorePoint, itemData.class)
+        end
+
+        if ( item and item.DropOnDeath and !itemData.restricted ) then
+            local ent = self:SpawnItem(itemData.class, pos)
+            if ( IsValid(ent) ) then
+                ent.ItemClip = itemData.clip
+            end
+
+            dropped = dropped + 1
+
+            if ( dropped > 4 ) then
+                break
+            end
+        end
+    end
+
+    hook.Run("PlayerDropDeathItems", client, killer, pos, dropped, inv)
+
+    client:GetTable().InventoryRestorePoint = restorePoint
+end
+
+--- Handles death item routing based on configured hooks.
+-- @realm server
+-- @player client Dead player
+-- @entity ragdoll Player ragdoll
+function impulse.Inventory:HandlePlayerDeathItems(client, ragdoll)
+    if ( !IsValid(client) or !IsValid(ragdoll) ) then return end
+
+    local clientTable = client:GetTable()
+    if ( !clientTable.impulseBeenInventorySetup ) then return end
+
+    local killer = ragdoll.Killer
+
+    if ( hook.Run("PlayerShouldDropDeathItems", client, killer) == true ) then
+        return self:DropDeathItems(client, killer)
+    end
+
+    if ( hook.Run("PlayerShouldRagdollDeathItems", client, killer) == true ) then
+        return self:CreateRagdollContainer(client, ragdoll)
+    end
+end
+
+--- Returns true if an entity is a ragdoll inventory container.
+-- @realm server
+-- @entity entity Candidate entity
+-- @treturn bool Is ragdoll container
+function impulse.Inventory:IsRagdollContainer(entity)
+    return IsValid(entity)
+        and entity:IsRagdoll()
+        and entity:GetRelay("ragdoll.items")
+        and istable(entity.Inventory)
+        and isfunction(entity.AddUser)
+end
+
+--- Attempts to open a ragdoll container for a player.
+-- @realm server
+-- @player client User
+-- @entity entity Candidate ragdoll
+-- @treturn bool|nil True when opened, false when blocked, nil when not a ragdoll container
+function impulse.Inventory:TryOpenRagdollContainer(client, entity)
+    if ( !IsValid(client) or !self:IsRagdollContainer(entity) ) then
+        return nil
+    end
+
+    entity.impulseNextUse = CurTime() + 1
+
+    if ( client:GetRelay("arrested", false) ) then
+        client:Notify("You cannot access a container when detained.")
+        return false
+    end
+
+    entity:AddUser(client)
+
+    return true
+end
+
 local PLAYER = FindMetaTable("Player")
+
+--- Handles death item behavior for this player.
+-- @realm server
+-- @entity ragdoll Player ragdoll
+function PLAYER:HandleDeathItems(ragdoll)
+    return impulse.Inventory:HandlePlayerDeathItems(self, ragdoll)
+end
 
 local function ShouldPersistInventory(client)
     return IsValid(client) and !client:IsBot()
