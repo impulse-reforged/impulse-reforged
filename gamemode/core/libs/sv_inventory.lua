@@ -179,14 +179,14 @@ function impulse.Inventory:BuildContainerPayload(container)
     end
 
     for class, amount in pairs(inv) do
-        local itemData, itemID = ResolveContainerItem(class)
-        if ( !itemData or !itemID ) then continue end
+        local itemData = ResolveContainerItem(class)
+        if ( !itemData ) then continue end
 
         local itemAmount = math.floor(tonumber(amount) or 1)
         if ( itemAmount < 1 ) then continue end
 
         payload[#payload + 1] = {
-            id = itemID,
+            class = itemData.UniqueID or class,
             amount = itemAmount
         }
     end
@@ -208,7 +208,7 @@ function impulse.Inventory:SendContainerSnapshot(container, target, netMsg)
     net.WriteUInt(#payload, 8)
 
     for _, entry in ipairs(payload) do
-        net.WriteUInt(entry.id, 10)
+        net.WriteString(entry.class)
         net.WriteUInt(math.min(entry.amount, 255), 8)
     end
 
