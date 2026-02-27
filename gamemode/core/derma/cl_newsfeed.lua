@@ -178,7 +178,7 @@ function PANEL:Setup()
     self.buttons:SetTall(20)
     self.buttons.Paint = nil
 
-    if ( impulse.Config.WordPressURL != "" ) then
+    if ( impulse.Config.WordPressURL and impulse.Config.WordPressURL != "" ) then
         self.news = {}
         self.materials = {}
 
@@ -192,7 +192,7 @@ function PANEL:Setup()
                 logs:Error("Failed to load newsfeed. Error: " .. error)
             end
         end)
-    elseif ( !table.IsEmpty(impulse.Config.SchemaChangelogs) ) then
+    elseif ( impulse.Config.SchemaChangelogs and !table.IsEmpty(impulse.Config.SchemaChangelogs) ) then
         local changelog = {}
         -- Get the latest changelog
         for _, data in pairs(impulse.Config.SchemaChangelogs) do
