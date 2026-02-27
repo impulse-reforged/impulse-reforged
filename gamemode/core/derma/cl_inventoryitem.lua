@@ -34,15 +34,27 @@ function PANEL:Init()
 end
 
 function PANEL:SetItem(itemNet, wide)
-    local item = impulse.Inventory.Items[itemNet.id]
+    local itemData = itemNet
+    local itemID
+
+    if ( istable(itemData) ) then
+        itemID = itemData.id
+    elseif ( isnumber(itemData) ) then
+        itemID = itemData
+        itemData = {id = itemID}
+    end
+
+    if ( !itemID ) then return end
+
+    local item = impulse.Inventory.Items[itemID]
     if ( !item ) then return end
 
     self.Item = item
 
     local direct = self.ContainerType
     if ( !direct ) then
-        self.IsEquipped = itemNet.equipped or false
-        self.IsRestricted = itemNet.restricted or false
+        self.IsEquipped = itemData.equipped or false
+        self.IsRestricted = itemData.restricted or false
     end
 
     self.Weight = item.Weight or 0
