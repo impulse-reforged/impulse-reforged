@@ -28,7 +28,15 @@ function PANEL:SetupContainer()
     self.container = tr.Entity
     self.isLoot = self.container.GetLoot and self.container:GetLoot() or false
 
-    self:SetTitle(hook.Run("GetContainerName", self.container) or ( self.isLoot and "Storage Container" or "Loot Container" ))
+    local containerName = hook.Run("GetContainerName", self.container)
+    if ( !containerName or containerName == "" ) then
+        local ragdollName = self.container:GetRelay("ragdoll.name", nil)
+        if ( ragdollName and ragdollName != "" ) then
+            containerName = ragdollName
+        end
+    end
+
+    self:SetTitle(containerName or ( self.isLoot and "Storage Container" or "Loot Container" ))
 end
 
 function PANEL:OnRemove()
@@ -47,7 +55,7 @@ function PANEL:PaintOver(w, h)
         draw.SimpleText(self.invWeight .. "kg/" .. impulse.Config.InventoryMaxWeight .. "kg", "Impulse-Elements18-Shadow", 345, 35, grey, TEXT_ALIGN_RIGHT)
     end
 
-    draw.SimpleText("Container", "Impulse-Elements23-Shadow", w - 5, 30, grey, TEXT_ALIGN_RIGHT)
+    draw.SimpleText(self:GetTitle(), "Impulse-Elements23-Shadow", w - 5, 30, grey, TEXT_ALIGN_RIGHT)
     if self.storageWeight and self.container then
         draw.SimpleText(self.storageWeight .. "kg/" .. capacity .. "kg", "Impulse-Elements18-Shadow", 355, 35, grey, TEXT_ALIGN_LEFT)
     end
