@@ -60,7 +60,7 @@ function PLAYER:SetTeam(teamID)
 
     local model, skin, bodygroups = self:ParseModelData(modelData)
     self:SetModel(model)
-    self:SetSkin(skin or selfTable.impulseDefaultSkin)
+    self:SetSkin(skin or selfTable.impulseDefaultSkin or 0)
 
     -- Reset all bodygroups first
     for i = 0, self:GetNumBodyGroups() - 1 do
@@ -155,7 +155,7 @@ function PLAYER:SetTeamClass(classID, skipLoadout)
 
     local model, skin, bodygroups = self:ParseModelData(modelData)
     self:SetModel(model)
-    self:SetSkin(skin or self.impulseDefaultSkin)
+    self:SetSkin(skin or self.impulseDefaultSkin or 0)
 
     self:SetupHands()
 
@@ -323,7 +323,7 @@ function PLAYER:SetTeamRank(rankID)
     if ( modelData ) then
         local model, skin, bodygroups = self:ParseModelData(modelData)
         self:SetModel(model)
-        self:SetSkin(skin or self.impulseDefaultSkin)
+        self:SetSkin(skin or self.impulseDefaultSkin or 0)
 
         self:SetupHands()
 
