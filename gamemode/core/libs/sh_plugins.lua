@@ -35,6 +35,14 @@ function impulse.Plugins:LoadEntities(path)
         files, folders = file.Find(path .. "/" .. folder .. "/*", "LUA")
         default = default or {}
 
+        table.sort(folders, function(a, b)
+            return string.lower(a) < string.lower(b)
+        end)
+
+        table.sort(files, function(a, b)
+            return string.lower(a) < string.lower(b)
+        end)
+
         for k, v in ipairs(folders) do
             local path2 = path .. "/" .. folder .. "/" .. v .. "/"
 
@@ -103,6 +111,14 @@ function impulse.Plugins:Load(path)
 
     local files, folders = file.Find(path .. "/*", "LUA")
     local disabledPlugins = impulse.Config.DisabledPlugins
+
+    table.sort(folders, function(a, b)
+        return string.lower(a) < string.lower(b)
+    end)
+
+    table.sort(files, function(a, b)
+        return string.lower(a) < string.lower(b)
+    end)
 
     for k, v in ipairs(folders) do
         if ( disabledPlugins and disabledPlugins[v] ) then

@@ -81,7 +81,13 @@ function impulse.Util:IncludeDir(directory, bFromLua)
     local baseDir = "impulse-reforged/gamemode/"
 
     -- Find all of the files within the directory.
-    for _, v in ipairs(file.Find((bFromLua and "" or baseDir) .. directory .. "/*.lua", "LUA")) do
+    local files = file.Find((bFromLua and "" or baseDir) .. directory .. "/*.lua", "LUA")
+
+    table.sort(files, function(a, b)
+        return string.lower(a) < string.lower(b)
+    end)
+
+    for _, v in ipairs(files) do
         -- Include the file from the prefix.
         impulse.Util:Include(directory .. "/" .. v)
     end
