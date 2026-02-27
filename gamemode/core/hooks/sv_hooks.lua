@@ -836,164 +836,6 @@ function GM:DoPlayerDeath(client, attacker, dmginfo)
     return true
 end
 
-local function HandleDeathItems(client, ragdoll)
-    local killer = ragdoll.Killer
-    local clientTable = client:GetTable()
-    if ( !clientTable.impulseBeenInventorySetup ) then return end
-
-    -- Either drop items to the ground or store them as a container on the ragdoll
-    if ( hook.Run("PlayerShouldDropDeathItems", client, killer) == true ) then
-        local inv = client:GetInventory()
-        local restorePoint = {}
-        local pos = client:LocalToWorld(client:OBBCenter())
-        local dropped = 0
-
-        for k, v in pairs(inv) do
-            local class = impulse.Inventory:ClassToNetID(v.class)
-            local item = impulse.Inventory.Items[class]
-
-            if ( !v.restricted ) then
-                table.insert(restorePoint, v.class)
-            end
-
-            if ( item.DropOnDeath and !v.restricted ) then
-                local ent = impulse.Inventory:SpawnItem(v.class, pos)
-                ent.ItemClip = v.clip
-
-                dropped = dropped + 1
-
-                if ( dropped > 4 ) then
-                    break
-                end
-            end
-        end
-
-        hook.Run("PlayerDropDeathItems", client, killer, pos, dropped, inv)
-
-        clientTable.InventoryRestorePoint = restorePoint
-    elseif ( hook.Run("PlayerShouldRagdollDeathItems", client, killer) == true ) then
-        ragdoll.Users = {}
-        ragdoll.Inventory = {}
-
-        ragdoll.AddItem = function(this, class, amount, noUpdate)
-            local count = 0
-            if ( this.Inventory[class] ) then
-                count = this.Inventory[class]
-            end
-
-            this.Inventory[class] = count + (amount or 1)
-
-            if ( !noUpdate ) then
-                this:UpdateUsers()
-            end
-        end
-
-        ragdoll.TakeItem = function(this, class, amount, noUpdate)
-            local itemCount = this.Inventory[class]
-            if ( itemCount ) then
-                local newCount = itemCount - (amount or 1)
-                if ( newCount < 1 ) then
-                    this.Inventory[class] = nil
-                else
-                    this.Inventory[class] = newCount
-                end
-            end
-
-            if ( !noUpdate ) then
-                this:UpdateUsers()
-            end
-        end
-
-        ragdoll.GetStorageWeight = function(this)
-            local weight = 0
-
-            for k, v in pairs(this.Inventory) do
-                local item = impulse.Inventory.Items[impulse.Inventory:ClassToNetID(k)]
-                weight = weight + ((item.Weight or 0) * v)
-            end
-
-            return weight
-        end
-
-        ragdoll.CanHoldItem = function(this, class, amount)
-            local item = impulse.Inventory.Items[impulse.Inventory:ClassToNetID(class)]
-            local weight = (item.Weight or 0) * (amount or 1)
-
-            return this:GetStorageWeight() + weight <= this:GetCapacity()
-        end
-
-        ragdoll.AddUser = function(this, user)
-            this.Users[user] = true
-
-            net.Start("impulseInvContainerOpen")
-            net.WriteUInt(table.Count(this.Inventory), 8)
-
-            for k, v in pairs(this.Inventory) do
-                local netid = impulse.Inventory:ClassToNetID(k)
-                local amount = v
-
-                net.WriteUInt(netid, 10)
-                net.WriteUInt(amount, 8)
-            end
-
-            net.Send(user)
-
-            user.currentContainer = this
-        end
-
-        ragdoll.RemoveUser = function(this, user)
-            this.Users[user] = nil
-            user.currentContainer = nil
-        end
-
-        ragdoll.UpdateUsers = function(this)
-            local pos = this:GetPos()
-
-            for k, v in pairs(this.Users) do
-                if ( IsValid(k) and pos:DistToSqr(k:GetPos()) < (230 * 230) ) then
-                    net.Start("impulseInvContainerUpdate")
-                    net.WriteUInt(table.Count(this.Inventory), 8)
-
-                    for k2, v2 in pairs(this.Inventory) do
-                        local netid = impulse.Inventory:ClassToNetID(k2)
-                        local amount = v2
-
-                        net.WriteUInt(netid, 10)
-                        net.WriteUInt(amount, 8)
-                    end
-
-                    net.Send(k)
-                else
-                    this.Users[k] = nil
-                end
-            end
-        end
-
-        ragdoll.GetCapacity = function(this)
-            return this:GetRelay("ragdoll.capacity", impulse.Config.InventoryMaxWeight)
-        end
-
-        local inventory = client:GetInventory()
-        local items = {}
-
-        for k, v in pairs(inventory) do
-            local class = impulse.Inventory:ClassToNetID(v.class)
-            if ( !class ) then continue end
-
-            local itemData = impulse.Inventory.Items[class]
-            if ( !itemData ) then continue end
-
-            table.insert(items, v.class)
-
-            ragdoll:AddItem(v.class, v.amount, true)
-        end
-
-        ragdoll:SetRelay("ragdoll.items", items)
-        ragdoll:SetRelay("ragdoll.capacity", impulse.Config.InventoryMaxWeight)
-        ragdoll:SetRelay("ragdoll.name", client:Name())
-    end
-end
-
 function GM:PlayerDeath(client, killer)
     local wait = impulse.Config.RespawnTime
     if ( client:IsDonator() ) then
@@ -1014,7 +856,7 @@ function GM:PlayerDeath(client, killer)
 
         local ragdoll = clientTable.Ragdoll
         if ( IsValid(ragdoll) ) then
-            HandleDeathItems(client, ragdoll)
+            client:HandleDeathItems(ragdoll)
         end
 
         client:ClearInventory(1)
@@ -1177,28 +1019,13 @@ local function ButtonCheck(client, entity)
     return true
 end
 
-local function RagdollCheck(client, entity)
-    if ( entity:IsRagdoll() and entity:GetRelay("ragdoll.items") ) then
-        entity.impulseNextUse = CurTime() + 1
-
-        if ( client:GetRelay("arrested", false) ) then
-            client:Notify("You cannot access a container when detained.")
-            return false
-        end
-
-        entity:AddUser(client)
-
-        return true
-    end
-end
-
 function GM:PlayerUse(client, entity)
     local clientTable = client:GetTable()
     if ( ( clientTable.impulseNextUse or 0 ) > CurTime() ) then return false end
     clientTable.impulseNextUse = CurTime() + 1 / 3
 
     if ( ButtonCheck(client, entity) == false ) then return false end
-    if ( RagdollCheck(client, entity) == false ) then return false end
+    if ( impulse.Inventory:TryOpenRagdollContainer(client, entity) == false ) then return false end
 end
 
 function GM:KeyRelease(client, key)
