@@ -7,7 +7,7 @@ function PLAYER:MakeAFK()
 
     local playercount = player.GetCount()
     local maxcount = impulse.Config.UserSlots or game.MaxPlayers()
-    local limit = impulse.Config.AFKKickRatio * maxcount
+    local limit = (impulse.Config.AFKKickRatio or 0.8) * maxcount
 
     if playercount >= limit and (impulse.Ops.EventManager.GetEventMode() or !self:IsDonator()) then
         if self:IsAdmin() then return end

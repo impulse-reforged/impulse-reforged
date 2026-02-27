@@ -39,7 +39,7 @@ function GM:Move(client, mvData)
         local speed = client:GetWalkSpeed()
         local forwardRatio = 0
         local sideRatio = 0
-        local ratio = impulse.Config.SlowWalkRatio
+        local ratio = impulse.Config.SlowWalkRatio or 0.75
 
         if (mvData:KeyDown(IN_FORWARD)) then
             forwardRatio = ratio
