@@ -149,7 +149,7 @@ function PANEL:QuickActions()
     local classes = impulse.Teams.Stored[LocalPlayer():Team()].classes
     if classes and LocalPlayer():InSpawn() then
         for v,classData in pairs(classes) do
-            if !classData.noMenu and LocalPlayer():GetTeamClass() != v then
+            if istable(classData) and !classData.noMenu and LocalPlayer():GetTeamClass() != v then
                 local classBtn = self.list:Add("DPanel")
                 classBtn:Dock(TOP)
                 classBtn:DockMargin(5, 2, 5, 2)
