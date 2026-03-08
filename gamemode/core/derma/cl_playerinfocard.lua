@@ -175,177 +175,207 @@ local quickTools = {
     }
 }
 
-
 function PANEL:Init()
-    self:Hide()
-    timer.Simple(0, function() -- Time to allow SetPlayer to catch up
-        if !IsValid(self) then return end
+    if ( IsValid(impulse.playerInfoCard) ) then
+        impulse.playerInfoCard:Remove()
+    end
 
-        self:Show()
-        self:SetSize(600, 400)
-        self:Center()
-        self:SetTitle("Player Information")
-        self:MakePopup()
+    impulse.playerInfoCard = self
 
-        -- 3d model
-        self.characterPreview = vgui.Create("impulseModelPanel", self)
-        self.characterPreview:SetSize(600,400)
-        self.characterPreview:SetPos(200,30)
-        self.characterPreview:SetFOV(80)
-        self.characterPreview:SetModel(self.Player:GetModel(), self.Player:GetSkin())
-        self.characterPreview:MoveToBack()
-        self.characterPreview:SetCursor("arrow")
-        function self.characterPreview:LayoutEntity(ent)
-            ent:SetAngles(Angle(0, 45, 0))
-            self:RunAnimation()
-        end
-
-        timer.Simple(0, function()
-            if !IsValid(self.characterPreview) then return end
-
-            local ent = self.characterPreview.Entity
-
-            if IsValid(ent) and IsValid(self.Player) then
-                for v, k in pairs(self.Player:GetBodyGroups()) do
-                    ent:SetBodygroup(k.id, self.Player:GetBodygroup(k.id))
-                end
-            end
-        end)
-
-        self.profileImage = vgui.Create("AvatarImage", self)
-        self.profileImage:SetSize(70, 70)
-        self.profileImage:SetPos(10, 30)
-        self.profileImage:SetPlayer(self.Player, 64)
-
-        -- Steam name
-        self.oocName = vgui.Create("DLabel", self)
-        self.oocName:SetFont("Impulse-CharacterInfo-NO")
-        self.oocName:SetText(self.Player:SteamName())
-        self.oocName:SizeToContents()
-        self.oocName:SetPos(86,30)
-
-
-        self.rpName = vgui.Create("DLabel", self)
-        self.rpName:SetFont("Impulse-Elements18")
-        self.rpName:SetText(self.Player:Name())
-        self.rpName:SizeToContents()
-        self.rpName:SetPos(self.oocName:GetWide() + 88, 42)
-
-        -- team name
-        self.teamName = vgui.Create("DLabel", self)
-        self.teamName:SetFont("Impulse-Elements23")
-        self.teamName:SetText(team.GetName(self.Player:Team()))
-        self.teamName:SetTextColor(team.GetColor(self.Player:Team()))
-        self.teamName:SizeToContents()
-        self.teamName:SetPos(86,60)
-
-        -- buttons
-        self.profileButton = vgui.Create("DButton", self)
-        self.profileButton:SetText("Steam Profile")
-        self.profileButton:SetPos(10,105)
-        self.profileButton:SetSize(90,20)
-        self.profileButton.DoClick = function()
-            gui.OpenURL("http://steamcommunity.com/profiles/" .. self.Player:SteamID64())
-        end
-
-        self.sidButton = vgui.Create("DButton", self)
-        self.sidButton:SetText("Copy Steam ID")
-        self.sidButton:SetPos(105,105)
-        self.sidButton:SetSize(90,20)
-        self.sidButton.DoClick = function()
-            SetClipboardText(self.Player:SteamID64())
-            LocalPlayer():Notify("Copied SteamID64.")
-        end
-
-        self.forumButton = vgui.Create("DButton", self)
-        self.forumButton:SetText("Panel Profile")
-        self.forumButton:SetPos(200,105)
-        self.forumButton:SetSize(90,20)
-        self.forumButton.DoClick = function()
-            gui.OpenURL(impulse.Config.PanelURL .. "/index.php?t=user&id=" .. self.Player:SteamID64())
-        end
-
-        self.whitelistButton = vgui.Create("DButton", self)
-        self.whitelistButton:SetText("Forum Profile")
-        self.whitelistButton:SetPos(295, 105)
-        self.whitelistButton:SetSize(90, 20)
-        self.whitelistButton.DoClick = function()
-            if !IsValid(self.Player) then return end
-
-            gui.OpenURL("https://impulse-community.com/api/getforumprofile.php?id=" .. self.Player:SteamID64())
-        end
-
-        -- badges
-        local xShift = 0
-        for badgeName, badgeData in pairs(impulse.Badges) do
-            if badgeData[3](self.Player) then
-                local badge = vgui.Create("DImageButton", self)
-                badge:SetPos(86 + xShift, 84)
-                badge:SetSize(16, 16)
-                badge:SetMaterial(badgeData[1])
-                badge.info = badgeData[2]
-
-                function badge:DoClick()
-                    Derma_Message(badge.info, "impulse", "Close")
-                end
-
-                xShift = xShift + 20
-            end
-        end
-
-        -- xp/playtime
-        self.playtime = vgui.Create("DLabel", self)
-        self.playtime:SetFont("Impulse-Elements18-Shadow")
-        self.playtime:SetText("XP: " .. self.Player:GetXP())
-        self.playtime:SizeToContents()
-        self.playtime:SetPos(10,130)
-
-        -- tp
-        self.tp = vgui.Create("DLabel", self)
-        self.tp:SetFont("Impulse-Elements18-Shadow")
-        self.tp:SetText("Achievement Points: " .. self.Player:GetRelay("achievementPoints", 0))
-        self.tp:SizeToContents()
-        self.tp:SetPos(10,150)
-
-        -- admin stuff
-        if LocalPlayer():IsAdmin() then
-            self.adminTools = vgui.Create("DCollapsibleCategory", self)
-            self.adminTools:SetPos(10,180)
-            self.adminTools:SetSize(400, 250)
-            self.adminTools:SetExpanded(0)
-            self.adminTools:SetLabel("Admin tools (click to expand)")
-
-            local colInv = Color(0, 0, 0, 0)
-            function self.adminTools:Paint()
-                self:SetBGColor(colInv)
-            end
-
-            self.adminList = vgui.Create("DIconLayout", self.adminTools)
-            self.adminList:Dock(FILL)
-            self.adminList:SetSpaceY(5)
-            self.adminList:SetSpaceX(5)
-
-            for v, k in pairs(quickTools) do
-                local action = self.adminList:Add("DButton")
-                action:SetSize(125,30)
-                action:SetText(k.name)
-                action:SetIcon(k.icon)
-
-                action.runFunc = k.onRun
-                local target = self.Player
-                function action:DoClick()
-                    if !IsValid(target) then return LocalPlayer():Notify("This player has disconnected.") end
-                    self.runFunc(target, target:SteamID64())
-                end
-            end
-        end
-    end)
-
+    self:SetSize(ScrW() / 3.5, ScrH() / 3)
+    self:Center()
+    self:SetTitle("Player Information")
+    self:MakePopup()
 end
 
-function PANEL:SetPlayer(player, badges)
-    self.Player = player
-    self.Badges = badges
+function PANEL:SetPlayer(client, badges)
+    self.client = client or NULL
+    self.badges = badges or {}
+
+    if ( !IsValid(client) ) then
+        self:Close()
+        return
+    end
+
+    -- 3d model
+    self.characterPreview = self:Add("impulseModelPanel")
+    self.characterPreview:Dock(RIGHT)
+    self.characterPreview:SetWide(ScreenScale(48))
+    self.characterPreview:SetFOV(ScreenScale(8))
+    self.characterPreview:SetModel(client:GetModel(), client:GetSkin())
+    self.characterPreview:MoveToBack()
+    self.characterPreview:SetCursor("arrow")
+
+    self.characterPreview.LayoutEntity = function(this, entity)
+        entity:SetAngles(Angle(0, 45, 0))
+        this:RunAnimation()
+
+        for k, v in pairs(client:GetBodyGroups()) do
+            entity:SetBodygroup(v.id, client:GetBodygroup(v.id))
+        end
+    end
+
+    self.nameContainer = self:Add("DPanel")
+    self.nameContainer:Dock(TOP)
+    self.nameContainer:DockMargin(0, 0, 0, 5)
+    self.nameContainer:SetTall(ScreenScaleH(32))
+    self.nameContainer.Paint = nil
+
+    self.profileImage = self.nameContainer:Add("AvatarImage")
+    self.profileImage:Dock(LEFT)
+    self.profileImage:DockMargin(0, 0, 5, 0)
+    self.profileImage:SetSize(self.nameContainer:GetTall(), self.nameContainer:GetTall())
+    self.profileImage:SetPlayer(client, 128)
+
+    local nameContainer = self.nameContainer:Add("DPanel")
+    nameContainer:Dock(TOP)
+    nameContainer.Paint = nil
+
+    self.oocName = nameContainer:Add("DLabel")
+    self.oocName:Dock(LEFT)
+    self.oocName:SetFont("Impulse-CharacterInfo-NO")
+    self.oocName:SetText(client:SteamName())
+    self.oocName:SizeToContents()
+
+    self.rpName = nameContainer:Add("DLabel")
+    self.rpName:Dock(LEFT)
+    self.rpName:SetFont("Impulse-Elements18")
+    self.rpName:SetText(client:Name())
+    self.rpName:SetTextInset(0, -4)
+    self.rpName:SetContentAlignment(2)
+    self.rpName:SizeToContents()
+
+    nameContainer:SetTall(math.max(self.oocName:GetTall(), self.rpName:GetTall()))
+
+    self.teamName = self.nameContainer:Add("DLabel")
+    self.teamName:Dock(TOP)
+    self.teamName:SetFont("Impulse-Elements23")
+    self.teamName:SetText(team.GetName(client:Team()))
+    self.teamName:SetTextColor(team.GetColor(client:Team()))
+    self.teamName:SizeToContents()
+
+    self.badgesContainer = self.nameContainer:Add("DPanel")
+    self.badgesContainer:Dock(TOP)
+    self.badgesContainer:SetTall(16)
+    self.badgesContainer.Paint = nil
+
+    -- badges
+    local xShift = 0
+    for badgeName, badgeData in pairs(impulse.Badges) do
+        if badgeData[3](client) then
+            local badge = self.badgesContainer:Add("DImageButton")
+            badge:Dock(LEFT)
+            badge:SetSize(16, 16)
+            badge:SetMaterial(badgeData[1])
+            badge.info = badgeData[2]
+
+            function badge:DoClick()
+                Derma_Message(badge.info, "impulse", "Close")
+            end
+
+            xShift = xShift + 20
+        end
+    end
+
+    self.buttonsContainer = self:Add("DPanel")
+    self.buttonsContainer:Dock(TOP)
+    self.buttonsContainer:DockMargin(0, 0, 0, 5)
+    self.buttonsContainer:SetTall(ScreenScaleH(8))
+    self.buttonsContainer.Paint = nil
+
+    -- buttons
+    self.profileButton = self.buttonsContainer:Add("DButton")
+    self.profileButton:Dock(LEFT)
+    self.profileButton:DockMargin(0, 0, 5, 0)
+    self.profileButton:SetText("Steam Profile")
+    self.profileButton:SizeToContents()
+    self.profileButton.DoClick = function()
+        gui.OpenURL("http://steamcommunity.com/profiles/" .. client:SteamID64())
+    end
+
+    self.sidButton = self.buttonsContainer:Add("DButton")
+    self.sidButton:Dock(LEFT)
+    self.sidButton:DockMargin(0, 0, 5, 0)
+    self.sidButton:SetText("Copy Steam ID")
+    self.sidButton:SizeToContents()
+    self.sidButton.DoClick = function()
+        SetClipboardText(client:SteamID64())
+        LocalPlayer():Notify("Copied SteamID64.")
+    end
+
+    self.forumButton = self.buttonsContainer:Add("DButton")
+    self.forumButton:Dock(LEFT)
+    self.forumButton:DockMargin(0, 0, 5, 0)
+    self.forumButton:SetText("Panel Profile")
+    self.forumButton:SizeToContents()
+    self.forumButton.DoClick = function()
+        gui.OpenURL(impulse.Config.PanelURL .. "/index.php?t=user&id=" .. client:SteamID64())
+    end
+
+    self.whitelistButton = self.buttonsContainer:Add("DButton")
+    self.whitelistButton:Dock(LEFT)
+    self.whitelistButton:DockMargin(0, 0, 5, 0)
+    self.whitelistButton:SetText("Forum Profile")
+    self.whitelistButton:SizeToContents()
+    self.whitelistButton.DoClick = function()
+        if !IsValid(client) then return end
+
+        gui.OpenURL("https://impulse-community.com/api/getforumprofile.php?id=" .. client:SteamID64())
+    end
+
+    -- xp/playtime
+    self.playtime = self:Add("DLabel")
+    self.playtime:Dock(TOP)
+    self.playtime:SetFont("Impulse-Elements18-Shadow")
+    self.playtime:SetText("XP: " .. client:GetXP())
+    self.playtime:SizeToContents()
+
+    -- tp
+    self.tp = vgui.Create("DLabel", self)
+    self.tp:Dock(TOP)
+    self.tp:DockMargin(0, 0, 0, 5)
+    self.tp:SetFont("Impulse-Elements18-Shadow")
+    self.tp:SetText("Achievement Points: " .. client:GetRelay("achievementPoints", 0))
+    self.tp:SizeToContents()
+
+    -- admin stuff
+    if ( LocalPlayer():IsAdmin() ) then
+        self.adminTools = self:Add("DCollapsibleCategory")
+        self.adminTools:Dock(FILL)
+        self.adminTools:SetExpanded(0)
+        self.adminTools:SetLabel("Admin tools (click to expand)")
+
+        local colInv = Color(0, 0, 0, 0)
+        function self.adminTools:Paint()
+            self:SetBGColor(colInv)
+        end
+
+        self.adminList = vgui.Create("DIconLayout", self.adminTools)
+        self.adminList:Dock(FILL)
+        self.adminList:SetSpaceY(5)
+        self.adminList:SetSpaceX(5)
+
+        for v, k in pairs(quickTools) do
+            local action = self.adminList:Add("DButton")
+            action:SetSize(125,30)
+            action:SetText(k.name)
+            action:SetIcon(k.icon)
+
+            action.runFunc = k.onRun
+            local target = client
+            function action:DoClick()
+                if !IsValid(target) then return LocalPlayer():Notify("This player has disconnected.") end
+                self.runFunc(target, target:SteamID64())
+            end
+        end
+    end
 end
 
 vgui.Register("impulsePlayerInfoCard", PANEL, "DFrame")
+
+if ( IsValid(impulse.playerInfoCard) ) then
+    local client = impulse.playerInfoCard.client
+    local badges = impulse.playerInfoCard.badges
+
+    vgui.Create("impulsePlayerInfoCard"):SetPlayer(client, badges)
+end
